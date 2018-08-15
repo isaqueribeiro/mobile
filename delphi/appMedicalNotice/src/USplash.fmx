@@ -1,0 +1,78 @@
+object FrmSplash: TFrmSplash
+  Left = 0
+  Top = 0
+  Caption = 'Medical Notice | Splash'
+  ClientHeight = 716
+  ClientWidth = 414
+  Position = ScreenCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object LayoutSplash: TLayout
+    Align = Client
+    Size.Width = 414.000000000000000000
+    Size.Height = 716.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object PanelSplash: TPanel
+      Align = Center
+      Size.Width = 250.000000000000000000
+      Size.Height = 250.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'pushpanel'
+      TabOrder = 0
+      object ImageIconApp: TImage
+        MultiResBitmap.Height = 1099
+        MultiResBitmap.Width = 1101
+        MultiResBitmap = <
+          item
+          end>
+        Align = Center
+        Size.Width = 150.000000000000000000
+        Size.Height = 150.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object LabelVersao: TLabel
+        Align = Bottom
+        StyledSettings = [Family, Style, FontColor]
+        Position.Y = 233.000000000000000000
+        Size.Width = 250.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 10.000000000000000000
+        TextSettings.HorzAlign = Trailing
+        Text = 'Vers'#227'o 1.0'
+      end
+      object LabelProgresso: TLabel
+        Align = Bottom
+        Position.Y = 216.000000000000000000
+        Size.Width = 250.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'LabelProgressoStyle1'
+        Text = 'Carregando...'
+      end
+      object ProgressBar: TProgressBar
+        Align = Bottom
+        Orientation = Horizontal
+        Position.Y = 208.000000000000000000
+        Size.Width = 250.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        Value = 70.000000000000000000
+      end
+      object LabelAppTitle: TLabel
+        Align = Top
+        StyledSettings = [Family, Style, FontColor]
+        Size.Width = 250.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 18.000000000000000000
+        TextSettings.HorzAlign = Center
+        Text = 'Medical Notice | Aviso M'#233'dico'
+      end
+    end
+  end
+end

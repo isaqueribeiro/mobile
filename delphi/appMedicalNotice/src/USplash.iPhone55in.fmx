@@ -1,0 +1,16 @@
+inherited FrmSplash_iPhone55in: TFrmSplash_iPhone55in
+  DesignerMasterStyle = 2
+  inherited LayoutSplash: TLayout
+    inherited PanelSplash: TPanel
+      Enabled = False
+      inherited ImageIconApp: TImage
+        MultiResBitmap.Height = 1099
+        MultiResBitmap.Width = 1101
+      end
+      inherited ProgressBar: TProgressBar
+        Position.Y = 246.000000000000000000
+        Size.Height = 4.000000000000000000
+      end
+    end
+  end
+end
