@@ -10,15 +10,17 @@ uses
 type
   TFrmSplash = class(TForm)
     LayoutSplash: TLayout;
-    PanelSplash: TPanel;
-    ImageIconApp: TImage;
-    LabelVersao: TLabel;
-    LabelProgresso: TLabel;
-    ProgressBar: TProgressBar;
+    Panel1: TPanel;
     LabelAppTitle: TLabel;
+    LabelVersion: TLabel;
+    LabelCarregando: TLabel;
+    ProgressBar: TProgressBar;
+    ImageLogoApp: TImage;
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
+    procedure Load;
   public
     { Public declarations }
   end;
@@ -29,12 +31,24 @@ var
 implementation
 
 {$R *.fmx}
+
+uses UDados;
 {$R *.iPhone4in.fmx IOS}
 {$R *.iPhone55in.fmx IOS}
 
+procedure TFrmSplash.FormActivate(Sender: TObject);
+begin
+  Load;
+end;
+
 procedure TFrmSplash.FormCreate(Sender: TObject);
 begin
-  ProgressBar.Value := 0;
+  ; //ProgressBar.Value := 0;
+end;
+
+procedure TFrmSplash.Load;
+begin
+  DtmDados.IsConectado;
 end;
 
 end.

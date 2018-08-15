@@ -8,6 +8,7 @@ object FrmSplash: TFrmSplash
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnActivate = FormActivate
   OnCreate = FormCreate
   DesignerMasterStyle = 0
   object LayoutSplash: TLayout
@@ -16,62 +17,58 @@ object FrmSplash: TFrmSplash
     Size.Height = 716.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    object PanelSplash: TPanel
+    object Panel1: TPanel
       Align = Center
-      Size.Width = 250.000000000000000000
-      Size.Height = 250.000000000000000000
+      Size.Width = 303.000000000000000000
+      Size.Height = 276.000000000000000000
       Size.PlatformDefault = False
-      StyleLookup = 'pushpanel'
       TabOrder = 0
-      object ImageIconApp: TImage
-        MultiResBitmap.Height = 1099
-        MultiResBitmap.Width = 1101
-        MultiResBitmap = <
-          item
-          end>
-        Align = Center
-        Size.Width = 150.000000000000000000
-        Size.Height = 150.000000000000000000
+      object LabelAppTitle: TLabel
+        Align = Top
+        StyledSettings = [Family, Style]
+        Size.Width = 303.000000000000000000
+        Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
+        TextSettings.Font.Size = 16.000000000000000000
+        TextSettings.HorzAlign = Center
+        Text = 'Medical Notice | Aviso M'#233'dico'
       end
-      object LabelVersao: TLabel
+      object LabelVersion: TLabel
         Align = Bottom
         StyledSettings = [Family, Style, FontColor]
-        Position.Y = 233.000000000000000000
-        Size.Width = 250.000000000000000000
-        Size.Height = 17.000000000000000000
+        Position.Y = 256.000000000000000000
+        Size.Width = 303.000000000000000000
+        Size.Height = 20.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Size = 10.000000000000000000
         TextSettings.HorzAlign = Trailing
         Text = 'Vers'#227'o 1.0'
       end
-      object LabelProgresso: TLabel
+      object LabelCarregando: TLabel
         Align = Bottom
-        Position.Y = 216.000000000000000000
-        Size.Width = 250.000000000000000000
-        Size.Height = 17.000000000000000000
+        Position.Y = 236.000000000000000000
+        Size.Width = 303.000000000000000000
+        Size.Height = 20.000000000000000000
         Size.PlatformDefault = False
-        StyleLookup = 'LabelProgressoStyle1'
         Text = 'Carregando...'
       end
       object ProgressBar: TProgressBar
         Align = Bottom
         Orientation = Horizontal
-        Position.Y = 208.000000000000000000
-        Size.Width = 250.000000000000000000
+        Position.Y = 228.000000000000000000
+        Size.Width = 303.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
         Value = 70.000000000000000000
       end
-      object LabelAppTitle: TLabel
-        Align = Top
-        StyledSettings = [Family, Style, FontColor]
-        Size.Width = 250.000000000000000000
-        Size.Height = 17.000000000000000000
+      object ImageLogoApp: TImage
+        MultiResBitmap = <
+          item
+          end>
+        Align = Center
+        Size.Width = 144.000000000000000000
+        Size.Height = 144.000000000000000000
         Size.PlatformDefault = False
-        TextSettings.Font.Size = 18.000000000000000000
-        TextSettings.HorzAlign = Center
-        Text = 'Medical Notice | Aviso M'#233'dico'
       end
     end
   end
