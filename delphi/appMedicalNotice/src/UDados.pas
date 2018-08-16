@@ -73,7 +73,8 @@ begin
   aFile := TPath.Combine(TPath.GetDocumentsPath, 'medical_notice.db');
   {$ENDIF}
   {$IF DEFINED (MSWINDOWS)}
-  aFile := GetEnvironmentVariable('MEDICAL_NOTICE_DB');
+  //aFile := GetEnvironmentVariable('MEDICAL_NOTICE_DB');
+  aFile := 'medical_notice.db';
   {$ENDIF}
 
   cnnConexao.Params.Values['DriverID'] := 'SQLite';
