@@ -302,13 +302,8 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="bin\Android\Release\styles.xml" Configuration="Release" Class="AndroidSplashStyles">
-                    <Platform Name="Android">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="D:\db\mobile\medical_notice.db" Configuration="Release" Class="File">
-                    <Platform Name="iOSSimulator">
+                <DeployFile LocalName="D:\db\mobile\medical_notice.db" Configuration="Debug" Class="File">
+                    <Platform Name="All Platforms">
                         <RemoteName>medical_notice.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -318,10 +313,17 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                     <Platform Name="Win32">
+                        <RemoteDir>.\db\</RemoteDir>
                         <RemoteName>medical_notice.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                     <Platform Name="Win64">
+                        <RemoteDir>.\db\</RemoteDir>
+                        <RemoteName>medical_notice.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>medical_notice.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -329,8 +331,9 @@
                         <RemoteName>medical_notice.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
-                    <Platform Name="All Platforms">
-                        <Enabled>false</Enabled>
+                </DeployFile>
+                <DeployFile LocalName="bin\Android\Release\styles.xml" Configuration="Release" Class="AndroidSplashStyles">
+                    <Platform Name="Android">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -551,36 +554,6 @@
                     </Platform>
                     <Platform Name="All Platforms">
                         <Enabled>false</Enabled>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="D:\db\mobile\medical_notice.db" Configuration="Debug" Class="File">
-                    <Platform Name="iOSSimulator">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>medical_notice.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                    <Platform Name="Android">
-                        <RemoteDir>.\assets\internal\</RemoteDir>
-                        <RemoteName>medical_notice.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                    <Platform Name="Win32">
-                        <RemoteDir>.\db\</RemoteDir>
-                        <RemoteName>medical_notice.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                    <Platform Name="Win64">
-                        <RemoteDir>.\db\</RemoteDir>
-                        <RemoteName>medical_notice.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <RemoteName>medical_notice.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                    <Platform Name="All Platforms">
-                        <RemoteName>medical_notice.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -1244,18 +1217,18 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
-                <Platform value="Android" ActiveMobileDevice="4203583dbe123100">True</Platform>
+                <Platform value="Android" ActiveMobileDevice="AVD_Nexus_10">True</Platform>
                 <Platform value="iOSSimulator" ActiveMobileDevice="iPad">True</Platform>
                 <Platform value="OSX32">True</Platform>
                 <Platform value="Win32">True</Platform>
