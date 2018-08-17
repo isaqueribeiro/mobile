@@ -1,6 +1,5 @@
 object DtmDados: TDtmDados
   OldCreateOrder = False
-  OnCreate = DataModuleCreate
   Height = 432
   Width = 560
   object FdSQLiteDriver: TFDPhysSQLiteDriverLink
@@ -16,31 +15,31 @@ object DtmDados: TDtmDados
     Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
     AcceptCharset = 'UTF-8, *;q=0.8'
     AcceptEncoding = 'identity'
-    BaseURL = 
-      'http://servicos.hab.org.br/medicalNotice/json/app_especialidade_' +
-      'dao.php'
+    BaseURL = 'http://servicos.hab.org.br/medicalNotice/json'
     Params = <>
     HandleRedirects = True
     RaiseExceptionOn500 = False
-    Left = 296
-    Top = 104
+    Left = 464
+    Top = 40
   end
   object RESTRequestGET: TRESTRequest
     Client = RESTClientGET
     Params = <>
-    Resource = 'key=abc'
+    Resource = 'app_especialidade_dao.php?key=abc'
     Response = RESTResponseGET
     SynchronizedEvents = False
-    Left = 296
-    Top = 152
+    Left = 464
+    Top = 88
   end
   object RESTResponseGET: TRESTResponse
-    Left = 296
-    Top = 200
+    Left = 464
+    Top = 136
   end
   object cnnConexao: TFDConnection
     Params.Strings = (
       'Database=D:\db\mobile\medical_notice.db'
+      'OpenMode=ReadWrite'
+      'LockingMode=Normal'
       'DriverID=SQLite')
     LoginPrompt = False
     Transaction = FDTransaction
@@ -59,28 +58,34 @@ object DtmDados: TDtmDados
     Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
     AcceptCharset = 'UTF-8, *;q=0.8'
     AcceptEncoding = 'identity'
-    BaseURL = 
-      'http://servicos.hab.org.br/medicalNotice/json/app_especialidade_' +
-      'dao.php'
+    BaseURL = 'http://servicos.hab.org.br/medicalNotice/json'
     ContentType = 'application/x-www-form-urlencoded'
     Params = <>
     HandleRedirects = True
     RaiseExceptionOn500 = False
-    Left = 184
-    Top = 240
+    Left = 376
+    Top = 40
   end
   object RESTRequestPOST: TRESTRequest
     Client = RESTClientPOST
     Method = rmPOST
     Params = <>
+    Resource = 'app_especialidade_dao.php'
     Response = RESTResponsePOST
     SynchronizedEvents = False
-    Left = 184
-    Top = 288
+    Left = 376
+    Top = 88
   end
   object RESTResponsePOST: TRESTResponse
     ContentType = 'application/json'
-    Left = 184
-    Top = 336
+    Left = 376
+    Top = 136
+  end
+  object qrySQL: TFDQuery
+    Connection = cnnConexao
+    Transaction = FDTransaction
+    UpdateTransaction = FDTransaction
+    Left = 96
+    Top = 248
   end
 end

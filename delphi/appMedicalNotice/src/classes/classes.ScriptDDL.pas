@@ -10,12 +10,17 @@ type
     private
       class var aInstance : TScriptDDL;
       const
+        TABLE_VERSAO        = 'tbl_versao';
         TABLE_USUARIO       = 'app_usuario';
         TABLE_ESPECIALIDADE = 'app_especialidade';
     public
       class function GetInstance : TScriptDDL;
+      function getCreateTableVersao : TStringList;
       function getCreateTableEspecialidade : TStringList;
       function getCreateTableUsuario : TStringList;
+
+      function getTableNameEspecialidade : String;
+      function getTableNameUsuario : String;
   end;
 
 implementation
@@ -65,12 +70,41 @@ begin
   end;
 end;
 
+function TScriptDDL.getCreateTableVersao: TStringList;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_VERSAO + ' (');
+    aSQL.Add('      cd_versao INTEGER NOT NULL PRIMARY KEY');
+    aSQL.Add('    , ds_versao STRING (30)');
+    aSQL.Add('    , dt_versao DATE');
+    aSQL.Add(')');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
+end;
+
 class function TScriptDDL.GetInstance: TScriptDDL;
 begin
   if not Assigned(aInstance) then
     aInstance := TScriptDDL.Create;
 
   Result := aInstance;
+end;
+
+function TScriptDDL.getTableNameEspecialidade: String;
+begin
+  Result := TABLE_ESPECIALIDADE;
+end;
+
+function TScriptDDL.getTableNameUsuario: String;
+begin
+  Result := TABLE_USUARIO;
 end;
 
 end.

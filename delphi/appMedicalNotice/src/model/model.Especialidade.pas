@@ -17,6 +17,7 @@ type
       property Codigo    : Integer read aCodigo write aCodigo;
       property Descricao : String read aDescricao write SetDescricao;
 
+      function ToString : String; override;
   end;
 
   TEspecialidades = Array of TEspecialidade;
@@ -35,6 +36,11 @@ end;
 procedure TEspecialidade.SetDescricao(const Value: String);
 begin
   aDescricao := Trim(Value);
+end;
+
+function TEspecialidade.ToString: String;
+begin
+  Result := aDescricao;
 end;
 
 end.

@@ -4,8 +4,9 @@ interface
 
 uses
   REST.Client,
-  Web.HTTPApp,
   REST.Types,
+  Web.HTTPApp,
+  System.JSON,
   classes.Constantes,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
@@ -16,18 +17,24 @@ type
       aRESTClient   : TRESTClient;
       aRESTRequest  : TRESTRequest;
       aRESTResponse : TRESTResponse;
-      aServerBaseURL,
-      aKey          : String;
+      aKeyHash : String;
       constructor Create(const AOnwer : TComponent;
-        const aBaseUrl, aHashKey : String);
-      procedure SetKey(Value : String);
-      procedure GetServerBaseURL(Value : String);
+        const aBaseUrl, aHash : String);
+      procedure SetBaseURL(Value : String);
+      procedure SetResourcePage(Value : String);
+
+      function GetBaseURL : String;
+      function GetResourcePage : String;
       class var aInstance : THttpConnectJSON;
     public
+      property BaseURL      : String read GetBaseURL write SetBaseURL;
+      property ResourcePage : String read GetResourcePage write SetResourcePage;
+      property KeyHash : String read aKeyHash write aKeyHash;
+
+      function Get(const aResourcePage, aHash, aSampleParams : String) : TJSONValue;
+
       class function GetInstance(const AOnwer : TComponent;
-        const aBaseUrl, aHashKey : String) : THttpConnectJSON;
-      property ServerBaseURL : String read aServerBaseURL write GetServerBaseURL;
-      property Key : String read aKey write SetKey;
+        const aBaseUrl, aHash : String) : THttpConnectJSON;
   end;
 
 implementation
@@ -35,12 +42,9 @@ implementation
 { THttpConnectJSON }
 
 constructor THttpConnectJSON.Create(const AOnwer : TComponent;
-  const aBaseUrl, aHashKey : String);
+  const aBaseUrl, aHash : String);
 begin
   inherited Create;
-  aServerBaseURL := Trim(aServerBaseURL);
-  aKey := Trim(aHashKey);
-
   aRESTClient := TRESTClient.Create(aBaseUrl);
   with aRESTClient do
   begin
@@ -63,37 +67,93 @@ begin
     Client   := aRESTClient;
     Method   := rmGET;
     Response := aRESTResponse;
-    Resource := 'key=' + Trim(aKey);
+    Resource := EmptyStr;
     SynchronizedEvents := False;
+  end;
+
+  BaseURL  := Trim(aBaseUrl);
+  aKeyHash := Trim(aHash);
+end;
+
+function THttpConnectJSON.Get(const aResourcePage, aHash,
+  aSampleParams: String): TJSONValue;
+var
+  aRetorno     : TJSONValue;
+  sHash        ,
+  sSampleParams,
+  sParams      : String;
+begin
+  aRetorno := TJSONValue.Create;
+  try
+    sHash         := Trim(aHash);
+    sSampleParams := Trim(aSampleParams);
+    if (sHash <> EmptyStr) or (sSampleParams <> EmptyStr) then
+      sParams := '?';
+    if (sHash <> EmptyStr) then
+      sParams := sParams + 'hash={hash}&';
+    if (sSampleParams <> EmptyStr) then
+      sParams := sParams + sSampleParams + '&';
+
+    if (Copy(sParams, Length(sParams), 1) = '&') then
+      sParams := Copy(sParams, 1, Length(sParams) - 1);
+
+    ResourcePage := Trim(aResourcePage) + sParams;
+
+    aRESTRequest.Method := rmGET;
+    if (sHash <> EmptyStr) then
+      aRESTRequest.Params.AddUrlSegment('hash', sHash);
+    aRESTRequest.Execute;
+
+    aRetorno := aRESTRequest.Response.JSONValue;
+  finally
+    Result := aRetorno;
   end;
 end;
 
+function THttpConnectJSON.GetBaseURL: String;
+begin
+  if Assigned(aRESTClient) then
+    Result := Trim(aRESTClient.BaseURL)
+  else
+    Result := EmptyStr;
+end;
+
 class function THttpConnectJSON.GetInstance(const AOnwer: TComponent;
-  const aBaseUrl, aHashKey: String): THttpConnectJSON;
+  const aBaseUrl, aHash : String): THttpConnectJSON;
 begin
   if not Assigned(aInstance) then
-    aInstance := THttpConnectJSON.Create(AOnwer, aBaseUrl, aHashKey)
+    aInstance := THttpConnectJSON.Create(AOnwer, aBaseUrl, aHash)
   else
-  begin
-    aInstance.ServerBaseURL := aBaseUrl;
-    aInstance.Key := aHashKey;
-  end;
+    aInstance.BaseURL := aBaseUrl;
 
   Result := aInstance;
 end;
 
-procedure THttpConnectJSON.GetServerBaseURL(Value: String);
+function THttpConnectJSON.GetResourcePage: String;
+var
+  aStr : String;
 begin
-  aServerBaseURL := Trim(Value);
-  if Assigned(aRESTClient) then
-    aRESTClient.BaseURL := aServerBaseURL;
+  if Assigned(aRESTRequest) then
+  begin
+    aStr := Trim(aRESTRequest.Resource);
+    if (Pos('?', aStr) > 0) then
+      aStr := Copy(aStr, 1, Pos('?', aStr) - 1);
+    Result := aStr;
+  end
+  else
+    Result := EmptyStr;
 end;
 
-procedure THttpConnectJSON.SetKey(Value: String);
+procedure THttpConnectJSON.SetBaseURL(Value: String);
 begin
-  aKey := Trim(Value);
+  if Assigned(aRESTClient) then
+    aRESTClient.BaseURL := Trim(Value);
+end;
+
+procedure THttpConnectJSON.SetResourcePage(Value: String);
+begin
   if Assigned(aRESTRequest) then
-    aRESTRequest.Resource := 'key=' + aKey;
+    aRESTRequest.Resource := Trim(Value);
 end;
 
 end.

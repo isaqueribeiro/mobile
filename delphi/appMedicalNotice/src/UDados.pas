@@ -15,7 +15,9 @@ uses
   FireDAC.Phys.SQLiteDef, FireDAC.Phys.SQLite, FireDAC.Comp.Client, FireDAC.FMXUI.Wait,
   FireDAC.Comp.UI, FireDAC.Stan.Pool, FireDAC.Stan.Async,
 
-  IPPeerClient, Data.Bind.Components, Data.Bind.ObjectScope, Data.DB;
+  IPPeerClient, Data.Bind.Components, Data.Bind.ObjectScope, Data.DB,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
 
 type
   TDtmDados = class(TDataModule)
@@ -29,14 +31,17 @@ type
     RESTClientPOST: TRESTClient;
     RESTRequestPOST: TRESTRequest;
     RESTResponsePOST: TRESTResponse;
-    procedure DataModuleCreate(Sender: TObject);
+    qrySQL: TFDQuery;
     procedure cnnConexaoBeforeConnect(Sender: TObject);
     procedure cnnConexaoAfterConnect(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    procedure SetSQLExecute(aSQL : TStringList);
+
     function IsConectado : Boolean;
+    function GetNextValue(aTableName, aFieldName : String) : Integer;
   end;
 
 var
@@ -58,6 +63,7 @@ var
   aScriptDDL : TScriptDDL;
 begin
   aScriptDDL := TScriptDDL.GetInstance;
+  cnnConexao.ExecSQL(aScriptDDL.getCreateTableVersao.Text, True);
   cnnConexao.ExecSQL(aScriptDDL.getCreateTableEspecialidade.Text, True);
   cnnConexao.ExecSQL(aScriptDDL.getCreateTableUsuario.Text, True);
 end;
@@ -81,17 +87,22 @@ begin
   cnnConexao.Params.Values['Database'] := aFile;
 end;
 
-procedure TDtmDados.DataModuleCreate(Sender: TObject);
+function TDtmDados.GetNextValue(aTableName, aFieldName : String): Integer;
+var
+  aValue : Integer;
 begin
-(*
-  // Criando base de dados
+  aValue := 0;
+  try
+    qrySQL.Close;
+    qrySQL.SQL.Text := 'Select max(' + aFieldName + ') as valor from ' + aTableName;
+    qrySQL.OpenOrExecute;
+    aValue := (qrySQL.FieldByName('valor').AsInteger + 1);
+  finally
+    if qrySQL.Active then
+      qrySQL.Close;
 
-  CREATE TABLE tbl_versao (
-      cd_versao INTEGER,
-      dt_versao DATE
-  );
-
-*)
+    Result := aValue;
+  end;
 end;
 
 function TDtmDados.IsConectado: Boolean;
@@ -106,6 +117,15 @@ begin
   finally
     Result := aRetorno;
   end;
+end;
+
+procedure TDtmDados.SetSQLExecute(aSQL: TStringList);
+begin
+  if qrySQL.Active then
+    qrySQL.Close;
+  qrySQL.SQL.Clear;
+  qrySQL.ClearFields;
+  qrySQL.SQL.AddStrings( aSQL );
 end;
 
 end.
