@@ -25,6 +25,8 @@ type
     ImageLogoApp: TImage;
     ScrollBoxForm: TScrollBox;
     LayoutForm: TLayout;
+    LabelAlerta: TLabel;
+    procedure OcultarAlerta(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure EditLoginKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
@@ -110,6 +112,11 @@ begin
   FWBounds.TopLeft     := ScreenToClient(FWBounds.TopLeft);
   FWBounds.BottomRight := ScreenToClient(FWBounds.BottomRight);
   UpdatePosition;
+end;
+
+procedure TFrmLogin.OcultarAlerta(Sender: TObject);
+begin
+  LabelAlerta.Visible := False;
 end;
 
 procedure TFrmLogin.RestorePosition;

@@ -31,7 +31,10 @@ type
     procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
-    aFormActive : TForm;
+    //aFormActive,
+    aFormLogin ,
+    aFormMain  : TForm;
+
     procedure Load;
     procedure UpdateEspecialidades;
     procedure LoadActivity;
@@ -76,28 +79,36 @@ procedure TFrmSplash.AbrirLogin;
 var
   aLayoutPadrao : TComponent;
 begin
-  if Assigned(aFormActive) then
+  //if Assigned(aFormActive) then
+  if Assigned(aFormLogin) then
   begin
-    if (aFormActive.ClassType = TFrmLogin) then
+    //if (aFormActive.ClassType = TFrmLogin) then
+    if (aFormLogin.ClassType = TFrmLogin) then
       Exit
     else
     begin
-      aFormActive.DisposeOf;
-      aFormActive := nil;
+//      aFormActive.DisposeOf;
+//      aFormActive := nil;
+      aFormLogin.DisposeOf;
+      aFormLogin := nil;
     end;
   end;
 
-  aFormActive := FrmLogin;
-  Application.CreateForm(TFrmLogin, aFormActive);
+//  aFormActive := FrmLogin;
+//  Application.CreateForm(TFrmLogin, aFormActive);
+  aFormLogin := FrmLogin;
+  Application.CreateForm(TFrmLogin, aFormLogin);
 
-  // TESTES
-  TFrmLogin(aFormActive).BtnEfetuarLogin.OnClick := PrepareLogin;
+  //TFrmLogin(aFormActive).BtnEfetuarLogin.OnClick := PrepareLogin;
+  TFrmLogin(aFormLogin).BtnEfetuarLogin.OnClick := PrepareLogin;
 
-  aLayoutPadrao := aFormActive.FindComponent('layoutBase');
+  //aLayoutPadrao := aFormActive.FindComponent('layoutBase');
+  aLayoutPadrao := aFormLogin.FindComponent('layoutBase');
   if Assigned(aLayoutPadrao) then
     LayoutForm.AddObject(TLayout(aLayoutPadrao));
 
-  Caption := aFormActive.Caption;
+  //Caption := aFormActive.Caption;
+  Caption := aFormLogin.Caption;
   MudarForm(TabForm, Self);
 end;
 
@@ -105,47 +116,55 @@ procedure TFrmSplash.AbrirMenu;
 var
   aLayoutPadrao : TComponent;
 begin
-  if Assigned(aFormActive) then
+  if Assigned(aFormMain) then
   begin
-    if (aFormActive.ClassType = TFrmLogin) then
+    if (aFormMain.ClassType = TFrmLogin) then
       Exit
     else
     begin
-      aFormActive.DisposeOf;
-      aFormActive := nil;
+      aFormMain.DisposeOf;
+      aFormMain := nil;
     end;
   end;
 
-  aFormActive := FrmPrincipal;
-  Application.CreateForm(TFrmLogin, aFormActive);
+  aFormMain := FrmPrincipal;
+  Application.CreateForm(TFrmLogin, aFormMain);
 
-  aLayoutPadrao := aFormActive.FindComponent('layoutBase');
+  aLayoutPadrao := aFormMain.FindComponent('layoutBase');
   if Assigned(aLayoutPadrao) then
     LayoutForm.AddObject(TLayout(aLayoutPadrao));
 
-  Caption := aFormActive.Caption;
+  Caption := aFormMain.Caption;
   MudarForm(TabForm, Self);
 end;
 
 procedure TFrmSplash.PrepareLogin(Sender: TObject);
 var
-  aFormLogin,
-  aLogin    ,
-  aSenha    : TComponent;
-  sLogin    ,
-  sSenha    : String;
+  //aForm  ,
+  aLogin  ,
+  aSenha  ,
+  aAlerta : TComponent;
+  sLogin  ,
+  sSenha  : String;
 begin
-  aFormLogin := TabForm.FindComponent('LayoutLogin');
   if (aFormLogin <> nil)  then
   begin
-    aLogin := aFormLogin.FindComponent('EditLogin');
-    aSenha := aFormLogin.FindComponent('EditSenha');
+    aLogin  := aFormLogin.FindComponent('EditLogin');
+    aSenha  := aFormLogin.FindComponent('EditSenha');
+    aAlerta := aFormLogin.FindComponent('LabelAlerta');
     if (aLogin <> nil) and (aSenha <> nil) then
     begin
       sLogin := Trim(TEdit(aLogin).Text);
       sSenha := Trim(TEdit(aSenha).Text);
       if (sLogin = EmptyStr) or (sSenha = EmptyStr) then
-        ShowMessage('Informar usuário e/ou senha!')
+      begin
+        TEdit(aLogin).SetFocus;
+        if Assigned(aAlerta) then
+        begin
+          TLabel(aAlerta).Text    := 'Informar usuário e/ou senha!';
+          TLabel(aAlerta).Visible := True;
+        end;
+      end
       else
         ;
     end
@@ -195,22 +214,32 @@ begin
       aJsonArray  : TJSONArray;
       aJsonObject : TJSONObject;
       I : Integer;
+      aErr : Boolean;
     begin
       aMsg := 'Conectando...';
       try
         IEsp := TEspecialidadeDao.GetInstance;
+        aErr := False;
+        try
+          aJsonArray := aHttpConnect.Get(PAGE_ESPECIALIDADE, aKey, EmptyStr) as TJSONArray;
+        except
+          On E : Exception do
+          begin
+            aErr := True;
+            aMsg := 'Servidor da entidade não responde ...' + #13 + E.Message;
+          end;
+        end;
 
         LabelCarregando.Text := aMsg;
-        aJsonArray := aHttpConnect.Get(PAGE_ESPECIALIDADE, aKey, EmptyStr) as TJSONArray;
+        if not aErr then
+          for I := 0 to aJsonArray.Count - 1 do
+          begin
+            aJsonObject := aJsonArray.Items[I] as TJSONObject;
 
-        for I := 0 to aJsonArray.Count - 1 do
-        begin
-          aJsonObject := aJsonArray.Items[I] as TJSONObject;
-
-          IEsp.AddLista;
-          IEsp.Lista[I].Codigo    := StrToInt(aJsonObject.GetValue('cd_especilidade').Value);
-          IEsp.Lista[I].Descricao := Trim(aJsonObject.GetValue('ds_especilidade').Value);
-        end;
+            IEsp.AddLista;
+            IEsp.Lista[I].Codigo    := StrToInt(aJsonObject.GetValue('cd_especilidade').Value);
+            IEsp.Lista[I].Descricao := Trim(aJsonObject.GetValue('ds_especilidade').Value);
+          end;
       finally
         UpdateEspecialidades;
       end;
