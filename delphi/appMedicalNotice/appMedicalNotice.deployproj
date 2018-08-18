@@ -124,6 +124,14 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>appMedicalNotice\assets\internal\</RemoteDir>
+            <RemoteName>medical_notice.db</RemoteName>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="bin\Android\Debug\styles.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice\res\values\</RemoteDir>
             <RemoteName>styles.xml</RemoteName>
@@ -253,14 +261,6 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>appMedicalNotice\assets\internal\</RemoteDir>
-            <RemoteName>medical_notice.db</RemoteName>
-            <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="bin\Android\Release\libappMedicalNotice.so" Condition="'$(Config)'=='Release'">
             <RemoteDir>appMedicalNotice\library\lib\armeabi-v7a\</RemoteDir>
             <RemoteName>appMedicalNotice</RemoteName>
@@ -346,6 +346,14 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>appMedicalNotice\db\</RemoteDir>
+            <RemoteName>medical_notice.db</RemoteName>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="$(BDS)\bin\midas.dll" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice\</RemoteDir>
             <RemoteName>midas.dll</RemoteName>
@@ -362,16 +370,16 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='OSX32'">
         <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>appMedicalNotice\db\</RemoteDir>
+            <RemoteDir>appMedicalNotice.app\Contents\MacOS\</RemoteDir>
             <RemoteName>medical_notice.db</RemoteName>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-    </ItemGroup>
-    <ItemGroup Condition="'$(Platform)'=='OSX32'">
         <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
             <RemoteDir>appMedicalNotice.app\Contents\MacOS\</RemoteDir>
             <RemoteName>libcgunwind.1.0.dylib</RemoteName>
@@ -404,14 +412,6 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>appMedicalNotice.app\Contents\MacOS\</RemoteDir>
-            <RemoteName>medical_notice.db</RemoteName>
-            <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="$(BDS)\redist\osx32\libsqladapter.dylib" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice.app\Contents\MacOS\</RemoteDir>
             <RemoteName>libsqladapter.dylib</RemoteName>
@@ -430,18 +430,18 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
-            <RemoteDir>appMedicalNotice.app\</RemoteDir>
-            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice.app\StartUp\Documents\</RemoteDir>
             <RemoteName>medical_notice.db</RemoteName>
             <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
+            <RemoteDir>appMedicalNotice.app\</RemoteDir>
+            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
+            <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
@@ -459,6 +459,14 @@
         <DeployFile Include="$(BDS)\bin64\dbxadapter.dll" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice\</RemoteDir>
             <RemoteName>dbxadapter.dll</RemoteName>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>appMedicalNotice\db\</RemoteDir>
+            <RemoteName>medical_notice.db</RemoteName>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -483,14 +491,6 @@
         <DeployFile Include="$(BDS)\bin64\midas.dll" Condition="'$(Config)'=='Release'">
             <RemoteDir>appMedicalNotice\</RemoteDir>
             <RemoteName>midas.dll</RemoteName>
-            <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>appMedicalNotice\db\</RemoteDir>
-            <RemoteName>medical_notice.db</RemoteName>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>

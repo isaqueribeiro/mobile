@@ -7,7 +7,7 @@ uses
   System.Variants, System.Threading, System.JSON,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
   FMX.Layouts, FMX.Controls.Presentation, FMX.StdCtrls, FMX.TabControl,
-  System.Actions, FMX.ActnList, FMX.Edit;
+  System.Math, System.Actions, FMX.ActnList, FMX.Edit;
 
 type
   TFrmSplash = class(TForm)
@@ -26,14 +26,20 @@ type
     LayoutGeral: TLayout;
     ActionListSplash: TActionList;
     acMudarForm: TChangeTabAction;
+    ScrollBoxForm: TScrollBox;
     procedure PrepareLogin(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormFocusChanged(Sender: TObject);
+    procedure FormVirtualKeyboardHidden(Sender: TObject;
+      KeyboardVisible: Boolean; const Bounds: TRect);
+    procedure FormVirtualKeyboardShown(Sender: TObject;
+      KeyboardVisible: Boolean; const Bounds: TRect);
   private
     { Private declarations }
-    //aFormActive,
-    aFormLogin ,
-    aFormMain  : TForm;
+    FWBounds    : TRectF;
+    FNeedOffSet : Boolean;
+    //aFormActive : TForm;
 
     procedure Load;
     procedure UpdateEspecialidades;
@@ -44,6 +50,9 @@ type
     procedure AbrirMenu;
   public
     { Public declarations }
+    procedure CalcContentBounds(Sender : TObject; var ContentBounds : TRectF);
+    procedure RestorePosition;
+    procedure UpdatePosition;
   end;
 
 var
@@ -79,36 +88,26 @@ procedure TFrmSplash.AbrirLogin;
 var
   aLayoutPadrao : TComponent;
 begin
-  //if Assigned(aFormActive) then
-  if Assigned(aFormLogin) then
+  if Assigned(FrmLogin) then
   begin
-    //if (aFormActive.ClassType = TFrmLogin) then
-    if (aFormLogin.ClassType = TFrmLogin) then
+    if (FrmLogin.ClassType = TFrmLogin) then
       Exit
     else
     begin
-//      aFormActive.DisposeOf;
-//      aFormActive := nil;
-      aFormLogin.DisposeOf;
-      aFormLogin := nil;
+      FrmLogin.DisposeOf;
+      FrmLogin := nil;
     end;
   end;
 
-//  aFormActive := FrmLogin;
-//  Application.CreateForm(TFrmLogin, aFormActive);
-  aFormLogin := FrmLogin;
-  Application.CreateForm(TFrmLogin, aFormLogin);
+  Application.CreateForm(TFrmLogin, FrmLogin);
 
-  //TFrmLogin(aFormActive).BtnEfetuarLogin.OnClick := PrepareLogin;
-  TFrmLogin(aFormLogin).BtnEfetuarLogin.OnClick := PrepareLogin;
+  FrmLogin.BtnEfetuarLogin.OnClick := PrepareLogin;
 
-  //aLayoutPadrao := aFormActive.FindComponent('layoutBase');
-  aLayoutPadrao := aFormLogin.FindComponent('layoutBase');
+  aLayoutPadrao := FrmLogin.FindComponent('layoutBase');
   if Assigned(aLayoutPadrao) then
     LayoutForm.AddObject(TLayout(aLayoutPadrao));
 
-  //Caption := aFormActive.Caption;
-  Caption := aFormLogin.Caption;
+  Caption := FrmLogin.Caption;
   MudarForm(TabForm, Self);
 end;
 
@@ -116,61 +115,71 @@ procedure TFrmSplash.AbrirMenu;
 var
   aLayoutPadrao : TComponent;
 begin
-  if Assigned(aFormMain) then
-  begin
-    if (aFormMain.ClassType = TFrmLogin) then
-      Exit
-    else
-    begin
-      aFormMain.DisposeOf;
-      aFormMain := nil;
-    end;
-  end;
+//  if Assigned(aFormMain) then
+//  begin
+//    if (aFormMain.ClassType = TFrmLogin) then
+//      Exit
+//    else
+//    begin
+//      aFormMain.DisposeOf;
+//      aFormMain := nil;
+//    end;
+//  end;
+//
+//  aFormMain := FrmPrincipal;
+//  Application.CreateForm(TFrmLogin, aFormMain);
+//
+//  aLayoutPadrao := aFormMain.FindComponent('layoutBase');
+//  if Assigned(aLayoutPadrao) then
+//    LayoutForm.AddObject(TLayout(aLayoutPadrao));
+//
+//  Caption := aFormMain.Caption;
+//  MudarForm(TabForm, Self);
+  if not Assigned(FrmPrincipal) then
+    Application.CreateForm(TFrmPrincipal, FrmPrincipal);
 
-  aFormMain := FrmPrincipal;
-  Application.CreateForm(TFrmLogin, aFormMain);
-
-  aLayoutPadrao := aFormMain.FindComponent('layoutBase');
+  aLayoutPadrao := FrmPrincipal.FindComponent('layoutBase');
   if Assigned(aLayoutPadrao) then
     LayoutForm.AddObject(TLayout(aLayoutPadrao));
 
-  Caption := aFormMain.Caption;
+  Caption := FrmPrincipal.Caption;
   MudarForm(TabForm, Self);
+end;
+
+procedure TFrmSplash.CalcContentBounds(Sender: TObject;
+  var ContentBounds: TRectF);
+begin
+  if (FNeedOffSet and (FWBounds.Top > 0)) then
+    ContentBounds.Bottom := Max(ContentBounds.Bottom, 2 * ClientHeight - FWBounds.Top);
 end;
 
 procedure TFrmSplash.PrepareLogin(Sender: TObject);
 var
-  //aForm  ,
-  aLogin  ,
-  aSenha  ,
-  aAlerta : TComponent;
   sLogin  ,
   sSenha  : String;
 begin
-  if (aFormLogin <> nil)  then
+  if (FrmLogin <> nil)  then
   begin
-    aLogin  := aFormLogin.FindComponent('EditLogin');
-    aSenha  := aFormLogin.FindComponent('EditSenha');
-    aAlerta := aFormLogin.FindComponent('LabelAlerta');
-    if (aLogin <> nil) and (aSenha <> nil) then
+    with FrmLogin do
     begin
-      sLogin := Trim(TEdit(aLogin).Text);
-      sSenha := Trim(TEdit(aSenha).Text);
+      sLogin := Trim(EditLogin.Text);
+      sSenha := Trim(EditSenha.Text);
       if (sLogin = EmptyStr) or (sSenha = EmptyStr) then
       begin
-        TEdit(aLogin).SetFocus;
-        if Assigned(aAlerta) then
-        begin
-          TLabel(aAlerta).Text    := 'Informar usuário e/ou senha!';
-          TLabel(aAlerta).Visible := True;
-        end;
+        LabelAlerta.Text    := 'Informar usuário e/ou senha!';
+        LabelAlerta.Visible := True;
       end
       else
         ;
-    end
-    else
-      raise Exception.Create('PrepareLogin() - Aplicativo desatualizado, favor entrar em contado com o DTI do ' + COMPANY_NAME + '.');
+    end;
   end;
+end;
+
+procedure TFrmSplash.RestorePosition;
+begin
+  ScrollBoxForm.ViewportPosition := PointF(ScrollBoxForm.ViewportPosition.X, 0);
+  LayoutForm.Align := TAlignLayout.Client;
+  ScrollBoxForm.RealignContent;
 end;
 
 procedure TFrmSplash.FormActivate(Sender: TObject);
@@ -193,6 +202,29 @@ begin
 //  LabelVersion.Text := 'Versão ' + JStringToString(PkgInfo.versionName);
 //  {$ENDIF}
   TabControlSplash.ActiveTab := TabSplash;
+  ScrollBoxForm.OnCalcContentBounds := CalcContentBounds;
+end;
+
+procedure TFrmSplash.FormFocusChanged(Sender: TObject);
+begin
+  UpdatePosition;
+end;
+
+procedure TFrmSplash.FormVirtualKeyboardHidden(Sender: TObject;
+  KeyboardVisible: Boolean; const Bounds: TRect);
+begin
+  FWBounds.Create(0, 0, 0, 0);
+  FNeedOffSet := False;
+  RestorePosition;
+end;
+
+procedure TFrmSplash.FormVirtualKeyboardShown(Sender: TObject;
+  KeyboardVisible: Boolean; const Bounds: TRect);
+begin
+  FWBounds := TRectF.Create(Bounds);
+  FWBounds.TopLeft     := ScreenToClient(FWBounds.TopLeft);
+  FWBounds.BottomRight := ScreenToClient(FWBounds.BottomRight);
+  UpdatePosition;
 end;
 
 procedure TFrmSplash.Load;
@@ -284,6 +316,32 @@ begin
     end
   );
   aTaskE.Start;
+end;
+
+procedure TFrmSplash.UpdatePosition;
+var
+  LFocused   : TControl;
+  LFocusRect : TRectF;
+begin
+  FNeedOffSet := False;
+  if Assigned(Focused) then
+  begin
+    LFocused   := TControl(Focused.GetObject);
+    LFocusRect := LFocused.AbsoluteRect;
+    LFocusRect.Offset(ScrollBoxForm.ViewportPosition);
+
+    if (LFocusRect.IntersectsWith(TRectF.Create(FWBounds)) and (LFocusRect.Bottom > FWBounds.Top)) then
+    begin
+      FNeedOffSet := True;
+      LayoutForm.Align := TAlignLayout.Horizontal;
+      ScrollBoxForm.RealignContent;
+      Application.ProcessMessages;
+      ScrollBoxForm.ViewportPosition := PointF(ScrollBoxForm.ViewportPosition.X, LFocusRect.Bottom - FWBounds.Top);
+    end;
+  end;
+
+  if not FNeedOffSet then
+    RestorePosition;
 end;
 
 procedure TFrmSplash.LoadActivity;
