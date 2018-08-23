@@ -38,7 +38,8 @@ type
   private
     { Private declarations }
     FWBounds    : TRectF;
-    FNeedOffSet : Boolean;
+    FNeedOffSet     ,
+    FActivateLoaded : Boolean;
     //aFormActive : TForm;
 
     procedure Load;
@@ -47,12 +48,14 @@ type
 
     procedure MudarForm(TabItem : TTabItem; Sender : TObject);
     procedure AbrirLogin;
-    procedure AbrirMenu;
   public
     { Public declarations }
     procedure CalcContentBounds(Sender : TObject; var ContentBounds : TRectF);
     procedure RestorePosition;
     procedure UpdatePosition;
+
+    procedure AbrirMenu;
+    procedure AbrirCadastroUsuario;
   end;
 
 var
@@ -79,7 +82,7 @@ uses
   , classes.Constantes
   , dao.Especialidade
   , dao.Usuario
-  , ULogin, UPrincipal;
+  , ULogin, UPrincipal, UCadastroUsuario;
 
 {$R *.iPhone4in.fmx IOS}
 {$R *.iPhone55in.fmx IOS}
@@ -88,27 +91,39 @@ procedure TFrmSplash.AbrirLogin;
 var
   aLayoutPadrao : TComponent;
 begin
-  if Assigned(FrmLogin) then
-  begin
-    if (FrmLogin.ClassType = TFrmLogin) then
-      Exit
-    else
-    begin
-      FrmLogin.DisposeOf;
-      FrmLogin := nil;
-    end;
-  end;
+//  if Assigned(FrmLogin) then
+//  begin
+//    if (FrmLogin.ClassType = TFrmLogin) then
+//      Exit
+//    else
+//    begin
+//      FrmLogin.DisposeOf;
+//      FrmLogin := nil;
+//    end;
+//  end;
+//
+//  Application.CreateForm(TFrmLogin, FrmLogin);
+//
+//  FrmLogin.BtnEfetuarLogin.OnClick := PrepareLogin;
+//
+//  aLayoutPadrao := FrmLogin.FindComponent('layoutBase');
+//  if Assigned(aLayoutPadrao) then
+//    LayoutForm.AddObject(TLayout(aLayoutPadrao));
+//
+//  Caption := FrmLogin.Caption;
+//  MudarForm(TabForm, Self);
 
-  Application.CreateForm(TFrmLogin, FrmLogin);
+//  Application.CreateForm(TFrmLogin, FrmLogin);
+//  FrmLogin.Show();
 
-  FrmLogin.BtnEfetuarLogin.OnClick := PrepareLogin;
+  if not Assigned(FrmLogin) then
+    Application.CreateForm(TFrmLogin, FrmLogin);
 
   aLayoutPadrao := FrmLogin.FindComponent('layoutBase');
   if Assigned(aLayoutPadrao) then
     LayoutForm.AddObject(TLayout(aLayoutPadrao));
 
-  Caption := FrmLogin.Caption;
-  MudarForm(TabForm, Self);
+  TabControlSplash.ActiveTab := TabForm;
 end;
 
 procedure TFrmSplash.AbrirMenu;
@@ -135,6 +150,18 @@ begin
 //
 //  Caption := aFormMain.Caption;
 //  MudarForm(TabForm, Self);
+  if Assigned(FrmLogin) then
+  begin
+    FrmLogin.DisposeOf;
+    FrmLogin := nil;
+  end;
+
+  if Assigned(FrmCadastroUsuario) then
+  begin
+    FrmCadastroUsuario.DisposeOf;
+    FrmCadastroUsuario := nil;
+  end;
+
   if not Assigned(FrmPrincipal) then
     Application.CreateForm(TFrmPrincipal, FrmPrincipal);
 
@@ -142,8 +169,7 @@ begin
   if Assigned(aLayoutPadrao) then
     LayoutForm.AddObject(TLayout(aLayoutPadrao));
 
-  Caption := FrmPrincipal.Caption;
-  MudarForm(TabForm, Self);
+  TabControlSplash.ActiveTab := TabForm;
 end;
 
 procedure TFrmSplash.CalcContentBounds(Sender: TObject;
@@ -153,26 +179,121 @@ begin
     ContentBounds.Bottom := Max(ContentBounds.Bottom, 2 * ClientHeight - FWBounds.Top);
 end;
 
-procedure TFrmSplash.PrepareLogin(Sender: TObject);
+procedure TFrmSplash.AbrirCadastroUsuario;
 var
-  sLogin  ,
-  sSenha  : String;
+  aLayoutPadrao : TComponent;
 begin
-  if (FrmLogin <> nil)  then
+  Sleep(500);
+
+  if Assigned(FrmLogin) then
   begin
-    with FrmLogin do
-    begin
-      sLogin := Trim(EditLogin.Text);
-      sSenha := Trim(EditSenha.Text);
-      if (sLogin = EmptyStr) or (sSenha = EmptyStr) then
-      begin
-        LabelAlerta.Text    := 'Informar usuário e/ou senha!';
-        LabelAlerta.Visible := True;
-      end
-      else
-        ;
-    end;
+//    {$IF DEFINED (ANDROID) || (IOS)}
+//    FrmLogin.DisposeOf;
+//    {$ELSE}
+//    FrmLogin.Close;
+//    {$ENDIF}
+    FrmLogin.DisposeOf;
+    FrmLogin := nil;
   end;
+
+  if not Assigned(FrmCadastroUsuario) then
+    Application.CreateForm(TFrmCadastroUsuario, FrmCadastroUsuario);
+
+  aLayoutPadrao := FrmCadastroUsuario.FindComponent('layoutBase');
+  if Assigned(aLayoutPadrao) then
+    LayoutForm.AddObject(TLayout(aLayoutPadrao));
+
+  TabControlSplash.ActiveTab := TabForm;
+end;
+
+procedure TFrmSplash.PrepareLogin(Sender: TObject);
+//var
+//  aKey     ,
+//  aLogin   ,
+//  aSenha   : String;
+//  aTaskLg  : ITask;
+//  iError   : Integer;
+//  aUsuario : TUsuarioDao;
+begin
+//  aKey := MD5(FormatDateTime('dd/mm/yyyy', Date));
+//
+//  if (FrmLogin <> nil)  then
+//  begin
+//    with FrmLogin do
+//    begin
+//      aLogin := AnsiLowerCase( Trim(EditLogin.Text) );
+//      aSenha := MD5( Trim(EditSenha.Text) );
+//      if (aLogin = EmptyStr) or (aSenha = EmptyStr) then
+//      begin
+//        LabelAlerta.Text    := 'Informar usuário e/ou senha!';
+//        LabelAlerta.Visible := True;
+//      end
+//      else
+//      begin
+//        // Buscar autenticação no servidor web
+//        aUsuario := TUsuarioDao.GetInstance;
+//        aTaskLg  := TTask.Create(
+//          procedure
+//          var
+//            aMsg    ,
+//            aParams : String;
+//            aJsonArray  : TJSONArray;
+//            aJsonObject : TJSONObject;
+//            I : Integer;
+//            aErr : Boolean;
+//          begin
+//            aMsg := 'Autenticando...';
+//            try
+//              aErr := False;
+//              try
+//                aUsuario.Model.Codigo := aLogin;
+//                aUsuario.Model.Senha  := aSenha;
+//                aJsonArray := DtmDados.HttpGetUsuario(aKey) as TJSONArray;
+//              except
+//                On E : Exception do
+//                begin
+//                  aErr := True;
+//                  aMsg := 'Servidor da entidade não responde ...' + #13 + E.Message;
+//                end;
+//              end;
+//
+//              if not aErr then
+//              begin
+//                aJsonObject := aJsonArray.Items[I] as TJSONObject;
+//                iError  := StrToInt(aJsonObject.GetValue('cd_error').Value);
+//                case iError of
+//                  0 :
+//                    begin
+//                      aUsuario.Model.Codigo     := aJsonObject.GetValue('cd_usuario').Value;
+//                      aUsuario.Model.Nome       := aJsonObject.GetValue('nm_usuario').Value;
+//                      aUsuario.Model.Email      := aJsonObject.GetValue('ds_email').Value.Replace('...', '', [rfReplaceAll]);
+//                      aUsuario.Model.Prestador  := StrToCurr(aJsonObject.GetValue('cd_prestador').Value);
+//                      aUsuario.Model.Senha      := aSenha;
+//                      aUsuario.Model.Observacao := aJsonObject.GetValue('ds_observacao').Value;
+//                      aUsuario.Model.Ativo      := True;
+//
+//                      FrmLogin.DisposeOf;
+//                      FrmLogin := nil;
+//                    end;
+//                  else
+//                    aMsg := aJsonObject.GetValue('ds_error').Value;
+//                end;
+//              end;
+//            finally
+//              if (iError > 0) then
+//              begin
+//                LabelAlerta.Text    := aMsg;
+//                LabelAlerta.Visible := True;
+//              end
+//              else
+//                CarregarCadastroActivity;
+//            end;
+//          end
+//        );
+//        aTaskLg.Start;
+//      end;
+//    end;
+//  end;
 end;
 
 procedure TFrmSplash.RestorePosition;
@@ -183,9 +304,19 @@ begin
 end;
 
 procedure TFrmSplash.FormActivate(Sender: TObject);
+var
+  aEspecilidades : TEspecialidadeDao;
 begin
-  if DtmDados.IsConectado then
-    Load;
+  if (FActivateLoaded = False) then
+  begin
+    aEspecilidades := TEspecialidadeDao.GetInstance;
+    if DtmDados.IsConectado then
+      if (aEspecilidades.GetCount() = 0) then
+        Load
+      else
+        LoadActivity;
+  end;
+//  Load;
 end;
 
 procedure TFrmSplash.FormCreate(Sender: TObject);
@@ -203,6 +334,8 @@ begin
 //  {$ENDIF}
   TabControlSplash.ActiveTab := TabSplash;
   ScrollBoxForm.OnCalcContentBounds := CalcContentBounds;
+
+  FActivateLoaded := False;
 end;
 
 procedure TFrmSplash.FormFocusChanged(Sender: TObject);
@@ -231,12 +364,8 @@ procedure TFrmSplash.Load;
 var
   aTask : ITask;
   aKey  : String;
-  aHttpConnect : THttpConnectJSON;
 begin
-//  Sleep(100);
-//  LoadActivity;
   aKey := MD5(FormatDateTime('dd/mm/yyyy', Date));
-  aHttpConnect := THttpConnectJSON.GetInstance(DtmDados, URL_SERVER_JSON, aKey);
 
   aTask := TTask.Create(
     procedure
@@ -253,7 +382,7 @@ begin
         IEsp := TEspecialidadeDao.GetInstance;
         aErr := False;
         try
-          aJsonArray := aHttpConnect.Get(PAGE_ESPECIALIDADE, aKey, EmptyStr) as TJSONArray;
+          aJsonArray := DtmDados.HttpGetEspecialidade(aKey) as TJSONArray;
         except
           On E : Exception do
           begin
@@ -350,6 +479,7 @@ var
 begin
   aUsuario := TUsuarioDao.GetInstance;
   aUsuario.Load;
+  FActivateLoaded := True;
   if aUsuario.IsAtivo then
     AbrirMenu
   else
@@ -358,8 +488,8 @@ end;
 
 procedure TFrmSplash.MudarForm(TabItem: TTabItem; Sender: TObject);
 begin
-  acMudarForm.Tab := TabItem;
-  acMudarForm.ExecuteTarget(Sender);
+//  acMudarForm.Tab := TabItem;
+//  acMudarForm.ExecuteTarget(Sender);
 end;
 
 end.

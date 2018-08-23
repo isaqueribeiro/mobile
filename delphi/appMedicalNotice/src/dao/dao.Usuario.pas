@@ -14,10 +14,12 @@ type
     strict private
       aDDL   : TScriptDDL;
       aModel : TUsuario;
+      aMainMenu : Boolean;
       constructor Create();
       class var aInstance : TUsuarioDao;
     public
       property Model : TUsuario read aModel write aModel;
+      property MainMenu : Boolean read aMainMenu write aMainMenu;
 
       procedure Load();
       procedure Insert();
@@ -40,6 +42,7 @@ begin
   inherited Create;
   aDDL   := TScriptDDL.GetInstance;
   aModel := TUsuario.GetInstance;
+  aMainMenu := False;
 end;
 
 function TUsuarioDao.Find(const aCodigo, aEmail: String;
@@ -68,9 +71,12 @@ begin
       if qrySQL.OpenOrExecute then
       begin
         aRetorno := (qrySQL.RecordCount > 0);
+
+        if aRetorno then
+          Model.Id := StringToGUID(FieldByName('id_usuario').AsString);
+
         if aRetorno and IsLoadModel then
         begin
-          Model.Id     := StringToGUID(FieldByName('id_usuario').AsString);
           Model.Codigo := FieldByName('cd_usuario').AsString;
           Model.Nome   := FieldByName('nm_usuario').AsString;
           Model.Email  := FieldByName('ds_email').AsString;

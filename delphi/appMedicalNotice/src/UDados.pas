@@ -4,8 +4,11 @@ interface
 
 uses
   REST.Client,
-  Web.HTTPApp,
   REST.Types,
+  Web.HTTPApp,
+  System.JSON,
+  classes.Constantes,
+
 
   System.IOUtils,
 
@@ -23,25 +26,35 @@ type
   TDtmDados = class(TDataModule)
     FdSQLiteDriver: TFDPhysSQLiteDriverLink;
     FDGUIxWaitCursor: TFDGUIxWaitCursor;
-    RESTClientGET: TRESTClient;
-    RESTRequestGET: TRESTRequest;
-    RESTResponseGET: TRESTResponse;
     cnnConexao: TFDConnection;
     FDTransaction: TFDTransaction;
-    RESTClientPOST: TRESTClient;
-    RESTRequestPOST: TRESTRequest;
-    RESTResponsePOST: TRESTResponse;
     qrySQL: TFDQuery;
+    RESTClientUsuario: TRESTClient;
+    RESTRequestUsuario: TRESTRequest;
+    RESTResponseUsuario: TRESTResponse;
+    RESTClientEspecialidade: TRESTClient;
+    RESTRequestEspecialidade: TRESTRequest;
+    RESTResponseEspecialidade: TRESTResponse;
+    RESTClient1: TRESTClient;
+    RESTRequest1: TRESTRequest;
+    RESTResponse1: TRESTResponse;
     procedure cnnConexaoBeforeConnect(Sender: TObject);
     procedure cnnConexaoAfterConnect(Sender: TObject);
+    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
+    aFileDB : String;
+    procedure DefinirArquivoDB;
   public
     { Public declarations }
     procedure SetSQLExecute(aSQL : TStringList);
 
     function IsConectado : Boolean;
     function GetNextValue(aTableName, aFieldName : String) : Integer;
+
+    function HttpGetEspecialidade(const aKey : String) : TJSONValue;
+    function HttpGetUsuario(const aKey : String) : TJSONValue;
+    function HttpPostUsuario(const aKey : String) : TJSONValue;
   end;
 
 var
@@ -52,7 +65,8 @@ implementation
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
 uses
-  classes.ScriptDDL;
+    classes.ScriptDDL
+  , dao.Usuario;
 
 {$R *.dfm}
 
@@ -69,22 +83,33 @@ begin
 end;
 
 procedure TDtmDados.cnnConexaoBeforeConnect(Sender: TObject);
-var
-  aFile : String;
+begin
+  cnnConexao.Params.Values['DriverID'] := 'SQLite';
+  cnnConexao.Params.Values['Database'] := aFileDB;
+end;
+
+procedure TDtmDados.DataModuleCreate(Sender: TObject);
+begin
+  aFileDB := EmptyStr;
+
+  {$IF DEFINED (ANDROID) || (IOS)}
+  aFileDB := TPath.Combine(TPath.GetDocumentsPath, 'medical_notice.db');
+  {$ENDIF}
+  {$IF DEFINED (MSWINDOWS)}
+  //aFileDB := GetEnvironmentVariable('MEDICAL_NOTICE_DB');
+  aFileDB := 'medical_notice.db';
+  {$ENDIF}
+
+  if (Trim(aFileDB) = EmptyStr) then
+    aFileDB := TPath.Combine(TPath.GetDocumentsPath, 'medical_notice.db');
+end;
+
+procedure TDtmDados.DefinirArquivoDB;
 begin
   // .\assets\internal\ -- Android
   // StartUp\Documents\ -- ISO
-
-  {$IF DEFINED (ANDROID) || (IOS)}
-  aFile := TPath.Combine(TPath.GetDocumentsPath, 'medical_notice.db');
-  {$ENDIF}
-  {$IF DEFINED (MSWINDOWS)}
-  //aFile := GetEnvironmentVariable('MEDICAL_NOTICE_DB');
-  aFile := 'medical_notice.db';
-  {$ENDIF}
-
   cnnConexao.Params.Values['DriverID'] := 'SQLite';
-  cnnConexao.Params.Values['Database'] := aFile;
+  cnnConexao.Params.Values['Database'] := aFileDB;
 end;
 
 function TDtmDados.GetNextValue(aTableName, aFieldName : String): Integer;
@@ -105,15 +130,98 @@ begin
   end;
 end;
 
+function TDtmDados.HttpGetEspecialidade(const aKey: String): TJSONValue;
+var
+  aRetorno : TJSONValue;
+begin
+  try
+    with RESTRequestEspecialidade, Params do
+    begin
+      Method   := rmGET;
+      Resource := PAGE_ESPECIALIDADE + '?hash={hash}';
+      Params.AddUrlSegment('hash', aKey);
+      Execute;
+
+      aRetorno := Response.JSONValue;
+    end;
+  finally
+    Result := aRetorno;
+  end;
+end;
+
+function TDtmDados.HttpGetUsuario(const aKey : String): TJSONValue;
+var
+  aRetorno    : TJSONValue;
+  aUsuarioDao : TUsuarioDao;
+  aParams     : String;
+begin
+  try
+    aUsuarioDao := TUsuarioDao.GetInstance;
+    aParams     := 'user=' + aUsuarioDao.Model.Codigo + '&pwd=' + aUsuarioDao.Model.Senha;
+
+    with RESTRequestUsuario, Params do
+    begin
+      Method   := rmGET;
+      Resource := PAGE_USUARIO + '?hash={hash}&' + aParams;
+      Params.AddUrlSegment('hash', aKey);
+      Execute;
+
+      aRetorno := Response.JSONValue;
+    end;
+  finally
+    Result := aRetorno;
+  end;
+end;
+
+function TDtmDados.HttpPostUsuario(const aKey: String): TJSONValue;
+var
+  aRetorno     : TJSONValue;
+  aUsuarioDao  : TUsuarioDao;
+  aUsuarioJson : TJSONObject;
+begin
+  aUsuarioJson := TJSONObject.Create;
+  try
+    aUsuarioDao  := TUsuarioDao.GetInstance;
+
+    aUsuarioJson.AddPair('id_usuario',    GUIDToString(aUsuarioDao.Model.Id));
+    aUsuarioJson.AddPair('cd_usuario',    aUsuarioDao.Model.Codigo);
+    aUsuarioJson.AddPair('ds_email',      aUsuarioDao.Model.Email);
+    aUsuarioJson.AddPair('ds_observacao', aUsuarioDao.Model.Observacao);
+
+    with RESTRequestUsuario, Params do
+    begin
+      Method   := rmPOST;
+      Resource := PAGE_USUARIO + '?hash={hash}&id_acao=saveUser';
+      Params.AddUrlSegment('hash', aKey);
+      AddBody(aUsuarioJson);
+      Execute;
+
+      Sleep(500);
+
+      aRetorno := Response.JSONValue;
+    end;
+  finally
+    aUsuarioJson.Free;
+    Result := aRetorno;
+  end;
+end;
+
 function TDtmDados.IsConectado: Boolean;
 var
   aRetorno : Boolean;
 begin
   aRetorno := False;
   try
-    if not cnnConexao.Connected then
-      cnnConexao.Connected := True;
-    aRetorno := True;
+    try
+      if not cnnConexao.Connected then
+        cnnConexao.Connected := True;
+      aRetorno := True;
+    except
+      aFileDB := StringReplace(TPath.GetDocumentsPath, 'Documents', 'medical_notice.db', []);
+      if not cnnConexao.Connected then
+        cnnConexao.Connected := True;
+      aRetorno := True;
+    end;
   finally
     Result := aRetorno;
   end;

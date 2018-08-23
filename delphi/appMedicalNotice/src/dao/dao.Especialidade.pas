@@ -26,6 +26,7 @@ type
       procedure AddLista;
 
       function Find(const aCodigo : Integer; const IsLoadModel : Boolean) : Boolean;
+      function GetCount() : Integer;
 
       class function GetInstance : TEspecialidadeDao;
   end;
@@ -88,6 +89,33 @@ begin
           Model.Descricao := FieldByName('ds_especialidade').AsString;
         end;
       end;
+      qrySQL.Close;
+    end;
+  finally
+    aSQL.Free;
+    Result := aRetorno;
+  end;
+end;
+
+function TEspecialidadeDao.GetCount: Integer;
+var
+  aRetorno : Integer;
+  aSQL : TStringList;
+begin
+  aRetorno := 0;
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Select *');
+    aSQL.Add('from ' + aDDL.getTableNameEspecialidade);
+    aSQL.EndUpdate;
+    with DtmDados, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+      OpenOrExecute;
+
+      aRetorno := RecordCount;
       qrySQL.Close;
     end;
   finally

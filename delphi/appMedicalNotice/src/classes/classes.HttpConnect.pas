@@ -18,13 +18,13 @@ type
       aRESTRequest  : TRESTRequest;
       aRESTResponse : TRESTResponse;
       aKeyHash : String;
-      constructor Create(const AOnwer : TComponent;
-        const aBaseUrl, aHash : String);
       procedure SetBaseURL(Value : String);
       procedure SetResourcePage(Value : String);
 
       function GetBaseURL : String;
       function GetResourcePage : String;
+      constructor Create(const AOnwer : TComponent;
+        const aBaseUrl, aHash : String);
       class var aInstance : THttpConnectJSON;
     public
       property BaseURL      : String read GetBaseURL write SetBaseURL;

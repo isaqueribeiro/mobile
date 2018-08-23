@@ -1,0 +1,73 @@
+object FrmPadrao: TFrmPadrao
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 531
+  ClientWidth = 342
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object layoutBase: TLayout
+    Align = Client
+    Size.Width = 342.000000000000000000
+    Size.Height = 531.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object ScrollBoxForm: TScrollBox
+      Align = Client
+      Size.Width = 342.000000000000000000
+      Size.Height = 531.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Viewport.Width = 342.000000000000000000
+      Viewport.Height = 531.000000000000000000
+      object LayoutForm: TLayout
+        Align = Client
+        Size.Width = 342.000000000000000000
+        Size.Height = 531.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object ToolBar: TToolBar
+          Size.Width = 342.000000000000000000
+          Size.Height = 44.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          object BtnVoltar: TSpeedButton
+            Align = Left
+            Margins.Left = 4.000000000000000000
+            Position.X = 4.000000000000000000
+            Size.Width = 44.000000000000000000
+            Size.Height = 44.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'replytoolbutton'
+            OnClick = BtnVoltarClick
+          end
+          object BtnConfirmar: TSpeedButton
+            Align = Right
+            Margins.Right = 4.000000000000000000
+            Position.X = 294.000000000000000000
+            Size.Width = 44.000000000000000000
+            Size.Height = 44.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'donetoolbutton'
+            Text = 'OK'
+            OnClick = BtnConfirmarClick
+          end
+          object LabelTitle: TLabel
+            Align = Client
+            StyledSettings = [Family, FontColor]
+            Size.Width = 246.000000000000000000
+            Size.Height = 44.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'labelstyle'
+            TextSettings.Font.Size = 14.000000000000000000
+            TextSettings.Font.StyleExt = {00060000000000000004000000}
+            TextSettings.HorzAlign = Center
+            Text = 'Medical Notice | Padr'#227'o'
+          end
+        end
+      end
+    end
+  end
+end

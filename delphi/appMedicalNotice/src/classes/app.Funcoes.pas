@@ -7,6 +7,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
 
   function MD5(const aTexto : String) : String;
+  function IsEmailValido(const aEmail : String) : Boolean;
 
 implementation
 
@@ -22,6 +23,24 @@ begin
   finally
     Result := aStr;
     idmd5.Free;
+  end;
+end;
+
+function IsEmailValido(const aEmail : String) : Boolean;
+var
+  aStr : String;
+  aRetorno : Boolean;
+begin
+  aRetorno := False;
+  aStr     := Trim(AnsiLowerCase(aEmail));
+  try
+    if (Pos('@', aStr) > 1) then
+    begin
+      Delete(aStr, 1, Pos('@', aStr));
+      aRetorno := (Length(aStr) > 0) and (Pos('.', aStr) > 2);
+    end;
+  finally
+    Result := aRetorno;
   end;
 end;
 

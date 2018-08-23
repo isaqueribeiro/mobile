@@ -15,7 +15,8 @@ uses
   ULogin in 'src\ULogin.pas' {FrmLogin},
   UCadastroUsuario in 'src\UCadastroUsuario.pas' {FrmCadastroUsuario},
   UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal},
-  dao.Usuario in 'src\dao\dao.Usuario.pas';
+  dao.Usuario in 'src\dao\dao.Usuario.pas',
+  UPadrao in 'src\UPadrao.pas' {FrmPadrao};
 
 {$R *.res}
 
