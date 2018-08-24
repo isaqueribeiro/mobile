@@ -41,6 +41,8 @@ type
     FNeedOffSet     ,
     FActivateLoaded : Boolean;
     //aFormActive : TForm;
+    aLayoutLogin    ,
+    aLayoutCadastro : TComponent;
 
     procedure Load;
     procedure UpdateEspecialidades;
@@ -88,8 +90,8 @@ uses
 {$R *.iPhone55in.fmx IOS}
 
 procedure TFrmSplash.AbrirLogin;
-var
-  aLayoutPadrao : TComponent;
+//var
+//  aLayoutPadrao : TComponent;
 begin
 //  if Assigned(FrmLogin) then
 //  begin
@@ -119,9 +121,9 @@ begin
   if not Assigned(FrmLogin) then
     Application.CreateForm(TFrmLogin, FrmLogin);
 
-  aLayoutPadrao := FrmLogin.FindComponent('layoutBase');
-  if Assigned(aLayoutPadrao) then
-    LayoutForm.AddObject(TLayout(aLayoutPadrao));
+  aLayoutLogin := FrmLogin.FindComponent('layoutBase');
+  if Assigned(aLayoutLogin) then
+    LayoutForm.AddObject(TLayout(aLayoutLogin));
 
   TabControlSplash.ActiveTab := TabForm;
 end;
@@ -152,13 +154,25 @@ begin
 //  MudarForm(TabForm, Self);
   if Assigned(FrmLogin) then
   begin
+    LayoutForm.RemoveObject(TLayout(aLayoutLogin));
+
+    {$IF DEFINED (IOS)}
     FrmLogin.DisposeOf;
+    {$ELSE}
+    FrmLogin.Close;
+    {$ENDIF}
     FrmLogin := nil;
   end;
 
   if Assigned(FrmCadastroUsuario) then
   begin
+    LayoutForm.RemoveObject(TLayout(aLayoutCadastro));
+
+    {$IF DEFINED (IOS)}
     FrmCadastroUsuario.DisposeOf;
+    {$ELSE}
+    FrmCadastroUsuario.Close;
+    {$ENDIF}
     FrmCadastroUsuario := nil;
   end;
 
@@ -180,28 +194,29 @@ begin
 end;
 
 procedure TFrmSplash.AbrirCadastroUsuario;
-var
-  aLayoutPadrao : TComponent;
+//var
+//  aLayoutPadrao : TComponent;
 begin
-  Sleep(500);
 
   if Assigned(FrmLogin) then
   begin
-//    {$IF DEFINED (ANDROID) || (IOS)}
-//    FrmLogin.DisposeOf;
-//    {$ELSE}
-//    FrmLogin.Close;
-//    {$ENDIF}
+    TabControlSplash.ActiveTab := TabSplash;
+    LayoutForm.RemoveObject(TLayout(aLayoutLogin));
+
+    {$IF DEFINED (IOS)}
     FrmLogin.DisposeOf;
+    {$ELSE}
+    FrmLogin.Close;
+    {$ENDIF}
     FrmLogin := nil;
   end;
 
   if not Assigned(FrmCadastroUsuario) then
     Application.CreateForm(TFrmCadastroUsuario, FrmCadastroUsuario);
 
-  aLayoutPadrao := FrmCadastroUsuario.FindComponent('layoutBase');
-  if Assigned(aLayoutPadrao) then
-    LayoutForm.AddObject(TLayout(aLayoutPadrao));
+  aLayoutCadastro := FrmCadastroUsuario.FindComponent('layoutBase');
+  if Assigned(aLayoutCadastro) then
+    LayoutForm.AddObject(TLayout(aLayoutCadastro));
 
   TabControlSplash.ActiveTab := TabForm;
 end;
@@ -336,6 +351,8 @@ begin
   ScrollBoxForm.OnCalcContentBounds := CalcContentBounds;
 
   FActivateLoaded := False;
+  aLayoutLogin    := nil;
+  aLayoutCadastro := nil;
 end;
 
 procedure TFrmSplash.FormFocusChanged(Sender: TObject);

@@ -91,7 +91,7 @@ procedure TFrmLogin.EditSenhaKeyUp(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);
 begin
   if (Key = vkReturn) then
-    BtnEfetuarLogin.SetFocus;
+    PrepareLogin(BtnEfetuarLogin);
 end;
 
 procedure TFrmLogin.FormCreate(Sender: TObject);

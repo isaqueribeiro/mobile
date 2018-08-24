@@ -55,14 +55,15 @@ begin
     aSQL.Clear;
     aSQL.BeginUpdate;
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_USUARIO + ' (');
-    aSQL.Add('      id_usuario    STRING (38) NOT NULL PRIMARY KEY');
-    aSQL.Add('    , cd_usuario    STRING (30) NOT NULL');
-    aSQL.Add('    , nm_usuario    STRING (50)');
-    aSQL.Add('    , ds_email      STRING (50)');
-    aSQL.Add('    , ds_senha      STRING (100)');
-    aSQL.Add('    , cd_prestador  NUMERIC');
-    aSQL.Add('    , ds_observacao STRING (50)');
-    aSQL.Add('    , sn_ativo      STRING (1) NOT NULL');
+    aSQL.Add('      id_usuario     STRING (38) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , cd_usuario     STRING (30) NOT NULL');
+    aSQL.Add('    , nm_usuario     STRING (50)');
+    aSQL.Add('    , ds_email       STRING (50)');
+    aSQL.Add('    , ds_senha       STRING (100)');
+    aSQL.Add('    , cd_prestador   NUMERIC');
+    aSQL.Add('    , ds_observacao  STRING (50)');
+    aSQL.Add('    , tk_dispositivo STRING (250)');
+    aSQL.Add('    , sn_ativo       STRING (1) NOT NULL');
     aSQL.Add(')');
     aSQL.EndUpdate;
   finally

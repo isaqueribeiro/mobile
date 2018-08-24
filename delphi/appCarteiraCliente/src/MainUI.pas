@@ -32,5 +32,6 @@ var
 implementation
 
 {$R *.fmx}
+{$R *.iPhone55in.fmx IOS}
 
 end.

@@ -1,23 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2018/08/15 09:48:07.000.246,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\src\USplash.pas</Transaction>
-    <Transaction>2018/08/15 09:48:07.000.246,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\src\USplash.fmx</Transaction>
-    <Transaction>2018/08/15 09:57:52.000.059,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\appMedicalNotice.dproj</Transaction>
-    <Transaction>2018/08/15 11:12:37.000.482,C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\Unit1.dfm=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\src\UDados.dfm</Transaction>
-    <Transaction>2018/08/15 11:12:37.000.482,C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\Unit1.pas=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\src\UDados.pas</Transaction>
-    <Transaction>2018/08/15 11:20:19.000.891,C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\Unit1.pas=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\src\model\model.Especialidade.pas</Transaction>
-    <Transaction>2018/08/15 11:26:35.000.149,C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\Unit1.pas=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appMedicalNotice\src\dao\dao.Especialidade.pas</Transaction>
-    <Transaction>2018/08/16 19:11:23.000.443,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\ULogin.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\Unit1.fmx</Transaction>
-    <Transaction>2018/08/17 00:08:59.000.319,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UCadastroUsuario.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\Unit1.fmx</Transaction>
-    <Transaction>2018/08/17 00:39:38.000.349,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPrincipal.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\Unit1.fmx</Transaction>
-    <Transaction>2018/08/21 18:29:27.000.717,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPadrao.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\Unit1.fmx</Transaction>
+    <Transaction>2018/08/24 17:28:22.000.050,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\appMedicalNotice.dproj</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
-		<NoProfile iOSSimulator="iPhone5" Android="AVD_for_Nexus_5_by_Google"/>
-		<PMacOS10.12 iOSSimulator="iPhone5"/>
+		<NoProfile iOSSimulator="iPhone5" Android="4203583dbe123100"/>
 		<PMacOS10.13 iOSSimulator="iPhone5"/>
 	</ActiveMobileDevice>
-	<BT_BuildType>Debug</BT_BuildType>
-	<MobileDevice>AVD_for_Nexus_10_by_Google</MobileDevice>
 </BorlandProject>

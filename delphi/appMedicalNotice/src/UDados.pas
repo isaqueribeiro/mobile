@@ -196,8 +196,6 @@ begin
       AddBody(aUsuarioJson);
       Execute;
 
-      Sleep(500);
-
       aRetorno := Response.JSONValue;
     end;
   finally

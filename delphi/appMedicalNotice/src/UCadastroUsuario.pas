@@ -41,6 +41,10 @@ type
       const Bounds: TRect);
     procedure FormVirtualKeyboardShown(Sender: TObject; KeyboardVisible: Boolean;
       const Bounds: TRect);
+    procedure EditNomeKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
+    procedure EditEmailKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
+    procedure EditObservacaoKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
   private
     { Private declarations }
     FWBounds    : TRectF;
@@ -76,6 +80,27 @@ begin
   begin
     ContentBounds.Bottom := Max(ContentBounds.Bottom, 2 * ClientHeight - FWBounds.Top);
   end;
+end;
+
+procedure TFrmCadastroUsuario.EditEmailKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+  Shift: TShiftState);
+begin
+  if (Key = vkReturn) then
+    EditObservacao.SetFocus;
+end;
+
+procedure TFrmCadastroUsuario.EditNomeKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+  Shift: TShiftState);
+begin
+  if (Key = vkReturn) then
+    EditEmail.SetFocus;
+end;
+
+procedure TFrmCadastroUsuario.EditObservacaoKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+  Shift: TShiftState);
+begin
+  if (Key = vkReturn) then
+    GravarUsuario(RoundRectCadastro);
 end;
 
 procedure TFrmCadastroUsuario.FormCreate(Sender: TObject);
@@ -156,10 +181,10 @@ begin
 
   if (aMsg <> EmptyStr) then
   begin
-    {$IF DEFINED (MSWINDOWS)}
-    ShowMessage(aMsg);
-    {$ELSE}
+    {$IF (DEFINED (MACOS)) || (DEFINED (IOS))}
     MessageDlg(aMsg, TMsgDlgType.mtwarning, [TMsgDlgBtn.mbok], 0);
+    {$ELSE}
+    ShowMessage(aMsg);
     {$ENDIF}
     if (aControle <> nil) then
       TEdit(aControle).SetFocus;
@@ -212,11 +237,15 @@ begin
         finally
           if (iError > 0) then
           begin
-            {$IF DEFINED (MSWINDOWS)}
-            ShowMessage(aMsg);
-            {$ELSE}
-            MessageDlg(aMsg, TMsgDlgType.mtwarning, [TMsgDlgBtn.mbok], 0);
-            {$ENDIF}
+            TThread.queue(nil,
+              procedure
+              begin
+                {$IF (DEFINED (MACOS)) || (DEFINED (IOS))}
+                MessageDlg(aMsg, TMsgDlgType.mtwarning, [TMsgDlgBtn.mbok], 0);
+                {$ELSE}
+                ShowMessage(aMsg);
+                {$ENDIF}
+              end);
           end
           else
           begin

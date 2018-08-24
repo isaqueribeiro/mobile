@@ -63,8 +63,11 @@ uses
   , FMX.Helpers.Android
   {$ENDIF}
   {$IF DEFINED (IOS)}
-  , FMX.Helpers.Mac
+  , FMX.Helpers.iOS
   {$ENDIF}
+//  {$IF DEFINED (MACOS)}
+//  , FMX.Helpers.Mac
+//  {$ENDIF}
   , app.Funcoes
   , classes.Constantes
   , dao.Usuario
@@ -120,6 +123,7 @@ begin
   if Assigned(aLayoutPadrao) then
     LayoutForm.AddObject(TLayout(aLayoutPadrao));
 
+  LabelTitleDetalhe.Text := FrmCadastroUsuario.LabelTitleCadastro.Text;
   FrmCadastroUsuario.ToolBarCadastro.Visible := False;
 
   acChangeTabAction.ExecuteTarget(Sender);
@@ -134,17 +138,10 @@ begin
   aUsuario.Model.Ativo := False;
   aUsuario.Update();
 
-  {$IF DEFINED (ANDROID)}
-  ;
-  {$ELSE}
-    {$IF DEFINED (IOS)}
-    ;
-    {$ENDIF}
-  {$ENDIF}
-
   MultiViewMenu.HideMaster;
-  {$IF DEFINED (ANDROID) || (IOS)}
+  {$IF DEFINED (MACOS) || (IOS)}
   FrmSplash.DisposeOf;
+  Application.Terminate;
   {$ELSE}
   Application.Terminate;
   {$ENDIF}
