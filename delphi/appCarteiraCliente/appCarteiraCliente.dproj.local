@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/03/23 22:54:30.000.157,=C:\Users\Notebook\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/03/23 22:58:20.000.773,=C:\Users\Notebook\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/04/20 10:28:47.000.212,=C:\Users\Notebook\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/04/20 12:01:26.000.618,=C:\Users\Notebook\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/06/07 18:31:12.000.169,=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/06/27 18:45:45.000.576,=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/08/22 20:54:10.000.059,=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/08/22 21:00:54.000.002,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\src\MainUI.pas</Transaction>
+    <Transaction>2018/08/22 21:00:54.000.002,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\src\MainUI.fmx</Transaction>
+    <Transaction>2018/08/22 21:01:28.000.608,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\appCarteiraCliente.dproj</Transaction>
+  </Transactions>
+	<ActiveMobileDevice>
+		<NoProfile iOSSimulator="iPhone5" Android="4203583dbe123100"/>
+	</ActiveMobileDevice>
+</BorlandProject>

@@ -1,0 +1,137 @@
+object FrmMain: TFrmMain
+  Left = 0
+  Top = 0
+  Caption = 'App Carteira de Clientes'
+  ClientHeight = 639
+  ClientWidth = 358
+  Position = ScreenCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object TabControl: TTabControl
+    Align = Client
+    Size.Width = 358.000000000000000000
+    Size.Height = 639.000000000000000000
+    Size.PlatformDefault = False
+    TabHeight = 49.000000000000000000
+    TabIndex = 0
+    TabOrder = 0
+    TabPosition = None
+    Sizes = (
+      358s
+      639s
+      358s
+      639s
+      358s
+      639s)
+    object TabSplash: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabSplash'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object LayoutSplash: TLayout
+        Align = Client
+        Size.Width = 358.000000000000000000
+        Size.Height = 639.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object LayoutLogo: TLayout
+          Align = Center
+          Size.Width = 220.000000000000000000
+          Size.Height = 260.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          object LayoutSplashTexto: TLayout
+            Align = Bottom
+            Position.Y = 220.000000000000000000
+            Size.Width = 220.000000000000000000
+            Size.Height = 40.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object LabelVersao: TLabel
+              Align = Bottom
+              StyledSettings = [Family, Style, FontColor]
+              Position.Y = 22.000000000000000000
+              Size.Width = 220.000000000000000000
+              Size.Height = 18.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.Size = 10.000000000000000000
+              TextSettings.HorzAlign = Trailing
+              Text = 'Vers'#227'o 1.0.0'
+            end
+            object LabelCarregando: TLabel
+              Align = Bottom
+              StyledSettings = [Family, FontColor]
+              Position.Y = 4.000000000000000000
+              Size.Width = 220.000000000000000000
+              Size.Height = 18.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.StyleExt = {00060000000000000004000000}
+              Text = 'Carregando...'
+            end
+            object ProgressBarCarregando: TProgressBar
+              Align = Bottom
+              Orientation = Horizontal
+              Size.Width = 220.000000000000000000
+              Size.Height = 4.000000000000000000
+              Size.PlatformDefault = False
+            end
+          end
+          object ImageLogo: TImage
+            MultiResBitmap.Height = 1099
+            MultiResBitmap.Width = 1101
+            MultiResBitmap = <
+              item
+              end>
+            Align = Client
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 10.000000000000000000
+            Size.Width = 200.000000000000000000
+            Size.Height = 200.000000000000000000
+            Size.PlatformDefault = False
+            WrapMode = Center
+          end
+        end
+      end
+    end
+    object TabLogin: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabLogin'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+    end
+    object TabPrincipal: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabPrincipal'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+    end
+  end
+end
