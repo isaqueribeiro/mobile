@@ -13,16 +13,15 @@ uses
   dao.Usuario in 'src\dao\dao.Usuario.pas',
   UCadastroUsuario in 'src\UCadastroUsuario.pas' {FrmCadastroUsuario},
   ULogin in 'src\ULogin.pas' {FrmLogin},
-  UPadrao in 'src\UPadrao.pas' {FrmPadrao},
   UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal},
   UDados in 'src\UDados.pas' {DtmDados: TDataModule},
-  USplash in 'src\USplash.pas' {FrmSplash};
+  USplashUI in 'src\USplashUI.pas' {FrmSplashUI};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TDtmDados, DtmDados);
-  Application.CreateForm(TFrmSplash, FrmSplash);
+  Application.CreateForm(TFrmSplashUI, FrmSplashUI);
   Application.Run;
 end.

@@ -18,11 +18,12 @@ type
       aAtivo      : Boolean;
       aTokenDispositivo : String;
       constructor Create();
+      procedure SetCodigo(Value : String);
       procedure SetEmail(Value : String);
       class var aInstance : TUsuario;
     public
       property Id     : TGUID read aId write aId;
-      property Codigo : String read aCodigo write aCodigo;
+      property Codigo : String read aCodigo write SetCodigo;
       property Nome   : String read aNome write aNome;
       property Email  : String read aEmail write SetEmail;
       property Senha  : String read aSenha write aSenha;
@@ -69,6 +70,11 @@ var
 begin
   CreateGUID(aGuid);
   aId := aGuid;
+end;
+
+procedure TUsuario.SetCodigo(Value: String);
+begin
+  aCodigo := AnsiLowerCase(Trim(Value));
 end;
 
 procedure TUsuario.SetEmail(Value: String);

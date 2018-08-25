@@ -4,10 +4,10 @@
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
     <PropertyGroup>
-        <DeviceId Condition="'$(Platform)'=='Android'">4203583dbe123100</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='Android'">AVD_for_Nexus_5_by_Google</DeviceId>
         <DeviceId Condition="'$(Platform)'=='iOSDevice32'"/>
         <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
-        <DeviceId Condition="'$(Platform)'=='iOSSimulator'">iPhone5</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='iOSSimulator'">1E914DD2-8653-4453-8AF5-ECA368ED5CB7</DeviceId>
     </PropertyGroup>
     <ItemGroup Condition="'$(Platform)'=='iOSDevice64'">
         <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
@@ -385,7 +385,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="iOSSimulator\Debug\appMedicalNotice.entitlements" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="bin\iOSSimulator\Debug\appMedicalNotice.entitlements" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice.app\</RemoteDir>
             <RemoteName>appMedicalNotice.entitlements</RemoteName>
             <DeployClass>ProjectiOSEntitlements</DeployClass>
@@ -512,7 +512,7 @@
             <Overwrite>True</Overwrite>
         </DeployFile>
         <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>appMedicalNotice.app\</RemoteDir>
+            <RemoteDir>appMedicalNotice.app\StartUp\Documents\</RemoteDir>
             <RemoteName>medical_notice.db</RemoteName>
             <DeployClass>File</DeployClass>
             <Operation>0</Operation>
@@ -520,7 +520,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="iOSSimulator\Debug\appMedicalNotice" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="bin\iOSSimulator\Debug\appMedicalNotice" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice.app\</RemoteDir>
             <RemoteName>appMedicalNotice</RemoteName>
             <DeployClass>ProjectOutput</DeployClass>
@@ -531,7 +531,7 @@
             <Required>True</Required>
         </DeployFile>
         <DeployFile Include="D:\db\mobile\medical_notice.db" Condition="'$(Config)'=='Release'">
-            <RemoteDir>appMedicalNotice.app\</RemoteDir>
+            <RemoteDir>appMedicalNotice.app\StartUp\Documents\</RemoteDir>
             <RemoteName>medical_notice.db</RemoteName>
             <DeployClass>File</DeployClass>
             <Operation>0</Operation>
@@ -539,7 +539,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="iOSSimulator\Debug\appMedicalNotice.info.plist" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="bin\iOSSimulator\Debug\appMedicalNotice.info.plist" Condition="'$(Config)'=='Debug'">
             <RemoteDir>appMedicalNotice.app\</RemoteDir>
             <RemoteName>Info.plist</RemoteName>
             <DeployClass>ProjectiOSInfoPList</DeployClass>
@@ -634,6 +634,15 @@
             <RemoteName>FM_SpotlightSearchIcon_80x80.png</RemoteName>
             <DeployClass>iPad_SpotLight80</DeployClass>
             <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="bin\iOSSimulator\Debug\appMedicalNotice.rsm" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>appMedicalNotice.app\</RemoteDir>
+            <RemoteName>appMedicalNotice.rsm</RemoteName>
+            <DeployClass>DebugSymbols</DeployClass>
+            <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>

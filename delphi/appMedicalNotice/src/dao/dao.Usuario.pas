@@ -58,7 +58,7 @@ begin
     aSQL.Add('Select * ');
     aSQL.Add('from ' + aDDL.getTableNameUsuario);
     aSQL.Add('where (cd_usuario = :cd_usuario)');
-    aSQL.Add('  and (ds_email   = :ds_email)');
+    aSQL.Add('   or (ds_email   = :ds_email)');
     aSQL.EndUpdate;
     with DtmDados, qrySQL do
     begin

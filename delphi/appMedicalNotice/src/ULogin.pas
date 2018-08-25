@@ -56,7 +56,7 @@ implementation
 
 uses
     UDados
-  , USplash
+  , USplashUI
   , app.Funcoes
   , classes.HttpConnect
   , classes.Constantes
@@ -203,7 +203,7 @@ begin
             LabelAlerta.Visible := True;
           end
           else
-            FrmSplash.AbrirCadastroUsuario;
+            FrmSplashUI.AbrirCadastroUsuario;
         end;
       end
     );

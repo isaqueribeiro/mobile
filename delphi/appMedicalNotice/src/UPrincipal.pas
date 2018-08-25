@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.StdCtrls, FMX.TabControl, System.Actions, FMX.ActnList, FMX.Objects,
-  FMX.MultiView, FMX.Controls.Presentation;
+  FMX.MultiView, FMX.Controls.Presentation, FMX.DialogService;
 
 type
   TFrmPrincipal = class(TForm)
@@ -41,6 +41,11 @@ type
     ImageCadastro: TImage;
     LabelCadastro: TLabel;
     LayoutForm: TLayout;
+    BtnMeuPlantao: TSpeedButton;
+    LayoutOpcoes: TLayout;
+    Image1: TImage;
+    SpeedButton1: TSpeedButton;
+    Image2: TImage;
     procedure UsuarioSair(Sender: TObject);
     procedure UsuarioCadastro(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -72,7 +77,9 @@ uses
   , classes.Constantes
   , dao.Usuario
   , System.Threading
-  , System.JSON, USplash, UCadastroUsuario;
+  , System.JSON
+  , USplashUI
+  , UCadastroUsuario;
 
 {$R *.fmx}
 {$R *.iPhone55in.fmx IOS}
@@ -84,8 +91,8 @@ begin
   aUsuario := TUsuarioDao.GetInstance;
   aUsuario.MainMenu := True;
 
+  MultiViewMenu.HideMaster;
   TabControlPrincipal.ActiveTab := TabPrincipal;
-  MultiViewMenu.Visible         := False;
   LabelUserName.Text  := AnsiUpperCase(aUsuario.Model.Nome);
   LabelUserEmail.Text := AnsiLowerCase(aUsuario.Model.Email);
 end;
@@ -94,12 +101,11 @@ procedure TFrmPrincipal.LimparForms;
 begin
   if Assigned(FrmCadastroUsuario) then
   begin
-//    {$IF DEFINED (ANDROID) || (IOS)}
-//    FrmCadastroUsuario.DisposeOf;
-//    {$ELSE}
-//    FrmCadastroUsuario.Close;
-//    {$ENDIF}
+    {$IF (DEFINED (MACOS)) || (DEFINED (IOS))}
     FrmCadastroUsuario.DisposeOf;
+    {$ELSE}
+    FrmCadastroUsuario.Close;
+    {$ENDIF}
     FrmCadastroUsuario := nil;
   end;
 end;
@@ -107,7 +113,8 @@ end;
 procedure TFrmPrincipal.MenuPrincipal;
 begin
   LimparForms;
-  TabControlPrincipal.ActiveTab := TabPrincipal;
+  //TabControlPrincipal.ActiveTab := TabPrincipal;
+  acPreviousTabAction.ExecuteTarget(Self);
 end;
 
 procedure TFrmPrincipal.UsuarioCadastro(Sender: TObject);
@@ -134,17 +141,35 @@ procedure TFrmPrincipal.UsuarioSair(Sender: TObject);
 var
   aUsuario : TUsuarioDao;
 begin
-  aUsuario := TUsuarioDao.GetInstance;
-  aUsuario.Model.Ativo := False;
-  aUsuario.Update();
-
   MultiViewMenu.HideMaster;
-  {$IF DEFINED (MACOS) || (IOS)}
-  FrmSplash.DisposeOf;
-  Application.Terminate;
-  {$ELSE}
-  Application.Terminate;
-  {$ENDIF}
+  TDialogService.MessageDialog('Deseja sair do aplicativo?', TMsgDlgType.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], TMsgDlgBtn.mbNo, 0,
+    procedure(const AResult: TModalResult)
+    begin
+      case AResult of
+        mrYES:
+          begin
+            aUsuario := TUsuarioDao.GetInstance;
+            aUsuario.Model.Ativo := False;
+            aUsuario.Update();
+
+            {$IF DEFINED (IOS)}
+            Halt(0);
+            {$ELSE}
+              {$IF DEFINED (MACOS)}
+              FrmSplashUI.DisposeOf;
+              Application.Terminate;
+              {$ELSE}
+              Application.Terminate;
+              {$ENDIF}
+            {$ENDIF}
+          end;
+        mrNo:
+          ;
+        mrCancel:
+          ;
+      end;
+    end);
+
 end;
 
 end.

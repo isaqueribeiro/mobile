@@ -31,9 +31,8 @@ type
     LabelLogin: TLabel;
     CaptionLogin: TLabel;
     RoundRectCadastro: TRoundRect;
+    BtnSalvar: TSpeedButton;
     ImageSalvar: TImage;
-    LabelSalvar: TLabel;
-    LayoutSalvar: TLayout;
     procedure GravarUsuario(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormFocusChanged(Sender: TObject);
@@ -64,7 +63,7 @@ implementation
 
 uses
     UDados
-  , USplash
+  , USplashUI
   , app.Funcoes
   , classes.Constantes
   , dao.Usuario
@@ -273,7 +272,7 @@ begin
     if (aUsuario.MainMenu and Assigned(FrmPrincipal)) then
       FrmPrincipal.MenuPrincipal
     else
-      FrmSplash.AbrirMenu;
+      FrmSplashUI.AbrirMenu;
   end;
 end;
 

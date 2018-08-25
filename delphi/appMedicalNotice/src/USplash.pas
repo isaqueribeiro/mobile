@@ -6,8 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants, System.Threading, System.JSON,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Layouts, FMX.Controls.Presentation, FMX.StdCtrls, FMX.TabControl,
-  System.Math, System.Actions, FMX.ActnList, FMX.Edit;
+  FMX.Layouts, FMX.Controls.Presentation, FMX.TabControl,
+  System.Math, System.Actions, FMX.ActnList, FMX.Edit, FMX.StdCtrls;
 
 type
   TFrmSplash = class(TForm)
@@ -16,7 +16,6 @@ type
     TabForm: TTabItem;
     LayoutForm: TLayout;
     LayoutSplash: TLayout;
-    PanelSplash: TPanel;
     ImageLogoEntidade: TImage;
     LabelAppTitle: TLabel;
     LabelVersion: TLabel;
@@ -27,6 +26,7 @@ type
     ActionListSplash: TActionList;
     acMudarForm: TChangeTabAction;
     ScrollBoxForm: TScrollBox;
+    LayoutPainel: TLayout;
     procedure PrepareLogin(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
