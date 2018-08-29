@@ -183,10 +183,11 @@ begin
   try
     aUsuarioDao  := TUsuarioDao.GetInstance;
 
-    aUsuarioJson.AddPair('id_usuario',    GUIDToString(aUsuarioDao.Model.Id));
-    aUsuarioJson.AddPair('cd_usuario',    aUsuarioDao.Model.Codigo);
-    aUsuarioJson.AddPair('ds_email',      aUsuarioDao.Model.Email);
-    aUsuarioJson.AddPair('ds_observacao', aUsuarioDao.Model.Observacao);
+    aUsuarioJson.AddPair('id_usuario',     GUIDToString(aUsuarioDao.Model.Id));
+    aUsuarioJson.AddPair('cd_usuario',     aUsuarioDao.Model.Codigo);
+    aUsuarioJson.AddPair('ds_email',       aUsuarioDao.Model.Email);
+    aUsuarioJson.AddPair('ds_observacao',  aUsuarioDao.Model.Observacao);
+    aUsuarioJson.AddPair('tk_dispositivo', aUsuarioDao.Model.TokenDispositivo);
 
     with RESTRequestUsuario, Params do
     begin

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2018/08/24 17:28:22.000.050,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\appMedicalNotice.dproj</Transaction>
-    <Transaction>2018/08/25 11:32:09.000.073,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPadraoForm.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPadrao.fmx</Transaction>
-    <Transaction>2018/08/25 11:46:06.000.862,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\USplashUI.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\Unit1.fmx</Transaction>
-    <Transaction>2018/08/25 11:53:51.000.803,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\USplashUI.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPadraoForm.fmx</Transaction>
+    <Transaction>2018/08/24 17:28:22.000.050,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\appMedicalNotice.dproj=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2018/08/25 11:32:09.000.073,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPadrao.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPadraoForm.fmx</Transaction>
+    <Transaction>2018/08/25 11:46:06.000.862,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\Unit1.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\USplashUI.fmx</Transaction>
+    <Transaction>2018/08/25 11:53:51.000.803,D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\UPadraoForm.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appMedicalNotice\src\USplashUI.fmx</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5" Android="AVD_for_Nexus_5_by_Google"/>
-		<PMacOS10.13 iOSSimulator="_iossimulator_1E914DD2-8653-4453-8AF5-ECA368ED5CB7"/>
+		<PMacOS10.13 iOSSimulator="iPhone5"/>
 	</ActiveMobileDevice>
 </BorlandProject>
