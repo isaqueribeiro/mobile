@@ -4,10 +4,10 @@
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
     <PropertyGroup>
-        <DeviceId Condition="'$(Platform)'=='Android'">AVD_for_Nexus_5_by_Google</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='Android'">Google</DeviceId>
         <DeviceId Condition="'$(Platform)'=='iOSDevice32'"/>
         <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
-        <DeviceId Condition="'$(Platform)'=='iOSSimulator'">1E914DD2-8653-4453-8AF5-ECA368ED5CB7</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='iOSSimulator'">4D94EDD8-D2B1-490A-95A3-B64CC48EB73B</DeviceId>
     </PropertyGroup>
     <ItemGroup Condition="'$(Platform)'=='iOSDevice64'"/>
     <ItemGroup Condition="'$(Platform)'=='Win64'"/>
@@ -38,15 +38,6 @@
             <RemoteDir>appCarteiraCliente.app\Contents\</RemoteDir>
             <RemoteName>Info.plist</RemoteName>
             <DeployClass>ProjectOSXInfoPList</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="bin\OSX32\Debug\appCarteiraCliente.entitlements" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>appCarteiraCliente.app\..\</RemoteDir>
-            <RemoteName>appCarteiraCliente.entitlements</RemoteName>
-            <DeployClass>ProjectOSXEntitlements</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -102,6 +93,15 @@
             <RemoteDir>appCarteiraCliente.app\Contents\MacOS\</RemoteDir>
             <RemoteName>libcgunwind.1.0.dylib</RemoteName>
             <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="bin\OSX32\Debug\appCarteiraCliente.entitlements" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>appCarteiraCliente.app\..\</RemoteDir>
+            <RemoteName>appCarteiraCliente.entitlements</RemoteName>
+            <DeployClass>ProjectOSXEntitlements</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -270,6 +270,15 @@
             <RemoteName>FM_ApplicationIcon_144x144.png</RemoteName>
             <DeployClass>iPad_AppIcon144</DeployClass>
             <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin\Artwork\iOS\iPad\FM_LaunchImageLandscape_1024x748.png" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>appCarteiraCliente.app\</RemoteDir>
+            <RemoteName>Default-Landscape.png</RemoteName>
+            <DeployClass>iPad_Launch1024</DeployClass>
+            <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
@@ -613,15 +622,6 @@
             <RemoteName>FM_SettingIcon_29x29.png</RemoteName>
             <DeployClass>iPad_Setting29</DeployClass>
             <Operation>0</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="$(BDS)\bin\Artwork\iOS\iPad\FM_LaunchImageLandscape_1024x748.png" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>appCarteiraCliente.app\</RemoteDir>
-            <RemoteName>Default-Landscape.png</RemoteName>
-            <DeployClass>iPad_Launch1024</DeployClass>
-            <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>

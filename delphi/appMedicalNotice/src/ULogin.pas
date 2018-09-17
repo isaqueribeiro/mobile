@@ -99,9 +99,9 @@ begin
   LabelVersion.Text := 'Versão ' + VERSION_NAME;
   ScrollBoxForm.OnCalcContentBounds := CalcContentBounds;
 
-  // Para teste
-  EditLogin.Text := 'edgar_sobrinho';
-  EditSenha.Text := '12345678';
+//  // Para teste
+//  EditLogin.Text := 'edgar_sobrinho';
+//  EditSenha.Text := '12345678';
 end;
 
 procedure TFrmLogin.FormFocusChanged(Sender: TObject);

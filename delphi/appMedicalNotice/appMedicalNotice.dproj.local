@@ -8,6 +8,6 @@
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5" Android="AVD_for_Nexus_5_by_Google"/>
-		<PMacOS10.13 iOSSimulator="iPhone5"/>
+		<PMacOS10.13 iOSSimulator="_iossimulator_4D94EDD8-D2B1-490A-95A3-B64CC48EB73B" iOSDevice64="_iosdevice_a2f603cb5612bbca3aff8a264d3a25f7ad20c124"/>
 	</ActiveMobileDevice>
 </BorlandProject>

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2018/08/22 21:00:54.000.002,C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\src\MainUI.pas=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2018/08/22 21:00:54.000.002,C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\src\MainUI.fmx=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.fmx</Transaction>
-    <Transaction>2018/08/22 21:01:28.000.608,C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\appCarteiraCliente.dproj=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2018/08/22 21:00:54.000.002,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\src\MainUI.fmx</Transaction>
+    <Transaction>2018/08/22 21:00:54.000.002,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\src\MainUI.pas</Transaction>
+    <Transaction>2018/08/22 21:01:28.000.608,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Isaque\Documents\Projetos\ASS\mobile\delphi\appCarteiraCliente\appCarteiraCliente.dproj</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5" Android="AVD_for_Nexus_5_by_Google"/>
-		<PMacOS10.13 iOSSimulator="_iossimulator_1E914DD2-8653-4453-8AF5-ECA368ED5CB7"/>
-	</ActiveMobileDevice>
+		<PMacOS10.13 iOSSimulator="_iossimulator_4D94EDD8-D2B1-490A-95A3-B64CC48EB73B"/>
+	</ActiveMobileDevice>  <BT_BuildType>Debug</BT_BuildType>
 </BorlandProject>
