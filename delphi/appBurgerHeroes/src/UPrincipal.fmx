@@ -1,0 +1,269 @@
+﻿object FrmPrincipal: TFrmPrincipal
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 497
+  ClientWidth = 295
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object ScrollBoxForm: TScrollBox
+    Align = Client
+    Size.Width = 295.000000000000000000
+    Size.Height = 497.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Viewport.Width = 295.000000000000000000
+    Viewport.Height = 497.000000000000000000
+    object LayoutForm: TLayout
+      Align = Client
+      Size.Width = 295.000000000000000000
+      Size.Height = 497.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object tabControlForm: TTabControl
+        Align = Client
+        Size.Width = 295.000000000000000000
+        Size.Height = 497.000000000000000000
+        Size.PlatformDefault = False
+        TabHeight = 49.000000000000000000
+        TabIndex = 1
+        TabOrder = 0
+        TabPosition = PlatformDefault
+        Sizes = (
+          295s
+          448s
+          295s
+          448s)
+        object tbiLogin: TTabItem
+          CustomIcon = <
+            item
+            end>
+          IsSelected = False
+          Size.Width = 146.000000000000000000
+          Size.Height = 49.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = ''
+          TabOrder = 0
+          Text = 'LOGIN'
+          ExplicitSize.cx = 146.000000000000000000
+          ExplicitSize.cy = 49.000000000000000000
+        end
+        object tbiMenu: TTabItem
+          CustomIcon = <
+            item
+            end>
+          IsSelected = True
+          Size.Width = 147.000000000000000000
+          Size.Height = 49.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = ''
+          TabOrder = 0
+          Text = 'MENU'
+          ExplicitSize.cx = 147.000000000000000000
+          ExplicitSize.cy = 49.000000000000000000
+          object LayoutMenu: TLayout
+            Align = Client
+            Size.Width = 86.000000000000000000
+            Size.Height = 448.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object ToolBarMenu: TToolBar
+              Size.Width = 86.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 0
+              object BtnMenu: TSpeedButton
+                Align = Left
+                Size.Width = 48.000000000000000000
+                Size.Height = 48.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'drawertoolbutton'
+                Visible = False
+              end
+            end
+          end
+          object MultiViewMenu: TMultiView
+            MasterButton = BtnMenu
+            Size.Width = 209.000000000000000000
+            Size.Height = 448.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 1
+            object LayoutMViewTop: TLayout
+              Align = Top
+              Size.Width = 209.000000000000000000
+              Size.Height = 162.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 0
+              object RectangleMViewUser: TRectangle
+                Align = Client
+                Fill.Kind = Gradient
+                Fill.Gradient.Points = <
+                  item
+                    Color = xFFAC2121
+                    Offset = 0.000000000000000000
+                  end
+                  item
+                    Color = xFFFECFCF
+                    Offset = 1.000000000000000000
+                  end>
+                Fill.Gradient.StartPosition.Y = 0.500000000000000000
+                Fill.Gradient.StopPosition.X = 1.000000000000000000
+                Fill.Gradient.StopPosition.Y = 0.500000000000000000
+                Size.Width = 209.000000000000000000
+                Size.Height = 162.000000000000000000
+                Size.PlatformDefault = False
+                Stroke.Kind = None
+                object LabelUserEmail: TLabel
+                  Align = Bottom
+                  StyledSettings = [Family, Style]
+                  Margins.Left = 24.000000000000000000
+                  Position.X = 24.000000000000000000
+                  Position.Y = 137.000000000000000000
+                  Size.Width = 185.000000000000000000
+                  Size.Height = 25.000000000000000000
+                  Size.PlatformDefault = False
+                  TextSettings.Font.Size = 11.000000000000000000
+                  TextSettings.FontColor = claWhite
+                  TextSettings.VertAlign = Leading
+                  Text = 'isaque.ribeiro@outlook.com'
+                  TabOrder = 0
+                end
+                object LabelUserName: TLabel
+                  Align = Bottom
+                  StyledSettings = [Family]
+                  Margins.Left = 24.000000000000000000
+                  Position.X = 24.000000000000000000
+                  Position.Y = 112.000000000000000000
+                  Size.Width = 185.000000000000000000
+                  Size.Height = 25.000000000000000000
+                  Size.PlatformDefault = False
+                  TextSettings.Font.StyleExt = {00060000000000000004000000}
+                  TextSettings.FontColor = claWhite
+                  TextSettings.VertAlign = Trailing
+                  Text = 'ISAQUE M. RIBEIRO'
+                  TabOrder = 1
+                end
+                object LayoutUserImage: TLayout
+                  Align = Client
+                  Size.Width = 209.000000000000000000
+                  Size.Height = 112.000000000000000000
+                  Size.PlatformDefault = False
+                  TabOrder = 2
+                  object CircleUserImage: TCircle
+                    Align = Left
+                    ClipChildren = True
+                    Margins.Left = 24.000000000000000000
+                    Margins.Top = 8.000000000000000000
+                    Margins.Bottom = 8.000000000000000000
+                    Position.X = 24.000000000000000000
+                    Position.Y = 8.000000000000000000
+                    Size.Width = 96.000000000000000000
+                    Size.Height = 96.000000000000000000
+                    Size.PlatformDefault = False
+                    Stroke.Kind = None
+                    object ImageUser: TImage
+                      Align = Client
+                      Size.Width = 96.000000000000000000
+                      Size.Height = 96.000000000000000000
+                      Size.PlatformDefault = False
+                      WrapMode = Center
+                    end
+                  end
+                end
+              end
+            end
+            object LayoutMViewOpcoes: TLayout
+              Align = Client
+              Size.Width = 209.000000000000000000
+              Size.Height = 286.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 1
+              object ListBoxMenu: TListBox
+                Align = Client
+                Margins.Left = 8.000000000000000000
+                Margins.Top = 8.000000000000000000
+                Margins.Right = 8.000000000000000000
+                Margins.Bottom = 8.000000000000000000
+                Size.Width = 193.000000000000000000
+                Size.Height = 270.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'listboxstyle'
+                TabOrder = 0
+                DisableFocusEffect = True
+                DefaultItemStyles.ItemStyle = ''
+                DefaultItemStyles.GroupHeaderStyle = ''
+                DefaultItemStyles.GroupFooterStyle = ''
+                Viewport.Width = 189.000000000000000000
+                Viewport.Height = 266.000000000000000000
+                object ListBoxGroupHeader1: TListBoxGroupHeader
+                  TextSettings.Font.Size = 10.000000000000000000
+                  StyledSettings = [Family, Style, FontColor, Other]
+                  Size.Width = 189.000000000000000000
+                  Size.Height = 30.000000000000000000
+                  Size.PlatformDefault = False
+                  TabOrder = 0
+                  Text = 'PEDIDOS'
+                end
+                object CARDÁPIO: TListBoxItem
+                  HitTest = True
+                  Margins.Left = 8.000000000000000000
+                  Position.X = 8.000000000000000000
+                  Position.Y = 30.000000000000000000
+                  TabOrder = 3
+                  Text = 'CARD'#193'PIO'
+                end
+                object ListBoxItem2: TListBoxItem
+                  HitTest = True
+                  Margins.Left = 8.000000000000000000
+                  Position.X = 8.000000000000000000
+                  Position.Y = 49.000000000000000000
+                  TabOrder = 2
+                  Text = 'FAZER PEDIDO'
+                end
+                object ListBoxItem1: TListBoxItem
+                  HitTest = True
+                  Margins.Left = 8.000000000000000000
+                  Position.X = 8.000000000000000000
+                  Position.Y = 68.000000000000000000
+                  TabOrder = 1
+                  Text = 'MEUS PEDIDOS'
+                end
+                object ListBoxGroupHeader2: TListBoxGroupHeader
+                  TextSettings.Font.Size = 10.000000000000000000
+                  StyledSettings = [Family, Style, FontColor, Other]
+                  Position.Y = 87.000000000000000000
+                  Size.Width = 189.000000000000000000
+                  Size.Height = 30.000000000000000000
+                  Size.PlatformDefault = False
+                  TabOrder = 4
+                  Text = 'CONFIGURA'#199#213'ES'
+                end
+                object ListBoxItem5: TListBoxItem
+                  HitTest = True
+                  Margins.Left = 8.000000000000000000
+                  Position.X = 8.000000000000000000
+                  Position.Y = 117.000000000000000000
+                  TabOrder = 5
+                  Text = 'MEUS DADOS'
+                  OnClick = ListBoxItem5Click
+                end
+                object ListBoxItem6: TListBoxItem
+                  HitTest = True
+                  Margins.Left = 8.000000000000000000
+                  Position.X = 8.000000000000000000
+                  Position.Y = 136.000000000000000000
+                  TabOrder = 6
+                  Text = 'SAIR'
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

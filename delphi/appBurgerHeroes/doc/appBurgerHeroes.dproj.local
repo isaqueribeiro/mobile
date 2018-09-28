@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/09/17 12:56:17.000.460,=D:\Projetos\Unit1.pas</Transaction>
+    <Transaction>2018/09/28 14:43:20.674,=D:\Projetos\Unit1.pas</Transaction>
+    <Transaction>2018/09/28 14:50:59.611,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UPrincipal.fmx=D:\Projetos\Unit1.fmx</Transaction>
+    <Transaction>2018/09/28 14:50:59.611,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UPrincipal.pas=D:\Projetos\Unit1.pas</Transaction>
+    <Transaction>2018/09/28 14:51:10.379,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\appBurgerHeroes.dproj=D:\Projetos\Project1.dproj</Transaction>
+  </Transactions>
+	<ActiveMobileDevice>
+		<PMacOS iOSSimulator="iPhone5"/>  <NoProfile Android="HCAXB6009519E7B"/>
+  </ActiveMobileDevice>
+</BorlandProject>

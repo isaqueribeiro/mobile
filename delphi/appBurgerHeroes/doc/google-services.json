@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "645945446041",
+    "firebase_url": "https://appburgerheroes.firebaseio.com",
+    "project_id": "appburgerheroes",
+    "storage_bucket": "appburgerheroes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645945446041:android:432f073b65bf92cc",
+        "android_client_info": {
+          "package_name": "com.embarcadero.appBurgerHeroes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "645945446041-erecurbnclbc0hjvjm80no6tamicip6q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZA9aBMXEJllRt1HtScHZ44vWyvhTe4-0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

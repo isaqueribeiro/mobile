@@ -1,0 +1,68 @@
+object FrmAbout: TFrmAbout
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 363
+  ClientWidth = 229
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object ScrollBoxForm: TScrollBox
+    Align = Client
+    Size.Width = 229.000000000000000000
+    Size.Height = 363.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Viewport.Width = 229.000000000000000000
+    Viewport.Height = 363.000000000000000000
+    object LayoutForm: TLayout
+      Align = Client
+      Size.Width = 229.000000000000000000
+      Size.Height = 363.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object ToolBar: TToolBar
+        Size.Width = 229.000000000000000000
+        Size.Height = 44.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object SpeedButton1: TSpeedButton
+          Action = WindowClose
+          Align = Left
+          Enabled = True
+          ImageIndex = -1
+          Size.Width = 44.000000000000000000
+          Size.Height = 44.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'priortoolbutton'
+        end
+        object LabelAppName: TLabel
+          Align = Client
+          StyledSettings = [Family, Size, FontColor]
+          Size.Width = 185.000000000000000000
+          Size.Height = 44.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.StyleExt = {00060000000000000004000000}
+          Text = 'BURGER HEROES | Sobre'
+          TabOrder = 1
+        end
+      end
+      object LayoutBase: TLayout
+        Align = Client
+        Size.Width = 229.000000000000000000
+        Size.Height = 319.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+      end
+    end
+  end
+  object ActionList: TActionList
+    Left = 64
+    Top = 144
+    object WindowClose: TWindowClose
+      Category = 'Window'
+      Hint = 'Close Window|Close active form'
+    end
+  end
+end
