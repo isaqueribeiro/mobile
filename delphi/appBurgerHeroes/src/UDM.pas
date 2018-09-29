@@ -67,12 +67,14 @@ end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
 begin
+  {$IF DEFINED (ANDROID) || (IOS)}
   EMSProvider.AndroidPush.GCMAppID := APP_CODIGO_REMETENTE;
   TThread.queue(nil,
     procedure
     begin
       PushEvents.AutoActivate := True;
     end);
+  {$ENDIF}
 end;
 
 procedure TDM.PushEventsPushReceived(Sender: TObject; const AData: TPushData);

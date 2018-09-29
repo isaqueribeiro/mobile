@@ -1,4 +1,4 @@
-﻿object FrmPrincipal: TFrmPrincipal
+object FrmPrincipal: TFrmPrincipal
   Left = 0
   Top = 0
   Caption = 'Form1'
@@ -82,7 +82,6 @@
                 Size.Height = 48.000000000000000000
                 Size.PlatformDefault = False
                 StyleLookup = 'drawertoolbutton'
-                Visible = False
               end
             end
           end
@@ -95,7 +94,7 @@
             object LayoutMViewTop: TLayout
               Align = Top
               Size.Width = 209.000000000000000000
-              Size.Height = 162.000000000000000000
+              Size.Height = 178.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 0
               object RectangleMViewUser: TRectangle
@@ -114,7 +113,7 @@
                 Fill.Gradient.StopPosition.X = 1.000000000000000000
                 Fill.Gradient.StopPosition.Y = 0.500000000000000000
                 Size.Width = 209.000000000000000000
-                Size.Height = 162.000000000000000000
+                Size.Height = 178.000000000000000000
                 Size.PlatformDefault = False
                 Stroke.Kind = None
                 object LabelUserEmail: TLabel
@@ -122,7 +121,7 @@
                   StyledSettings = [Family, Style]
                   Margins.Left = 24.000000000000000000
                   Position.X = 24.000000000000000000
-                  Position.Y = 137.000000000000000000
+                  Position.Y = 153.000000000000000000
                   Size.Width = 185.000000000000000000
                   Size.Height = 25.000000000000000000
                   Size.PlatformDefault = False
@@ -137,7 +136,7 @@
                   StyledSettings = [Family]
                   Margins.Left = 24.000000000000000000
                   Position.X = 24.000000000000000000
-                  Position.Y = 112.000000000000000000
+                  Position.Y = 128.000000000000000000
                   Size.Width = 185.000000000000000000
                   Size.Height = 25.000000000000000000
                   Size.PlatformDefault = False
@@ -150,22 +149,25 @@
                 object LayoutUserImage: TLayout
                   Align = Client
                   Size.Width = 209.000000000000000000
-                  Size.Height = 112.000000000000000000
+                  Size.Height = 128.000000000000000000
                   Size.PlatformDefault = False
                   TabOrder = 2
                   object CircleUserImage: TCircle
                     Align = Left
                     ClipChildren = True
                     Margins.Left = 24.000000000000000000
-                    Margins.Top = 8.000000000000000000
+                    Margins.Top = 24.000000000000000000
                     Margins.Bottom = 8.000000000000000000
                     Position.X = 24.000000000000000000
-                    Position.Y = 8.000000000000000000
+                    Position.Y = 24.000000000000000000
                     Size.Width = 96.000000000000000000
                     Size.Height = 96.000000000000000000
                     Size.PlatformDefault = False
                     Stroke.Kind = None
                     object ImageUser: TImage
+                      MultiResBitmap = <
+                        item
+                        end>
                       Align = Client
                       Size.Width = 96.000000000000000000
                       Size.Height = 96.000000000000000000
@@ -179,86 +181,238 @@
             object LayoutMViewOpcoes: TLayout
               Align = Client
               Size.Width = 209.000000000000000000
-              Size.Height = 286.000000000000000000
+              Size.Height = 270.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 1
-              object ListBoxMenu: TListBox
-                Align = Client
-                Margins.Left = 8.000000000000000000
-                Margins.Top = 8.000000000000000000
-                Margins.Right = 8.000000000000000000
-                Margins.Bottom = 8.000000000000000000
-                Size.Width = 193.000000000000000000
-                Size.Height = 270.000000000000000000
+              object BtnMenuCardapio: TSpeedButton
+                Align = Top
+                Margins.Top = 4.000000000000000000
+                Position.Y = 4.000000000000000000
+                Size.Width = 209.000000000000000000
+                Size.Height = 48.000000000000000000
                 Size.PlatformDefault = False
-                StyleLookup = 'listboxstyle'
-                TabOrder = 0
-                DisableFocusEffect = True
-                DefaultItemStyles.ItemStyle = ''
-                DefaultItemStyles.GroupHeaderStyle = ''
-                DefaultItemStyles.GroupFooterStyle = ''
-                Viewport.Width = 189.000000000000000000
-                Viewport.Height = 266.000000000000000000
-                object ListBoxGroupHeader1: TListBoxGroupHeader
-                  TextSettings.Font.Size = 10.000000000000000000
-                  StyledSettings = [Family, Style, FontColor, Other]
-                  Size.Width = 189.000000000000000000
-                  Size.Height = 30.000000000000000000
+                OnClick = DoCarregarCardapio
+                object ImageMenuCardapio: TImage
+                  MultiResBitmap.Height = 24
+                  MultiResBitmap.Width = 24
+                  MultiResBitmap = <
+                    item
+                      Width = 24
+                      Height = 24
+                      PNG = {
+                        89504E470D0A1A0A0000000D4948445200000018000000180806000000E0773D
+                        F8000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                        029149444154484BAD96CD4B1B4118C69F6CD2469378D02812C1431B3D34A2C1
+                        8F5AAA42BC48B56969FF088981961E0A2D047AEB1FD0DEBD043D147BEAA1F622
+                        A569F1EBD0541414C40F946D0D9A10C52831D1643A9399BA594DA621FA8307DE
+                        79366F9ECDCCCE6C0CB8406767E78D6834FAD462B134298A225C0D532A85643A
+                        1D2166F387F5F5F594B08BA20BA8AFAFB77ABDDEAF6F02817BB74E4E808D0DBD
+                        36A9B6B611CF64E0AFADFDFEC360F0EEEEEE1E8BF6FFE376BB5FC53737096969
+                        2104902A585545BABBBB43ECA6447B417473D0D5D5D551BDB0002C2F0BA73837
+                        69CCC08341CFEDE6E6CFB2105D80D16854108F8B919CA6D353240E0F313438D4
+                        EF743A278B855C5EC544421472EED2C5B67D99443299C4E043AFA75848D9018C
+                        B76B6BB8FFFE1DACA3A378A4AA9E0E42261D0E87455CCE71A500D6FCF8F8182F
+                        B7B71050557C8CC53CAE6CF635BFCAB952C0456CD92C5ACECEEE88618E6B0D28
+                        843CC040F7E1F030505DCD6BBF1F0804348D8C70BF547C3EDF04E9EFD73694D5
+                        4A88AA12D2DBCBEB488490544AD3CE0EF7F336E00BBB7D427C5D0EF92FA00B88
+                        C646606686D70E0760366B6A68E0BE0479406525303D0DB4B7F37A7E0E585DD5
+                        3447C7CC97703980EECE73D269201402F6F678FD8DD66C9C2FE64BD007B059CC
+                        0FA0A726C6C6804884D7E3E34030A8898D992F411FC0EE861DD3FFB0D9809515
+                        606080D74B4BC0ECACA6C545EE4BD007ECEF0374B39C737404B85CC0D414AF5B
+                        5B819E1E4D6D6DDC2F155F5FDF44FE23578EE48F692C268AEB4317603C38C89B
+                        9FF22084E8565D17B0A428E14481177DA9B0DE9F1515BFC4F032EC2C7F66B7CF
+                        FD31990ACEAF4CBF69CF73BB7DFEE2FBA0E0DF967834FAA4269369A28D259D64
+                        F443246E346ED4D4D57D0A87C3A7C2A6007F01FBE96DEA9DB376140000000049
+                        454E44AE426082}
+                      FileName = 
+                        'D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\images\m' +
+                        'enu_24x24.png'
+                    end>
+                  Align = Left
+                  HitTest = False
+                  Size.Width = 44.000000000000000000
+                  Size.Height = 48.000000000000000000
                   Size.PlatformDefault = False
-                  TabOrder = 0
-                  Text = 'PEDIDOS'
+                  WrapMode = Center
                 end
-                object CARDÁPIO: TListBoxItem
-                  HitTest = True
-                  Margins.Left = 8.000000000000000000
-                  Position.X = 8.000000000000000000
-                  Position.Y = 30.000000000000000000
-                  TabOrder = 3
+                object LabelMenuCardapio: TLabel
+                  Align = Client
+                  StyledSettings = [Family, Style, FontColor]
+                  Size.Width = 165.000000000000000000
+                  Size.Height = 48.000000000000000000
+                  Size.PlatformDefault = False
+                  TextSettings.Font.Size = 11.000000000000000000
                   Text = 'CARD'#193'PIO'
-                end
-                object ListBoxItem2: TListBoxItem
-                  HitTest = True
-                  Margins.Left = 8.000000000000000000
-                  Position.X = 8.000000000000000000
-                  Position.Y = 49.000000000000000000
-                  TabOrder = 2
-                  Text = 'FAZER PEDIDO'
-                end
-                object ListBoxItem1: TListBoxItem
-                  HitTest = True
-                  Margins.Left = 8.000000000000000000
-                  Position.X = 8.000000000000000000
-                  Position.Y = 68.000000000000000000
                   TabOrder = 1
-                  Text = 'MEUS PEDIDOS'
                 end
-                object ListBoxGroupHeader2: TListBoxGroupHeader
-                  TextSettings.Font.Size = 10.000000000000000000
-                  StyledSettings = [Family, Style, FontColor, Other]
-                  Position.Y = 87.000000000000000000
-                  Size.Width = 189.000000000000000000
-                  Size.Height = 30.000000000000000000
+              end
+              object LineCardapio: TLine
+                Align = Top
+                LineType = Diagonal
+                Margins.Top = 4.000000000000000000
+                Position.Y = 56.000000000000000000
+                Size.Width = 209.000000000000000000
+                Size.Height = 1.000000000000000000
+                Size.PlatformDefault = False
+                Stroke.Kind = Gradient
+                Stroke.Gradient.Points = <
+                  item
+                    Color = xFFD32121
+                    Offset = 0.000000000000000000
+                  end
+                  item
+                    Color = xFFFDE4E4
+                    Offset = 1.000000000000000000
+                  end>
+                Stroke.Gradient.StartPosition.Y = 0.500000000000000000
+                Stroke.Gradient.StopPosition.X = 1.000000000000000000
+                Stroke.Gradient.StopPosition.Y = 0.500000000000000000
+              end
+              object BtnMenuPedido: TSpeedButton
+                Align = Top
+                Margins.Top = 4.000000000000000000
+                Position.Y = 61.000000000000000000
+                Size.Width = 209.000000000000000000
+                Size.Height = 48.000000000000000000
+                Size.PlatformDefault = False
+                OnClick = DoCarregarPedidos
+                object ImageMenuPedido: TImage
+                  MultiResBitmap.Height = 24
+                  MultiResBitmap.Width = 24
+                  MultiResBitmap = <
+                    item
+                      Width = 24
+                      Height = 24
+                      PNG = {
+                        89504E470D0A1A0A0000000D4948445200000018000000180806000000E0773D
+                        F8000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                        032349444154484BB5565B48554114DD7BE6DC73AF76FBE861FD94F620023392
+                        EC650F15942C887EC2A4E8454278AF147D440F7F4CB28F8AA00788F96714947D
+                        26044211460FCAF0A7BE8AD4FC088B88305FF7CE9C69CDB9A7C0EA42DA6DC170
+                        F6D97B66EF3D6BF6997D98D2201173D64BD2BB0C530979B4440A9315987C688F
+                        4749D01B36D4A58DBCE9B6A8678169027E0B30541B2AC862D52CD96C0A54A48C
+                        BCE2B05E01B1940C357A780AA6326DF801B141221441C02E2D9C78B839F93AB5
+                        2A05113C7D8CC7427BB229D96D9D27857BDC337CC9EA9D9AC2631E73973FA9A6
+                        E82C097E644559B3720B335FB032325DE678C997D6877DFF819F01545C1C704C
+                        B20D8B7B46C233E785CA8BCF5345C9301D2C7269209AA0F212994EE6666221CC
+                        2C8330D6C7786D687FE036455122162A929C7C8209DDBC38EF212DCAFD1118D4
+                        3318211C83918258FF49869B04DDEFD2A0CF311E1D653672D464AF8BB68CF408
+                        D34042B0BA068FAECC99BD432CCCB38B4FF250B8C977CE74C27C73CFF80ED3C8
+                        388F7A5E5B710E3A658B01897E89F068AB4164A13EC9CD924C91769C1815E67F
+                        B059992137CAD313DF262D0774E10CE762AC52757233EB18DFC094DD5083F38D
+                        9A7AFB89DEF56B9FE729C8E26D5FD20625E6A39EA10EEADBCBEF4D9C8C1D56DD
+                        B09A4E4F42A674F2ED4ABE637DB38A732F285A609599060EAA8FC76ADDA5AE48
+                        ECC417896AC81C7003E884E7B6FB658A3D498C886FC910E0780C43731351250A
+                        FA3A8A7D4E60CB0850F61FF1D8C78D4483105408E702A5F2ADFF0824EBA094AA
+                        213ADCE0BF53C756A23D6BECB96400CF41F93D22943F6DB33B684784AA9429B3
+                        002377F83251189FE32194D0FC409F11808A8128516BF0FAFFC03A8E3BDF3387
+                        8598D81BFE15DA238F055F6555CB23CCD42FC8DC0E6C1901AEE16A7C0CB97607
+                        6DD8419512A1D5BFB6BBA9020DA7C011EA05C47631A623F52067487AAA138DBE
+                        343565EA18AD936552A84E5C9F5F9923A7FCAB62BC2EB45C6A7517CD220F8DFC
+                        29287B2C8C19F657FC25D0B3A719431BD0078AF103D0ABC9D91E6E49BEF20358
+                        0CC673A233E8F3119C453508CC47302730FD15E05421B1D786F996C8CAB92A2E
+                        0E2241A2EF75376C8CE7C8AE060000000049454E44AE426082}
+                      FileName = 
+                        'D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\images\p' +
+                        'edido_24x24.png'
+                    end>
+                  Align = Left
+                  HitTest = False
+                  Size.Width = 44.000000000000000000
+                  Size.Height = 48.000000000000000000
                   Size.PlatformDefault = False
-                  TabOrder = 4
-                  Text = 'CONFIGURA'#199#213'ES'
+                  WrapMode = Center
                 end
-                object ListBoxItem5: TListBoxItem
-                  HitTest = True
-                  Margins.Left = 8.000000000000000000
-                  Position.X = 8.000000000000000000
-                  Position.Y = 117.000000000000000000
-                  TabOrder = 5
-                  Text = 'MEUS DADOS'
-                  OnClick = ListBoxItem5Click
+                object LabelMenuPedido: TLabel
+                  Align = Client
+                  StyledSettings = [Family, Style, FontColor]
+                  Size.Width = 165.000000000000000000
+                  Size.Height = 48.000000000000000000
+                  Size.PlatformDefault = False
+                  TextSettings.Font.Size = 11.000000000000000000
+                  Text = 'PEDIDOS'
+                  TabOrder = 2
                 end
-                object ListBoxItem6: TListBoxItem
-                  HitTest = True
-                  Margins.Left = 8.000000000000000000
-                  Position.X = 8.000000000000000000
-                  Position.Y = 136.000000000000000000
-                  TabOrder = 6
-                  Text = 'SAIR'
+              end
+              object BtnMenuCompras: TSpeedButton
+                Align = Top
+                Margins.Top = 4.000000000000000000
+                Position.Y = 113.000000000000000000
+                Size.Width = 209.000000000000000000
+                Size.Height = 48.000000000000000000
+                Size.PlatformDefault = False
+                OnClick = DoCarregarHistoricoCompras
+                object ImageMenuCompras: TImage
+                  MultiResBitmap.Height = 24
+                  MultiResBitmap.Width = 24
+                  MultiResBitmap = <
+                    item
+                      Width = 24
+                      Height = 24
+                      PNG = {
+                        89504E470D0A1A0A0000000D4948445200000018000000180806000000E0773D
+                        F8000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                        021449444154484BD595B14E1B411086FFDD3B620C16A643A98D2848914028D2
+                        A5E40978853C002D8A8CF3027448812E255D1E216940911C1222A00021112952
+                        A448C19820DBF8EE36FFECED11CB77708748C327AD66FFB9F1CECEECDE190F1E
+                        E52C9696E0CDEEC393F9EA01FA7C60EC837B6213ACCCA3E62B3439AD8A3611BE
+                        3576F1F47F24B94EE03101854D20842166BC2B9C3A599C03040D2072EA5F8BEA
+                        2FE1B77B18A9F4F151030BCE7D6786ABE75A318D0F08D676D0A163DFB924C224
+                        234F0FF86A6213AE132430D226A07DA72A7864878749F175FEA02AFA275011CD
+                        5D5692182EBC283E7292EC5E4827902EC67616BFF85C462F8E1BAB724DEAC71D
+                        F73BB12E46194C8B4B6B1CD9678E54021DC6156885055346D70E1FBFC56742B4
+                        9CAF6D356D12A314D6C5174538169B904A80AFF8CEDD5FCAF42AC24CE11619BC
+                        B73E9553815C31061FCABCE4B936156811956D113797530131CADD24D95599CB
+                        FB38B33AC4B9D5655C582D36D63DEEFC89B8B49F5381A0A2F8A0EF0ADFAEBDD5
+                        4FF8E1A42533011B612BE0817DEE02934506C3C7DF34F16CF08A0A9909A220AE
+                        80576E7E14681519DCFD36174F9199C0DFC36964F0C5C97B9195D4C23AD5F20B
+                        8C4EB4E1B52778BCB72031FCC45F0EB72797D77358AFCF2110EB5C29F2626EAC
+                        E0D5738C4C1974F9466B1E76A077511AFC0C0B4562B26F11D968A2CF82DF325C
+                        DAB339FC43A1484C2E5BFC2B75D31B2912F35001FE02E2E9EEF6D0F0F1DA0000
+                        000049454E44AE426082}
+                      FileName = 
+                        'D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\images\c' +
+                        'ompras_24x24.png'
+                    end>
+                  Align = Left
+                  HitTest = False
+                  Size.Width = 44.000000000000000000
+                  Size.Height = 48.000000000000000000
+                  Size.PlatformDefault = False
+                  WrapMode = Center
                 end
+                object LabelMenuCompras: TLabel
+                  Align = Client
+                  StyledSettings = [Family, Style, FontColor]
+                  Size.Width = 165.000000000000000000
+                  Size.Height = 48.000000000000000000
+                  Size.PlatformDefault = False
+                  TextSettings.Font.Size = 11.000000000000000000
+                  Text = 'MINHAS COMPRAS'
+                  TabOrder = 2
+                end
+              end
+              object LineCompras: TLine
+                Align = Top
+                LineType = Diagonal
+                Margins.Top = 4.000000000000000000
+                Position.Y = 165.000000000000000000
+                Size.Width = 209.000000000000000000
+                Size.Height = 1.000000000000000000
+                Size.PlatformDefault = False
+                Stroke.Kind = Gradient
+                Stroke.Gradient.Points = <
+                  item
+                    Color = xFFD32121
+                    Offset = 0.000000000000000000
+                  end
+                  item
+                    Color = xFFFDE4E4
+                    Offset = 1.000000000000000000
+                  end>
+                Stroke.Gradient.StartPosition.Y = 0.500000000000000000
+                Stroke.Gradient.StopPosition.X = 1.000000000000000000
+                Stroke.Gradient.StopPosition.Y = 0.500000000000000000
               end
             end
           end

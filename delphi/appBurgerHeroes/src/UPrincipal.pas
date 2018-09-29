@@ -37,18 +37,25 @@ type
     ToolBarMenu: TToolBar;
     BtnMenu: TSpeedButton;
     LayoutMViewOpcoes: TLayout;
-    ListBoxMenu: TListBox;
-    ListBoxGroupHeader1: TListBoxGroupHeader;
-    ListBoxItem1: TListBoxItem;
-    ListBoxItem2: TListBoxItem;
-    CARDÁPIO: TListBoxItem;
-    ListBoxGroupHeader2: TListBoxGroupHeader;
-    ListBoxItem5: TListBoxItem;
-    ListBoxItem6: TListBoxItem;
     ImageUser: TImage;
+    BtnMenuCardapio: TSpeedButton;
+    ImageMenuCardapio: TImage;
+    LabelMenuCardapio: TLabel;
+    LineCardapio: TLine;
+    BtnMenuPedido: TSpeedButton;
+    ImageMenuPedido: TImage;
+    LabelMenuPedido: TLabel;
+    BtnMenuCompras: TSpeedButton;
+    ImageMenuCompras: TImage;
+    LabelMenuCompras: TLabel;
+    LineCompras: TLine;
+    procedure DoCarregarCardapio(Sender: TObject);
+    procedure DoCarregarPedidos(Sender: TObject);
+    procedure DoCarregarHistoricoCompras(Sender: TObject);
+
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    procedure ListBoxItem5Click(Sender: TObject);
+    procedure ListBoxItemMeusDadosClick(Sender: TObject);
   private
     { Private declarations }
     aPushService  : TPushService;
@@ -56,6 +63,7 @@ type
 
     procedure AtivarPushNotification;
     procedure CarregarPushNotification;
+    procedure SetStyleBotton(const aSpeedButton: TSpeedButton);
     procedure DoServiceConnectionChange(Sender : TObject; PushChanges : TPushService.TChanges);
     procedure DoReceiveNotificationEvent(Sender : TObject; const ServiceNotification : TPushServiceNotification);
   public
@@ -145,6 +153,21 @@ begin
   end;
 end;
 
+procedure TFrmPrincipal.DoCarregarCardapio(Sender: TObject);
+begin
+  SetStyleBotton(TSpeedButton(Sender));
+end;
+
+procedure TFrmPrincipal.DoCarregarHistoricoCompras(Sender: TObject);
+begin
+  SetStyleBotton(TSpeedButton(Sender));
+end;
+
+procedure TFrmPrincipal.DoCarregarPedidos(Sender: TObject);
+begin
+  SetStyleBotton(TSpeedButton(Sender));
+end;
+
 procedure TFrmPrincipal.DoReceiveNotificationEvent(Sender: TObject;
   const ServiceNotification: TPushServiceNotification);
 var
@@ -214,7 +237,7 @@ procedure TFrmPrincipal.FormCreate(Sender: TObject);
 var
   aWidth : Single;
 begin
-  aWidth := Round((Screen.Width / 3) * 2);
+  aWidth := Round((Screen.Width / 4) * 3);
   MultiViewMenu.Width := aWidth;
   MultiViewMenu.HideMaster;
 
@@ -223,11 +246,22 @@ begin
   AtivarPushNotification;
 end;
 
-procedure TFrmPrincipal.ListBoxItem5Click(Sender: TObject);
+procedure TFrmPrincipal.ListBoxItemMeusDadosClick(Sender: TObject);
 begin
   MultiViewMenu.HideMaster;
   Application.CreateForm(TFrmAbout, FrmAbout);
   FrmAbout.Show;
+end;
+
+procedure TFrmPrincipal.SetStyleBotton(const aSpeedButton: TSpeedButton);
+begin
+  MultiViewMenu.HideMaster;
+
+  BtnMenuCardapio.IsPressed := False;
+  BtnMenuPedido.IsPressed   := False;
+  BtnMenuCompras.IsPressed  := False;
+
+  aSpeedButton.IsPressed  := True;
 end;
 
 end.
