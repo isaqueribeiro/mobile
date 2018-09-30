@@ -13,6 +13,10 @@ uses
   System.Threading,
   System.Math,
 
+//  {$IF DEFINED (ANDROID)}
+//  System.Android.Service,
+//  {$ENDIF}
+
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.TabControl, FMX.Layouts,
   FMX.Controls.Presentation, FMX.MultiView, FMX.StdCtrls, FMX.Objects, FMX.ListBox, IPPeerClient,
@@ -49,6 +53,9 @@ type
     ImageMenuCompras: TImage;
     LabelMenuCompras: TLabel;
     LineCompras: TLine;
+    SpeedButton1: TSpeedButton;
+    Image1: TImage;
+    Label1: TLabel;
     procedure DoCarregarCardapio(Sender: TObject);
     procedure DoCarregarPedidos(Sender: TObject);
     procedure DoCarregarHistoricoCompras(Sender: TObject);
@@ -56,8 +63,12 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure ListBoxItemMeusDadosClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
+//    {$IF DEFINED (ANDROID)}
+//    aServiceBurgerHeroes : TLocalServiceConnection;
+//    {$ENDIF}
     aPushService  : TPushService;
     aPushServiceConnection : TPushServiceConnection;
 
@@ -242,7 +253,6 @@ begin
   MultiViewMenu.HideMaster;
 
   tabControlForm.TabPosition := TTabPosition.None;
-
   AtivarPushNotification;
 end;
 
@@ -262,6 +272,14 @@ begin
   BtnMenuCompras.IsPressed  := False;
 
   aSpeedButton.IsPressed  := True;
+end;
+
+procedure TFrmPrincipal.SpeedButton1Click(Sender: TObject);
+begin
+//  {$IF DEFINED (ANDROID)}
+//  aServiceBurgerHeroes := TLocalServiceConnection.Create;
+//  aServiceBurgerHeroes.StartService('ServiceBurgerHeroes');
+//  {$ENDIF}
 end;
 
 end.

@@ -43,7 +43,7 @@ object FrmPrincipal: TFrmPrincipal
             item
             end>
           IsSelected = False
-          Size.Width = 146.000000000000000000
+          Size.Width = 56.000000000000000000
           Size.Height = 49.000000000000000000
           Size.PlatformDefault = False
           StyleLookup = ''
@@ -57,7 +57,7 @@ object FrmPrincipal: TFrmPrincipal
             item
             end>
           IsSelected = True
-          Size.Width = 147.000000000000000000
+          Size.Width = 55.000000000000000000
           Size.Height = 49.000000000000000000
           Size.PlatformDefault = False
           StyleLookup = ''
@@ -82,6 +82,7 @@ object FrmPrincipal: TFrmPrincipal
                 Size.Height = 48.000000000000000000
                 Size.PlatformDefault = False
                 StyleLookup = 'drawertoolbutton'
+                Visible = False
               end
             end
           end
@@ -186,10 +187,8 @@ object FrmPrincipal: TFrmPrincipal
               TabOrder = 1
               object BtnMenuCardapio: TSpeedButton
                 Align = Top
-                Margins.Top = 4.000000000000000000
-                Position.Y = 4.000000000000000000
                 Size.Width = 209.000000000000000000
-                Size.Height = 48.000000000000000000
+                Size.Height = 40.000000000000000000
                 Size.PlatformDefault = False
                 OnClick = DoCarregarCardapio
                 object ImageMenuCardapio: TImage
@@ -230,16 +229,16 @@ object FrmPrincipal: TFrmPrincipal
                     end>
                   Align = Left
                   HitTest = False
-                  Size.Width = 44.000000000000000000
-                  Size.Height = 48.000000000000000000
+                  Size.Width = 40.000000000000000000
+                  Size.Height = 40.000000000000000000
                   Size.PlatformDefault = False
                   WrapMode = Center
                 end
                 object LabelMenuCardapio: TLabel
                   Align = Client
                   StyledSettings = [Family, Style, FontColor]
-                  Size.Width = 165.000000000000000000
-                  Size.Height = 48.000000000000000000
+                  Size.Width = 169.000000000000000000
+                  Size.Height = 40.000000000000000000
                   Size.PlatformDefault = False
                   TextSettings.Font.Size = 11.000000000000000000
                   Text = 'CARD'#193'PIO'
@@ -249,8 +248,10 @@ object FrmPrincipal: TFrmPrincipal
               object LineCardapio: TLine
                 Align = Top
                 LineType = Diagonal
+                Opacity = 0.500000000000000000
                 Margins.Top = 4.000000000000000000
-                Position.Y = 56.000000000000000000
+                Margins.Bottom = 4.000000000000000000
+                Position.Y = 44.000000000000000000
                 Size.Width = 209.000000000000000000
                 Size.Height = 1.000000000000000000
                 Size.PlatformDefault = False
@@ -270,10 +271,9 @@ object FrmPrincipal: TFrmPrincipal
               end
               object BtnMenuPedido: TSpeedButton
                 Align = Top
-                Margins.Top = 4.000000000000000000
-                Position.Y = 61.000000000000000000
+                Position.Y = 49.000000000000000000
                 Size.Width = 209.000000000000000000
-                Size.Height = 48.000000000000000000
+                Size.Height = 40.000000000000000000
                 Size.PlatformDefault = False
                 OnClick = DoCarregarPedidos
                 object ImageMenuPedido: TImage
@@ -286,48 +286,48 @@ object FrmPrincipal: TFrmPrincipal
                       PNG = {
                         89504E470D0A1A0A0000000D4948445200000018000000180806000000E0773D
                         F8000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-                        032349444154484BB5565B48554114DD7BE6DC73AF76FBE861FD94F620023392
-                        EC650F15942C887EC2A4E8454278AF147D440F7F4CB28F8AA00788F96714947D
-                        26044211460FCAF0A7BE8AD4FC088B88305FF7CE9C69CDB9A7C0EA42DA6DC170
-                        F6D97B66EF3D6BF6997D98D2201173D64BD2BB0C530979B4440A9315987C688F
-                        4749D01B36D4A58DBCE9B6A8678169027E0B30541B2AC862D52CD96C0A54A48C
-                        BCE2B05E01B1940C357A780AA6326DF801B141221441C02E2D9C78B839F93AB5
-                        2A05113C7D8CC7427BB229D96D9D27857BDC337CC9EA9D9AC2631E73973FA9A6
-                        E82C097E644559B3720B335FB032325DE678C997D6877DFF819F01545C1C704C
-                        B20D8B7B46C233E785CA8BCF5345C9301D2C7269209AA0F212994EE6666221CC
-                        2C8330D6C7786D687FE036455122162A929C7C8209DDBC38EF212DCAFD1118D4
-                        3318211C83918258FF49869B04DDEFD2A0CF311E1D653672D464AF8BB68CF408
-                        D34042B0BA068FAECC99BD432CCCB38B4FF250B8C977CE74C27C73CFF80ED3C8
-                        388F7A5E5B710E3A658B01897E89F068AB4164A13EC9CD924C91769C1815E67F
-                        B059992137CAD313DF262D0774E10CE762AC52757233EB18DFC094DD5083F38D
-                        9A7AFB89DEF56B9FE729C8E26D5FD20625E6A39EA10EEADBCBEF4D9C8C1D56DD
-                        B09A4E4F42A674F2ED4ABE637DB38A732F285A609599060EAA8FC76ADDA5AE48
-                        ECC417896AC81C7003E884E7B6FB658A3D498C886FC910E0780C43731351250A
-                        FA3A8A7D4E60CB0850F61FF1D8C78D4483105408E702A5F2ADFF0824EBA094AA
-                        213ADCE0BF53C756A23D6BECB96400CF41F93D22943F6DB33B684784AA9429B3
-                        002377F83251189FE32194D0FC409F11808A8128516BF0FAFFC03A8E3BDF3387
-                        8598D81BFE15DA238F055F6555CB23CCD42FC8DC0E6C1901AEE16A7C0CB97607
-                        6DD8419512A1D5BFB6BBA9020DA7C011EA05C47631A623F52067487AAA138DBE
-                        343565EA18AD936552A84E5C9F5F9923A7FCAB62BC2EB45C6A7517CD220F8DFC
-                        29287B2C8C19F657FC25D0B3A719431BD0078AF103D0ABC9D91E6E49BEF20358
-                        0CC673A233E8F3119C453508CC47302730FD15E05421B1D786F996C8CAB92A2E
-                        0E2241A2EF75376C8CE7C8AE060000000049454E44AE426082}
+                        032749444154484BB5565B48954110FE66F73FFF39D6E9A18BF552DA8508BA90
+                        6437BB98907481E8254A0AA94828CF91A287E8E28B45F650115881986F8541D9
+                        634210146174A18C5EEAA948CD87B08808CBCBF977FF69FEDFBFC04A483D7DB0
+                        ECECCCEECCCEECECCE12864126E5ACD2B03B9950CC16731DCD39912884B1D447
+                        1A6F88D16A595F771BCCD34834047F18E8A98C2DCC2153AF89D7462C18D6971C
+                        B28B855C07C6295F7A4528B14CF79978950324AC4FAD5639E978BDF77A70D520
+                        54D4871848C5CA73D86B0B947BCA3DEA33D5057CA7A2E0884FD41A4EAA283C03
+                        450F0352572CD9A488CE877CC6026DBD17818E701CE1970193567BB5EF5D85A6
+                        97BDF149D363EB8BCEA1B4F83BF615BAE84A66B0BE580F47533D486B9ECC1290
+                        40C740656C4FA47630449954AC5091F758866D3427FF0166E7FD34AC15934404
+                        F0C15A81ECDF685997C1BD562B5E38BEC56152ACFB79DCCA6443EF4BC535508A
+                        CC1599E5EADC29DBD4ACFC60F171EA89D786CA09C7F89B7B3A54380C2DE7514D
+                        2B4ACF0ACF04C9209E7C49505F238B65653EE90D1A5C681D278582F91F825D71
+                        8F9BA409996F23A6A37039C4D3E41C979A2ABD816C8A9A18BC8B484BCCD758B4
+                        7702EF3A6D18E751D0EA6D87171805D1619FD1828E727ACF6970D00276CD329C
+                        1C018DE1E81B1BE956A09BBC34B53BE0990133DB30A00EEAAF74E7B92AB3436E
+                        A49C73F6202F80CDF86E7398A6E29396960825598228EE9766A916D828097D4D
+                        927D6A24CB0AE4227D946E379D02BA853031E0A6304D281D2364B38EA4529990
+                        0ED58463B46C06CA978B4BE18C31E29984FC0ED024E496C08366B1B07D50945D
+                        48446ED145202ED771BFA4D08C889F154828BA92406334FC7F209BA63AB67C50
+                        EBA1B561AC3016BED27499BC03D44B0A9DF2E0DD8C6459813CB7657219F2020F
+                        AE8A07DBAD8E2DFBBDDC8D165270166A659ECB456B56FD36512D8F448FB2E6AE
+                        14FA75D19C51A3AF4A972865EECAF3F9952871227C2A06AA628B9431B7A558E4
+                        4B217F4284478AF97BB8E21F21357B3C33564B1D28323EB5FB70B6C61BBC57A1
+                        8100DDE9DCE4447C3EA4C065F24D992FC6E4B3F0EF906F8C91B37C2D75E086CA
+                        C9BDAC2E74CB06811FE1967283266CC98F0000000049454E44AE426082}
                       FileName = 
                         'D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\images\p' +
                         'edido_24x24.png'
                     end>
                   Align = Left
                   HitTest = False
-                  Size.Width = 44.000000000000000000
-                  Size.Height = 48.000000000000000000
+                  Size.Width = 40.000000000000000000
+                  Size.Height = 40.000000000000000000
                   Size.PlatformDefault = False
                   WrapMode = Center
                 end
                 object LabelMenuPedido: TLabel
                   Align = Client
                   StyledSettings = [Family, Style, FontColor]
-                  Size.Width = 165.000000000000000000
-                  Size.Height = 48.000000000000000000
+                  Size.Width = 169.000000000000000000
+                  Size.Height = 40.000000000000000000
                   Size.PlatformDefault = False
                   TextSettings.Font.Size = 11.000000000000000000
                   Text = 'PEDIDOS'
@@ -336,10 +336,9 @@ object FrmPrincipal: TFrmPrincipal
               end
               object BtnMenuCompras: TSpeedButton
                 Align = Top
-                Margins.Top = 4.000000000000000000
-                Position.Y = 113.000000000000000000
+                Position.Y = 89.000000000000000000
                 Size.Width = 209.000000000000000000
-                Size.Height = 48.000000000000000000
+                Size.Height = 40.000000000000000000
                 Size.PlatformDefault = False
                 OnClick = DoCarregarHistoricoCompras
                 object ImageMenuCompras: TImage
@@ -352,40 +351,40 @@ object FrmPrincipal: TFrmPrincipal
                       PNG = {
                         89504E470D0A1A0A0000000D4948445200000018000000180806000000E0773D
                         F8000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-                        021449444154484BD595B14E1B411086FFDD3B620C16A643A98D2848914028D2
-                        A5E40978853C002D8A8CF3027448812E255D1E216940911C1222A00021112952
-                        A448C19820DBF8EE36FFECED11CB77708748C327AD66FFB9F1CECEECDE190F1E
-                        E52C9696E0CDEEC393F9EA01FA7C60EC837B6213ACCCA3E62B3439AD8A3611BE
-                        3576F1F47F24B94EE03101854D20842166BC2B9C3A599C03040D2072EA5F8BEA
-                        2FE1B77B18A9F4F151030BCE7D6786ABE75A318D0F08D676D0A163DFB924C224
-                        234F0FF86A6213AE132430D226A07DA72A7864878749F175FEA02AFA275011CD
-                        5D5692182EBC283E7292EC5E4827902EC67616BFF85C462F8E1BAB724DEAC71D
-                        F73BB12E46194C8B4B6B1CD9678E54021DC6156885055346D70E1FBFC56742B4
-                        9CAF6D356D12A314D6C5174538169B904A80AFF8CEDD5FCAF42AC24CE11619BC
-                        B73E9553815C31061FCABCE4B936156811956D113797530131CADD24D95599CB
-                        FB38B33AC4B9D5655C582D36D63DEEFC89B8B49F5381A0A2F8A0EF0ADFAEBDD5
-                        4FF8E1A42533011B612BE0817DEE02934506C3C7DF34F16CF08A0A9909A220AE
-                        80576E7E14681519DCFD36174F9199C0DFC36964F0C5C97B9195D4C23AD5F20B
-                        8C4EB4E1B52778BCB72031FCC45F0EB72797D77358AFCF2110EB5C29F2626EAC
-                        E0D5738C4C1974F9466B1E76A077511AFC0C0B4562B26F11D968A2CF82DF325C
-                        DAB339FC43A1484C2E5BFC2B75D31B2912F35001FE02E2E9EEF6D0F0F1DA0000
-                        000049454E44AE426082}
+                        021549444154484BD5554D4B1C41107D3D3DEAAE595C4F826783073DC4AF436E
+                        1EFD05FB17FC015E83B84B7E406E42925B8EB9E5272497046165553407256040
+                        100435ABB2BB3A339D573D3D467666991173F14153FDAA6BFA55D5F4F4E0D943
+                        398B5A0D7A661F5AE6F503DC71C1D88527C20ABC59C094AFD0E4B42ADC84D86B
+                        B4F0EA7F88DC0B680A9058014118625ADFE2D8D1E23840D00022C7FEB5686319
+                        7EBB87A1CA1DBE79C092733F1AFDD573AF188DAF08DEFD40878E7DE79208938C
+                        3C9EF898FA94D804F70209186905683FA90A86EDD018175FE71A55E1A7404538
+                        B3AC2431DC7D457C74FE4AB217A405A48BB19DC119D765F4E2B8D12A1F279FEC
+                        B8E7C4BA1865F0525CDAC3A15D73480978615C81A7B064CAE8DAE1E35C7CECEF
+                        A5F3B52DA74D6294C2A6F8A208476213A404B083DFCCFE46A6B711A60BB7C8E0
+                        8BF5A99C0AE48831F8A7CC47B46B53811691D91631B99C0A08A3DC4992ACCADC
+                        DEC785E521FE585EC695E56263DE63E6B3E2F2FC9C0A042A8A5FF4631102BBF5
+                        2D9C386A9129C046D80AF8356F7781F12283E12FDE3631F7F0880A3205A220AE
+                        406B2C9480CB2283D97FE7E629640AF8BB380E0D5A8E3E0959A216AC53ADBD46
+                        69AC0DDD1E93F60E86C4F08ABFE96F4F2ED6E7B1B9318740AC73A5901733B082
+                        D5450C4D1874798D7B7CD9816E61E4E1352C2812937D8A880F4DFED50CDEB339
+                        21CFF8C7FE0705456272F199BF52371D882231CF15C05FE20CEEF7522E079600
+                        00000049454E44AE426082}
                       FileName = 
                         'D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\images\c' +
                         'ompras_24x24.png'
                     end>
                   Align = Left
                   HitTest = False
-                  Size.Width = 44.000000000000000000
-                  Size.Height = 48.000000000000000000
+                  Size.Width = 40.000000000000000000
+                  Size.Height = 40.000000000000000000
                   Size.PlatformDefault = False
                   WrapMode = Center
                 end
                 object LabelMenuCompras: TLabel
                   Align = Client
                   StyledSettings = [Family, Style, FontColor]
-                  Size.Width = 165.000000000000000000
-                  Size.Height = 48.000000000000000000
+                  Size.Width = 169.000000000000000000
+                  Size.Height = 40.000000000000000000
                   Size.PlatformDefault = False
                   TextSettings.Font.Size = 11.000000000000000000
                   Text = 'MINHAS COMPRAS'
@@ -395,8 +394,10 @@ object FrmPrincipal: TFrmPrincipal
               object LineCompras: TLine
                 Align = Top
                 LineType = Diagonal
+                Opacity = 0.500000000000000000
                 Margins.Top = 4.000000000000000000
-                Position.Y = 165.000000000000000000
+                Margins.Bottom = 4.000000000000000000
+                Position.Y = 133.000000000000000000
                 Size.Width = 209.000000000000000000
                 Size.Height = 1.000000000000000000
                 Size.PlatformDefault = False
@@ -413,6 +414,63 @@ object FrmPrincipal: TFrmPrincipal
                 Stroke.Gradient.StartPosition.Y = 0.500000000000000000
                 Stroke.Gradient.StopPosition.X = 1.000000000000000000
                 Stroke.Gradient.StopPosition.Y = 0.500000000000000000
+              end
+              object SpeedButton1: TSpeedButton
+                Align = Top
+                Position.Y = 138.000000000000000000
+                Size.Width = 209.000000000000000000
+                Size.Height = 40.000000000000000000
+                Size.PlatformDefault = False
+                OnClick = SpeedButton1Click
+                object Image1: TImage
+                  MultiResBitmap.Height = 24
+                  MultiResBitmap.Width = 24
+                  MultiResBitmap = <
+                    item
+                      Width = 24
+                      Height = 24
+                      PNG = {
+                        89504E470D0A1A0A0000000D4948445200000018000000180806000000E0773D
+                        F8000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                        021649444154484BD595C14E14411086FFEE1E84D50DCBC503670C073CA0C8C1
+                        9B479F8057E001B81A031B1FC01B897AF3E8CD47D08BC6640D60C083C6041313
+                        1212C545B2BBECCCB47FD5F420D999CD0CC10B5FD2A9FEAB6BBBBA6A7B6670E5
+                        31C16265056E61174EE61B7B1872C1EBC225D1048F9630171974386D89F6093E
+                        B5B7B0F83F929C25704C40A1098424C1BC3BC57E90F5D943DC06D2A0FEB568FD
+                        01A2EE0013CD21DE5A6039B82FCC68F5DC2BA3FD06F1D3F7E8D1B11B5C12E1F3
+                        51A5735FE2312736E72C410E233501ED4BD3C4351D0E33E2EBFD414BF401D014
+                        CD5336F318EEFE507D16DFF2D30BC504D2C5CC2EE090EB320659DCF516F7A49E
+                        ED85DF890D31C6E396B89CC5175D0B1412D824ABC01A2CFB06FA3A22FC141FFB
+                        7B147C5DD5B4798C31D8145F9AE2ABD89C42026CE33B4F7F22D3D314F3B55BE4
+                        F15A7DA6A202B9620CFE2CF34917DA54A34554DA221EAEA202E24DB84972AA06
+                        B78FF04B7582DFAA1B38562D36D3039EFCB6B86C54518160D2EC8FBE2809B0B3
+                        F1013F82544A13B0115A019FE68F7D60A6CE60F88D271DDC397F4585D204699C
+                        55E01C96A680A33A83A77FC7CD0B94268876B0CF27722BC84B519654619D66ED
+                        3EA6A6BB70DD6969EF782486AFF893D1F654F2F82E36D717118B0DAE02553163
+                        2B58BD87899B1E7D7E276C1C238EB63179FE352CD48929BF45E4790743EBF10C
+                        31126BF162F487429D984A5EF1531AA663A913735501FE0262B3EFF97E6103FC
+                        0000000049454E44AE426082}
+                      FileName = 
+                        'D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\images\c' +
+                        'ompras_24x24.png'
+                    end>
+                  Align = Left
+                  HitTest = False
+                  Size.Width = 40.000000000000000000
+                  Size.Height = 40.000000000000000000
+                  Size.PlatformDefault = False
+                  WrapMode = Center
+                end
+                object Label1: TLabel
+                  Align = Client
+                  StyledSettings = [Family, Style, FontColor]
+                  Size.Width = 169.000000000000000000
+                  Size.Height = 40.000000000000000000
+                  Size.PlatformDefault = False
+                  TextSettings.Font.Size = 11.000000000000000000
+                  Text = 'ATIVAR SERVI'#199'O (TESTE)'
+                  TabOrder = 2
+                end
               end
             end
           end

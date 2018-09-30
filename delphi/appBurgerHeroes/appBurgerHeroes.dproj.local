@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2018/09/28 14:50:59.000.611,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UPrincipal.fmx=D:\Projetos\Unit1.fmx</Transaction>
-    <Transaction>2018/09/28 14:51:10.000.379,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\appBurgerHeroes.dproj=D:\Projetos\Project1.dproj</Transaction>
-    <Transaction>2018/09/28 15:09:55.000.279,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UDM.dfm=D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\Unit1.dfm</Transaction>
-    <Transaction>2018/09/28 19:51:56.000.539,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\Unit1.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UAbout.fmx</Transaction>
+    <Transaction>2018/09/28 14:50:59.000.611,D:\Projetos\Unit1.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UPrincipal.fmx</Transaction>
+    <Transaction>2018/09/28 14:51:10.000.379,D:\Projetos\Project1.dproj=D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\appBurgerHeroes.dproj</Transaction>
+    <Transaction>2018/09/28 15:09:55.000.279,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\Unit1.dfm=D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UDM.dfm</Transaction>
+    <Transaction>2018/09/28 19:51:56.000.539,D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\src\UAbout.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\Unit1.fmx</Transaction>
+    <Transaction>2018/09/30 13:18:07.115,=D:\Projetos\ASS\mobile\trunk\delphi\appBurgerHeroes\Android\Release\ServiceBurgerHeroes.jar</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<PMacOS iOSSimulator="iPhone5"/>
-		<NoProfile Android=""/>
+		<NoProfile Android="HCAXB6009519E7B"/>
 	</ActiveMobileDevice>
 </BorlandProject>

@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{92FBF838-E249-49BE-9F68-B93525EBBC6F}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="appBurgerHeroes.dproj">
+            <Dependencies>ServiceBurgerHeroes.dproj</Dependencies>
+        </Projects>
+        <Projects Include="ServiceBurgerHeroes.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="appBurgerHeroes" DependsOnTargets="ServiceBurgerHeroes">
+        <MSBuild Projects="appBurgerHeroes.dproj"/>
+    </Target>
+    <Target Name="appBurgerHeroes:Clean" DependsOnTargets="ServiceBurgerHeroes:Clean">
+        <MSBuild Projects="appBurgerHeroes.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="appBurgerHeroes:Make" DependsOnTargets="ServiceBurgerHeroes:Make">
+        <MSBuild Projects="appBurgerHeroes.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ServiceBurgerHeroes">
+        <MSBuild Projects="ServiceBurgerHeroes.dproj"/>
+    </Target>
+    <Target Name="ServiceBurgerHeroes:Clean">
+        <MSBuild Projects="ServiceBurgerHeroes.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ServiceBurgerHeroes:Make">
+        <MSBuild Projects="ServiceBurgerHeroes.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="appBurgerHeroes;ServiceBurgerHeroes"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="appBurgerHeroes:Clean;ServiceBurgerHeroes:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="appBurgerHeroes:Make;ServiceBurgerHeroes:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

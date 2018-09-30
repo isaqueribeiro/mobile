@@ -50,6 +50,7 @@
 		-->
         <%receivers%>
 		<service android:name="com.embarcadero.gcm.notifications.GCMIntentService"/>
+		<service android:exported="false" android:name="com.embarcadero.services.ServiceBurgerHeroes" />
     </application>
 </manifest>
 <!-- END_INCLUDE(manifest) -->

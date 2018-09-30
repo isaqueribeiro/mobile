@@ -3,10 +3,11 @@ program appBurgerHeroes;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal},
   classes.Constantes in 'src\classes\classes.Constantes.pas',
+  UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal},
   UDM in 'src\UDM.pas' {DM: TDataModule},
-  UAbout in 'src\UAbout.pas' {FrmAbout};
+  UAbout in 'src\UAbout.pas' {FrmAbout},
+  UDMService in 'src\UDMService.pas' {DMService: TAndroidService};
 
 {$R *.res}
 
