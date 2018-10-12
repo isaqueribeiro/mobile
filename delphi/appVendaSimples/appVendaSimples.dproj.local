@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2018/10/12 10:10:29.919,=D:\Projetos\Unit1.pas</Transaction>
+    <Transaction>2018/10/12 10:13:21.253,D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UInicial.fmx=D:\Projetos\Unit1.fmx</Transaction>
+    <Transaction>2018/10/12 10:13:21.253,D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UInicial.pas=D:\Projetos\Unit1.pas</Transaction>
+    <Transaction>2018/10/12 10:15:42.843,D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\appVendaSimples.dproj=D:\Projetos\Project1.dproj</Transaction>
+    <Transaction>2018/10/12 14:38:02.032,=D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\Unit1.pas</Transaction>
+    <Transaction>2018/10/12 14:38:22.052,D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UConstantes.pas=D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\Unit1.pas</Transaction>
+  </Transactions>
+  <ActiveMobileDevice>   <PMacOS iOSSimulator="iPhone5"/>
+  </ActiveMobileDevice>
+</BorlandProject>
