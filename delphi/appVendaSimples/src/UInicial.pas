@@ -57,7 +57,7 @@ implementation
 
 {$R *.fmx}
 
-uses UConstantes;
+uses UConstantes, UDM;
 
 { TFrmInicial }
 
@@ -97,6 +97,11 @@ begin
   begin
     aSlide := (aSlide + 1);
     ExibriSlide(aSlide);
+  end
+  else
+  begin
+    layoutWizard.Visible := False;
+    LayoutFundo.Visible  := True;
   end;
 end;
 
