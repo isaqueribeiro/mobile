@@ -11,7 +11,7 @@ uses
 type
   TFrmPrincipal = class(TForm)
     StyleBook: TStyleBook;
-    layoutBotoes: TLayout;
+    layoutTabs: TLayout;
     layoutTabPedido: TLayout;
     layoutTabCliente: TLayout;
     layoutTabNotificacao: TLayout;
@@ -28,12 +28,43 @@ type
     labelNotification: TLabel;
     TabPedido: TLayout;
     rectangleTituloPedido: TRectangle;
-    layoutBusca: TLayout;
-    rectangleBusca: TRectangle;
-    editBusca: TEdit;
+    layoutBuscaPedido: TLayout;
+    rectangleBuscaPedido: TRectangle;
+    editBuscaPedido: TEdit;
     ListViewPedido: TListView;
     labelTituloPedido: TLabel;
     imageAddPedido: TImage;
+    imageBuscaPedido: TImage;
+    TabCliente: TLayout;
+    rectangleTituloCliente: TRectangle;
+    labelTituloCliente: TLabel;
+    imageAddCliente: TImage;
+    layoutBuscaCliente: TLayout;
+    rectangleBuscaCliente: TRectangle;
+    editBuscaCliente: TEdit;
+    imageBuscaCliente: TImage;
+    ListViewCliente: TListView;
+    TabNotificacao: TLayout;
+    rectangleTituloNotificacao: TRectangle;
+    labelTituloNotificacao: TLabel;
+    ListViewNotificacao: TListView;
+    TabMais: TLayout;
+    rectangleTituloMais: TRectangle;
+    labelTituloMais: TLabel;
+    layoutMaisOpcoes: TLayout;
+    layoutMaisOpcoesL1: TLayout;
+    imageProduto: TImage;
+    labelProduto: TLabel;
+    imageSincronizar: TImage;
+    labelSincronizar: TLabel;
+    layoutMaisOpcoesL2: TLayout;
+    imageMeuPerfil: TImage;
+    labelMeuPerfil: TLabel;
+    imageIndicarApp: TImage;
+    labelIndicarApp: TLabel;
+    layoutMaisOpcoesL3: TLayout;
+    imageSair: TImage;
+    labelSair: TLabel;
     procedure DoSelecinarTab(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -112,9 +143,9 @@ begin
   labelTabMais.FontColor        := crCinza;
 
   TabPedido.Visible      := (aTab = idxTabPedido);
-//  TabCliente.Visible     := (aTab = idxTabCliente);
-//  TabNotificacao.Visible := (aTab = idxTabNotificacao);
-//  TabMais.Visible        := (aTab = idxTabMais);
+  TabCliente.Visible     := (aTab = idxTabCliente);
+  TabNotificacao.Visible := (aTab = idxTabNotificacao);
+  TabMais.Visible        := (aTab = idxTabMais);
 
   Case aTab of
     idxTabPedido :
