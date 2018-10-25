@@ -354,6 +354,7 @@
             <Form>FrmPrincipal</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="src\classes.ScriptDDL.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -380,14 +381,17 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="bin\Win32\Debug\appVendaSimples.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>appVendaSimples.exe</RemoteName>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -396,13 +400,89 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="Android">
+                        <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\db\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\db\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="Android">
+                        <RemoteDir>.\assets\internal\</RemoteDir>
+                        <Enabled>false</Enabled>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="bin\Win32\Debug\appVendaSimples.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\db\</RemoteDir>
+                        <RemoteName>appVendaSimples.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\db\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

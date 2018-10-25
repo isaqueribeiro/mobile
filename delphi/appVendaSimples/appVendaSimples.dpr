@@ -7,7 +7,8 @@ uses
   UConstantes in 'src\UConstantes.pas',
   ULogin in 'src\ULogin.pas' {FrmLogin},
   UDM in 'src\UDM.pas' {DM: TDataModule},
-  UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal};
+  UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal},
+  classes.ScriptDDL in 'src\classes.ScriptDDL.pas';
 
 {$R *.res}
 
