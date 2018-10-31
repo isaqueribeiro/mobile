@@ -12,6 +12,7 @@ object DM: TDM
       'LockingMode=Normal'
       'DriverID=SQLite')
     LoginPrompt = False
+    AfterConnect = connAfterConnect
     Left = 48
     Top = 32
   end

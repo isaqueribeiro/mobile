@@ -18,6 +18,7 @@ type
     conn: TFDConnection;
     drvSQLiteDriver: TFDPhysSQLiteDriverLink;
     procedure DataModuleCreate(Sender: TObject);
+    procedure connAfterConnect(Sender: TObject);
   private
     { Private declarations }
     procedure SetArquivoDB(const aFileName : String);
@@ -36,6 +37,18 @@ uses
   UConstantes, classes.ScriptDDL;
 
 {$R *.dfm}
+
+procedure TDM.connAfterConnect(Sender: TObject);
+var
+  aScriptDDL : TScriptDDL;
+begin
+  aScriptDDL := TScriptDDL.GetInstance;
+  conn.ExecSQL(aScriptDDL.getCreateTableVersao.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTableUsuario.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTableCliente.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTablePedido.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTableNotificacao.Text, True);
+end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
 var
