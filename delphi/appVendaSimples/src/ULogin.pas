@@ -47,23 +47,60 @@ type
     ChangeTabLogin: TChangeTabAction;
     ChangeTabCadastro: TChangeTabAction;
     procedure DoExecutarLink(Sender: TObject);
+    procedure DoAcessar(Sender: TObject);
+
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
+    aConfirmado : Boolean;
     procedure DefinirLink;
   public
     { Public declarations }
+    property Confirmado : Boolean read aConfirmado;
   end;
 
-var
-  FrmLogin: TFrmLogin;
+//var
+//  FrmLogin: TFrmLogin;
+//
+  procedure CadastrarNovaConta;
+  function EfetuarLogin : Boolean;
 
 implementation
 
 {$R *.fmx}
 
-uses UDM;
+uses
+  UDM;
+
+procedure CadastrarNovaConta;
+var
+  aForm : TFrmLogin;
+begin
+  Application.CreateForm(TFrmLogin, aForm);
+  Application.RealCreateForms;
+  try
+    aForm.TabControl.ActiveTab := aForm.TabCadastro;
+    aForm.ShowModal;
+  finally
+    aForm.DisposeOf;
+  end;
+end;
+
+function EfetuarLogin : Boolean;
+var
+  aForm : TFrmLogin;
+begin
+  Application.CreateForm(TFrmLogin, aForm);
+  Application.RealCreateForms;
+  try
+    aForm.TabControl.ActiveTab := aForm.TabLogin;
+    aForm.ShowModal;
+  finally
+    Result := aForm.Confirmado;
+    aForm.DisposeOf;
+  end;
+end;
 
 procedure TFrmLogin.DefinirLink;
 begin
@@ -72,6 +109,14 @@ begin
   else
   if (TabControl.ActiveTab = TabCadastro) then
     labelLinkRodape.Text := 'Já tem um cadastro? Faça o login aqui.';
+end;
+
+procedure TFrmLogin.DoAcessar(Sender: TObject);
+begin
+  DM.ConectarDB;
+
+  aConfirmado := True;
+  Self.Close;
 end;
 
 procedure TFrmLogin.DoExecutarLink(Sender: TObject);
@@ -89,6 +134,7 @@ procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
   TabControl.ActiveTab   := TabLogin;
   TabControl.TabPosition := TTabPosition.None;
+  aConfirmado := False;
 end;
 
 procedure TFrmLogin.FormShow(Sender: TObject);

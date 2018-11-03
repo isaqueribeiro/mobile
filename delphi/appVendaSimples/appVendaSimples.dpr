@@ -8,15 +8,18 @@ uses
   ULogin in 'src\ULogin.pas' {FrmLogin},
   UDM in 'src\UDM.pas' {DM: TDataModule},
   UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal},
-  classes.ScriptDDL in 'src\classes.ScriptDDL.pas';
+  UMensagem in 'src\UMensagem.pas' {FrmMensagem},
+  classes.ScriptDDL in 'src\classes.ScriptDDL.pas',
+  app.Funcoes in 'src\app.Funcoes.pas',
+  model.Pedido in 'src\model.Pedido.pas',
+  model.Cliente in 'src\model.Cliente.pas',
+  dao.Pedido in 'src\dao.Pedido.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TDM, DM);
-  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
   Application.CreateForm(TFrmInicial, FrmInicial);
-  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.Run;
 end.

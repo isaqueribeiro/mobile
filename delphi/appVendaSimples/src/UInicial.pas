@@ -35,11 +35,16 @@ type
     imageAppIcon: TImage;
     labelAppName: TLabel;
     labelAppBemVindo: TLabel;
-    buttonTenhoCadastro: TButton;
-    buttonNovoCadatro: TButton;
     StyleBookApp: TStyleBook;
+    rectangleTenhoCadastro: TRectangle;
+    labelTenhoCadastro: TLabel;
+    Rectangle1: TRectangle;
+    Label1: TLabel;
     procedure DoVoltarSlide(Sender: TObject);
     procedure DoProximoSlide(Sender: TObject);
+    procedure DoLogar(Sender: TObject);
+    procedure DoNovaConta(Sender: TObject);
+
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -57,7 +62,9 @@ implementation
 
 {$R *.fmx}
 
-uses UConstantes, UDM;
+uses
+  UConstantes,
+  UDM, ULogin, app.Funcoes, UPrincipal;
 
 { TFrmInicial }
 
@@ -89,6 +96,20 @@ end;
 procedure TFrmInicial.FormShow(Sender: TObject);
 begin
   ExibriSlide(1);
+end;
+
+procedure TFrmInicial.DoLogar(Sender: TObject);
+begin
+  if EfetuarLogin then
+  begin
+    Self.Hide;
+    CriarForm(TFrmPrincipal, FrmPrincipal);
+  end;
+end;
+
+procedure TFrmInicial.DoNovaConta(Sender: TObject);
+begin
+  CadastrarNovaConta;
 end;
 
 procedure TFrmInicial.DoProximoSlide(Sender: TObject);

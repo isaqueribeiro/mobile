@@ -11,12 +11,19 @@ uses
   System.SysUtils, System.Classes, FMX.Types, FMX.Controls, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool,
   FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  FireDAC.FMXUI.Wait, Data.DB, FireDAC.Comp.Client;
+  FireDAC.FMXUI.Wait, Data.DB, FireDAC.Comp.Client, FireDAC.Comp.UI,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
 
 type
   TDM = class(TDataModule)
     conn: TFDConnection;
     drvSQLiteDriver: TFDPhysSQLiteDriverLink;
+    trans: TFDTransaction;
+    waitCursor: TFDGUIxWaitCursor;
+    qrySQL: TFDQuery;
+    updPedido: TFDUpdateSQL;
+    qryPedido: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
@@ -24,6 +31,7 @@ type
     procedure SetArquivoDB(const aFileName : String);
   public
     { Public declarations }
+    procedure ConectarDB;
   end;
 
 var
@@ -34,9 +42,20 @@ implementation
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
 uses
-  UConstantes, classes.ScriptDDL;
+  UConstantes,
+  classes.ScriptDDL, UMensagem;
 
 {$R *.dfm}
+
+procedure TDM.ConectarDB;
+begin
+  try
+    conn.Connected := True;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar conectar-se com o banco de dados. ' + #13 + E.Message);
+  end;
+end;
 
 procedure TDM.connAfterConnect(Sender: TObject);
 var
@@ -47,7 +66,7 @@ begin
   conn.ExecSQL(aScriptDDL.getCreateTableUsuario.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableCliente.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTablePedido.Text, True);
-  conn.ExecSQL(aScriptDDL.getCreateTableNotificacao.Text, True);
+//  conn.ExecSQL(aScriptDDL.getCreateTableNotificacao.Text, True);
 end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);
@@ -74,14 +93,8 @@ end;
 
 procedure TDM.SetArquivoDB(const aFileName : String);
 begin
-  try
-    conn.Params.Values['DriverID'] := 'SQLite';
-    conn.Params.Values['Database'] := aFileName;
-    conn.Connected := True;
-  except
-    On E : Exception do
-      raise Exception.Create('Erro ao tentar conectar-se com o banco de dados. ' + #13 + E.Message);
-  end;
+  conn.Params.Values['DriverID'] := 'SQLite';
+  conn.Params.Values['Database'] := aFileName;
 end;
 
 end.

@@ -354,7 +354,14 @@
             <Form>FrmPrincipal</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="src\UMensagem.pas">
+            <Form>FrmMensagem</Form>
+        </DCCReference>
         <DCCReference Include="src\classes.ScriptDDL.pas"/>
+        <DCCReference Include="src\app.Funcoes.pas"/>
+        <DCCReference Include="src\model.Pedido.pas"/>
+        <DCCReference Include="src\model.Cliente.pas"/>
+        <DCCReference Include="src\dao.Pedido.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -401,8 +408,22 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
                     <Platform Name="Android">
                         <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -415,20 +436,6 @@
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
                     <Platform Name="Win64">
                         <RemoteDir>.\db\</RemoteDir>
-                        <RemoteName>venda_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="iOSDevice32">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>venda_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="iOSDevice64">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
