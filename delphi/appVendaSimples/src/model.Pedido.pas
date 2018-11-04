@@ -3,11 +3,12 @@ unit model.Pedido;
 interface
 
 uses
+  UConstantes,
   model.Cliente,
+  model.Loja,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
 
 type
-  TTipoPedido = (tpOrcamento, tpPedido);
   TPedido = class(TObject)
     private
       aID      : TGUID;
@@ -24,6 +25,7 @@ type
       aSincronizado : Boolean;
       aObservacao   : String;
       aReferencia   : TGUID;
+      aLoja : TLoja;
     public
       constructor Create; overload;
       destructor Destroy; overload;
@@ -42,6 +44,7 @@ type
       property Sincronizado  : Boolean read aSincronizado write aSincronizado;
       property Observacao    : String read aObservacao write aObservacao;
       property Referencia    : TGUID read aReferencia write aReferencia;
+      property Loja : TLoja read aLoja write aLoja;
 
       procedure NewID;
 
@@ -50,17 +53,7 @@ type
 
   TPedidos = Array of TPedido;
 
-  function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido;
-
 implementation
-
-function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido;
-begin
-  if aExpressao then
-    Result := aTrue
-  else
-    Result := aFalse;
-end;
 
 { TPedido }
 
@@ -81,11 +74,13 @@ begin
   aSincronizado  := False;
   aObservacao    := EmptyStr;
   aReferencia    := GUID_NULL;
+  aLoja := TLoja.Create;
 end;
 
 destructor TPedido.Destroy;
 begin
   aCliente.Free;
+  aLoja.Free;
   inherited Destroy;
 end;
 

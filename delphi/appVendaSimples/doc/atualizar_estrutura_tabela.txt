@@ -1,0 +1,65 @@
+PRAGMA foreign_keys = 0;
+
+CREATE TABLE sqlitestudio_temp_table AS SELECT *
+                                          FROM tbl_pedido;
+
+DROP TABLE tbl_pedido;
+
+CREATE TABLE tbl_pedido (
+    id_pedido       VARCHAR (38)    NOT NULL
+                                    PRIMARY KEY,
+    cd_pedido       BIGINT (10)     UNIQUE ON CONFLICT ROLLBACK,
+    tp_pedido       CHAR (1)        DEFAULT ('O') 
+                                    NOT NULL,
+    id_cliente      VARCHAR (38)    NOT NULL,
+    ds_contato      VARCHAR (100),
+    ds_observacao   VARCHAR (500),
+    dt_pedido       DATE,
+    vl_total        NUMERIC (15, 2) DEFAULT (0),
+    vl_desconto     NUMERIC (15, 2) DEFAULT (0),
+    vl_pedido       NUMERIC (15, 2) DEFAULT (0),
+    sn_ativo        CHAR (1)        DEFAULT ('S') 
+                                    NOT NULL,
+    sn_entregue     CHAR (1)        DEFAULT ('N') 
+                                    NOT NULL,
+    sn_sincronizado CHAR (1)        DEFAULT ('N') 
+                                    NOT NULL,
+    cd_referencia   VARCHAR (38),
+    id_loja         VARCHAR (38) 
+);
+
+INSERT INTO tbl_pedido (
+                           id_pedido,
+                           cd_pedido,
+                           tp_pedido,
+                           id_cliente,
+                           ds_contato,
+                           ds_observacao,
+                           dt_pedido,
+                           vl_total,
+                           vl_desconto,
+                           vl_pedido,
+                           sn_ativo,
+                           sn_entregue,
+                           sn_sincronizado,
+                           cd_referencia
+                       )
+                       SELECT id_pedido,
+                              cd_pedido,
+                              tp_pedido,
+                              id_cliente,
+                              ds_contato,
+                              ds_observacao,
+                              dt_pedido,
+                              vl_total,
+                              vl_desconto,
+                              vl_pedido,
+                              sn_ativo,
+                              sn_entregue,
+                              sn_sincronizado,
+                              cd_referencia
+                         FROM sqlitestudio_temp_table;
+
+DROP TABLE sqlitestudio_temp_table;
+
+PRAGMA foreign_keys = 1;

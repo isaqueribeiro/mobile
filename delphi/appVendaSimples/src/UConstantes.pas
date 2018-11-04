@@ -2,6 +2,11 @@ unit UConstantes;
 
 interface
 
+Type
+  TTipoCliente = (tcPessoaFisica, tcPessoaJuridica);
+  TTipoLoja = TTipoCliente;
+  TTipoPedido = (tpOrcamento, tpPedido);
+
 const
   cnsNameDB     = 'venda_simples.db';
   crCinza       = $FFB6ACAC;

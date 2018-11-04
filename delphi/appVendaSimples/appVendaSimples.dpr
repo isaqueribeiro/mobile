@@ -13,7 +13,8 @@ uses
   app.Funcoes in 'src\app.Funcoes.pas',
   model.Pedido in 'src\model.Pedido.pas',
   model.Cliente in 'src\model.Cliente.pas',
-  dao.Pedido in 'src\dao.Pedido.pas';
+  dao.Pedido in 'src\dao.Pedido.pas',
+  model.Loja in 'src\model.Loja.pas';
 
 {$R *.res}
 

@@ -2,10 +2,10 @@ unit model.Cliente;
 
 interface
 uses
+  UConstantes,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
 
 type
-  TTipoCliente = (tcPessoaFisica, tcPessoaJuridica);
   TCliente = class(TObject)
     private
       aID      : TGUID;

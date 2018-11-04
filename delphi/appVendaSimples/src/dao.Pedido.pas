@@ -3,6 +3,7 @@ unit dao.Pedido;
 interface
 
 uses
+  UConstantes,
   classes.ScriptDDL,
   model.Pedido,
 
@@ -118,10 +119,8 @@ begin
           Model.Ativo          := (AnsiUpperCase(FieldByName('sn_ativo').AsString) = 'S');
           Model.Entregue       := (AnsiUpperCase(FieldByName('sn_entregue').AsString) = 'S');
           Model.Sincronizado   := (AnsiUpperCase(FieldByName('sn_sincronizado').AsString) = 'S');
-          if Trim(FieldByName('cd_referencia').AsString) = EmptyStr then
-            Model.Referencia := GUID_NULL
-          else
-            Model.Referencia := StringToGUID(FieldByName('cd_referencia').AsString);
+          Model.Referencia := IfThen(Trim(FieldByName('cd_referencia').AsString) = EmptyStr, GUID_NULL, StringToGUID(FieldByName('cd_referencia').AsString));
+          Model.Loja.ID    := IfThen(Trim(FieldByName('id_loja').AsString) = EmptyStr, GUID_NULL, StringToGUID(FieldByName('id_loja').AsString));
         end;
       end;
       qrySQL.Close;

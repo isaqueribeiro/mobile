@@ -3,6 +3,7 @@ unit UDM;
 interface
 
 uses
+  UConstantes,
   System.Threading,
   System.IOUtils,
   FMX.DialogService,
@@ -37,15 +38,33 @@ type
 var
   DM: TDM;
 
+  function IfThen(aExpressao : Boolean; aTrue, aFalse : TGUID) : TGUID; overload;
+  function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido; overload;
+
 implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
 uses
-  UConstantes,
   classes.ScriptDDL, UMensagem;
 
 {$R *.dfm}
+
+function IfThen(aExpressao : Boolean; aTrue, aFalse : TGUID) : TGUID;
+begin
+  if aExpressao then
+    Result := aTrue
+  else
+    Result := aFalse;
+end;
+
+function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido;
+begin
+  if aExpressao then
+    Result := aTrue
+  else
+    Result := aFalse;
+end;
 
 procedure TDM.ConectarDB;
 begin
