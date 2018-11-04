@@ -108,7 +108,7 @@ begin
     begin
       LabelTitulo.Text := 'SUCESSO!';
       LabelMsg.Text    := Trim(aMensagem);
-      ImageMsg.Bitmap  := ImageMsgAlerta.Bitmap;
+      ImageMsg.Bitmap  := ImageMsgSucesso.Bitmap;
 
       RectangleOK.Visible     := True;
       RectangleFechar.Visible := False;
@@ -132,7 +132,7 @@ begin
     begin
       LabelTitulo.Text := AnsiUpperCase(Trim(aTitulo));
       LabelMsg.Text    := Trim(aMensagem);
-      ImageMsg.Bitmap  := ImageMsgAlerta.Bitmap;
+      ImageMsg.Bitmap  := ImageMsgPergunta.Bitmap;
 
       LabelOK.Text     := 'SIM';
       LabelFechar.Text := 'NÃO';

@@ -16,16 +16,16 @@ type
       aTipo    : TTipoPedido;
       aCliente : TCliente;
       aContato : String;
-      aData    : TDate;
+      aDataEmissao  : TDate;
       aValorTotal   ,
       aValorDesconto,
       aValorPedido  : Currency;
       aAtivo        ,
-      aEntregue     ,
-      aSincronizado : Boolean;
+      aEntregue     : Boolean;
       aObservacao   : String;
       aReferencia   : TGUID;
       aLoja : TLoja;
+      function GetSincronizado : Boolean;
     public
       constructor Create; overload;
       destructor Destroy; overload;
@@ -35,13 +35,13 @@ type
       property Tipo    : TTipoPedido read aTipo write aTipo;
       property Cliente : TCliente read aCliente write aCliente;
       property Contato : String read aContato write aContato;
-      property Data    : TDate read aData write aData;
+      property DataEmissao   : TDate read aDataEmissao write aDataEmissao;
       property ValorTotal    : Currency read aValorTotal write aValorTotal;
       property ValorDesconto : Currency read aValorDesconto write aValorDesconto;
       property ValorPedido   : Currency read aValorPedido write aValorPedido;
       property Ativo         : Boolean read aAtivo write aAtivo;
       property Entregue      : Boolean read aEntregue write aEntregue;
-      property Sincronizado  : Boolean read aSincronizado write aSincronizado;
+      property Sincronizado  : Boolean read GetSincronizado;
       property Observacao    : String read aObservacao write aObservacao;
       property Referencia    : TGUID read aReferencia write aReferencia;
       property Loja : TLoja read aLoja write aLoja;
@@ -63,18 +63,18 @@ begin
   aId      := GUID_NULL;
   aCodigo  := 0;
   aTipo    := tpOrcamento;
-  aCliente := TCliente.Create;
   aContato := EmptyStr;
-  aData    := Date;
+  aDataEmissao   := Date;
   aValorTotal    := 0.0;
   aValorDesconto := 0.0;
   aValorPedido   := 0.0;
   aAtivo         := True;
   aEntregue      := False;
-  aSincronizado  := False;
   aObservacao    := EmptyStr;
   aReferencia    := GUID_NULL;
-  aLoja := TLoja.Create;
+
+  aCliente := TCliente.Create;
+  aLoja    := TLoja.Create;
 end;
 
 destructor TPedido.Destroy;
@@ -82,6 +82,11 @@ begin
   aCliente.Free;
   aLoja.Free;
   inherited Destroy;
+end;
+
+function TPedido.GetSincronizado : Boolean;
+begin
+  Result := (aTipo = tpPedido);
 end;
 
 procedure TPedido.NewID;
@@ -94,7 +99,10 @@ end;
 
 function TPedido.ToString: String;
 begin
-  Result := 'Pedido #' + FormatFloat('00000', aCodigo);
+  if aTipo = tpPedido then
+    Result := 'Pedido #' + FormatFloat('00000', aCodigo)
+  else
+    Result := 'Orçamento #' + FormatFloat('00000', aCodigo);
 end;
 
 end.

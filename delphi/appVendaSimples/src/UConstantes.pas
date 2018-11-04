@@ -14,6 +14,8 @@ const
   crAzul        = $FF1E87AF;
   vlOpacityIcon = 0.3;
 
+  EMPTY_DATE = '30/12/1899';
+
 implementation
 
 end.

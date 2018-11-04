@@ -11,7 +11,6 @@ object DM: TDM
       'LockingMode=Normal'
       'OpenMode=ReadWrite'
       'DriverID=SQLite')
-    Connected = True
     LoginPrompt = False
     Transaction = trans
     UpdateTransaction = trans
@@ -92,7 +91,6 @@ object DM: TDM
     Top = 176
   end
   object qryPedido: TFDQuery
-    Active = True
     Connection = conn
     Transaction = trans
     UpdateTransaction = trans
@@ -113,7 +111,7 @@ object DM: TDM
         Name = 'CD_PEDIDO'
         DataType = ftCurrency
         ParamType = ptInput
-        Value = Null
+        Value = 20000c
       end>
   end
 end

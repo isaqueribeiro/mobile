@@ -10,6 +10,7 @@ type
     strict private
       class var aInstance : TScriptDDL;
       const
+        NUMBER_VERSION_DB = 1;
         TABLE_VERSAO      = 'app_versao';
         TABLE_INFO        = 'app_info';
         TABLE_NOTIFICACAO = 'app_notificacao';
@@ -41,27 +42,28 @@ function TScriptDDL.getCreateTableCliente: TStringList;
 var
   aSQL : TStringList;
 begin
-  // Exemplos de ID no formato GUID
-  // ['{0A7BA6EA-7E57-42E8-9B05-874A64442798}'] - Cliente 1
-  // ['{5F3D9FF3-A6B9-44CA-B07F-33AAC4AA4475}'] - Cliente 2
   aSQL := TStringList.Create;
   try
     aSQL := TStringList.Create;
     aSQL.Clear;
     aSQL.BeginUpdate;
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_CLIENTE + ' (');
-    aSQL.Add('      id_cliente      VARCHAR (38) NOT NULL PRIMARY KEY');
-    aSQL.Add('    , cd_cliente      BIGINT  (10) UNIQUE ON CONFLICT ROLLBACK');
-    aSQL.Add('    , nm_cliente      VARCHAR (100)');
-    aSQL.Add('    , tp_cliente      CHAR(1) DEFAULT (' + QuotedStr('F') + ') NOT NULL'); // F - Pessoa Física, J - Pessoa Jurídica
-    aSQL.Add('    , nr_cpf_cnpj     VARCHAR (20)');
-    aSQL.Add('    , ds_contato      VARCHAR (100)');
-    aSQL.Add('    , nr_telefone     VARCHAR (20)');
-    aSQL.Add('    , nr_celular      VARCHAR (20)');
-    aSQL.Add('    , ds_observacao   VARCHAR (500)');
-    aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
-    aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
-    aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Cliente no Servidor Web (ID)
+    aSQL.Add('      id_cliente       VARCHAR (38) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , cd_cliente       BIGINT  (10) UNIQUE ON CONFLICT ROLLBACK');
+    aSQL.Add('    , nm_cliente       VARCHAR (150)');
+    aSQL.Add('    , tp_cliente       CHAR(1) DEFAULT (' + QuotedStr('F') + ') NOT NULL'); // F - Pessoa Física, J - Pessoa Jurídica
+    aSQL.Add('    , nr_cpf_cnpj      VARCHAR (20)');
+    aSQL.Add('    , ds_contato       VARCHAR (100)');
+    aSQL.Add('    , nr_telefone      VARCHAR (20)');
+    aSQL.Add('    , nr_celular       VARCHAR (20)');
+    aSQL.Add('    , ds_email         VARCHAR (150)');
+    aSQL.Add('    , ds_endereco      VARCHAR (500)');
+    aSQL.Add('    , ds_observacao    VARCHAR (500)');
+    aSQL.Add('    , sn_ativo         CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
+    aSQL.Add('    , sn_sincronizado  CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , cd_referencia    VARCHAR (38)'); // Referência do Cliente no Servidor Web (ID)
+    aSQL.Add('    , dt_ultima_compra DATE');
+    aSQL.Add('    , vl_ultima_compra NUMERIC (15,2) DEFAULT (0)');
     aSQL.Add(')');
     aSQL.EndUpdate;
   finally
@@ -70,17 +72,33 @@ begin
 end;
 
 function TScriptDDL.getCreateTableNotificacao: TStringList;
+var
+  aSQL : TStringList;
 begin
-  ;
+  aSQL := TStringList.Create;
+  try
+    aSQL := TStringList.Create;
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_NOTIFICACAO + ' (');
+    aSQL.Add('      id_notificacao VARCHAR (38) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , cd_notificacao BIGINT  (10) UNIQUE ON CONFLICT ROLLBACK');
+    aSQL.Add('    , dt_notificacao DATE  NOT NULL');
+    aSQL.Add('    , ds_titulo      VARCHAR (150)');
+    aSQL.Add('    , ds_mensagem    VARCHAR (500)');
+    aSQL.Add('    , sn_lida        CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , sn_destacar    CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add(')');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
 end;
 
 function TScriptDDL.getCreateTablePedido: TStringList;
 var
   aSQL : TStringList;
 begin
-  // Exemplos de ID no formato GUID
-  // ['{4B0A0C47-8A62-4E8D-AECF-074BE7D4CBC1}'] - Pedido  1
-  // ['{AF73EDCF-870F-45AC-A3E7-75458A920DBA}'] - Pedido  2
   aSQL := TStringList.Create;
   try
     aSQL := TStringList.Create;
@@ -98,7 +116,7 @@ begin
     aSQL.Add('    , vl_desconto     NUMERIC (15,2) DEFAULT (0)');
     aSQL.Add('    , vl_pedido       NUMERIC (15,2) DEFAULT (0)'); //  (vl_pedido = vl_total -  vl_desconto)
     aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
-    aSQL.Add('    , sn_entregue     CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , sn_entregue     CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL'); // Pedido Entregue ao Cliente ?
     aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Pedido no Servidor Web (ID)
     aSQL.Add(')');

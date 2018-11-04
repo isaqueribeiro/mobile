@@ -38,8 +38,9 @@ type
 var
   DM: TDM;
 
-  function IfThen(aExpressao : Boolean; aTrue, aFalse : TGUID) : TGUID; overload;
+//  function IfThen(aExpressao : Boolean; aTrue, aFalse : TGUID) : TGUID; overload;
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido; overload;
+  function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoCliente) : TTipoCliente; overload;
 
 implementation
 
@@ -50,7 +51,15 @@ uses
 
 {$R *.dfm}
 
-function IfThen(aExpressao : Boolean; aTrue, aFalse : TGUID) : TGUID;
+//function IfThen(aExpressao : Boolean; aTrue, aFalse : TGUID) : TGUID;
+//begin
+//  if aExpressao then
+//    Result := aTrue
+//  else
+//    Result := aFalse;
+//end;
+//
+function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido;
 begin
   if aExpressao then
     Result := aTrue
@@ -58,7 +67,7 @@ begin
     Result := aFalse;
 end;
 
-function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido;
+function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoCliente) : TTipoCliente;
 begin
   if aExpressao then
     Result := aTrue

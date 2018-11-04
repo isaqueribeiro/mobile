@@ -16,16 +16,19 @@ type
       aContato    ,
       aTelefone   ,
       aCelular    ,
+      aEmail      ,
+      aEndereco   ,
       aObservacao : String;
       aAtivo        ,
-      aEntregue     ,
       aSincronizado : Boolean;
       aReferencia   : TGUID;
+      aDataUltimaCompra  : TDateTime;
+      aValorUltimaCompra : Currency;
 
+      procedure SetEmail(Value : String);
       procedure SetNome(Value : String);
     public
       constructor Create; overload;
-//      destructor Destroy; overload;
 
       property ID      : TGUID read aID write aID;
       property Codigo  : Currency read aCodigo write aCodigo;
@@ -35,16 +38,21 @@ type
       property Contato    : String read aContato write aContato;
       property Telefone   : String read aTelefone write aTelefone;
       property Celular    : String read aCelular write aCelular;
+      property Email      : String read aEmail write SetEmail;
+      property Endereco   : String read aEndereco write aEndereco;
       property Observacao : String read aObservacao write aObservacao;
       property Ativo        : Boolean read aAtivo write aAtivo;
-      property Entregue     : Boolean read aEntregue write aEntregue;
       property Sincronizado : Boolean read aSincronizado write aSincronizado;
       property Referencia   : TGUID read aReferencia write aReferencia;
+      property DataUltimaCompra  : TDateTime read aDataUltimaCompra write aDataUltimaCompra;
+      property ValorUltimaCompra : Currency read aValorUltimaCompra write aValorUltimaCompra;
 
       procedure NewID;
 
       function ToString : String; override;
   end;
+
+  TClientes = Array of TCliente;
 
 implementation
 
@@ -60,10 +68,14 @@ begin
   aContato := EmptyStr;
   aCpfCnpj := EmptyStr;
   aAtivo         := True;
-  aEntregue      := False;
   aSincronizado  := False;
+  aEmail         := EmptyStr;
+  aEndereco      := EmptyStr;
   aObservacao    := EmptyStr;
   aReferencia    := GUID_NULL;
+
+  aDataUltimaCompra  := StrToDate(EMPTY_DATE);
+  aValorUltimaCompra := 0.0;
 end;
 
 procedure TCliente.NewID;
@@ -74,14 +86,19 @@ begin
   aId := aGuid;
 end;
 
+procedure TCliente.SetEmail(Value: String);
+begin
+  aEmail := AnsiLowerCase(Trim(Value));
+end;
+
 procedure TCliente.SetNome(Value: String);
 begin
-  aNome := Trim(aNome);
+  aNome := AnsiUpperCase(Trim(Value));
 end;
 
 function TCliente.ToString: String;
 begin
-  Result := aNome;
+  Result := 'Cliente #' + FormatFloat('##000', aCodigo);
 end;
 
 end.
