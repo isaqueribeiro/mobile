@@ -53,53 +53,54 @@ type
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
-    aConfirmado : Boolean;
     procedure DefinirLink;
+    function Autenticar : Boolean;
   public
     { Public declarations }
-    property Confirmado : Boolean read aConfirmado;
   end;
 
-//var
-//  FrmLogin: TFrmLogin;
-//
+var
+  FrmLogin: TFrmLogin;
+
   procedure CadastrarNovaConta;
-  function EfetuarLogin : Boolean;
+  procedure EfetuarLogin;
 
 implementation
 
 {$R *.fmx}
 
 uses
-  UDM;
+  app.Funcoes,
+  UDM,
+  UInicial,
+  UPrincipal;
 
 procedure CadastrarNovaConta;
-var
-  aForm : TFrmLogin;
 begin
-  Application.CreateForm(TFrmLogin, aForm);
+  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.RealCreateForms;
   try
-    aForm.TabControl.ActiveTab := aForm.TabCadastro;
-    aForm.ShowModal;
+    FrmLogin.TabControl.ActiveTab := FrmLogin.TabCadastro;
+    FrmLogin.ShowModal;
   finally
-    aForm.DisposeOf;
+    FrmLogin.DisposeOf;
   end;
 end;
 
-function EfetuarLogin : Boolean;
-var
-  aForm : TFrmLogin;
+procedure EfetuarLogin;
 begin
-  Application.CreateForm(TFrmLogin, aForm);
+  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.RealCreateForms;
   try
-    aForm.TabControl.ActiveTab := aForm.TabLogin;
-    aForm.ShowModal;
+    FrmLogin.TabControl.ActiveTab := FrmLogin.TabLogin;
+    FrmLogin.Show;
   finally
-    Result := aForm.Confirmado;
-    aForm.DisposeOf;
   end;
+end;
+
+function TFrmLogin.Autenticar: Boolean;
+begin
+  Result := True;
 end;
 
 procedure TFrmLogin.DefinirLink;
@@ -114,9 +115,13 @@ end;
 procedure TFrmLogin.DoAcessar(Sender: TObject);
 begin
   DM.ConectarDB;
-
-  aConfirmado := True;
-  Self.Close;
+  if Autenticar then
+  begin
+    Self.Close;
+    if Assigned(FrmInicial) then
+      FrmInicial.Hide;
+    CriarForm(TFrmPrincipal, FrmPrincipal);
+  end;
 end;
 
 procedure TFrmLogin.DoExecutarLink(Sender: TObject);
@@ -134,7 +139,6 @@ procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
   TabControl.ActiveTab   := TabLogin;
   TabControl.TabPosition := TTabPosition.None;
-  aConfirmado := False;
 end;
 
 procedure TFrmLogin.FormShow(Sender: TObject);

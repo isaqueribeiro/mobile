@@ -100,11 +100,12 @@ end;
 
 procedure TFrmInicial.DoLogar(Sender: TObject);
 begin
-  if EfetuarLogin then
-  begin
-    Self.Hide;
-    CriarForm(TFrmPrincipal, FrmPrincipal);
-  end;
+//  if EfetuarLogin then
+//  begin
+//    Self.Hide;
+//    CriarForm(TFrmPrincipal, FrmPrincipal);
+//  end;
+  EfetuarLogin;
 end;
 
 procedure TFrmInicial.DoNovaConta(Sender: TObject);

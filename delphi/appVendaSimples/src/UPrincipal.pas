@@ -78,7 +78,9 @@ type
     Label1: TLabel;
     img_lida: TImage;
     img_nao_lida: TImage;
+    img_update: TImage;
     procedure DoFecharApp(Sender: TObject);
+    procedure DoCloseApp(Sender: TObject);
     procedure DoSelecinarTab(Sender: TObject);
     procedure DoBuscaPedidos(Sender: TObject);
     procedure DoBuscaClientes(Sender: TObject);
@@ -258,8 +260,12 @@ end;
 
 procedure TFrmPrincipal.DoFecharApp(Sender: TObject);
 begin
-  if ExibirMsgConfirmacao('Fechar', 'Deseja encerrar o aplicativo?') then
-    Halt(0);
+  ExibirMsgConfirmacao('Fechar', 'Deseja encerrar o aplicativo?', DoCloseApp);
+end;
+
+procedure TFrmPrincipal.DoCloseApp(Sender: TObject);
+begin
+  Halt(0);
 end;
 
 procedure TFrmPrincipal.DoSelecinarTab(Sender: TObject);
@@ -286,6 +292,7 @@ begin
   img_nao_sinc.Visible := False;
   img_lida.Visible     := False;
   img_nao_lida.Visible := False;
+  img_update.Visible   := False;
 end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);

@@ -28,19 +28,20 @@ type
     procedure DoOK(Sender: TObject);
     procedure DoFechar(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-  private
+  strict private
     { Private declarations }
     aConfirmado : Boolean;
+    class var aInstance : TFrmMensagem;
   public
     { Public declarations }
     property Confirmado : Boolean read aConfirmado;
+    class function GetInstance : TFrmMensagem;
   end;
 
   procedure ExibirMsgErro(aMensagem : String);
   procedure ExibirMsgAlerta(aMensagem : String);
   procedure ExibirMsgSucesso(aMensagem : String);
-
-  function ExibirMsgConfirmacao(aTitulo, aMensagem : String) : Boolean;
+  procedure ExibirMsgConfirmacao(aTitulo, aMensagem : String; aEvento : TNotifyEvent);
 
 implementation
 
@@ -53,8 +54,7 @@ procedure ExibirMsgErro(aMensagem : String);
 var
   aForm : TFrmMensagem;
 begin
-  Application.CreateForm(TFrmMensagem, aForm);
-  Application.RealCreateForms;
+  aForm := TFrmMensagem.GetInstance;
   try
     with aForm do
     begin
@@ -66,10 +66,9 @@ begin
       RectangleFechar.Visible := True;
 
       RectangleFechar.Align := TAlignLayout.Center;
-      ShowModal;
+      Show;
     end;
   finally
-    aForm.DisposeOf;
   end;
 end;
 
@@ -77,8 +76,7 @@ procedure ExibirMsgAlerta(aMensagem : String);
 var
   aForm : TFrmMensagem;
 begin
-  Application.CreateForm(TFrmMensagem, aForm);
-  Application.RealCreateForms;
+  aForm := TFrmMensagem.GetInstance;
   try
     with aForm do
     begin
@@ -90,10 +88,9 @@ begin
       RectangleFechar.Visible := True;
 
       RectangleFechar.Align := TAlignLayout.Center;
-      ShowModal;
+      Show;
     end;
   finally
-    aForm.DisposeOf;
   end;
 end;
 
@@ -101,8 +98,7 @@ procedure ExibirMsgSucesso(aMensagem : String);
 var
   aForm : TFrmMensagem;
 begin
-  Application.CreateForm(TFrmMensagem, aForm);
-  Application.RealCreateForms;
+  aForm := TFrmMensagem.GetInstance;
   try
     with aForm do
     begin
@@ -114,19 +110,17 @@ begin
       RectangleFechar.Visible := False;
 
       RectangleOK.Align := TAlignLayout.Center;
-      ShowModal;
+      Show;
     end;
   finally
-    aForm.DisposeOf;
   end;
 end;
 
-function ExibirMsgConfirmacao(aTitulo, aMensagem : String) : Boolean;
+procedure ExibirMsgConfirmacao(aTitulo, aMensagem : String; aEvento : TNotifyEvent);
 var
   aForm : TFrmMensagem;
 begin
-  Application.CreateForm(TFrmMensagem, aForm);
-  Application.RealCreateForms;
+  aForm := TFrmMensagem.GetInstance;
   try
     with aForm do
     begin
@@ -137,14 +131,14 @@ begin
       LabelOK.Text     := 'SIM';
       LabelFechar.Text := 'NÃO';
 
+      LabelOK.OnClick  := aEvento;
+
       RectangleOK.Visible     := True;
       RectangleFechar.Visible := True;
 
-      ShowModal;
+      Show;
     end;
   finally
-    Result := aForm.Confirmado;
-    aForm.DisposeOf;
   end;
 end;
 
@@ -171,6 +165,17 @@ begin
   RectangleFechar.Visible := False;
 
   aConfirmado := False;
+end;
+
+class function TFrmMensagem.GetInstance: TFrmMensagem;
+begin
+  if not Assigned(aInstance) then
+  begin
+    Application.CreateForm(TFrmMensagem, aInstance);
+    Application.RealCreateForms;
+  end;
+
+  Result := aInstance;
 end;
 
 end.
