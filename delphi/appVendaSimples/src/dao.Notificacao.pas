@@ -1,55 +1,55 @@
-unit dao.Cliente;
+unit dao.Notificacao;
 
 interface
 
 uses
   UConstantes,
   classes.ScriptDDL,
-  model.Cliente,
+  model.Notificacao,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet;
 
 type
-  TClienteDao = class(TObject)
+  TNotificacaoDao = class(TObject)
     strict private
       aDDL   : TScriptDDL;
-      aModel : TCliente;
-      aLista : TClientes;
+      aModel : TNotificacao;
+      aLista : TNotificacoes;
       constructor Create();
-      procedure SetValues(const aDataSet : TFDQuery; const aObject : TCliente);
+      procedure SetValues(const aDataSet : TFDQuery; const aObject : TNotificacao);
       procedure ClearLista;
-      class var aInstance : TClienteDao;
+      class var aInstance : TNotificacaoDao;
     public
-      property Model : TCliente read aModel write aModel;
-      property Lista : TClientes read aLista write aLista;
+      property Model : TNotificacao read aModel write aModel;
+      property Lista : TNotificacoes read aLista write aLista;
 
       procedure Load(const aBusca : String);
       procedure Insert();
       procedure Update();
       procedure AddLista; overload;
-      procedure AddLista(aCliente : TCliente); overload;
+      procedure AddLista(aNotificacao : TNotificacao); overload;
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
 
-      class function GetInstance : TClienteDao;
+      class function GetInstance : TNotificacaoDao;
   end;
 
 implementation
 
-{ TClienteDao }
+{ TNotificacaoDao }
 
 uses
   UDM;
 
-procedure TClienteDao.AddLista;
+procedure TNotificacaoDao.AddLista;
 var
   I : Integer;
-  o : TCliente;
+  o : TNotificacao;
 begin
   I := High(aLista) + 2;
-  o := TCliente.Create;
+  o := TNotificacao.Create;
 
   if (I <= 0) then
     I := 1;
@@ -58,7 +58,7 @@ begin
   aLista[I - 1] := o;
 end;
 
-procedure TClienteDao.AddLista(aCliente: TCliente);
+procedure TNotificacaoDao.AddLista(aNotificacao: TNotificacao);
 var
   I : Integer;
 begin
@@ -68,24 +68,23 @@ begin
     I := 1;
 
   SetLength(aLista, I);
-  aLista[I - 1] := aCliente;
+  aLista[I - 1] := aNotificacao;
 end;
 
-procedure TClienteDao.ClearLista;
+procedure TNotificacaoDao.ClearLista;
 begin
   SetLength(aLista, 0);
 end;
 
-constructor TClienteDao.Create;
+constructor TNotificacaoDao.Create;
 begin
   inherited Create;
   aDDL   := TScriptDDL.GetInstance;
-  aModel := TCliente.Create;
+  aModel := TNotificacao.Create;
   SetLength(aLista, 0);
 end;
 
-function TClienteDao.Find(const aCodigo: Currency;
-  const IsLoadModel: Boolean): Boolean;
+function TNotificacaoDao.Find(const aCodigo: Currency; const IsLoadModel: Boolean): Boolean;
 var
   aSQL : TStringList;
   aRetorno : Boolean;
@@ -96,8 +95,8 @@ begin
     aSQL.BeginUpdate;
     aSQL.Add('Select');
     aSQL.Add('    c.* ');
-    aSQL.Add('from ' + aDDL.getTableNameCliente + ' c');
-    aSQL.Add('where c.cd_cliente = ' + CurrToStr(aCodigo));
+    aSQL.Add('from ' + aDDL.getTableNameNotificacao + ' c');
+    aSQL.Add('where c.cd_notificacao = ' + CurrToStr(aCodigo));
     aSQL.EndUpdate;
 
     with DM, qrySQL do
@@ -119,7 +118,7 @@ begin
   end;
 end;
 
-function TClienteDao.GetCount: Integer;
+function TNotificacaoDao.GetCount: Integer;
 var
   aRetorno : Integer;
   aSQL : TStringList;
@@ -129,8 +128,8 @@ begin
   try
     aSQL.BeginUpdate;
     aSQL.Add('Select ');
-    aSQL.Add('  count(*) as qt_clientes');
-    aSQL.Add('from ' + aDDL.getTableNameCliente);
+    aSQL.Add('  count(*) as qt_notificacoes');
+    aSQL.Add('from ' + aDDL.getTableNameNotificacao);
     aSQL.EndUpdate;
     with DM, qrySQL do
     begin
@@ -138,7 +137,7 @@ begin
       qrySQL.SQL.Text := aSQL.Text;
       OpenOrExecute;
 
-      aRetorno := FieldByName('qt_clientes').AsInteger;
+      aRetorno := FieldByName('qt_notificacoes').AsInteger;
       qrySQL.Close;
     end;
   finally
@@ -147,23 +146,23 @@ begin
   end;
 end;
 
-class function TClienteDao.GetInstance: TClienteDao;
+class function TNotificacaoDao.GetInstance: TNotificacaoDao;
 begin
   if not Assigned(aInstance) then
-    aInstance := TClienteDao.Create();
+    aInstance := TNotificacaoDao.Create();
 
   Result := aInstance;
 end;
 
-procedure TClienteDao.Insert;
+procedure TNotificacaoDao.Insert;
 begin
   ;
 end;
 
-procedure TClienteDao.Load(const aBusca: String);
+procedure TNotificacaoDao.Load(const aBusca: String);
 var
   aSQL : TStringList;
-  aCliente : TCliente;
+  aNotificacao : TNotificacao;
   aFiltro  : String;
 begin
   aSQL := TStringList.Create;
@@ -173,19 +172,20 @@ begin
     aSQL.BeginUpdate;
     aSQL.Add('Select');
     aSQL.Add('    c.* ');
-    aSQL.Add('from ' + aDDL.getTableNameCliente + ' c');
+    aSQL.Add('from ' + aDDL.getTableNameNotificacao + ' c');
 
     if (StrToCurrDef(aFiltro, 0) > 0) then
-      aSQL.Add('where c.cd_cliente = ' + aFiltro)
+      aSQL.Add('where c.cd_notificacao = ' + aFiltro)
     else
     if (Trim(aBusca) <> EmptyStr) then
     begin
       aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
-      aSQL.Add('where c.nm_cliente like ' + QuotedStr(aFiltro));
+      aSQL.Add('where (c.ds_titulo like ' + QuotedStr(aFiltro) + ')');
+      aSQL.Add('   or (c.ds_mensagem like ' + QuotedStr(aFiltro) + ')');
     end;
 
     aSQL.Add('order by');
-    aSQL.Add('    c.nm_cliente ');
+    aSQL.Add('    c.dt_notificacao DESC');
 
     aSQL.EndUpdate;
 
@@ -200,10 +200,10 @@ begin
         if (qrySQL.RecordCount > 0) then
           while not qrySQL.Eof do
           begin
-            aCliente := TCliente.Create;
-            SetValues(qrySQL, aCliente);
+            aNotificacao := TNotificacao.Create;
+            SetValues(qrySQL, aNotificacao);
 
-            AddLista(aCliente);
+            AddLista(aNotificacao);
             qrySQL.Next;
           end;
       end;
@@ -214,37 +214,22 @@ begin
   end;
 end;
 
-procedure TClienteDao.SetValues(const aDataSet: TFDQuery;
-  const aObject: TCliente);
+procedure TNotificacaoDao.SetValues(const aDataSet: TFDQuery; const aObject: TNotificacao);
 begin
   with aDataSet, aObject do
   begin
-    ID     := StringToGUID(FieldByName('id_cliente').AsString);
-    Codigo := FieldByName('cd_cliente').AsCurrency;
-    Tipo   := IfThen(AnsiUpperCase(FieldByName('tp_cliente').AsString) = 'F', tcPessoaFisica, tcPessoaJuridica);
+    ID     := StringToGUID(FieldByName('id_notificacao').AsString);
+    Codigo := FieldByName('cd_notificacao').AsCurrency;
 
-    Nome         := FieldByName('nm_cliente').AsString;
-    CpfCnpj      := FieldByName('nr_cpf_cnpj').AsString;
-    Contato      := FieldByName('ds_contato').AsString;
-    Telefone     := FieldByName('nr_telefone').AsString;
-    Celular      := FieldByName('nr_celular').AsString;
-    Email        := FieldByName('ds_email').AsString;
-    Endereco     := FieldByName('ds_endereco').AsString;
-    Observacao   := FieldByName('ds_observacao').AsString;
-    Ativo        := (AnsiUpperCase(FieldByName('sn_ativo').AsString) = 'S');
-    Sincronizado := (AnsiUpperCase(FieldByName('sn_sincronizado').AsString) = 'S');
-
-    if (Trim(FieldByName('cd_referencia').AsString) <> EmptyStr) then
-      Referencia := StringToGUID(FieldByName('cd_referencia').AsString)
-    else
-      Referencia := GUID_NULL;
-
-    DataUltimaCompra  := FieldByName('dt_ultima_compra').AsDateTime;
-    ValorUltimaCompra := FieldByName('vl_ultima_compra').AsCurrency;
+    Data   := FieldByName('dt_notificacao').AsDateTime;
+    Titulo := FieldByName('ds_titulo').AsString;
+    Mensagem := FieldByName('ds_mensagem').AsString;
+    Lida     := (AnsiUpperCase(FieldByName('sn_lida').AsString) = 'S');
+    Destacar := (AnsiUpperCase(FieldByName('sn_destacar').AsString) = 'S');
   end;
 end;
 
-procedure TClienteDao.Update;
+procedure TNotificacaoDao.Update;
 begin
   ;
 end;

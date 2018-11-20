@@ -5,8 +5,10 @@ interface
 uses
   model.Pedido,
   model.Cliente,
+  model.Notificacao,
   dao.Pedido,
   dao.Cliente,
+  dao.Notificacao,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
@@ -84,6 +86,7 @@ type
     procedure DoSelecinarTab(Sender: TObject);
     procedure DoBuscaPedidos(Sender: TObject);
     procedure DoBuscaClientes(Sender: TObject);
+    procedure DoBuscaNotificacoes(Sender: TObject);
 
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -94,8 +97,14 @@ type
     procedure SelecionarTab(const aTab : Smallint);
     procedure BuscarPedidos(aBusca : String; aPagina : Integer);
     procedure BuscarClientes(aBusca : String; aPagina : Integer);
+    procedure BuscarNotificacoes(aBusca : String; aPagina : Integer);
+    procedure FormatarItemPedidoListView(aItem  : TListViewItem);
+    procedure FormatarItemClienteListView(aItem  : TListViewItem);
+    procedure FormatarItemNotificacaoListView(aItem  : TListViewItem); virtual; abstract;
+
     procedure AddPedidoListView(aPedido : TPedido);
     procedure AddClienteListView(aCliente : TCliente);
+    procedure AddNotificacaoListView(aNotificacao : TNotificacao); virtual; abstract;
   public
     { Public declarations }
   end;
@@ -126,28 +135,8 @@ var
   aImage : TListItemImage;
 begin
   aItem := ListViewCliente.Items.Add;
-  with aItem do
-  begin
-    aItem.Data['cliente'] := aCliente;
-
-    TListItemText(Objects.FindDrawable('Text1')).Text := aCliente.Nome;
-    TListItemText(Objects.FindDrawable('Text2')).Text := IfThen(Trim(aCliente.Endereco) = EmptyStr, '* SEM ENDEREÇO INFORMADO!', Trim(aCliente.Endereco));
-    if (aCliente.DataUltimaCompra <> StrToDate(EMPTY_DATE)) then
-    begin
-      TListItemText(Objects.FindDrawable('Text3')).Text :=
-        '** Última Compra : ' + FormatDateTime('dd/mm/yyyy', aCliente.DataUltimaCompra) + ', ' +
-        'R$ ' + FormatFloat(',0.00', aCliente.ValorUltimaCompra);
-    end
-    else
-      TListItemText(Objects.FindDrawable('Text3')).Text := '**';
-
-    // Status
-    aImage := TListItemImage(Objects.FindDrawable('Image4'));
-    if aCliente.Ativo then
-      aImage.Bitmap := img_sinc.Bitmap
-    else
-      aImage.Bitmap := img_nao_sinc.Bitmap;
-  end;
+  aItem.TagObject := aCliente;
+  FormatarItemClienteListView(aItem);
 end;
 
 procedure TFrmPrincipal.AddPedidoListView(aPedido: TPedido);
@@ -157,37 +146,8 @@ var
   aImage : TListItemImage;
 begin
   aItem := ListViewPedido.Items.Add;
-  with aItem do
-  begin
-    aItem.Data['pedido'] := aPedido;
-
-    // Número
-    aText := TListItemText(Objects.FindDrawable('Text1'));
-    aText.Text := aPedido.ToString;
-    // Cliente
-    aText := TListItemText(Objects.FindDrawable('Text2'));
-    aText.Text := aPedido.Cliente.Nome;
-    // Data
-    aText := TListItemText(Objects.FindDrawable('Text3'));
-    aText.Text := FormatDateTime('dd/mm/yyyy', aPedido.DataEmissao);
-    // Valor
-    aText := TListItemText(Objects.FindDrawable('Text4'));
-    aText.Text := 'R$ ' +  FormatFloat(',0.00', aPedido.ValorPedido);
-
-    // Entregue
-    aImage := TListItemImage(Objects.FindDrawable('Image6'));
-    if aPedido.Entregue then
-      aImage.Bitmap := img_entregue.Bitmap
-    else
-      aImage.Visible := False;
-
-    // Sincronizado
-    aImage := TListItemImage(Objects.FindDrawable('Image5'));
-    if aPedido.Sincronizado then
-      aImage.Bitmap := img_sinc.Bitmap
-    else
-      aImage.Bitmap := img_nao_sinc.Bitmap;
-  end;
+  aItem.TagObject := aPedido;
+  FormatarItemPedidoListView(aItem);
 end;
 
 procedure TFrmPrincipal.BuscarClientes(aBusca: String; aPagina: Integer);
@@ -199,6 +159,17 @@ begin
   dao.Load(aBusca);
   for I := Low(dao.Lista) to High(dao.Lista) do
     AddClienteListView(dao.Lista[I]);
+end;
+
+procedure TFrmPrincipal.BuscarNotificacoes(aBusca: String; aPagina: Integer);
+var
+  dao : TNotificacaoDao;
+  I : Integer;
+begin
+  dao := TNotificacaoDao.GetInstance;
+  dao.Load(aBusca);
+  for I := Low(dao.Lista) to High(dao.Lista) do
+    AddNotificacaoListView(dao.Lista[I]);
 end;
 
 procedure TFrmPrincipal.BuscarPedidos(aBusca: String; aPagina: Integer);
@@ -235,6 +206,23 @@ begin
     ListViewCliente.EndUpdate;
     ListViewCliente.Visible  := (ListViewCliente.Items.Count > 0);
     //layoutSemCliente.Visible := not ListViewCliente.Visible;
+  except
+    On E : Exception do
+      ExibirMsgErro(E.Message);
+  end;
+end;
+
+procedure TFrmPrincipal.DoBuscaNotificacoes(Sender: TObject);
+begin
+  try
+    ListViewNotificacao.BeginUpdate;
+    ListViewNotificacao.Items.Clear;
+
+    BuscarNotificacoes(EmptyStr, 0);
+
+    ListViewNotificacao.EndUpdate;
+    ListViewNotificacao.Visible  := (ListViewNotificacao.Items.Count > 0);
+    //layoutSemNotificacao.Visible := not ListViewNotificacao.Visible;
   except
     On E : Exception do
       ExibirMsgErro(E.Message);
@@ -281,6 +269,75 @@ begin
     aTab := TLabel(Sender).Tag;
 
   SelecionarTab(aTab);
+end;
+
+procedure TFrmPrincipal.FormatarItemClienteListView(aItem: TListViewItem);
+var
+  aText  : TListItemText;
+  aImage : TListItemImage;
+  aCliente : TCliente;
+begin
+  with aItem do
+  begin
+    aCliente := TCliente(aItem.TagObject);
+
+    TListItemText(Objects.FindDrawable('Text1')).Text := aCliente.Nome;
+    TListItemText(Objects.FindDrawable('Text2')).Text := IfThen(Trim(aCliente.Endereco) = EmptyStr, '* SEM ENDEREÇO INFORMADO!', Trim(aCliente.Endereco));
+    if (aCliente.DataUltimaCompra <> StrToDate(EMPTY_DATE)) then
+    begin
+      TListItemText(Objects.FindDrawable('Text3')).Text :=
+        '** Última Compra : ' + FormatDateTime('dd/mm/yyyy', aCliente.DataUltimaCompra) + ', ' +
+        'R$ ' + FormatFloat(',0.00', aCliente.ValorUltimaCompra);
+    end
+    else
+      TListItemText(Objects.FindDrawable('Text3')).Text := '**';
+
+    // Status
+    aImage := TListItemImage(Objects.FindDrawable('Image4'));
+    if aCliente.Ativo then
+      aImage.Bitmap := img_sinc.Bitmap
+    else
+      aImage.Bitmap := img_nao_sinc.Bitmap;
+  end;
+end;
+
+procedure TFrmPrincipal.FormatarItemPedidoListView(aItem: TListViewItem);
+var
+  aText   : TListItemText;
+  aImage  : TListItemImage;
+  aPedido : TPedido;
+begin
+  with aItem do
+  begin
+    aPedido := TPedido(aItem.TagObject);
+
+    // Número
+    aText := TListItemText(Objects.FindDrawable('Text1'));
+    aText.Text := aPedido.ToString;
+    // Cliente
+    aText := TListItemText(Objects.FindDrawable('Text2'));
+    aText.Text := aPedido.Cliente.Nome;
+    // Data
+    aText := TListItemText(Objects.FindDrawable('Text3'));
+    aText.Text := FormatDateTime('dd/mm/yyyy', aPedido.DataEmissao);
+    // Valor
+    aText := TListItemText(Objects.FindDrawable('Text4'));
+    aText.Text := 'R$ ' +  FormatFloat(',0.00', aPedido.ValorPedido);
+
+    // Entregue
+    aImage := TListItemImage(Objects.FindDrawable('Image6'));
+    if aPedido.Entregue then
+      aImage.Bitmap := img_entregue.Bitmap
+    else
+      aImage.Visible := False;
+
+    // Sincronizado
+    aImage := TListItemImage(Objects.FindDrawable('Image5'));
+    if aPedido.Sincronizado then
+      aImage.Bitmap := img_sinc.Bitmap
+    else
+      aImage.Bitmap := img_nao_sinc.Bitmap;
+  end;
 end;
 
 procedure TFrmPrincipal.FormCreate(Sender: TObject);
@@ -338,6 +395,7 @@ begin
       end;
     idxTabNotificacao :
       begin
+        DoBuscaNotificacoes(nil);
         imageTabNotificacao.Opacity   := 1;
         labelTabNotificacao.FontColor := crAzul;
       end;
