@@ -17,6 +17,7 @@ type
         TABLE_USUARIO     = 'tbl_usuario';
         TABLE_PEDIDO      = 'tbl_pedido';
         TABLE_CLIENTE     = 'tbl_cliente';
+        TABLE_PRODUTO     = 'tbl_produto';
     public
       class function GetInstance : TScriptDDL;
 
@@ -25,6 +26,7 @@ type
       function getCreateTableUsuario : TStringList;
       function getCreateTablePedido : TStringList;
       function getCreateTableCliente : TStringList;
+      function getCreateTableProduto : TStringList;
 
       function getTableNameVersao : String;
       function getTableNameInfo : String;
@@ -32,6 +34,7 @@ type
       function getTableNameUsuario : String;
       function getTableNamePedido : String;
       function getTableNameCliente : String;
+      function getTableNameProduto : String;
   end;
 
 implementation
@@ -126,6 +129,31 @@ begin
   end;
 end;
 
+function TScriptDDL.getCreateTableProduto: TStringList;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL := TStringList.Create;
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_PRODUTO + ' (');
+    aSQL.Add('      id_produto      VARCHAR (38) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , cd_produto      BIGINT  (10) UNIQUE ON CONFLICT ROLLBACK');
+    aSQL.Add('    , ds_produto      VARCHAR (200)');
+    aSQL.Add('    , ft_produto      IMAGE');
+    aSQL.Add('    , vl_produto      NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
+    aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Produto no Servidor Web (ID)
+    aSQL.Add(')');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
+end;
+
 function TScriptDDL.getCreateTableUsuario: TStringList;
 var
   aSQL : TStringList;
@@ -197,6 +225,11 @@ end;
 function TScriptDDL.getTableNamePedido: String;
 begin
   Result := TABLE_PEDIDO;
+end;
+
+function TScriptDDL.getTableNameProduto: String;
+begin
+  Result := TABLE_PRODUTO;
 end;
 
 function TScriptDDL.getTableNameUsuario: String;

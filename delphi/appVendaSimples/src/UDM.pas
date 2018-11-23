@@ -30,6 +30,7 @@ type
   private
     { Private declarations }
     procedure SetArquivoDB(const aFileName : String);
+    procedure CriarTabela;
   public
     { Public declarations }
     procedure ConectarDB;
@@ -86,6 +87,11 @@ begin
 end;
 
 procedure TDM.connAfterConnect(Sender: TObject);
+begin
+  CriarTabela;
+end;
+
+procedure TDM.CriarTabela;
 var
   aScriptDDL : TScriptDDL;
 begin
@@ -94,7 +100,8 @@ begin
   conn.ExecSQL(aScriptDDL.getCreateTableUsuario.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableCliente.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTablePedido.Text, True);
-//  conn.ExecSQL(aScriptDDL.getCreateTableNotificacao.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTableNotificacao.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTableProduto.Text, True);
 end;
 
 procedure TDM.DataModuleCreate(Sender: TObject);

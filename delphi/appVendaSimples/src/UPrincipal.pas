@@ -84,6 +84,7 @@ type
     procedure DoFecharApp(Sender: TObject);
     procedure DoCloseApp(Sender: TObject);
     procedure DoSelecinarTab(Sender: TObject);
+
     procedure DoBuscaPedidos(Sender: TObject);
     procedure DoBuscaClientes(Sender: TObject);
     procedure DoBuscaNotificacoes(Sender: TObject);
@@ -91,16 +92,21 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure imageAddPedidoClick(Sender: TObject);
+    procedure ListViewNotificacaoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+    procedure ListViewPedidoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+    procedure ListViewClienteUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
   private
     { Private declarations }
     procedure DefinirIndices;
     procedure SelecionarTab(const aTab : Smallint);
+
     procedure BuscarPedidos(aBusca : String; aPagina : Integer);
     procedure BuscarClientes(aBusca : String; aPagina : Integer);
     procedure BuscarNotificacoes(aBusca : String; aPagina : Integer);
+
     procedure FormatarItemPedidoListView(aItem  : TListViewItem);
     procedure FormatarItemClienteListView(aItem  : TListViewItem);
-    procedure FormatarItemNotificacaoListView(aItem  : TListViewItem); virtual; abstract;
+    procedure FormatarItemNotificacaoListView(aItem  : TListViewItem);
 
     procedure AddPedidoListView(aPedido : TPedido);
     procedure AddClienteListView(aCliente : TCliente);
@@ -131,8 +137,6 @@ uses
 procedure TFrmPrincipal.AddClienteListView(aCliente : TCliente);
 var
   aItem  : TListViewItem;
-  aText  : TListItemText;
-  aImage : TListItemImage;
 begin
   aItem := ListViewCliente.Items.Add;
   aItem.TagObject := aCliente;
@@ -142,8 +146,6 @@ end;
 procedure TFrmPrincipal.AddPedidoListView(aPedido: TPedido);
 var
   aItem  : TListViewItem;
-  aText  : TListItemText;
-  aImage : TListItemImage;
 begin
   aItem := ListViewPedido.Items.Add;
   aItem.TagObject := aPedido;
@@ -301,6 +303,56 @@ begin
   end;
 end;
 
+procedure TFrmPrincipal.FormatarItemNotificacaoListView(aItem: TListViewItem);
+var
+  aText  : TListItemText;
+  aImage : TListItemImage;
+  aNotificacao : TNotificacao;
+
+  procedure DefinirDestaqueText(const xText : TListItemText;
+    const aCorDestaque, aCorLida, aCorNormal : TAlphaColor);
+  begin
+    if aNotificacao.Destacar then
+    begin
+      xText.Font.Style := [TFontStyle.fsBold];
+      xText.TextColor  := aCorDestaque;
+    end
+    else
+    if not aNotificacao.Lida then
+    begin
+      xText.Font.Style := [TFontStyle.fsBold];
+      xText.TextColor  := aCorLida;
+    end
+    else
+    begin
+      xText.Font.Style := [];
+      xText.TextColor  := aCorNormal;
+    end;
+  end;
+
+begin
+  with aItem do
+  begin
+    aNotificacao := TNotificacao(aItem.TagObject);
+
+    // Titulo
+    aText := TListItemText(Objects.FindDrawable('Text1'));
+    aText.Text := aNotificacao.Titulo;
+    DefinirDestaqueText(aText, crVermelho, crAzul, crAzul);
+
+    // Data
+    aText := TListItemText(Objects.FindDrawable('Text2'));
+    aText.Text := FormatDateTime('dd/mm/yyyy', aNotificacao.Data);
+    DefinirDestaqueText(aText, crVermelho, crCinzaEscuro, crCinzaEscuro);
+
+    // Mensagem
+    aText := TListItemText(Objects.FindDrawable('Text3'));
+    aText.Text := aNotificacao.Mensagem;
+    aText.WordWrap := True;
+    DefinirDestaqueText(aText, crVermelho, crCinzaEscuro, crCinzaEscuro);
+  end;
+end;
+
 procedure TFrmPrincipal.FormatarItemPedidoListView(aItem: TListViewItem);
 var
   aText   : TListItemText;
@@ -361,6 +413,21 @@ procedure TFrmPrincipal.imageAddPedidoClick(Sender: TObject);
 begin
   // Para teste
   AddPedidoListView(TPedido.Create);
+end;
+
+procedure TFrmPrincipal.ListViewClienteUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+begin
+  FormatarItemClienteListView(AItem);
+end;
+
+procedure TFrmPrincipal.ListViewNotificacaoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+begin
+  FormatarItemNotificacaoListView(AItem);
+end;
+
+procedure TFrmPrincipal.ListViewPedidoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+begin
+  FormatarItemPedidoListView(AItem);
 end;
 
 procedure TFrmPrincipal.SelecionarTab(const aTab: Smallint);

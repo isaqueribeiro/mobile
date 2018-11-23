@@ -9,15 +9,19 @@ uses
   UDM in 'src\UDM.pas' {DM: TDataModule},
   UPrincipal in 'src\UPrincipal.pas' {FrmPrincipal},
   UMensagem in 'src\UMensagem.pas' {FrmMensagem},
+  UPadrao in 'src\UPadrao.pas' {FrmPadrao},
   classes.ScriptDDL in 'src\classes.ScriptDDL.pas',
   app.Funcoes in 'src\app.Funcoes.pas',
   model.Pedido in 'src\model.Pedido.pas',
   model.Cliente in 'src\model.Cliente.pas',
-  dao.Pedido in 'src\dao.Pedido.pas',
   model.Loja in 'src\model.Loja.pas',
-  dao.Cliente in 'src\dao.Cliente.pas',
   model.Notificacao in 'src\model.Notificacao.pas',
-  dao.Notificacao in 'src\dao.Notificacao.pas';
+  model.Produto in 'src\model.Produto.pas',
+  dao.Pedido in 'src\dao.Pedido.pas',
+  dao.Cliente in 'src\dao.Cliente.pas',
+  dao.Notificacao in 'src\dao.Notificacao.pas',
+  dao.Produto in 'src\dao.Produto.pas',
+  UProduto in 'src\UProduto.pas' {FrmProduto};
 
 {$R *.res}
 
