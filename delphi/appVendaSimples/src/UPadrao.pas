@@ -15,6 +15,7 @@ type
     labelTitulo: TLabel;
     imageAdicionar: TImage;
     imageVoltar: TImage;
+    procedure DoFecharFormulario(Sender: TObject);
   private
     { Private declarations }
   public
@@ -27,5 +28,10 @@ var
 implementation
 
 {$R *.fmx}
+
+procedure TFrmPadrao.DoFecharFormulario(Sender: TObject);
+begin
+  Self.Close;
+end;
 
 end.

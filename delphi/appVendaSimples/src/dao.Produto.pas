@@ -7,7 +7,7 @@ uses
   classes.ScriptDDL,
   model.Produto,
 
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.StrUtils, System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet;
 
 type
@@ -155,8 +155,54 @@ begin
 end;
 
 procedure TProdutoDao.Insert;
+var
+  aSQL : TStringList;
 begin
-  ;
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Insert Into ' + aDDL.getTableNameProduto + '(');
+    aSQL.Add('    id_produto      ');
+    aSQL.Add('  , cd_produto      ');
+    aSQL.Add('  , ds_produto      ');
+    //aSQL.Add('  , ft_produto      ');
+    aSQL.Add('  , vl_produto      ');
+    aSQL.Add('  , sn_ativo        ');
+    aSQL.Add('  , sn_sincronizado ');
+    aSQL.Add('  , cd_referencia   ');
+    aSQL.Add(') values (');
+    aSQL.Add('    :id_produto     ');
+    aSQL.Add('  , :cd_produto     ');
+    aSQL.Add('  , :ds_produto     ');
+    //aSQL.Add('  , :ft_produto     ');
+    aSQL.Add('  , :vl_produto     ');
+    aSQL.Add('  , :sn_ativo       ');
+    aSQL.Add('  , :sn_sincronizado');
+    aSQL.Add('  , :cd_referencia  ');
+    aSQL.Add(')');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      if (aModel.ID = GUID_NULL) then
+        aModel.NewID;
+
+      ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
+      ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
+      ParamByName('ds_produto').AsString      := aModel.Descricao;
+      //ParamByName('ft_produto').Clear;
+      ParamByName('vl_produto').AsCurrency    := aModel.Valor;
+      ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+      ParamByName('cd_referencia').Clear;
+      ExecSQL;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 procedure TProdutoDao.Load(const aBusca: String);
@@ -180,7 +226,7 @@ begin
     if (Trim(aBusca) <> EmptyStr) then
     begin
       aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
-      aSQL.Add('where c.ds_produto like ' + QuotedStr(aFiltro));
+      aSQL.Add('where p.ds_produto like ' + QuotedStr(aFiltro));
     end;
 
     aSQL.Add('order by');
@@ -234,8 +280,46 @@ begin
 end;
 
 procedure TProdutoDao.Update;
+var
+  aSQL : TStringList;
 begin
-  ;
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Update ' + aDDL.getTableNameProduto + ' Set');
+    aSQL.Add('    cd_produto      = :cd_produto ');
+    aSQL.Add('  , ds_produto      = :ds_produto ');
+    //aSQL.Add('  , ft_produto      = :ft_produto ');
+    aSQL.Add('  , vl_produto      = :vl_produto ');
+    aSQL.Add('  , sn_ativo        = :sn_ativo   ');
+    aSQL.Add('  , sn_sincronizado = :sn_sincronizado ');
+    aSQL.Add('  , cd_referencia   = :cd_referencia   ');
+    aSQL.Add('where id_produto    = :id_produto      ');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
+      ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
+      ParamByName('ds_produto').AsString      := aModel.Descricao;
+      //ParamByName('ft_produto').Clear;
+      ParamByName('vl_produto').AsCurrency    := aModel.Valor;
+      ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
+
+      if (aModel.Referencia = GUID_NULL) then
+        ParamByName('cd_referencia').Clear
+      else
+        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
+
+      ExecSQL;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 end.

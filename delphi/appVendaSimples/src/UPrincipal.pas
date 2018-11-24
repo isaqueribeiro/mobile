@@ -84,6 +84,7 @@ type
     procedure DoFecharApp(Sender: TObject);
     procedure DoCloseApp(Sender: TObject);
     procedure DoSelecinarTab(Sender: TObject);
+    procedure DoExibirProdutos(Sender: TObject);
 
     procedure DoBuscaPedidos(Sender: TObject);
     procedure DoBuscaClientes(Sender: TObject);
@@ -130,7 +131,8 @@ implementation
 
 uses
   UConstantes,
-    UMensagem;
+  UMensagem,
+  UProduto;
 
 { TFrmPrincipal }
 
@@ -256,6 +258,11 @@ end;
 procedure TFrmPrincipal.DoCloseApp(Sender: TObject);
 begin
   Halt(0);
+end;
+
+procedure TFrmPrincipal.DoExibirProdutos(Sender: TObject);
+begin
+  ExibirListaProdutos;
 end;
 
 procedure TFrmPrincipal.DoSelecinarTab(Sender: TObject);

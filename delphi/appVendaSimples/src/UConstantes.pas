@@ -17,6 +17,9 @@ const
 
   EMPTY_DATE = '30/12/1899';
 
+  FLAG_SIM = 'S';
+  FLAG_NAO = 'N';
+
 implementation
 
 end.

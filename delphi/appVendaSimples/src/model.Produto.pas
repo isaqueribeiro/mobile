@@ -12,7 +12,7 @@ type
       aID        : TGUID;
       aCodigo    : Currency;
       aDescricao : String;
-      aFoto      : TImageIndex;
+      aFoto      : TStream;
       aValor     : Currency;
       aAtivo        ,
       aSincronizado : Boolean;
@@ -25,11 +25,13 @@ type
       property ID           : TGUID read aID write aID;
       property Codigo       : Currency read aCodigo write aCodigo;
       property Descricao    : String read aDescricao write SetDescricao;
-      property Foto         : TImageIndex read aFoto write aFoto;
+      property Foto         : TStream read aFoto write aFoto;
       property Valor        : Currency read aValor write aValor;
       property Ativo        : Boolean read aAtivo write aAtivo;
       property Sincronizado : Boolean read aSincronizado write aSincronizado;
       property Referencia   : TGUID read aReferencia write aReferencia;
+
+      procedure NewID;
   end;
 
   TProdutos = Array of TProduto;
@@ -44,11 +46,19 @@ begin
   aId      := GUID_NULL;
   aCodigo  := 0;
   aDescricao := EmptyStr;
-  //aFoto      : TImageIndex;
+  aFoto      := nil;
   aValor     := 0.0;
   aAtivo        := True;
   aSincronizado := False;
   aReferencia   := GUID_NULL;
+end;
+
+procedure TProduto.NewID;
+var
+  aGuid : TGUID;
+begin
+  CreateGUID(aGuid);
+  aID := aGuid;
 end;
 
 procedure TProduto.SetDescricao(Value: String);
