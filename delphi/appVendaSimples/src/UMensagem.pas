@@ -61,6 +61,7 @@ begin
       LabelTitulo.Text := 'ERRO';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgErro.Bitmap;
+      LabelFechar.Text := 'FECHAR';
 
       RectangleOK.Visible     := False;
       RectangleFechar.Visible := True;
@@ -83,6 +84,7 @@ begin
       LabelTitulo.Text := 'ALERTA!';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgAlerta.Bitmap;
+      LabelFechar.Text := 'FECHAR';
 
       RectangleOK.Visible     := False;
       RectangleFechar.Visible := True;
@@ -105,6 +107,7 @@ begin
       LabelTitulo.Text := 'SUCESSO!';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgSucesso.Bitmap;
+      LabelFechar.Text := 'FECHAR';
 
       RectangleOK.Visible     := True;
       RectangleFechar.Visible := False;

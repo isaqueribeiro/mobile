@@ -8,7 +8,7 @@ uses
   model.Produto,
 
   System.StrUtils, System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FireDAC.Comp.Client, FireDAC.Comp.DataSet;
+  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet;
 
 type
   TProdutoDao = class(TObject)
@@ -165,20 +165,26 @@ begin
     aSQL.Add('    id_produto      ');
     aSQL.Add('  , cd_produto      ');
     aSQL.Add('  , ds_produto      ');
-    //aSQL.Add('  , ft_produto      ');
     aSQL.Add('  , vl_produto      ');
     aSQL.Add('  , sn_ativo        ');
     aSQL.Add('  , sn_sincronizado ');
     aSQL.Add('  , cd_referencia   ');
+
+    if (aModel.Foto <> nil) then
+      aSQL.Add('  , ft_produto    ');
+
     aSQL.Add(') values (');
     aSQL.Add('    :id_produto     ');
     aSQL.Add('  , :cd_produto     ');
     aSQL.Add('  , :ds_produto     ');
-    //aSQL.Add('  , :ft_produto     ');
     aSQL.Add('  , :vl_produto     ');
     aSQL.Add('  , :sn_ativo       ');
     aSQL.Add('  , :sn_sincronizado');
     aSQL.Add('  , :cd_referencia  ');
+
+    if (aModel.Foto <> nil) then
+      aSQL.Add('  , :ft_produto   ');
+
     aSQL.Add(')');
     aSQL.EndUpdate;
 
@@ -193,11 +199,14 @@ begin
       ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
       ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
       ParamByName('ds_produto').AsString      := aModel.Descricao;
-      //ParamByName('ft_produto').Clear;
       ParamByName('vl_produto').AsCurrency    := aModel.Valor;
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := FLAG_NAO;
       ParamByName('cd_referencia').Clear;
+
+      if (aModel.Foto <> nil) then
+        ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
+
       ExecSQL;
     end;
   finally
@@ -267,7 +276,6 @@ begin
     Codigo := FieldByName('cd_produto').AsCurrency;
 
     Descricao := FieldByName('ds_produto').AsString;
-    //Foto      := ?
     Valor     := FieldByName('vl_produto').AsCurrency;
     Ativo        := (AnsiUpperCase(FieldByName('sn_ativo').AsString) = 'S');
     Sincronizado := (AnsiUpperCase(FieldByName('sn_sincronizado').AsString) = 'S');
@@ -276,6 +284,14 @@ begin
       Referencia := StringToGUID(FieldByName('cd_referencia').AsString)
     else
       Referencia := GUID_NULL;
+
+    if (not FieldByName('ft_produto').IsNull) then
+    begin
+      aModel.Foto := TStream.Create;
+      aModel.Foto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
+    end
+    else
+      aModel.Foto := nil;
   end;
 end;
 
@@ -289,11 +305,14 @@ begin
     aSQL.Add('Update ' + aDDL.getTableNameProduto + ' Set');
     aSQL.Add('    cd_produto      = :cd_produto ');
     aSQL.Add('  , ds_produto      = :ds_produto ');
-    //aSQL.Add('  , ft_produto      = :ft_produto ');
     aSQL.Add('  , vl_produto      = :vl_produto ');
     aSQL.Add('  , sn_ativo        = :sn_ativo   ');
     aSQL.Add('  , sn_sincronizado = :sn_sincronizado ');
     aSQL.Add('  , cd_referencia   = :cd_referencia   ');
+
+    if (aModel.Foto <> nil) then
+      aSQL.Add('  , ft_produto    = :ft_produto ');
+
     aSQL.Add('where id_produto    = :id_produto      ');
     aSQL.EndUpdate;
 
@@ -305,7 +324,6 @@ begin
       ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
       ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
       ParamByName('ds_produto').AsString      := aModel.Descricao;
-      //ParamByName('ft_produto').Clear;
       ParamByName('vl_produto').AsCurrency    := aModel.Valor;
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
@@ -314,6 +332,9 @@ begin
         ParamByName('cd_referencia').Clear
       else
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
+
+      if (aModel.Foto <> nil) then
+        ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
 
       ExecSQL;
     end;
