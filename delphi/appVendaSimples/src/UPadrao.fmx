@@ -10,7 +10,8 @@ object FrmPadrao: TFrmPadrao
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
-  DesignerMasterStyle = 0
+  OnCreate = FormCreate
+  DesignerMasterStyle = 3
   object StyleBook: TStyleBook
     Styles = <
       item
@@ -1131,100 +1132,284 @@ object FrmPadrao: TFrmPadrao
     Left = 24
     Top = 368
   end
-  object LayoutForm: TLayout
+  object LayoutFundo: TLayout
+    Align = Contents
+    Size.Width = 300.000000000000000000
+    Size.Height = 486.000000000000000000
+    Size.PlatformDefault = False
+    Visible = False
+    TabOrder = 2
+    object RectangleFundo: TRectangle
+      Align = Client
+      Fill.Color = xFF6B6868
+      Opacity = 0.300000011920929000
+      Size.Width = 300.000000000000000000
+      Size.Height = 486.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+    end
+  end
+  object LayoutBase: TLayout
     Align = Client
     Size.Width = 300.000000000000000000
     Size.Height = 486.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 1
-    object rectangleTitulo: TRectangle
-      Align = Top
-      Fill.Color = xFF1E87AF
+    TabOrder = 3
+    object tbsControle: TTabControl
+      Align = Client
       Size.Width = 300.000000000000000000
-      Size.Height = 48.000000000000000000
+      Size.Height = 486.000000000000000000
       Size.PlatformDefault = False
-      Stroke.Kind = None
-      object labelTitulo: TLabel
-        Align = Contents
-        StyledSettings = [Family]
-        HitTest = True
-        Size.Width = 300.000000000000000000
-        Size.Height = 48.000000000000000000
+      TabHeight = 49.000000000000000000
+      TabIndex = 0
+      TabOrder = 0
+      TabPosition = PlatformDefault
+      Sizes = (
+        300s
+        437s
+        300s
+        437s)
+      object tbsConsulta: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 150.000000000000000000
+        Size.Height = 49.000000000000000000
         Size.PlatformDefault = False
-        TextSettings.Font.Size = 14.000000000000000000
-        TextSettings.Font.StyleExt = {00060000000000000004000000}
-        TextSettings.FontColor = claWhite
-        TextSettings.HorzAlign = Center
-        Text = 'FORMUL'#193'RIO PADR'#195'O'
+        StyleLookup = ''
         TabOrder = 0
+        Text = 'CONSULTA'
+        ExplicitSize.cx = 150.000000000000000000
+        ExplicitSize.cy = 49.000000000000000000
+        object LayoutFormConsulta: TLayout
+          Align = Client
+          Size.Width = 300.000000000000000000
+          Size.Height = 437.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          object rectangleTitulo: TRectangle
+            Align = Top
+            Fill.Color = xFF1E87AF
+            Size.Width = 300.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            object labelTitulo: TLabel
+              Align = Contents
+              StyledSettings = [Family]
+              HitTest = True
+              Size.Width = 300.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.Size = 14.000000000000000000
+              TextSettings.Font.StyleExt = {00060000000000000004000000}
+              TextSettings.FontColor = claWhite
+              TextSettings.HorzAlign = Center
+              Text = 'FORMUL'#193'RIO PESQUISA'
+              TabOrder = 0
+            end
+            object imageAdicionar: TImage
+              MultiResBitmap.Height = 32
+              MultiResBitmap.Width = 32
+              MultiResBitmap = <
+                item
+                  Width = 32
+                  Height = 32
+                  PNG = {
+                    89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
+                    F4000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                    0155494441545847D596DD6D833010C731028905B24095D7AA0B743796EB0251
+                    5EA32E90059040B877C7117030F6193B81FE5EFCB7B0EFCB5F64FF11C5AD0DD7
+                    B72854A6351A17388071E2B17E46635B88990BE0E428030CD908B553D779F824
+                    0741C96C8A5880D06E9AB2AF419535319DA173A534F79C344D73674954557562
+                    E9E6C9C72C00CC5CE61CD1004B42012C3D987E1625793DE87C5AE65900C20412
+                    330680DEC5E58F67B9046F746EE2AD7BDBB63796735451141FAC89AEEB7EA159
+                    245296E599A5156F00CFBB3D14DFE9D8E11498EC1E807709FABEFF6439072B7B
+                    614DC04A7D6133F426F23CBFB2B4E20D608DED37E1031CAF775A02BA09298129
+                    8057BE820E0E740AF0897C4715C8C774159B0E87B79A14F51DC01EFC6649C01E
+                    FC61B98EC8BEE5AF2511017F5B75F2D3A1C2131B2608237601596FAE2A964C5C
+                    360BB1F31F90911043A91C2F41A32EC3BEEF4723CBFE00228A7B957BB90D1900
+                    00000049454E44AE426082}
+                  FileName = 
+                    'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\images\a' +
+                    'dd_circle_branco_32x32.png'
+                end>
+              Align = Right
+              Position.X = 252.000000000000000000
+              Size.Width = 48.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              WrapMode = Center
+              OnClick = imageAdicionarClick
+            end
+            object imageVoltar: TImage
+              MultiResBitmap.Height = 32
+              MultiResBitmap.Width = 32
+              MultiResBitmap = <
+                item
+                  Width = 32
+                  Height = 32
+                  PNG = {
+                    89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
+                    F4000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                    0189494441545847D5965B4AC43014865B41C1477113AE4B10114144062F78A9
+                    B83057D0615EBA82AEC0CA98A4699C78929E0E836D73EB05FD5EA6EDDF9CFFCF
+                    C9346DF41F89F1B70B93368838925215773080FB9CEFB5D3140B61C858400D1E
+                    5400D1357CEB24C99EFF20035E93094AEC8063DDE0B6E7797E8887FDE8CE9A08
+                    34A755F52684581545718C97FAE9F70833FF2AAB57894088659ACA7D947A1831
+                    00E1FC19BDE566232561FC06250BDD5E5E01D68C3FA2B706C22C5072A01DC0CB
+                    1CCCEED1574318BB43697A60E6B7E8AB81300F284DCF9AB105FA6AE0FC09A5E9
+                    F964EC8410F28DDEB214E21DA5F9A065794A29DD86609CBFA0341F10E20C3A01
+                    0F5D0D84986F191A28E7E784D2DD10F3FD111B20C4052CC76E08DF47D17BE36B
+                    01212E7F8570DC8CBA76C2C01711985E35212A2152FBBB403162000584B806F3
+                    E587944778C9429FD7801059961DE0A119A3472D0687B0E254DFFAD5128CC7D7
+                    5622C70E11FB4FAC1E30C272C0AC83BBAA5AE6DCB60E868EDFA28BF8141ACBB8
+                    8D2A6A2A6CD3FF1A51F40325495718C58A2A720000000049454E44AE426082}
+                  FileName = 
+                    'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVe' +
+                    'ndaSimples\src\images\back_circle_branco_32x32.png'
+                end>
+              Align = Left
+              Size.Width = 48.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              WrapMode = Center
+              OnClick = imageVoltarClick
+            end
+          end
+        end
       end
-      object imageAdicionar: TImage
-        MultiResBitmap.Height = 32
-        MultiResBitmap.Width = 32
-        MultiResBitmap = <
+      object tbsCadastro: TTabItem
+        CustomIcon = <
           item
-            Width = 32
-            Height = 32
-            PNG = {
-              89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
-              F4000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              0155494441545847D596DD6D833010C731028905B24095D7AA0B743796EB0251
-              5EA32E90059040B877C7117030F6193B81FE5EFCB7B0EFCB5F64FF11C5AD0DD7
-              B72854A6351A17388071E2B17E46635B88990BE0E428030CD908B553D779F824
-              0741C96C8A5880D06E9AB2AF419535319DA173A534F79C344D73674954557562
-              E9E6C9C72C00CC5CE61CD1004B42012C3D987E1625793DE87C5AE65900C20412
-              330680DEC5E58F67B9046F746EE2AD7BDBB63796735451141FAC89AEEB7EA159
-              245296E599A5156F00CFBB3D14DFE9D8E11498EC1E807709FABEFF6439072B7B
-              614DC04A7D6133F426F23CBFB2B4E20D608DED37E1031CAF775A02BA09298129
-              8057BE820E0E740AF0897C4715C8C774159B0E87B79A14F51DC01EFC6649C01E
-              FC61B98EC8BEE5AF2511017F5B75F2D3A1C2131B2608237601596FAE2A964C5C
-              360BB1F31F90911043A91C2F41A32EC3BEEF4723CBFE00228A7B957BB90D1900
-              00000049454E44AE426082}
-            FileName = 
-              'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\images\a' +
-              'dd_circle_branco_32x32.png'
           end>
-        Align = Right
-        Position.X = 252.000000000000000000
-        Size.Width = 48.000000000000000000
-        Size.Height = 48.000000000000000000
+        IsSelected = False
+        Size.Width = 150.000000000000000000
+        Size.Height = 49.000000000000000000
         Size.PlatformDefault = False
-        WrapMode = Center
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'CADASTRO'
+        ExplicitSize.cx = 150.000000000000000000
+        ExplicitSize.cy = 49.000000000000000000
+        object LayoutFormCadastro: TLayout
+          Align = Client
+          Size.Width = 300.000000000000000000
+          Size.Height = 437.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          object rectangleTituloCadastro: TRectangle
+            Align = Top
+            Fill.Color = xFF1E87AF
+            Size.Width = 300.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            object labelTituloCadastro: TLabel
+              Align = Contents
+              StyledSettings = [Family]
+              HitTest = True
+              Size.Width = 300.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.Size = 14.000000000000000000
+              TextSettings.Font.StyleExt = {00060000000000000004000000}
+              TextSettings.FontColor = claWhite
+              TextSettings.HorzAlign = Center
+              Text = 'FORMUL'#193'RIO CADASTRO'
+              TabOrder = 0
+            end
+            object imageVoltarConsulta: TImage
+              MultiResBitmap.Height = 32
+              MultiResBitmap.Width = 32
+              MultiResBitmap = <
+                item
+                  Width = 32
+                  Height = 32
+                  PNG = {
+                    89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
+                    F4000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                    018A494441545847D5965B4E84301486C144131F8D9B705D26C6181363CCC44B
+                    BC605C982B60E20B2B600583194A2975EA69394C2602BD7189F3BD0CF0D3F3FF
+                    3D1D0AC13E12E26F173A6D106120842C6E6100F759DF6BA629E6C390B1801C3C
+                    A800A26AB8D689A203F7411A9C26E395D802CBBADE6D4FD3F4180FFB519DD5E1
+                    695E54D507E7FC2BCBB253BCD44FBF879F795E56EF028110CB38168728F53062
+                    00C2D82B7A8BCD460842D91D4A06BABD9C02AC297B466F058459A064413B8093
+                    39983DA2AF8250FA80D2F4C0CCEFD15701619E509A9E35A50BF455C0F90B4AD3
+                    F34DE9599EE73FE82D4ACE3F519A8FA22CCF0921DB1094B13794E603425C4027
+                    E0A1AB8110F32D4343C1D8654EC86E88F9FE880D10E20A96633784EBA3E8BCF1
+                    B58010D77F42586E465D3BA1E78B084C6F9A1015E7B1F95D201931800442DC82
+                    F97225C4095E32D0E735204492244778A847EB518BDE218C58D5377EB578E3F0
+                    B51589B14384EE13AB078CB01C306BEFAECA9659B7AD83A1E3B7A8222E85C632
+                    6E238BEA0A9BF4FF4610FC0295D65703F92FAAAB0000000049454E44AE426082}
+                  FileName = 
+                    'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVe' +
+                    'ndaSimples\src\images\back_circle_branco_32x32.png'
+                end>
+              Align = Left
+              Size.Width = 48.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              WrapMode = Center
+              OnClick = imageVoltarConsultaClick
+            end
+            object imageSalvarCadastro: TImage
+              MultiResBitmap.Height = 32
+              MultiResBitmap.Width = 32
+              MultiResBitmap = <
+                item
+                  Width = 32
+                  Height = 32
+                  PNG = {
+                    89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
+                    F4000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                    0238494441545847D5963F6BDB4018C6A5D84B43D3FCFD0E8566089404BA0432
+                    846E8542C892A1742A740C19B2C55BBF4BBF42B3A4149AA4A5F42B14839798D8
+                    4302B574D25D9ED33D56E25AD2DD596E487E703EEBBDF77D9F47275956F01809
+                    391751B5568B30504A377710409E73AE9D61B349A8530B7471AD0624EBE1DBA7
+                    D59AF12FAAC0EB642672EC8063DFE96C7B19D9CE56F13FC587946BDC8378C63D
+                    1A180C06CF9324D9E7E11D8AB5A66A208AA2B52411170AC0C401C364DCC054C5
+                    63196F0821BA5A5C030312E33D974718DE958A736DA48C5F856978DC6C365718
+                    0A1A8D461886EA050FDD88E3781DAE4FA494CB0C59114A6CA3E69A279E93A6E2
+                    1353DC90327A89463D5D8CF9374C2C71A9146CF91B918841A67807D41F31C50D
+                    DC3CAB28BA647D068E7F615A64CA1810DFC11026FB165CF943A6B883BA05087E
+                    372D6E41EC27A605A6E520FE0E2331590678D137DD47A6F8832D7F8606A7EC97
+                    83D80F4CF34CD3E21F20969A55036220DA63CAE428D59B47A773F6CD41EC8C06
+                    0F3024C3195A1963972D6CD87FFAFD7E5F5F0EBDF523E0ACFFF06B0E1E3A31E2
+                    6F596A41158897FC4974BBDD3998F84A9D4220FC17E3354B1CF030A081C65398
+                    F866E446C14FEF0A9F5B4C75A44CABC244BBDD7E92A6E917EA66C0540F0FAC4D
+                    A6B851F9976F164B1370F36913C714EF437C834B6E58FA1B2C6F2D9D4E671626
+                    3EE369B9C6902B1E6F5B2D657975F226B4BF8EFD8B2970745C05CEDA5B7C88DE
+                    32E76D2BA06E7D4ED6C4A7D1B484C7D14DAB1ADBD61F1A41700323F95E41AE65
+                    5DC50000000049454E44AE426082}
+                  FileName = 
+                    'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\images\s' +
+                    'ave_circle_branco_32x32.png'
+                end>
+              Align = Right
+              Position.X = 252.000000000000000000
+              Size.Width = 48.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              WrapMode = Center
+              OnClick = imageAdicionarClick
+            end
+          end
+        end
       end
-      object imageVoltar: TImage
-        MultiResBitmap.Height = 32
-        MultiResBitmap.Width = 32
-        MultiResBitmap = <
-          item
-            Width = 32
-            Height = 32
-            PNG = {
-              89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
-              F4000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-              0189494441545847D5965B4AC43014865B41C1477113AE4B10114144062F78A9
-              B83057D0615EBA82AEC0CAD8A6499C78929E0E836DAEBDA0DFCBB4FD9BF3FF39
-              99B48DFE2331FEF661D206114742C8E20E06709FF3BD76DA62210C190BC8C183
-              0A20AA866F9D24D9F31F64C06B3241891D70AC1BDCF63CCF0FF1508FEAAC8940
-              F38AB137CEF9AA288A63BCA447EF1166FE55B357814088659A8A7D94348C18A0
-              A4F419BDC566234449E80D4A16FABDBC02AC097D446F058459A0E44037809739
-              98DDA3AFA224E40EA5E98199DFA2AF02C23CA0343D6B4216E8AB80F32794A6E7
-              939013C6D8377A8B9AF37794E6A3AAEB53D86ADB1084D21794E603429C412760
-              D3354088F996A1A5A2F49C71BE1B62BE3F620B84B880E5D80DE1BB15BD1F7C1D
-              20C4E5AF108E0FA3BE2761E08B084CAFDA10B02CA9FD5D2019318004425C83F9
-              F2438823BC6441E73520449665077868C6E8D188C121AC38D5B77EB504E3F1B5
-              9588B143C4FE136B068CB01C30EBE0AECA9639B7AD87A1E3B7A8223E85C632EE
-              228B9A0ADBF4BF4614FD00F25B5781FA60EB0A0000000049454E44AE426082}
-            FileName = 
-              'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVe' +
-              'ndaSimples\src\images\back_circle_branco_32x32.png'
-          end>
-        Align = Left
-        Size.Width = 48.000000000000000000
-        Size.Height = 48.000000000000000000
-        Size.PlatformDefault = False
-        WrapMode = Center
-        OnClick = DoFecharFormulario
-      end
+    end
+  end
+  object ActionList: TActionList
+    Left = 24
+    Top = 417
+    object ChangeTabActionConsulta: TChangeTabAction
+      Category = 'Tab'
+      Tab = tbsConsulta
+    end
+    object ChangeTabActionCadastro: TChangeTabAction
+      Category = 'Tab'
+      Tab = tbsCadastro
     end
   end
 end

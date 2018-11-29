@@ -11,6 +11,7 @@ type
     private
       aID        : TGUID;
       aCodigo    : Currency;
+      aCodigoEan ,
       aDescricao : String;
       aFoto      : TStream;
       aValor     : Currency;
@@ -24,6 +25,7 @@ type
 
       property ID           : TGUID read aID write aID;
       property Codigo       : Currency read aCodigo write aCodigo;
+      property CodigoEan    : String read aCodigoEan write aCodigoEan;
       property Descricao    : String read aDescricao write SetDescricao;
       property Foto         : TStream read aFoto write aFoto;
       property Valor        : Currency read aValor write aValor;
@@ -45,6 +47,7 @@ begin
   inherited Create;
   aId      := GUID_NULL;
   aCodigo  := 0;
+  CodigoEan  := EmptyStr;
   aDescricao := EmptyStr;
   aFoto      := nil;
   aValor     := 0.0;

@@ -164,6 +164,7 @@ begin
     aSQL.Add('Insert Into ' + aDDL.getTableNameProduto + '(');
     aSQL.Add('    id_produto      ');
     aSQL.Add('  , cd_produto      ');
+    aSQL.Add('  , br_produto      ');
     aSQL.Add('  , ds_produto      ');
     aSQL.Add('  , vl_produto      ');
     aSQL.Add('  , sn_ativo        ');
@@ -176,6 +177,7 @@ begin
     aSQL.Add(') values (');
     aSQL.Add('    :id_produto     ');
     aSQL.Add('  , :cd_produto     ');
+    aSQL.Add('  , :br_produto     ');
     aSQL.Add('  , :ds_produto     ');
     aSQL.Add('  , :vl_produto     ');
     aSQL.Add('  , :sn_ativo       ');
@@ -198,6 +200,7 @@ begin
 
       ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
       ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
+      ParamByName('br_produto').AsString      := aModel.CodigoEan;
       ParamByName('ds_produto').AsString      := aModel.Descricao;
       ParamByName('vl_produto').AsCurrency    := aModel.Valor;
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
@@ -275,6 +278,7 @@ begin
     ID     := StringToGUID(FieldByName('id_produto').AsString);
     Codigo := FieldByName('cd_produto').AsCurrency;
 
+    CodigoEan := FieldByName('br_produto').AsString;
     Descricao := FieldByName('ds_produto').AsString;
     Valor     := FieldByName('vl_produto').AsCurrency;
     Ativo        := (AnsiUpperCase(FieldByName('sn_ativo').AsString) = 'S');
@@ -304,6 +308,7 @@ begin
     aSQL.BeginUpdate;
     aSQL.Add('Update ' + aDDL.getTableNameProduto + ' Set');
     aSQL.Add('    cd_produto      = :cd_produto ');
+    aSQL.Add('  , br_produto      = :br_produto ');
     aSQL.Add('  , ds_produto      = :ds_produto ');
     aSQL.Add('  , vl_produto      = :vl_produto ');
     aSQL.Add('  , sn_ativo        = :sn_ativo   ');
@@ -323,6 +328,7 @@ begin
 
       ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
       ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
+      ParamByName('br_produto').AsString      := aModel.CodigoEan;
       ParamByName('ds_produto').AsString      := aModel.Descricao;
       ParamByName('vl_produto').AsCurrency    := aModel.Valor;
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);

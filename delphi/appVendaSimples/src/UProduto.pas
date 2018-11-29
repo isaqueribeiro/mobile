@@ -9,7 +9,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadrao, FMX.Objects,
   FMX.Controls.Presentation, FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.ListView;
+  FMX.ListView.Adapters.Base, FMX.ListView, System.Actions, FMX.ActnList,
+  FMX.TabControl;
 
 type
   TFrmProduto = class(TFrmPadrao)
@@ -19,15 +20,34 @@ type
     imageBuscaProduto: TImage;
     ListViewProduto: TListView;
     img_produto_sem_foto: TImage;
+    lytProdutoFoto: TLayout;
+    imgProdutoFoto: TImage;
+    lblAlterarImagem: TLabel;
+    lytProdutoDescricao: TLayout;
+    lineProdutoDescricao: TLine;
+    LabelProdutoDescricao: TLabel;
+    imgProdutoDescricao: TImage;
+    lblProdutoDescricao: TLabel;
+    lytProdutoValor: TLayout;
+    lineProdutoValor: TLine;
+    LabelProdutoValor: TLabel;
+    imgProdutoValor: TImage;
+    lblProdutoValor: TLabel;
+    lytProdutoEan: TLayout;
+    lineProdutoEan: TLine;
+    img_foto_novo_produto: TImage;
+    LabelProdutoEan: TLabel;
     procedure DoBuscaProdutos(Sender: TObject);
     procedure ListViewProdutoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure imageAdicionarClick(Sender: TObject);
   strict private
     { Private declarations }
     procedure FormatarItemProdutoListView(aItem  : TListViewItem);
     procedure AdicionarProdutoListView(aProduto : TProduto);
     procedure BuscarProdutos(aBusca : String; aPagina : Integer);
+    procedure NovoProduto;
 
     class var aInstance : TFrmProduto;
   public
@@ -64,6 +84,12 @@ begin
   end;
 
   Result := aInstance;
+end;
+
+procedure TFrmProduto.imageAdicionarClick(Sender: TObject);
+begin
+  inherited;
+  NovoProduto;
 end;
 
 procedure TFrmProduto.AdicionarProdutoListView(aProduto: TProduto);
@@ -134,7 +160,8 @@ end;
 procedure TFrmProduto.FormCreate(Sender: TObject);
 begin
   inherited;
-  img_produto_sem_foto.Visible := False;
+  img_produto_sem_foto.Visible  := False;
+  img_foto_novo_produto.Visible := False;
 end;
 
 procedure TFrmProduto.FormShow(Sender: TObject);
@@ -146,6 +173,14 @@ end;
 procedure TFrmProduto.ListViewProdutoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
 begin
   FormatarItemProdutoListView(AItem);
+end;
+
+procedure TFrmProduto.NovoProduto;
+begin
+  labelTituloCadastro.Text := 'NOVO PRODUTO';
+  imgProdutoFoto.Bitmap    := img_foto_novo_produto.Bitmap;
+  lblProdutoDescricao.Text := 'Informe aqui a descrição do novo produto';
+  lblProdutoValor.Text     := '0,00';
 end;
 
 end.

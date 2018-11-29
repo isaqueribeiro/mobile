@@ -141,7 +141,8 @@ begin
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_PRODUTO + ' (');
     aSQL.Add('      id_produto      VARCHAR (38) NOT NULL PRIMARY KEY');
     aSQL.Add('    , cd_produto      BIGINT  (10) UNIQUE ON CONFLICT ROLLBACK');
-    aSQL.Add('    , ds_produto      VARCHAR (200)');
+    aSQL.Add('    , br_produto      VARCHAR (15)');  // Código de Barras (ean13)
+    aSQL.Add('    , ds_produto      VARCHAR (250)');
     aSQL.Add('    , ft_produto      IMAGE');
     aSQL.Add('    , vl_produto      NUMERIC (15,2) DEFAULT (0)');
     aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
