@@ -6,7 +6,8 @@ uses
   UConstantes,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts, FMX.Controls.Presentation,
-  FMX.StdCtrls, FMX.Objects, FMX.TabControl, System.Actions, FMX.ActnList;
+  FMX.StdCtrls, FMX.Objects, FMX.TabControl, System.Actions, FMX.ActnList,
+  FMX.Ani;
 
 type
   TFrmPadrao = class(TForm)
@@ -30,6 +31,8 @@ type
     labelTituloCadastro: TLabel;
     imageVoltarConsulta: TImage;
     imageSalvarCadastro: TImage;
+    FloatAnimationEntrada: TFloatAnimation;
+    FloatAnimationSaida: TFloatAnimation;
     procedure FormCreate(Sender: TObject);
     procedure imageVoltarConsultaClick(Sender: TObject);
     procedure imageAdicionarClick(Sender: TObject);

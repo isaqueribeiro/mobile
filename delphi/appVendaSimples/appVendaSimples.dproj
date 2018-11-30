@@ -438,6 +438,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
                     <Platform Name="iOSDevice32">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
@@ -446,13 +453,6 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="iOSDevice64">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>venda_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
                     <Platform Name="iOSDevice64">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>

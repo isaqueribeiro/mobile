@@ -10,7 +10,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadrao, FMX.Objects,
   FMX.Controls.Presentation, FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
   FMX.ListView.Adapters.Base, FMX.ListView, System.Actions, FMX.ActnList,
-  FMX.TabControl;
+  FMX.TabControl, FMX.MediaLibrary.Actions, FMX.StdActns;
 
 type
   TFrmProduto = class(TFrmPadrao)
@@ -37,11 +37,29 @@ type
     lineProdutoEan: TLine;
     img_foto_novo_produto: TImage;
     LabelProdutoEan: TLabel;
+    lytCancelarImagem: TLayout;
+    rectangleCancelarImagem: TRectangle;
+    lblCancelarImagem: TLabel;
+    lytCapturarImagem: TLayout;
+    rectangleCapturarImagem: TRectangle;
+    lblCapturarImagemCamera: TLabel;
+    lineCapturarImagem: TLine;
+    imgCapturarImagemCamera: TImage;
+    actTakePhotoFromCamera: TTakePhotoFromCameraAction;
+    actTakePhotoFromLibrary: TTakePhotoFromLibraryAction;
+    lblCapturarImagemBiblioteca: TLabel;
+    imgCapturarImagemBiblioteca: TImage;
     procedure DoBuscaProdutos(Sender: TObject);
     procedure ListViewProdutoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure imageAdicionarClick(Sender: TObject);
+    procedure lblCancelarImagemClick(Sender: TObject);
+    procedure imgProdutoFotoClick(Sender: TObject);
+    procedure lblCapturarImagemCameraClick(Sender: TObject);
+    procedure lblCapturarImagemBibliotecaClick(Sender: TObject);
+    procedure actTakePhotoFromLibraryDidFinishTaking(Image: TBitmap);
+    procedure actTakePhotoFromCameraDidFinishTaking(Image: TBitmap);
   strict private
     { Private declarations }
     procedure FormatarItemProdutoListView(aItem  : TListViewItem);
@@ -90,6 +108,36 @@ procedure TFrmProduto.imageAdicionarClick(Sender: TObject);
 begin
   inherited;
   NovoProduto;
+end;
+
+procedure TFrmProduto.imgProdutoFotoClick(Sender: TObject);
+begin
+  ExibirPainelOpacity;
+end;
+
+procedure TFrmProduto.lblCancelarImagemClick(Sender: TObject);
+begin
+  OcultarPainelOpacity;
+end;
+
+procedure TFrmProduto.lblCapturarImagemBibliotecaClick(Sender: TObject);
+begin
+  actTakePhotoFromLibrary.ExecuteTarget(Sender);
+end;
+
+procedure TFrmProduto.lblCapturarImagemCameraClick(Sender: TObject);
+begin
+  actTakePhotoFromCamera.ExecuteTarget(Sender);
+end;
+
+procedure TFrmProduto.actTakePhotoFromCameraDidFinishTaking(Image: TBitmap);
+begin
+  imgProdutoFoto.Bitmap := Image;
+end;
+
+procedure TFrmProduto.actTakePhotoFromLibraryDidFinishTaking(Image: TBitmap);
+begin
+  imgProdutoFoto.Bitmap := Image;
 end;
 
 procedure TFrmProduto.AdicionarProdutoListView(aProduto: TProduto);
