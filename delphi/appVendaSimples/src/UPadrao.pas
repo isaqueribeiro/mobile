@@ -37,6 +37,8 @@ type
     procedure imageVoltarConsultaClick(Sender: TObject);
     procedure imageAdicionarClick(Sender: TObject);
     procedure imageVoltarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure imageSalvarCadastroClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -71,9 +73,20 @@ begin
   OcultarPainelOpacity;
 end;
 
+procedure TFrmPadrao.FormShow(Sender: TObject);
+begin
+  FloatAnimationEntrada.StartValue := Self.Height;
+  FloatAnimationSaida.StopValue    := Self.Height;
+end;
+
 procedure TFrmPadrao.imageAdicionarClick(Sender: TObject);
 begin
   ChangeTabActionCadastro.ExecuteTarget(Sender);
+end;
+
+procedure TFrmPadrao.imageSalvarCadastroClick(Sender: TObject);
+begin
+  ChangeTabActionConsulta.ExecuteTarget(Sender);
 end;
 
 procedure TFrmPadrao.imageVoltarClick(Sender: TObject);

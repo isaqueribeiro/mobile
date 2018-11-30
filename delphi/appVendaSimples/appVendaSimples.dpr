@@ -21,7 +21,8 @@ uses
   dao.Cliente in 'src\dao.Cliente.pas',
   dao.Notificacao in 'src\dao.Notificacao.pas',
   dao.Produto in 'src\dao.Produto.pas',
-  UProduto in 'src\UProduto.pas' {FrmProduto};
+  UProduto in 'src\UProduto.pas' {FrmProduto},
+  UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar};
 
 {$R *.res}
 

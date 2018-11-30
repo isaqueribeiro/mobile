@@ -43,6 +43,8 @@ var
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido; overload;
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoCliente) : TTipoCliente; overload;
 
+  function GetNewID(const aTabela, aCampo : String) : Currency;
+
 implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
@@ -83,6 +85,37 @@ begin
   except
     On E : Exception do
       ExibirMsgErro('Erro ao tentar conectar-se com o banco de dados. ' + #13 + E.Message);
+  end;
+end;
+
+function GetNewID(const aTabela, aCampo : String) : Currency;
+var
+  aRetorno : Currency;
+  aQuery   : TFDQuery;
+begin
+  aRetorno := 0;
+  aQuery   := TFDQuery.Create(DM);
+  try
+    with DM, aQuery do
+    begin
+      aQuery.Connection  := conn;
+      aQuery.Transaction := trans;
+
+      SQL.BeginUpdate;
+      SQL.Clear;
+      SQL.Add('Select');
+      SQL.Add('  max(' + aCampo + ') as valor');
+      SQL.Add('from ' + aTabela);
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+        aRetorno := FieldByName('valor').AsCurrency + 1;
+    end;
+  finally
+    aQuery.Close;
+    aQuery.Free;
+
+    Result := aRetorno;
   end;
 end;
 

@@ -32,6 +32,7 @@ type
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
+      function PodeExcluir : Boolean;
 
       class function GetInstance : TProdutoDao;
   end;
@@ -169,7 +170,6 @@ begin
     aSQL.Add('  , vl_produto      ');
     aSQL.Add('  , sn_ativo        ');
     aSQL.Add('  , sn_sincronizado ');
-    aSQL.Add('  , cd_referencia   ');
 
     if (aModel.Foto <> nil) then
       aSQL.Add('  , ft_produto    ');
@@ -182,7 +182,6 @@ begin
     aSQL.Add('  , :vl_produto     ');
     aSQL.Add('  , :sn_ativo       ');
     aSQL.Add('  , :sn_sincronizado');
-    aSQL.Add('  , :cd_referencia  ');
 
     if (aModel.Foto <> nil) then
       aSQL.Add('  , :ft_produto   ');
@@ -198,6 +197,9 @@ begin
       if (aModel.ID = GUID_NULL) then
         aModel.NewID;
 
+      if (aModel.Codigo = 0) then
+        aModel.Codigo := GetNewID(aDDL.getTableNameProduto, 'cd_produto');
+
       ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
       ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
       ParamByName('br_produto').AsString      := aModel.CodigoEan;
@@ -205,7 +207,6 @@ begin
       ParamByName('vl_produto').AsCurrency    := aModel.Valor;
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := FLAG_NAO;
-      ParamByName('cd_referencia').Clear;
 
       if (aModel.Foto <> nil) then
         ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
@@ -271,6 +272,11 @@ begin
   end;
 end;
 
+function TProdutoDao.PodeExcluir: Boolean;
+begin
+  Result := True; // Apenas para testes
+end;
+
 procedure TProdutoDao.SetValues(const aDataSet: TFDQuery; const aObject: TProduto);
 begin
   with aDataSet, aObject do
@@ -291,11 +297,11 @@ begin
 
     if (not FieldByName('ft_produto').IsNull) then
     begin
-      aModel.Foto := TStream.Create;
-      aModel.Foto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
+      Foto := TStream.Create;
+      Foto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
     end
     else
-      aModel.Foto := nil;
+      Foto := nil;
   end;
 end;
 
@@ -313,7 +319,9 @@ begin
     aSQL.Add('  , vl_produto      = :vl_produto ');
     aSQL.Add('  , sn_ativo        = :sn_ativo   ');
     aSQL.Add('  , sn_sincronizado = :sn_sincronizado ');
-    aSQL.Add('  , cd_referencia   = :cd_referencia   ');
+
+    if (aModel.Referencia <> GUID_NULL) then
+      aSQL.Add('  , cd_referencia   = :cd_referencia   ');
 
     if (aModel.Foto <> nil) then
       aSQL.Add('  , ft_produto    = :ft_produto ');
@@ -334,9 +342,7 @@ begin
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
-      if (aModel.Referencia = GUID_NULL) then
-        ParamByName('cd_referencia').Clear
-      else
+      if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
       if (aModel.Foto <> nil) then
