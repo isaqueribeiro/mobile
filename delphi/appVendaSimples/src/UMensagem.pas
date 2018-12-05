@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Ani;
 
 type
   TFrmMensagem = class(TForm)
@@ -25,9 +25,11 @@ type
     RectangleFechar: TRectangle;
     LabelFechar: TLabel;
     LayoutRodape: TLayout;
+    floatAnimeEntrada: TFloatAnimation;
     procedure DoOK(Sender: TObject);
     procedure DoFechar(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   strict private
     { Private declarations }
     aConfirmado : Boolean;
@@ -58,6 +60,8 @@ begin
   try
     with aForm do
     begin
+      RectangleMensagem.Visible := False;
+
       LabelTitulo.Text := 'ERRO';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgErro.Bitmap;
@@ -81,6 +85,8 @@ begin
   try
     with aForm do
     begin
+      RectangleMensagem.Visible := False;
+
       LabelTitulo.Text := 'ALERTA!';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgAlerta.Bitmap;
@@ -104,6 +110,8 @@ begin
   try
     with aForm do
     begin
+      RectangleMensagem.Visible := False;
+
       LabelTitulo.Text := 'SUCESSO!';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgSucesso.Bitmap;
@@ -127,6 +135,8 @@ begin
   try
     with aForm do
     begin
+      RectangleMensagem.Visible := False;
+
       LabelTitulo.Text := AnsiUpperCase(Trim(aTitulo));
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgPergunta.Bitmap;
@@ -147,18 +157,27 @@ end;
 
 procedure TFrmMensagem.DoFechar(Sender: TObject);
 begin
+  RectangleMensagem.Visible := False;
   aConfirmado := False;
   Self.Close;
 end;
 
 procedure TFrmMensagem.DoOK(Sender: TObject);
 begin
+  RectangleMensagem.Visible := False;
   aConfirmado := True;
   Self.Close;
 end;
 
+procedure TFrmMensagem.FormActivate(Sender: TObject);
+begin
+  RectangleMensagem.Visible := True;
+end;
+
 procedure TFrmMensagem.FormCreate(Sender: TObject);
 begin
+  RectangleMensagem.Visible := False;
+
   ImageMsgErro.Visible     := False;
   ImageMsgAlerta.Visible   := False;
   ImageMsgSucesso.Visible  := False;
@@ -177,6 +196,8 @@ begin
     Application.CreateForm(TFrmMensagem, aInstance);
     Application.RealCreateForms;
   end;
+
+  aInstance.RectangleMensagem.Visible := False;
 
   Result := aInstance;
 end;

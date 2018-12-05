@@ -109,7 +109,10 @@ begin
       SQL.EndUpdate;
 
       if OpenOrExecute then
-        aRetorno := FieldByName('valor').AsCurrency + 1;
+        if not FieldByName('valor').IsNull then
+          aRetorno := FieldByName('valor').AsCurrency + 1
+        else
+          aRetorno := 1;
     end;
   finally
     aQuery.Close;

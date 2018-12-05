@@ -27,6 +27,7 @@ type
       procedure Load(const aBusca : String);
       procedure Insert();
       procedure Update();
+      procedure Delete();
       procedure AddLista; overload;
       procedure AddLista(aProduto : TProduto); overload;
 
@@ -83,6 +84,31 @@ begin
   aDDL   := TScriptDDL.GetInstance;
   aModel := TProduto.Create;
   SetLength(aLista, 0);
+end;
+
+procedure TProdutoDao.Delete;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Delete from ' + aDDL.getTableNameProduto);
+    aSQL.Add('where id_produto    = :id_produto      ');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
+
+      ExecSQL;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 function TProdutoDao.Find(const aCodigo: Currency; const IsLoadModel: Boolean): Boolean;

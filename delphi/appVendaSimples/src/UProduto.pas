@@ -68,11 +68,41 @@ type
     lineProdutoExcluir: TLine;
     imgProdutoExcluir: TImage;
     lblProdutoExcluir: TLabel;
+    layoutValorCampo: TLayout;
+    labelValorCampo: TLabel;
+    lineValorCampo: TLine;
+    lytTecla7: TLayout;
+    lblTecla7: TLabel;
+    lytTecla8: TLayout;
+    lblTecla8: TLabel;
+    lytTecla9: TLayout;
+    lblTecla9: TLabel;
+    lytTecla4: TLayout;
+    lblTecla4: TLabel;
+    lytTecla5: TLayout;
+    lblTecla5: TLabel;
+    lytTecla6: TLayout;
+    lblTecla6: TLabel;
+    lytTecla1: TLayout;
+    lblTecla1: TLabel;
+    lytTecla2: TLayout;
+    lblTecla2: TLabel;
+    lytTecla3: TLayout;
+    lblTecla3: TLabel;
+    lytTeclas: TLayout;
+    lytTecla00: TLayout;
+    lblTecla00: TLabel;
+    lytTecla0: TLayout;
+    lblTecla0: TLabel;
+    lytTeclaBackSpace: TLayout;
+    imgTeclaBackSpace: TImage;
     procedure DoBuscaProdutos(Sender: TObject);
     procedure DoEditarDescricao(Sender: TObject);
     procedure DoEditarValor(Sender: TObject);
     procedure DoSalvarProdutos(Sender: TObject);
     procedure DoExcluirProduto(Sender : TObject);
+    procedure DoTeclaBackSpace(Sender : TObject);
+    procedure DoTeclaNumero(Sender : TObject);
 
     procedure ListViewProdutoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure FormCreate(Sender: TObject);
@@ -95,8 +125,10 @@ type
     procedure FormatarItemProdutoListView(aItem  : TListViewItem);
     procedure AdicionarProdutoListView(aProduto : TProduto);
 
-    procedure BuscarProdutos(aBusca : String; aPagina : Integer);
     procedure NovoProduto;
+    procedure TeclaBackSpace;
+    procedure TeclaNumero(const aValue : String);
+    procedure BuscarProdutos(aBusca : String; aPagina : Integer);
     procedure EditarProduto(const aItemIndex : Integer);
     procedure ExcluirProduto(Sender: TObject);
 
@@ -254,6 +286,17 @@ begin
   begin
     aObj := mmMemoCampo.TagObject;
     aStr := Trim(mmMemoCampo.Text);
+  end
+  else
+  if layoutValorCampo.Visible then
+  begin
+    aObj := labelValorCampo.TagObject;
+    aStr := Trim(labelValorCampo.Text);
+    if (Trim(labelValorCampo.TagString) <> EmptyStr) then  // Máscara para formatação numérica
+    begin
+      aStr := aStr.Replace('.', '', [rfReplaceAll]);
+      aStr := FormatFloat(Trim(labelValorCampo.TagString), StrToCurrDef(aStr, 0));
+    end;
   end;
 
   if (aObj <> nil) then
@@ -289,6 +332,7 @@ procedure TFrmProduto.DoEditarDescricao(Sender: TObject);
 begin
   layoutEditarCampo.Visible := False;
   layoutMemoCampo.Visible   := True;
+  layoutValorCampo.Visible  := False;
 
   labelTituloEdicao.Text   := AnsiUpperCase(LabelProdutoDescricao.Text);
   mmMemoCampo.Text         := IfThen(labelTituloCadastro.TagFloat = 0, EmptyStr, lblProdutoDescricao.Text);
@@ -306,17 +350,23 @@ end;
 
 procedure TFrmProduto.DoEditarValor(Sender: TObject);
 begin
-  layoutEditarCampo.Visible := True;
+  layoutEditarCampo.Visible := False;
   layoutMemoCampo.Visible   := False;
+  layoutValorCampo.Visible  := True;
+
+//  labelTituloEdicao.Text       := AnsiUpperCase(LabelProdutoValor.Text);
+//  editEditarCampo.Text         := IfThen(labelTituloCadastro.TagFloat = 0, EmptyStr, lblProdutoValor.Text);
+//  editEditarCampo.MaxLength    := 15;
+//  editEditarCampo.TextAlign    := TTextAlign.Trailing;
+//  editEditarCampo.KeyboardType := TVirtualKeyboardType.DecimalNumberPad;
+//  editEditarCampo.TextPrompt   := 'Informe aqui o valor (R$)';
+//  editEditarCampo.TagString    := ',0.00';
+//  editEditarCampo.TagObject    := TObject(lblProdutoValor);
 
   labelTituloEdicao.Text       := AnsiUpperCase(LabelProdutoValor.Text);
-  editEditarCampo.Text         := IfThen(labelTituloCadastro.TagFloat = 0, EmptyStr, lblProdutoValor.Text);
-  editEditarCampo.MaxLength    := 15;
-  editEditarCampo.TextAlign    := TTextAlign.Trailing;
-  editEditarCampo.KeyboardType := TVirtualKeyboardType.DecimalNumberPad;
-  editEditarCampo.TextPrompt   := 'Informe aqui o valor (R$)';
-  editEditarCampo.TagString    := ',0.00';
-  editEditarCampo.TagObject    := TObject(lblProdutoValor);
+  labelValorCampo.Text         := Trim(lblProdutoValor.Text);
+  labelValorCampo.TagString    := ',0.00';
+  labelValorCampo.TagObject    := TObject(lblProdutoValor);
 
   ChangeTabActionEditar.ExecuteTarget(Sender);
 
@@ -333,14 +383,19 @@ procedure TFrmProduto.DoSalvarProdutos(Sender: TObject);
 var
   ins : Boolean;
   dao : TProdutoDao;
-  aItem : TListViewItem;
-//  aFoto : TBitmap;
+  aItem  : TListViewItem;
+  aValor : String;
 begin
   dao := TProdutoDao.GetInstance;
   dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
   dao.Model.Codigo    := labelTituloCadastro.TagFloat;
   dao.Model.Descricao := lblProdutoDescricao.Text;
-  dao.Model.Valor     := StrToCurrDef(lblProdutoValor.Text.Replace('.', '', [rfReplaceAll]), 0);
+
+  aValor := Trim(lblProdutoValor.Text);
+  aValor := aValor.Replace('.', '', [rfReplaceAll]);
+  aValor := aValor.Replace(',', '', [rfReplaceAll]);
+
+  dao.Model.Valor := StrToCurrDef(aValor, 0) / 100;
 
   if (imgProdutoFoto.TagFloat > 0) then
   begin
@@ -371,6 +426,16 @@ begin
   ChangeTabActionConsulta.ExecuteTarget(Sender);
 end;
 
+procedure TFrmProduto.DoTeclaBackSpace(Sender: TObject);
+begin
+  TeclaBackSpace;
+end;
+
+procedure TFrmProduto.DoTeclaNumero(Sender: TObject);
+begin
+  TeclaNumero( TLabel(Sender).Text );
+end;
+
 procedure TFrmProduto.NovoProduto;
 begin
   labelTituloCadastro.Text      := 'NOVO PRODUTO';
@@ -385,6 +450,37 @@ begin
   lytProdutoExcluir.Visible := False;
 end;
 
+procedure TFrmProduto.TeclaBackSpace;
+var
+  aStr   : String;
+  aValor : Currency;
+begin
+  aStr := Trim(labelValorCampo.Text);
+  aStr := aStr.Replace('.', '', [rfReplaceAll]);
+  aStr := aStr.Replace(',', '', [rfReplaceAll]);
+
+  if Length(aStr) > 1 then
+    aStr := Copy(aStr, 1, Length(aStr) - 1)
+  else
+    aStr := '0';
+
+  aValor := StrToCurrDef(aStr, 0) / 100;
+  labelValorCampo.Text := FormatFloat(labelValorCampo.TagString, aValor);
+end;
+
+procedure TFrmProduto.TeclaNumero(const aValue: String);
+var
+  aStr   : String;
+  aValor : Currency;
+begin
+  aStr := Trim(labelValorCampo.Text) + Trim(aValue);
+  aStr := aStr.Replace('.', '', [rfReplaceAll]);
+  aStr := aStr.Replace(',', '', [rfReplaceAll]);
+
+  aValor := StrToCurrDef(aStr, 0) / 100;
+  labelValorCampo.Text := FormatFloat(labelValorCampo.TagString, aValor);
+end;
+
 procedure TFrmProduto.EditarProduto(const aItemIndex : Integer);
 var
   aProduto : TProduto;
@@ -397,6 +493,7 @@ begin
 
   lblProdutoDescricao.Text := aProduto.Descricao;
   lblProdutoValor.Text     := FormatFloat(',0.00', aProduto.Valor);
+
   if (aProduto.Foto = nil) then
   begin
     imgProdutoFoto.Bitmap   := img_foto_novo_produto.Bitmap;
@@ -426,6 +523,7 @@ begin
     msg.Close;
     if dao.PodeExcluir then
     begin
+      dao.Delete();
       ListViewProduto.Items.Delete(aItemIndex);
       ChangeTabActionConsulta.ExecuteTarget(Sender);
     end
