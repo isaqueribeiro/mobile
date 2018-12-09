@@ -22,10 +22,42 @@ type
     layoutMemoCampo: TLayout;
     rectangleMemoCampo: TRectangle;
     mmMemoCampo: TMemo;
+    layoutValorCampo: TLayout;
+    labelValorCampo: TLabel;
+    lineValorCampo: TLine;
+    lytTeclas: TLayout;
+    lytTecla8: TLayout;
+    lblTecla8: TLabel;
+    lytTecla9: TLayout;
+    lblTecla9: TLabel;
+    lytTecla4: TLayout;
+    lblTecla4: TLabel;
+    lytTecla5: TLayout;
+    lblTecla5: TLabel;
+    lytTecla6: TLayout;
+    lblTecla6: TLabel;
+    lytTecla1: TLayout;
+    lblTecla1: TLabel;
+    lytTecla2: TLayout;
+    lblTecla2: TLabel;
+    lytTecla3: TLayout;
+    lblTecla3: TLabel;
+    lytTecla7: TLayout;
+    lblTecla7: TLabel;
+    lytTecla00: TLayout;
+    lblTecla00: TLabel;
+    lytTecla0: TLayout;
+    lblTecla0: TLabel;
+    lytTeclaBackSpace: TLayout;
+    imgTeclaBackSpace: TImage;
+    procedure DoTeclaBackSpace(Sender : TObject);
+    procedure DoTeclaNumero(Sender : TObject);
     procedure imageVoltarConsultaClick(Sender: TObject);
     procedure imageSalvarEdicaoClick(Sender: TObject);
   private
     { Private declarations }
+    procedure TeclaBackSpace;
+    procedure TeclaNumero(const aValue : String);
   public
     { Public declarations }
     function DevolverValorEditado : Boolean;
@@ -37,6 +69,9 @@ var
 implementation
 
 {$R *.fmx}
+
+uses
+  UMensagem;
 
 function TFrmPadraoEditar.DevolverValorEditado: Boolean;
 var
@@ -60,6 +95,17 @@ begin
   begin
     aObj := mmMemoCampo.TagObject;
     aStr := Trim(mmMemoCampo.Text);
+  end
+  else
+  if layoutValorCampo.Visible then
+  begin
+    aObj := labelValorCampo.TagObject;
+    aStr := Trim(labelValorCampo.Text);
+    if (Trim(labelValorCampo.TagString) <> EmptyStr) then  // Máscara para formatação numérica
+    begin
+      aStr := aStr.Replace('.', '', [rfReplaceAll]);
+      aStr := FormatFloat(Trim(labelValorCampo.TagString), StrToCurrDef(aStr, 0));
+    end;
   end;
 
   if (aObj <> nil) then
@@ -71,7 +117,20 @@ begin
       TEdit(aObj).Text := aStr;
   end;
 
-  Result := ( (Trim(aStr) <> EmptyStr) or (aObj <> nil) );
+  if (Trim(aStr) = EmptyStr) then
+    ExibirMsgAlerta('Este campo é obrigatório!')
+  else
+    Result := ( (Trim(aStr) <> EmptyStr) or (aObj <> nil) );
+end;
+
+procedure TFrmPadraoEditar.DoTeclaBackSpace(Sender: TObject);
+begin
+  TeclaBackSpace;
+end;
+
+procedure TFrmPadraoEditar.DoTeclaNumero(Sender: TObject);
+begin
+  TeclaNumero( TLabel(Sender).Text );
 end;
 
 procedure TFrmPadraoEditar.imageSalvarEdicaoClick(Sender: TObject);
@@ -83,6 +142,37 @@ end;
 procedure TFrmPadraoEditar.imageVoltarConsultaClick(Sender: TObject);
 begin
   ChangeTabActionCadastro.ExecuteTarget(Sender);
+end;
+
+procedure TFrmPadraoEditar.TeclaBackSpace;
+var
+  aStr   : String;
+  aValor : Currency;
+begin
+  aStr := Trim(labelValorCampo.Text);
+  aStr := aStr.Replace('.', '', [rfReplaceAll]);
+  aStr := aStr.Replace(',', '', [rfReplaceAll]);
+
+  if Length(aStr) > 1 then
+    aStr := Copy(aStr, 1, Length(aStr) - 1)
+  else
+    aStr := '0';
+
+  aValor := StrToCurrDef(aStr, 0) / 100;
+  labelValorCampo.Text := FormatFloat(labelValorCampo.TagString, aValor);
+end;
+
+procedure TFrmPadraoEditar.TeclaNumero(const aValue: String);
+var
+  aStr   : String;
+  aValor : Currency;
+begin
+  aStr := Trim(labelValorCampo.Text) + Trim(aValue);
+  aStr := aStr.Replace('.', '', [rfReplaceAll]);
+  aStr := aStr.Replace(',', '', [rfReplaceAll]);
+
+  aValor := StrToCurrDef(aStr, 0) / 100;
+  labelValorCampo.Text := FormatFloat(labelValorCampo.TagString, aValor);
 end;
 
 end.

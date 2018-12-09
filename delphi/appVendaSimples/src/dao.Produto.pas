@@ -299,8 +299,36 @@ begin
 end;
 
 function TProdutoDao.PodeExcluir: Boolean;
+var
+  aRetorno : Boolean;
+  aSQL : TStringList;
 begin
-  Result := True; // Apenas para testes
+  aRetorno := True;
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Select ');
+    aSQL.Add('  count(id_produto) as qt_produtos');
+    aSQL.Add('from ' + aDDL.getTableNamePedidoItem);
+    aSQL.Add('where id_produto = :id_produto');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+      ParamByName('id_produto').AsString := GUIDToString(aModel.ID);
+      OpenOrExecute;
+
+      aRetorno := (FieldByName('qt_produtos').AsInteger > 0);
+
+      qrySQL.Close;
+    end;
+  finally
+    aSQL.Free;
+
+    Result := aRetorno;
+  end;
 end;
 
 procedure TProdutoDao.SetValues(const aDataSet: TFDQuery; const aObject: TProduto);

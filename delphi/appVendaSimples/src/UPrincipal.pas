@@ -75,12 +75,15 @@ type
     img_entregue: TImage;
     img_sinc: TImage;
     img_nao_sinc: TImage;
-    layoutSemPedido: TLayout;
-    Image1: TImage;
-    Label1: TLabel;
     img_lida: TImage;
     img_nao_lida: TImage;
     img_update: TImage;
+    ImgSemPedido: TImage;
+    lblSemPedido: TLabel;
+    imgSemCliente: TImage;
+    lblSemCliente: TLabel;
+    imgSemNotificacao: TImage;
+    lblSemNotificacao: TLabel;
     procedure DoFecharApp(Sender: TObject);
     procedure DoCloseApp(Sender: TObject);
     procedure DoSelecinarTab(Sender: TObject);
@@ -132,6 +135,7 @@ implementation
 uses
   UConstantes,
   UMensagem,
+  UCliente,
   UProduto;
 
 { TFrmPrincipal }
@@ -202,51 +206,54 @@ end;
 procedure TFrmPrincipal.DoBuscaClientes(Sender: TObject);
 begin
   try
+    ImgSemCliente.Visible := False;
+
     ListViewCliente.BeginUpdate;
     ListViewCliente.Items.Clear;
 
     BuscarClientes(editBuscaCliente.Text, 0);
 
     ListViewCliente.EndUpdate;
-    ListViewCliente.Visible  := (ListViewCliente.Items.Count > 0);
-    //layoutSemCliente.Visible := not ListViewCliente.Visible;
+    ImgSemCliente.Visible := (ListViewCliente.Items.Count = 0);
   except
     On E : Exception do
-      ExibirMsgErro(E.Message);
+      ExibirMsgErro('Erro ao tenta carregar os clientes.' + #13 + E.Message);
   end;
 end;
 
 procedure TFrmPrincipal.DoBuscaNotificacoes(Sender: TObject);
 begin
   try
+    ImgSemNotificacao.Visible := False;
+
     ListViewNotificacao.BeginUpdate;
     ListViewNotificacao.Items.Clear;
 
     BuscarNotificacoes(EmptyStr, 0);
 
     ListViewNotificacao.EndUpdate;
-    ListViewNotificacao.Visible  := (ListViewNotificacao.Items.Count > 0);
-    //layoutSemNotificacao.Visible := not ListViewNotificacao.Visible;
+    ImgSemNotificacao.Visible := (ListViewNotificacao.Items.Count = 0);
   except
     On E : Exception do
-      ExibirMsgErro(E.Message);
+      ExibirMsgErro('Erro ao tenta carregar as notificações.' + #13 + E.Message);
   end;
 end;
 
 procedure TFrmPrincipal.DoBuscaPedidos(Sender: TObject);
 begin
   try
+    ImgSemPedido.Visible := False;
+
     ListViewPedido.BeginUpdate;
     ListViewPedido.Items.Clear;
 
     BuscarPedidos(editBuscaPedido.Text, 0);
 
     ListViewPedido.EndUpdate;
-    ListViewPedido.Visible  := (ListViewPedido.Items.Count > 0);
-    layoutSemPedido.Visible := not ListViewPedido.Visible;
+    ImgSemPedido.Visible := (ListViewPedido.Items.Count = 0);
   except
     On E : Exception do
-      ExibirMsgErro(E.Message);
+      ExibirMsgErro('Erro ao tenta carregar os pedidos.' + #13 + E.Message);
   end;
 end;
 

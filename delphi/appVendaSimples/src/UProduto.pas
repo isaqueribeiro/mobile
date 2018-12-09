@@ -96,6 +96,8 @@ type
     lblTecla0: TLabel;
     lytTeclaBackSpace: TLayout;
     imgTeclaBackSpace: TImage;
+    imgSemProduto: TImage;
+    lblSemProduto: TLabel;
     procedure DoBuscaProdutos(Sender: TObject);
     procedure DoEditarDescricao(Sender: TObject);
     procedure DoEditarValor(Sender: TObject);
@@ -308,23 +310,27 @@ begin
       TEdit(aObj).Text := aStr;
   end;
 
-  Result := ( (Trim(aStr) <> EmptyStr) or (aObj <> nil) );
+  if (Trim(aStr) = EmptyStr) then
+    ExibirMsgAlerta('Este campo é obrigatório!')
+  else
+    Result := ( (Trim(aStr) <> EmptyStr) or (aObj <> nil) );
 end;
 
 procedure TFrmProduto.DoBuscaProdutos(Sender: TObject);
 begin
   try
+    imgSemProduto.Visible := False;
+
     ListViewProduto.BeginUpdate;
     ListViewProduto.Items.Clear;
 
     BuscarProdutos(editBuscaProduto.Text, 0);
 
     ListViewProduto.EndUpdate;
-    ListViewProduto.Visible  := (ListViewProduto.Items.Count > 0);
-    //layoutSemProduto.Visible := not ListViewPedido.Visible;
+    imgSemProduto.Visible := (ListViewProduto.Items.Count = 0);
   except
     On E : Exception do
-      ExibirMsgErro(E.Message);
+      ExibirMsgErro('Erro ao tentar carregar os produtos.' + #13 + E.Message);
   end;
 end;
 
@@ -386,44 +392,49 @@ var
   aItem  : TListViewItem;
   aValor : String;
 begin
-  dao := TProdutoDao.GetInstance;
-  dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
-  dao.Model.Codigo    := labelTituloCadastro.TagFloat;
-  dao.Model.Descricao := lblProdutoDescricao.Text;
+  try
+    dao := TProdutoDao.GetInstance;
+    dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
+    dao.Model.Codigo    := labelTituloCadastro.TagFloat;
+    dao.Model.Descricao := lblProdutoDescricao.Text;
 
-  aValor := Trim(lblProdutoValor.Text);
-  aValor := aValor.Replace('.', '', [rfReplaceAll]);
-  aValor := aValor.Replace(',', '', [rfReplaceAll]);
+    aValor := Trim(lblProdutoValor.Text);
+    aValor := aValor.Replace('.', '', [rfReplaceAll]);
+    aValor := aValor.Replace(',', '', [rfReplaceAll]);
 
-  dao.Model.Valor := StrToCurrDef(aValor, 0) / 100;
+    dao.Model.Valor := StrToCurrDef(aValor, 0) / 100;
 
-  if (imgProdutoFoto.TagFloat > 0) then
-  begin
-    dao.Model.Foto := TMemoryStream.Create;
-    dao.Model.Foto.Position := 0;
-    imgProdutoFoto.Bitmap.SaveToStream(dao.Model.Foto);
+    if (imgProdutoFoto.TagFloat > 0) then
+    begin
+      dao.Model.Foto := TMemoryStream.Create;
+      dao.Model.Foto.Position := 0;
+      imgProdutoFoto.Bitmap.SaveToStream(dao.Model.Foto);
+    end;
+
+    ins := (dao.Model.ID = GUID_NULL);
+
+    if ins then
+      dao.Insert()
+    else
+      dao.Update();
+
+    if ins then
+    begin
+      AdicionarProdutoListView(dao.Model);
+      ListViewProduto.ItemIndex := (ListViewProduto.Items.Count - 1);
+    end
+    else
+    begin
+      aItem := TListViewItem(ListViewProduto.Items.Item[ListViewProduto.ItemIndex]);
+      aItem.TagObject := dao.Model;
+      FormatarItemProdutoListView(aItem);
+    end;
+
+    ChangeTabActionConsulta.ExecuteTarget(Sender);
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar salvar o produto.' + #13 + E.Message);
   end;
-
-  ins := (dao.Model.ID = GUID_NULL);
-
-  if ins then
-    dao.Insert()
-  else
-    dao.Update();
-
-  if ins then
-  begin
-    AdicionarProdutoListView(dao.Model);
-    ListViewProduto.ItemIndex := (ListViewProduto.Items.Count - 1);
-  end
-  else
-  begin
-    aItem := TListViewItem(ListViewProduto.Items.Item[ListViewProduto.ItemIndex]);
-    aItem.TagObject := dao.Model;
-    FormatarItemProdutoListView(aItem);
-  end;
-
-  ChangeTabActionConsulta.ExecuteTarget(Sender);
 end;
 
 procedure TFrmProduto.DoTeclaBackSpace(Sender: TObject);
@@ -514,21 +525,26 @@ var
   msg : TFrmMensagem;
   dao : TProdutoDao;
 begin
-  msg := TFrmMensagem.GetInstance;
-  dao := TProdutoDao.GetInstance;
-  aItemIndex := ListViewProduto.ItemIndex;
-  dao.Model  := TProduto(ListViewProduto.Items.Item[aItemIndex].TagObject);
-  if Assigned(dao.Model) then
-  begin
-    msg.Close;
-    if dao.PodeExcluir then
+  try
+    msg := TFrmMensagem.GetInstance;
+    dao := TProdutoDao.GetInstance;
+    aItemIndex := ListViewProduto.ItemIndex;
+    dao.Model  := TProduto(ListViewProduto.Items.Item[aItemIndex].TagObject);
+    if Assigned(dao.Model) then
     begin
-      dao.Delete();
-      ListViewProduto.Items.Delete(aItemIndex);
-      ChangeTabActionConsulta.ExecuteTarget(Sender);
-    end
-    else
-      ExibirMsgAlerta('Produto não pode ser excluído por está presente em pedidos');
+      msg.Close;
+      if dao.PodeExcluir then
+      begin
+        dao.Delete();
+        ListViewProduto.Items.Delete(aItemIndex);
+        ChangeTabActionConsulta.ExecuteTarget(Sender);
+      end
+      else
+        ExibirMsgAlerta('Produto não pode ser excluído por está sendo usado em pedidos');
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar excluir o produto.' + #13 + E.Message);
   end;
 end;
 

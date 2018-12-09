@@ -16,6 +16,7 @@ type
         TABLE_NOTIFICACAO = 'app_notificacao';
         TABLE_USUARIO     = 'tbl_usuario';
         TABLE_PEDIDO      = 'tbl_pedido';
+        TABLE_PEDIDO_ITEM = 'tbl_pedido_item';
         TABLE_CLIENTE     = 'tbl_cliente';
         TABLE_PRODUTO     = 'tbl_produto';
     public
@@ -25,6 +26,7 @@ type
       function getCreateTableNotificacao : TStringList;
       function getCreateTableUsuario : TStringList;
       function getCreateTablePedido : TStringList;
+      function getCreateTablePedidoItem : TStringList; virtual; abstract;
       function getCreateTableCliente : TStringList;
       function getCreateTableProduto : TStringList;
 
@@ -33,6 +35,7 @@ type
       function getTableNameNotificacao : String;
       function getTableNameUsuario : String;
       function getTableNamePedido : String;
+      function getTableNamePedidoItem : String;
       function getTableNameCliente : String;
       function getTableNameProduto : String;
   end;
@@ -226,6 +229,11 @@ end;
 function TScriptDDL.getTableNamePedido: String;
 begin
   Result := TABLE_PEDIDO;
+end;
+
+function TScriptDDL.getTableNamePedidoItem: String;
+begin
+  Result := TABLE_PEDIDO_ITEM;
 end;
 
 function TScriptDDL.getTableNameProduto: String;
