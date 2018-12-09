@@ -99,6 +99,7 @@ type
     procedure ListViewNotificacaoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure ListViewPedidoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure ListViewClienteUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+    procedure imageAddClienteClick(Sender: TObject);
   private
     { Private declarations }
     procedure DefinirIndices;
@@ -421,6 +422,11 @@ end;
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
   SelecionarTab(idxTabPedido);
+end;
+
+procedure TFrmPrincipal.imageAddClienteClick(Sender: TObject);
+begin
+  NovoCadastroCliente;
 end;
 
 procedure TFrmPrincipal.imageAddPedidoClick(Sender: TObject);

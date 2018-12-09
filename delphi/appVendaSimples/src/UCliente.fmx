@@ -1,19 +1,28 @@
 inherited FrmCliente: TFrmCliente
   Caption = 'Venda Smples'
+  ClientHeight = 486
+  OnActivate = FormActivate
   DesignerMasterStyle = 3
+  inherited StyleBook: TStyleBook
+    Left = 16
+    Top = 8
+  end
   inherited LayoutBase: TLayout
+    Size.Height = 486.000000000000000000
     inherited tbsControle: TTabControl
+      Size.Height = 486.000000000000000000
       Sizes = (
         300s
-        556s
+        437s
         300s
-        556s
+        437s
         300s
-        556s)
+        437s)
       inherited tbsConsulta: TTabItem
         ExplicitSize.cx = 150.000000000000000000
         ExplicitSize.cy = 49.000000000000000000
         inherited LayoutFormConsulta: TLayout
+          Size.Height = 437.000000000000000000
           inherited rectangleTitulo: TRectangle
             inherited labelTitulo: TLabel
               TextSettings.Font.StyleExt = {00060000000000000004000000}
@@ -58,9 +67,11 @@ inherited FrmCliente: TFrmCliente
         ExplicitSize.cx = 150.000000000000000000
         ExplicitSize.cy = 49.000000000000000000
         inherited LayoutFormCadastro: TLayout
+          Size.Height = 437.000000000000000000
           inherited rectangleTituloCadastro: TRectangle
             inherited labelTituloCadastro: TLabel
               TextSettings.Font.StyleExt = {00060000000000000004000000}
+              Text = 'NOVO CLIENTE'
             end
             inherited imageVoltarConsulta: TImage
               MultiResBitmap.Height = 32
@@ -127,11 +138,12 @@ inherited FrmCliente: TFrmCliente
             end
           end
           inherited ScrollBoxCadastro: TScrollBox
+            Size.Height = 389.000000000000000000
             Viewport.Width = 300.000000000000000000
-            Viewport.Height = 508.000000000000000000
+            Viewport.Height = 389.000000000000000000
             inherited lytDescricao: TLayout
               Position.Y = 50.000000000000000000
-              TabOrder = 5
+              TabOrder = 9
               inherited LabelDescricao: TLabel
                 Text = 'Nome'
               end
@@ -182,7 +194,7 @@ inherited FrmCliente: TFrmCliente
               end
             end
             inherited lytExcluir: TLayout
-              Position.Y = 100.000000000000000000
+              Position.Y = 300.000000000000000000
               inherited imgExcluir: TImage
                 MultiResBitmap.Height = 48
                 MultiResBitmap.Width = 48
@@ -375,6 +387,390 @@ inherited FrmCliente: TFrmCliente
                 TabOrder = 1
               end
             end
+            object lytEndereco: TLayout
+              Align = Top
+              Position.Y = 100.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 50.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 8
+              object LineEndereco: TLine
+                Align = Top
+                LineType = Diagonal
+                Opacity = 0.500000000000000000
+                Margins.Left = 10.000000000000000000
+                Margins.Right = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Size.Width = 280.000000000000000000
+                Size.Height = 1.000000000000000000
+                Size.PlatformDefault = False
+                Stroke.Color = xFF1E87AF
+              end
+              object LabelEndereco: TLabel
+                Align = Left
+                StyledSettings = [Family, Size, FontColor]
+                Margins.Left = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 103.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleAzul'
+                Text = 'Endere'#231'o'
+                TabOrder = 2
+              end
+              object imgEndereco: TImage
+                MultiResBitmap.Height = 48
+                MultiResBitmap.Width = 48
+                MultiResBitmap = <
+                  item
+                    Width = 48
+                    Height = 48
+                    PNG = {
+                      89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+                      87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                      0315494441546843ED984F4814511CC77F6F777596C004352ADC99BAE529F5EE
+                      A593B77257303A84F8371705292BDD3558A49A55342CADA4AC36910E19EE6ED9
+                      B583C72E11D125C243B342973AE461D9A59CD7EFBD9D5D102270E6BDF1329FCB
+                      9BEFB00CDFEFFBFDDE1F163C3C3C3C3C0E94C6E9F510ACADF92DE93A3E6BB4C5
+                      C999EC29FF1FF37D682B90820475F42DBB106BDC37C7136F0E5555ED7E013F84
+                      AC572BC687DF7DF0AA6BD7D2AE607BD6BE4F9DCDE39C5F8502940D776BAD8167
+                      6E57C27605CA84F4F4055F91AC42106BC1A0E673A3F8A90FA6A64CAE25E378F1
+                      EDBC7BF9B9A6FDFC5752241D10C08A12D2521B38AAFD6A6BDA80CD4D6AFD4C1A
+                      42760F16A2B6BD6B0B8AE41C0F01A4F5B0FF98BAD3D6F456760861FD6AC43B5F
+                      80627697D70421D0AB2AA7978152C76DFA3F847F5CD33317A108A9F29AC0E95F
+                      CE153E0EC95A13C2770C231E5E05057AD86A661A676840AD6E7E24AB1252B63C
+                      168252E8AD84F0917E2DF97A494608697B762E1E5929858052EB107A49460869
+                      01182C8449497FB912A510D9072243480DC0D88E77A44C4A3144B91210E52140
+                      4C08E90118DBF1CE141A1FC4C74A0855CF2C8AA8842B0118C644F829DAAF8420
+                      840CABC9ACE310AE056018931882D02128FCE4A7331E761822738F3D326D0757
+                      033070C21B21585F314C80D64022613B80E31EDC0FD8F73771D66F5812F726FA
+                      24170F0F62296CDF975CAB8096CCDCDA639ED0586E3232E0C43CC39500685EC7
+                      61920BEC7F4ACD89DC44649A6B87C86E21A225D3491CC6B9628B3758376EC422
+                      B35C0B406A0035B93E43C0779D0B344F82F5D7BEC5C277B81684AC0044D5D3B3
+                      B8D78F7155F84169F0C8582ED631CFB54024FC9F43B16D5AE6F698571AAEE06E
+                      73976BC1880E4034BD651EEB7A992B340FC1865134BFC0B504C405C0134A53B8
+                      F951AEB9F9BA515CB08B5C4B42CC1A40F3EA7476013F36C2359A3795BA11BCC4
+                      3DE45A22CE03FCC33CADAE1FC6436A896BC9380B9048F8B06DEEE357A2D61B76
+                      D38C1AB1F0E392948FA39358539AE70ED23CC35100E2F76D00E4F3F868B2BBBE
+                      DBE68570E276F64C48CFF658D2C3C3C3C3C3C34500FE025F611CE817E9483E00
+                      00000049454E44AE426082}
+                    FileName = 
+                      'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\images\i' +
+                      'con-detalhe-48.png'
+                  end>
+                Align = Right
+                Margins.Right = 10.000000000000000000
+                Position.X = 264.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 26.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                WrapMode = Center
+              end
+              object lblEndereco: TLabel
+                Align = Client
+                StyledSettings = [Family, Size, FontColor]
+                HitTest = True
+                Margins.Right = 5.000000000000000000
+                Size.Width = 146.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleNegritoCinza'
+                TextSettings.Font.StyleExt = {00060000000000000004000000}
+                TextSettings.HorzAlign = Trailing
+                Text = 'Informe aqui o nome do novo cliente'
+                TabOrder = 1
+              end
+            end
+            object lytTelefone: TLayout
+              Align = Top
+              Position.Y = 150.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 50.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 7
+              object LineTelefone: TLine
+                Align = Top
+                LineType = Diagonal
+                Opacity = 0.500000000000000000
+                Margins.Left = 10.000000000000000000
+                Margins.Right = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Size.Width = 280.000000000000000000
+                Size.Height = 1.000000000000000000
+                Size.PlatformDefault = False
+                Stroke.Color = xFF1E87AF
+              end
+              object LabelTelefone: TLabel
+                Align = Left
+                StyledSettings = [Family, Size, FontColor]
+                Margins.Left = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 103.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleAzul'
+                Text = 'Telefone'
+                TabOrder = 2
+              end
+              object imgTelefone: TImage
+                MultiResBitmap.Height = 48
+                MultiResBitmap.Width = 48
+                MultiResBitmap = <
+                  item
+                    Width = 48
+                    Height = 48
+                    PNG = {
+                      89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+                      87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                      0315494441546843ED984D4C13411886BF690BDB982007C09FD05DBDC949E0CE
+                      C51337A525C17830845F6920218A0A2D260D51B7103028A844512B211EC4D056
+                      F1EA81A317638C176338B825F1A01739346D941DBF996E9B901813766796CB3E
+                      97D977D36CDE77BE6F7E52F0F0F0F0F038501AA7D743B0B6E6B7A4EBF8ACD116
+                      2767B2A7FC7FCCF7A1AD400A12D4D1B7EC42AC71DF1C4FBC395455B5FB05FC10
+                      B25EAD181F7EF7C1ABAE5D4BBB82ED59FB3E75368F737E150A5036DCADB5069E
+                      B95D09DB152813D2D3177C45B20A41AC05839ACF8DE2A73E989A32B9968CE3C5
+                      B7F3EEE5E79AF6F35F49917440002B4A484B6DE0A8F6ABAD69033637A9F53369
+                      08D93D5888DAF6AE2D2892733C0490D6C3FE63EA4E5BD35BD92184F5AB11EF7C
+                      018AD95D5E138440AFAA9C5E064A1DB7E9FF10FE714DCF5C8422A4CA6B02A77F
+                      3957F838246B4D08DF318C78781514E861AB99699CA101B5BAF991AC4A48D9F2
+                      58084AA1B712C247FAB5E4EB251921A4EDD9B97864A514024AAD43E8251921A4
+                      0560B0102625FDE54A9442641F880C213500633BDE913229C510E54A40948700
+                      3121A407606CC73B53687C101F2B21543DB328A212AE04601813E1A768BF1282
+                      1032AC26B38E43B81680614C62084287A0F0939FCE78D86188CC3DF6C8B41D5C
+                      0DC0C0096F84607DC530015A038984ED008E7B703F60DFDFC459BF6149DC9BE8
+                      935C3C3C88A5B07D5F72AD025A32736B8F794263B9C9C88013F30C5702A0791D
+                      87492EB0FF29352772139169AE1D22BB8588964C277118E78A2DDE60DDB8118B
+                      CC722D00A901D4E4FA0C01DF752ED03C09D65FFB160BDFE15A10B20210554FCF
+                      E25E3FC655E107A5C12363B958C73CD70291F07F0EC5B66999DB635E69B882BB
+                      CD5DAE05233A00D1F49679ACEB65AED03C041B46D1FC02D7121017004F284DE1
+                      E647B9E6E6EB4671C12E722D09316B00CDABD3D905FCD808D768DE54EA46F012
+                      F7906B89380FF00FF3B4BA7E180FA925AE25E32C4022E1C3B6B98F5F895A6FD8
+                      4D336AC4C28F4B523E8E4E624D699E3B48F30C470188DFB70190CFE3A3C9EEFA
+                      6E9B17C289DBD933213DDB63490F0F0F0F0F0F1701F80B4F1E1CE74E77E4EB00
+                      00000049454E44AE426082}
+                    FileName = 
+                      'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\images\i' +
+                      'con-detalhe-48.png'
+                  end>
+                Align = Right
+                Margins.Right = 10.000000000000000000
+                Position.X = 264.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 26.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                WrapMode = Center
+              end
+              object lblTelefone: TLabel
+                Align = Client
+                StyledSettings = [Family, Size, FontColor]
+                HitTest = True
+                Margins.Right = 5.000000000000000000
+                Size.Width = 146.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleNegritoCinza'
+                TextSettings.Font.StyleExt = {00060000000000000004000000}
+                TextSettings.HorzAlign = Trailing
+                Text = 'Informe aqui o n'#250'mero de telefone do novo cliente'
+                TabOrder = 1
+              end
+            end
+            object lytEmail: TLayout
+              Align = Top
+              Position.Y = 200.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 50.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 6
+              object LineEmail: TLine
+                Align = Top
+                LineType = Diagonal
+                Opacity = 0.500000000000000000
+                Margins.Left = 10.000000000000000000
+                Margins.Right = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Size.Width = 280.000000000000000000
+                Size.Height = 1.000000000000000000
+                Size.PlatformDefault = False
+                Stroke.Color = xFF1E87AF
+              end
+              object LabelEmail: TLabel
+                Align = Left
+                StyledSettings = [Family, Size, FontColor]
+                Margins.Left = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 103.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleAzul'
+                Text = 'Email'
+                TabOrder = 2
+              end
+              object imgEmail: TImage
+                MultiResBitmap.Height = 48
+                MultiResBitmap.Width = 48
+                MultiResBitmap = <
+                  item
+                    Width = 48
+                    Height = 48
+                    PNG = {
+                      89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+                      87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                      0315494441546843ED984D4C13411886BF690BDB982007C09FD05DBDC949E0CE
+                      C51337A525C17830845F6920218A0A2D260D51B7103028A844512B211EC4D056
+                      F1EA81A317638C176338B825F1A01739346D941DBF996E9B901813766796CB3E
+                      97D977D36CDE77BE6F7E52F0F0F0F0F038501AA7D743B0B6E6B7A4EBF8ACD116
+                      2767B2A7FC7FCCF7A1AD400A12D4D1B7EC42AC71DF1C4FBC395455B5FB05FC10
+                      B25EAD181F7EF7C1ABAE5D4BBB82ED59FB3E75368F737E150A5036DCADB5069E
+                      B95D09DB152813D2D3177C45B20A41AC05839ACF8DE2A73E989A32B9968CE3C5
+                      B7F3EEE5E79AF6F35F49917440002B4A484B6DE0A8F6ABAD69033637A9F53369
+                      08D93D5888DAF6AE2D2892733C0490D6C3FE63EA4E5BD35BD92184F5AB11EF7C
+                      018AD95D5E138440AFAA9C5E064A1DB7E9FF10FE714DCF5C8422A4CA6B02A77F
+                      3957F838246B4D08DF318C78781514E861AB99699CA101B5BAF991AC4A48D9F2
+                      58084AA1B712C247FAB5E4EB251921A4EDD9B97864A514024AAD43E8251921A4
+                      0560B0102625FDE54A9442641F880C213500633BDE913229C510E54A40948700
+                      3121A407606CC73B53687C101F2B21543DB328A212AE04601813E1A768BF1282
+                      1032AC26B38E43B81680614C62084287A0F0939FCE78D86188CC3DF6C8B41D5C
+                      0DC0C0096F84607DC530015A038984ED008E7B703F60DFDFC459BF6149DC9BE8
+                      935C3C3C88A5B07D5F72AD025A32736B8F794263B9C9C88013F30C5702A0791D
+                      87492EB0FF29352772139169AE1D22BB8588964C277118E78A2DDE60DDB8118B
+                      CC722D00A901D4E4FA0C01DF752ED03C09D65FFB160BDFE15A10B20210554FCF
+                      E25E3FC655E107A5C12363B958C73CD70291F07F0EC5B66999DB635E69B882BB
+                      CD5DAE05233A00D1F49679ACEB65AED03C041B46D1FC02D7121017004F284DE1
+                      E647B9E6E6EB4671C12E722D09316B00CDABD3D905FCD808D768DE54EA46F012
+                      F7906B89380FF00FF3B4BA7E180FA925AE25E32C4022E1C3B6B98F5F895A6FD8
+                      4D336AC4C28F4B523E8E4E624D699E3B48F30C470188DFB70190CFE3A3C9EEFA
+                      6E9B17C289DBD933213DDB63490F0F0F0F0F0F1701F80B4F1E1CE74E77E4EB00
+                      00000049454E44AE426082}
+                    FileName = 
+                      'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\images\i' +
+                      'con-detalhe-48.png'
+                  end>
+                Align = Right
+                Margins.Right = 10.000000000000000000
+                Position.X = 264.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 26.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                WrapMode = Center
+              end
+              object lblEmail: TLabel
+                Align = Client
+                StyledSettings = [Family, Size, FontColor]
+                HitTest = True
+                Margins.Right = 5.000000000000000000
+                Size.Width = 146.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleNegritoCinza'
+                TextSettings.Font.StyleExt = {00060000000000000004000000}
+                TextSettings.HorzAlign = Trailing
+                Text = 'Informe aqui o e-mail do novo cliente'
+                TabOrder = 1
+              end
+            end
+            object lytObs: TLayout
+              Align = Top
+              Position.Y = 250.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 50.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 5
+              object LineObs: TLine
+                Align = Top
+                LineType = Diagonal
+                Opacity = 0.500000000000000000
+                Margins.Left = 10.000000000000000000
+                Margins.Right = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Size.Width = 280.000000000000000000
+                Size.Height = 1.000000000000000000
+                Size.PlatformDefault = False
+                Stroke.Color = xFF1E87AF
+              end
+              object LabelObs: TLabel
+                Align = Left
+                StyledSettings = [Family, Size, FontColor]
+                Margins.Left = 10.000000000000000000
+                Position.X = 10.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 103.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleAzul'
+                Text = 'Observa'#231#245'es'
+                TabOrder = 2
+              end
+              object imgObs: TImage
+                MultiResBitmap.Height = 48
+                MultiResBitmap.Width = 48
+                MultiResBitmap = <
+                  item
+                    Width = 48
+                    Height = 48
+                    PNG = {
+                      89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+                      87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                      0315494441546843ED984D4C13411886BF690BDB982007C09FD05DBDC949E0CE
+                      C51337A525C17830845F6920218A0A2D260D51B7103028A844512B211EC4D056
+                      F1EA81A317638C176338B825F1A01739346D941DBF996E9B901813766796CB3E
+                      97D977D36CDE77BE6F7E52F0F0F0F0F038501AA7D743B0B6E6B7A4EBF8ACD116
+                      2767B2A7FC7FCCF7A1AD400A12D4D1B7EC42AC71DF1C4FBC395455B5FB05FC10
+                      B25EAD181F7EF7C1ABAE5D4BBB82ED59FB3E75368F737E150A5036DCADB5069E
+                      B95D09DB152813D2D3177C45B20A41AC05839ACF8DE2A73E989A32B9968CE3C5
+                      B7F3EEE5E79AF6F35F49917440002B4A484B6DE0A8F6ABAD69033637A9F53369
+                      08D93D5888DAF6AE2D2892733C0490D6C3FE63EA4E5BD35BD92184F5AB11EF7C
+                      018AD95D5E138440AFAA9C5E064A1DB7E9FF10FE714DCF5C8422A4CA6B02A77F
+                      3957F838246B4D08DF318C78781514E861AB99699CA101B5BAF991AC4A48D9F2
+                      58084AA1B712C247FAB5E4EB251921A4EDD9B97864A514024AAD43E8251921A4
+                      0560B0102625FDE54A9442641F880C213500633BDE913229C510E54A40948700
+                      3121A407606CC73B53687C101F2B21543DB328A212AE04601813E1A768BF1282
+                      1032AC26B38E43B81680614C62084287A0F0939FCE78D86188CC3DF6C8B41D5C
+                      0DC0C0096F84607DC530015A038984ED008E7B703F60DFDFC459BF6149DC9BE8
+                      935C3C3C88A5B07D5F72AD025A32736B8F794263B9C9C88013F30C5702A0791D
+                      87492EB0FF29352772139169AE1D22BB8588964C277118E78A2DDE60DDB8118B
+                      CC722D00A901D4E4FA0C01DF752ED03C09D65FFB160BDFE15A10B20210554FCF
+                      E25E3FC655E107A5C12363B958C73CD70291F07F0EC5B66999DB635E69B882BB
+                      CD5DAE05233A00D1F49679ACEB65AED03C041B46D1FC02D7121017004F284DE1
+                      E647B9E6E6EB4671C12E722D09316B00CDABD3D905FCD808D768DE54EA46F012
+                      F7906B89380FF00FF3B4BA7E180FA925AE25E32C4022E1C3B6B98F5F895A6FD8
+                      4D336AC4C28F4B523E8E4E624D699E3B48F30C470188DFB70190CFE3A3C9EEFA
+                      6E9B17C289DBD933213DDB63490F0F0F0F0F0F1701F80B4F1E1CE74E77E4EB00
+                      00000049454E44AE426082}
+                    FileName = 
+                      'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\images\i' +
+                      'con-detalhe-48.png'
+                  end>
+                Align = Right
+                Margins.Right = 10.000000000000000000
+                Position.X = 264.000000000000000000
+                Position.Y = 1.000000000000000000
+                Size.Width = 26.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                WrapMode = Center
+              end
+              object lblObs: TLabel
+                Align = Client
+                StyledSettings = [Family, Size, FontColor]
+                HitTest = True
+                Margins.Right = 5.000000000000000000
+                Size.Width = 146.000000000000000000
+                Size.Height = 49.000000000000000000
+                Size.PlatformDefault = False
+                StyleLookup = 'LabelStyleNegritoCinza'
+                TextSettings.Font.StyleExt = {00060000000000000004000000}
+                TextSettings.HorzAlign = Trailing
+                Text = 'Informe aqui as observa'#231#245'es para o novo cliente'
+                TabOrder = 1
+              end
+            end
           end
         end
       end
@@ -382,6 +778,7 @@ inherited FrmCliente: TFrmCliente
         ExplicitSize.cx = 48.000000000000000000
         ExplicitSize.cy = 49.000000000000000000
         inherited LayoutFormEditar: TLayout
+          Size.Height = 437.000000000000000000
           inherited rectangleTituloEditar: TRectangle
             inherited labelTituloEditar: TLabel
               TextSettings.Font.StyleExt = {00060000000000000004000000}
@@ -582,5 +979,9 @@ inherited FrmCliente: TFrmCliente
         end
       end
     end
+  end
+  inherited ActionList: TActionList
+    Left = 48
+    Top = 9
   end
 end

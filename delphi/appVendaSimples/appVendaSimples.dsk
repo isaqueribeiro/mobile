@@ -1,46 +1,50 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UMensagem.pas',0,1,177,13,177,0,0,,
-File_1=TSourceModule,'c:\delphi\tokyo\studio\19.0\source\data\firedac\FireDAC.Stan.Error.pas',0,1,156,1,189,0,0,,
-File_2=TSourceModule,'c:\delphi\tokyo\studio\19.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,5543,1,5576,0,0,,
-File_3=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.Platform.Win.pas',0,1,2782,1,2797,0,0,,
-File_4=TSourceModule,'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\model.Produto.pas',0,1,45,21,52,0,0,,
-File_5=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.ListView.pas',0,1,5759,1,5774,0,0,{{1093,0}
-File_6=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.ListView.Adapters.Base.pas',0,1,149,1,165,0,0,{{238,0}
-File_7=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.ListView.Appearances.pas',0,1,1311,1,1327,0,0,{{1660,0}
-File_8=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.Graphics.pas',0,1,460,14,477,0,0,,
-File_9=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\rtl\common\System.Classes.pas',0,1,7464,3,7481,0,0,,
-File_10=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\data\firedac\FireDAC.Phys.pas',0,1,6846,1,6861,0,0,,
-File_11=TSourceModule,'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPadraoEditar.pas',0,1,41,34,53,0,0,,
-File_12=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.Forms.pas',0,1,3258,1,3273,0,0,,
-File_13=TSourceModule,'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UMensagem.pas',0,1,124,43,135,0,0,,
+File_0=TSourceModule,'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UProduto.pas',0,1,338,85,456,0,0,,
+File_1=TSourceModule,'c:\delphi\tokyo\studio\19.0\SOURCE\RTL\SYS\System.Types.pas',0,1,549,23,576,0,0,,
+File_2=TSourceModule,'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\dao.Produto.pas',0,1,2,16,29,0,0,,
+File_3=TSourceModule,'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UMensagem.pas',0,1,177,13,177,0,0,,
+File_4=TSourceModule,'c:\delphi\tokyo\studio\19.0\source\data\firedac\FireDAC.Stan.Error.pas',0,1,156,1,189,0,0,,
+File_5=TSourceModule,'c:\delphi\tokyo\studio\19.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,5543,1,5576,0,0,,
+File_6=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.Platform.Win.pas',0,1,2782,1,2797,0,0,,
+File_7=TSourceModule,'D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\model.Produto.pas',0,1,45,21,52,0,0,,
+File_8=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.ListView.pas',0,1,5759,1,5774,0,0,{{1093,0}
+File_9=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.ListView.Adapters.Base.pas',0,1,149,1,165,0,0,{{238,0}
+File_10=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.ListView.Appearances.pas',0,1,1311,1,1327,0,0,{{1660,0}
+File_11=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\fmx\FMX.Graphics.pas',0,1,460,14,477,0,0,,
 
 [Modules]
-Module0=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UProduto.pas
-Module1=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\dao.Produto.pas
-Module2=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\classes.ScriptDDL.pas
-Module3=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UDM.pas
-Module4=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPrincipal.pas
-Module5=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\ULogin.pas
-Module6=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UInicial.pas
-Module7=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UConstantes.pas
-Module8=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\appVendaSimples.dproj
-Module9=default.htm
+Module0=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UCliente.pas
+Module1=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPrincipal.pas
+Module2=default.htm
+Module3=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\appVendaSimples.dproj
+Module4=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\classes.ScriptDDL.pas
+Module5=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UConstantes.pas
+Module6=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UDM.pas
+Module7=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\ULogin.pas
+Module8=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UInicial.pas
+Module9=documentation.htm
 Count=10
 EditWindowCount=1
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UProduto.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UCliente.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\dao.Produto.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPrincipal.pas]
 ModuleType=TSourceModule
+
+[default.htm]
+ModuleType=TURLModule
+
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\appVendaSimples.dproj]
+ModuleType=TBaseProject
 
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\classes.ScriptDDL.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UDM.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UConstantes.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPrincipal.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UDM.pas]
 ModuleType=TSourceModule
 
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\ULogin.pas]
@@ -49,18 +53,12 @@ ModuleType=TSourceModule
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UInicial.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UConstantes.pas]
-ModuleType=TSourceModule
-
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\appVendaSimples.dproj]
-ModuleType=TBaseProject
-
-[default.htm]
+[documentation.htm]
 ModuleType=TURLModule
 
 [EditWindow0]
 ViewCount=10
-CurrentEditView=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UProduto.pas
+CurrentEditView=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UCliente.pas
 View0=0
 View1=1
 View2=2
@@ -105,6 +103,10 @@ CustomEditViewType=TWelcomePageView
 WelcomePageURL=bds:/default.htm
 
 [View1]
+CustomEditViewType=TWelcomePageView
+WelcomePageURL=bds:/documentation.htm
+
+[View2]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\appVendaSimples.dpr
 CursorX=47
@@ -115,18 +117,18 @@ Elisions=
 Bookmarks=
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\appVendaSimples.dpr
 
-[View2]
+[View3]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UConstantes.pas
-CursorX=1
-CursorY=1
+CursorX=28
+CursorY=14
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UConstantes.pas
 
-[View3]
+[View4]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UDM.pas
 CursorX=25
@@ -137,18 +139,18 @@ Elisions=
 Bookmarks=
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UDM.pas
 
-[View4]
+[View5]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\classes.ScriptDDL.pas
-CursorX=54
-CursorY=153
-TopLine=117
+CursorX=28
+CursorY=63
+TopLine=47
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\classes.ScriptDDL.pas
 
-[View5]
+[View6]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UInicial.pas
 CursorX=1
@@ -159,7 +161,7 @@ Elisions=
 Bookmarks=
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UInicial.pas
 
-[View6]
+[View7]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\ULogin.pas
 CursorX=88
@@ -170,38 +172,27 @@ Elisions=
 Bookmarks=
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\ULogin.pas
 
-[View7]
+[View8]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPrincipal.pas
-CursorX=1
-CursorY=1
-TopLine=1
+CursorX=66
+CursorY=469
+TopLine=427
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=Borland.FormDesignerView
 
-[View8]
-CustomEditViewType=TEditView
-Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UProduto.pas
-CursorX=1
-CursorY=388
-TopLine=382
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UProduto.pas
-
 [View9]
 CustomEditViewType=TEditView
-Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\dao.Produto.pas
-CursorX=32
-CursorY=227
-TopLine=187
+Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UCliente.pas
+CursorX=63
+CursorY=112
+TopLine=82
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\dao.Produto.pas
+EditViewName=Borland.FormDesignerView
 
 [UndockedDesigner]
 Count=0
@@ -385,7 +376,12 @@ TBDockHeight=9010
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
-SplitPos=146
+SplitPos=111
+
+[PropInspDesignerSelection]
+ArrangeBy=Name
+SelectedItem=Height,OnClick
+ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Padding=0,Position=0,RotationCenter=0,Scale=0,Size=0,StyledSettings=0,TextSettings=0,Touch=0,TouchTargetExpansion=0,BitmapMargins=0,Fill=0,FormFactor=0,StyleBook=0,SystemStatusBar=0
 
 [frmDesignPreview]
 PercentageSizes=1

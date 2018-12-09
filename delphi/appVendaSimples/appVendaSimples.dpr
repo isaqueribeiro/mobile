@@ -22,7 +22,9 @@ uses
   dao.Notificacao in 'src\dao.Notificacao.pas',
   dao.Produto in 'src\dao.Produto.pas',
   UProduto in 'src\UProduto.pas' {FrmProduto},
-  UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar};
+  UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar},
+  UPadraoCadastro in 'src\UPadraoCadastro.pas' {FrmPadraoCadastro},
+  UCliente in 'src\UCliente.pas' {FrmCliente};
 
 {$R *.res}
 
