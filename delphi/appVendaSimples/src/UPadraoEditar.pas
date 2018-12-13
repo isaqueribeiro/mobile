@@ -56,10 +56,11 @@ type
     procedure imageSalvarEdicaoClick(Sender: TObject);
   private
     { Private declarations }
-    procedure TeclaBackSpace;
-    procedure TeclaNumero(const aValue : String);
   public
     { Public declarations }
+    procedure TeclaBackSpace; virtual;
+    procedure TeclaNumero(const aValue : String); virtual;
+
     function DevolverValorEditado : Boolean;
   end;
 
@@ -75,8 +76,9 @@ uses
 
 function TFrmPadraoEditar.DevolverValorEditado: Boolean;
 var
-  aObj : TObject;
-  aStr : String;
+  aObj  : TObject;
+  aStr  : String;
+  aPost : Boolean;
 begin
   aObj := nil;
   aStr := EmptyStr;
@@ -101,24 +103,34 @@ begin
   begin
     aObj := labelValorCampo.TagObject;
     aStr := Trim(labelValorCampo.Text);
-    if (Trim(labelValorCampo.TagString) <> EmptyStr) then  // Máscara para formatação numérica
+
+    // Máscara para formatação numérica
+    if (Trim(labelValorCampo.TagString) = ',0.00') or (Trim(labelValorCampo.TagString) = ',0') or (Trim(labelValorCampo.TagString) = ',0.##') then
     begin
       aStr := aStr.Replace('.', '', [rfReplaceAll]);
       aStr := FormatFloat(Trim(labelValorCampo.TagString), StrToCurrDef(aStr, 0));
     end;
   end;
 
-  if (aObj <> nil) then
+  aPost := ((Trim(aStr) <> EmptyStr) and (labelTituloEditar.TagString = '*')) or (labelTituloEditar.TagString = EmptyStr);
+
+  if aPost and (aObj <> nil) then
   begin
     if aObj is TLabel then
-      TLabel(aObj).Text := aStr
+    begin
+      TLabel(aObj).Text     := aStr;
+      TLabel(aObj).TagFloat := 1;
+    end
     else
     if aObj is TEdit then
-      TEdit(aObj).Text := aStr;
+    begin
+      TEdit(aObj).Text     := aStr;
+      TEdit(aObj).TagFloat := 1;
+    end;
   end;
 
-  if (Trim(aStr) = EmptyStr) then
-    ExibirMsgAlerta('Este campo é obrigatório!')
+  if (Trim(aStr) = EmptyStr) and (labelTituloEditar.TagString = '*') then
+    ExibirMsgAlerta('Esta informação é obrigatória!')
   else
     Result := ( (Trim(aStr) <> EmptyStr) or (aObj <> nil) );
 end;

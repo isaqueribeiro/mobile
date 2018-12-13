@@ -18,6 +18,7 @@ uses
   {$ENDIF}
 
   IdHashMessageDigest,
+  System.MaskUtils,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Forms;
 
@@ -27,6 +28,7 @@ uses
   function MD5(const aTexto : String) : String;
   function IsEmailValido(const aEmail : String) : Boolean;
   function GetNumeroSIM : String;
+  function FormatarTexto(aFormato, aStr : String) : String;
 
 implementation
 
@@ -89,6 +91,11 @@ begin
   aPhoneNumber := JStringToString(aManagerFone.getLine1Number);
   {$ENDIF}
   Result := Trim(aPhoneNumber);
+end;
+
+function FormatarTexto(aFormato, aStr : String) : String;
+begin
+  Result := FormatMaskText(aFormato, aStr);
 end;
 
 end.

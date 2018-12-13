@@ -20,6 +20,7 @@ type
     lineExcluir: TLine;
     imgExcluir: TImage;
     lblExcluir: TLabel;
+    ChangeTabActionEditar: TChangeTabAction;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
