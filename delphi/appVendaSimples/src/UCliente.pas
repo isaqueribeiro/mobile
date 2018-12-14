@@ -40,6 +40,7 @@ type
     imgObs: TImage;
     lblObs: TLabel;
     procedure DoEditarCampo(Sender: TObject);
+    procedure DoSalvarCliente(Sender: TObject);
 
     procedure FormActivate(Sender: TObject);
   strict private
@@ -54,6 +55,7 @@ type
 
     procedure TeclaBackSpace; override;
     procedure TeclaNumero(const aValue : String); override;
+    procedure Notificar; virtual; abstract;
 
     class function GetInstance : TFrmCliente;
   end;
@@ -68,7 +70,10 @@ implementation
 
 {$R *.fmx}
 
-uses app.Funcoes;
+uses
+    app.Funcoes
+  , UConstantes
+  , UMensagem;
 
 procedure ExibirCadastroCliente;
 var
@@ -86,6 +91,8 @@ begin
 
   with aForm do
   begin
+    tbsControle.ActiveTab := tbsCadastro;
+
     labelTituloCadastro.Text      := 'NOVO CLIENTE';
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL);
     labelTituloCadastro.TagFloat  := 0;
@@ -213,6 +220,55 @@ begin
   ChangeTabActionEditar.ExecuteTarget(Sender);
 end;
 
+procedure TFrmCliente.DoSalvarCliente(Sender: TObject);
+var
+  ins : Boolean;
+  dao : TClienteDao;
+begin
+  try
+    if (lblCPF_CNPJ.TagFloat = 0) or (Trim(lblCPF_CNPJ.Text) = EmptyStr) then
+      ExibirMsgAlerta('Informe o número de CPF/CNPJ!')
+    else
+    if (lblDescricao.TagFloat = 0) or (Trim(lblDescricao.Text) = EmptyStr) then
+      ExibirMsgAlerta('Informe o nome completo!')
+    else
+    if (not StrIsCPF(lblCPF_CNPJ.Text)) and (not StrIsCNPJ(lblCPF_CNPJ.Text)) then
+      ExibirMsgAlerta('Número de CPF/CNPJ inválido!')
+    else
+    begin
+      dao := TClienteDao.GetInstance;
+
+      dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
+      dao.Model.Codigo    := labelTituloCadastro.TagFloat;
+
+      if StrIsCNPJ(lblCPF_CNPJ.Text) then
+        dao.Model.Tipo := TTipoCliente.tcPessoaJuridica
+      else
+        dao.Model.Tipo := TTipoCliente.tcPessoaFisica;
+
+      dao.Model.CpfCnpj    := IfThen(lblCPF_CNPJ.TagFloat  = 0, EmptyStr, lblCPF_CNPJ.Text);
+      dao.Model.Nome       := IfThen(lblDescricao.TagFloat = 0, EmptyStr, lblDescricao.Text);
+      dao.Model.Endereco   := IfThen(lblEndereco.TagFloat  = 0, EmptyStr, lblEndereco.Text);
+      dao.Model.Telefone   := IfThen(lblTelefone.TagFloat  = 0, EmptyStr, lblTelefone.Text);
+      dao.Model.Email      := IfThen(lblEmail.TagFloat     = 0, EmptyStr, lblEmail.Text);
+      dao.Model.Observacao := IfThen(lblObs.TagFloat       = 0, EmptyStr, lblObs.Text);
+
+      ins := (dao.Model.ID = GUID_NULL);
+
+      if ins then
+        dao.Insert()
+      else
+        dao.Update();
+
+      Self.Notificar;
+      Self.Close;
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar salvar o cliente.' + #13 + E.Message);
+  end;
+end;
+
 procedure TFrmCliente.FormActivate(Sender: TObject);
 begin
   inherited;
@@ -232,9 +288,9 @@ begin
   if (labelValorCampo.TagString = 'fone') then
   begin
     if (Length(aStr) > 10) then
-      aStr := FormatarTexto('(99)99999-9999;0', aStr)
+      aStr := FormatarTexto('(99) 99999-9999;0', aStr)
     else
-      aStr := FormatarTexto('(99)9999-9999;0', aStr);
+      aStr := FormatarTexto('(99) 9999-9999;0', aStr);
   end;
 
   labelValorCampo.Text := aStr;
