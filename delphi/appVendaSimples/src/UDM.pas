@@ -42,6 +42,7 @@ var
 //  function IfThen(aExpressao : Boolean; aTrue, aFalse : TGUID) : TGUID; overload;
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido; overload;
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoCliente) : TTipoCliente; overload;
+  function GetTipoClienteStr(aTipo : TTipoCliente) : String;
 
   function GetNewID(const aTabela, aCampo : String) : Currency;
 
@@ -76,6 +77,14 @@ begin
     Result := aTrue
   else
     Result := aFalse;
+end;
+
+function GetTipoClienteStr(aTipo: TTipoCliente): String;
+begin
+  case aTipo of
+    tcPessoaFisica   : Result := 'F';
+    tcPessoaJuridica : Result := 'J';
+  end;
 end;
 
 procedure TDM.ConectarDB;

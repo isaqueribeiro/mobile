@@ -26,6 +26,7 @@ type
       aDataUltimaCompra  : TDateTime;
       aValorUltimaCompra : Currency;
 
+      procedure SetTelefone(Value : String);
       procedure SetEmail(Value : String);
       procedure SetNome(Value : String);
     public
@@ -37,7 +38,7 @@ type
       property Nome    : String read aNome write SetNome;
       property CpfCnpj : String read aCpfCnpj write aCpfCnpj;
       property Contato    : String read aContato write aContato;
-      property Telefone   : String read aTelefone write aTelefone;
+      property Telefone   : String read aTelefone write SetTelefone;
       property Celular    : String read aCelular write aCelular;
       property Email      : String read aEmail write SetEmail;
       property Endereco   : String read aEndereco write aEndereco;
@@ -95,6 +96,11 @@ end;
 procedure TCliente.SetNome(Value: String);
 begin
   aNome := AnsiUpperCase(Trim(Value));
+end;
+
+procedure TCliente.SetTelefone(Value: String);
+begin
+  aTelefone := Trim(Value);
 end;
 
 function TCliente.ToString: String;

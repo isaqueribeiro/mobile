@@ -94,8 +94,8 @@ begin
     tbsControle.ActiveTab := tbsCadastro;
 
     labelTituloCadastro.Text      := 'NOVO CLIENTE';
-    labelTituloCadastro.TagString := GUIDToString(GUID_NULL);
-    labelTituloCadastro.TagFloat  := 0;
+    labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
+    labelTituloCadastro.TagFloat  := 0;                       // Destinado a guardar o CODIGO numérico do registro
 
     lblCPF_CNPJ.Text  := 'Informe aqui o número de CPF/CNPJ do novo cliente';
     lblDescricao.Text := 'Informe aqui o nome do novo cliente';
@@ -104,7 +104,7 @@ begin
     lblEmail.Text     := 'Informe aqui o e-mail do novo cliente';
     lblObs.Text       := 'Insira aqui as observações sobre o cliente';
 
-    lblCPF_CNPJ.TagFloat  := 0;
+    lblCPF_CNPJ.TagFloat  := 0; // Flags: 0 - Sem edição; 1 - Dado editado
     lblDescricao.TagFloat := 0;
     lblEndereco.TagFloat  := 0;
     lblTelefone.TagFloat  := 0;
@@ -140,18 +140,18 @@ begin
       begin
         layoutValorCampo.Visible    := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelCPF_CNPJ.Text);
-        labelTituloEditar.TagString := '*'; // Campo obrigatório
+        labelTituloEditar.TagString := '*';                // Campo obrigatório
 
         labelValorCampo.Text      := IfThen(lblCPF_CNPJ.TagFloat = 0, EmptyStr, lblCPF_CNPJ.Text);
-        labelValorCampo.TagString := 'cpf/cnpj';
-        labelValorCampo.TagObject := TObject(lblCPF_CNPJ);
+        labelValorCampo.TagString := 'cpf/cnpj';           // Flag para formatação do valor
+        labelValorCampo.TagObject := TObject(lblCPF_CNPJ); // Objeto de origem da informação. O dado editado será devolvido para ele.
       end;
 
     1 :
       begin
         layoutEditCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelDescricao.Text);
-        labelTituloEditar.TagString := '*'; // Campo obrigatório
+        labelTituloEditar.TagString := '*';                // Campo obrigatório
 
         editEditCampo.Text         := IfThen(lblDescricao.TagFloat = 0, EmptyStr, lblDescricao.Text);
         editEditCampo.MaxLength    := 150;
@@ -183,7 +183,7 @@ begin
         labelTituloEditar.TagString := EmptyStr;
 
         labelValorCampo.Text      := IfThen(lblTelefone.TagFloat = 0, EmptyStr, lblTelefone.Text);
-        labelValorCampo.TagString := 'fone';
+        labelValorCampo.TagString := 'fone';               // Flag para formatação do valor
         labelValorCampo.TagObject := TObject(lblTelefone);
       end;
 
@@ -224,8 +224,20 @@ procedure TFrmCliente.DoSalvarCliente(Sender: TObject);
 var
   ins : Boolean;
   dao : TClienteDao;
+  inf : Extended;
 begin
   try
+    inf :=
+      lblCPF_CNPJ.TagFloat  +
+      lblDescricao.TagFloat +
+      lblEndereco.TagFloat  +
+      lblTelefone.TagFloat  +
+      lblEmail.TagFloat     +
+      lblObs.TagFloat;
+
+    if (inf = 0) then
+      ExibirMsgAlerta('Sem dados informados!')
+    else
     if (lblCPF_CNPJ.TagFloat = 0) or (Trim(lblCPF_CNPJ.Text) = EmptyStr) then
       ExibirMsgAlerta('Informe o número de CPF/CNPJ!')
     else
@@ -246,7 +258,7 @@ begin
       else
         dao.Model.Tipo := TTipoCliente.tcPessoaFisica;
 
-      dao.Model.CpfCnpj    := IfThen(lblCPF_CNPJ.TagFloat  = 0, EmptyStr, lblCPF_CNPJ.Text);
+      dao.Model.CpfCnpj    := IfThen(lblCPF_CNPJ.TagFloat  = 0, EmptyStr, lblCPF_CNPJ.Text);  // Postar dados na classe caso ele tenha sido editado
       dao.Model.Nome       := IfThen(lblDescricao.TagFloat = 0, EmptyStr, lblDescricao.Text);
       dao.Model.Endereco   := IfThen(lblEndereco.TagFloat  = 0, EmptyStr, lblEndereco.Text);
       dao.Model.Telefone   := IfThen(lblTelefone.TagFloat  = 0, EmptyStr, lblTelefone.Text);

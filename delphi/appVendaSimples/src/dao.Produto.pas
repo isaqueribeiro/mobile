@@ -197,6 +197,9 @@ begin
     aSQL.Add('  , sn_ativo        ');
     aSQL.Add('  , sn_sincronizado ');
 
+    if (aModel.Referencia <> GUID_NULL) then
+      aSQL.Add('  , cd_referencia   ');
+
     if (aModel.Foto <> nil) then
       aSQL.Add('  , ft_produto    ');
 
@@ -208,6 +211,9 @@ begin
     aSQL.Add('  , :vl_produto     ');
     aSQL.Add('  , :sn_ativo       ');
     aSQL.Add('  , :sn_sincronizado');
+
+    if (aModel.Referencia <> GUID_NULL) then
+      aSQL.Add('  , :cd_referencia  ');
 
     if (aModel.Foto <> nil) then
       aSQL.Add('  , :ft_produto   ');
@@ -233,6 +239,9 @@ begin
       ParamByName('vl_produto').AsCurrency    := aModel.Valor;
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+
+      if (aModel.Referencia <> GUID_NULL) then
+        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
       if (aModel.Foto <> nil) then
         ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
