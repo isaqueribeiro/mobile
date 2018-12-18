@@ -329,7 +329,7 @@ begin
       ParamByName('id_produto').AsString := GUIDToString(aModel.ID);
       OpenOrExecute;
 
-      aRetorno := (FieldByName('qt_produtos').AsInteger > 0);
+      aRetorno := (FieldByName('qt_produtos').AsInteger = 0);
 
       qrySQL.Close;
     end;

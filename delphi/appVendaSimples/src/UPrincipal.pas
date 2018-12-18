@@ -9,6 +9,7 @@ uses
   dao.Pedido,
   dao.Cliente,
   dao.Notificacao,
+  interfaces.Cliente,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
@@ -16,7 +17,7 @@ uses
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
-  TFrmPrincipal = class(TForm)
+  TFrmPrincipal = class(TForm, IObservadorCliente)
     StyleBook: TStyleBook;
     layoutTabs: TLayout;
     layoutTabPedido: TLayout;
@@ -116,6 +117,8 @@ type
     procedure AddPedidoListView(aPedido : TPedido);
     procedure AddClienteListView(aCliente : TCliente);
     procedure AddNotificacaoListView(aNotificacao : TNotificacao); virtual; abstract;
+
+    procedure AtualizarCliente;
   public
     { Public declarations }
   end;
@@ -157,6 +160,33 @@ begin
   aItem := ListViewPedido.Items.Add;
   aItem.TagObject := aPedido;
   FormatarItemPedidoListView(aItem);
+end;
+
+procedure TFrmPrincipal.AtualizarCliente;
+var
+  dao : TClienteDao;
+  aItem : TListViewItem;
+  aItemIndex : Integer;
+begin
+  dao := TClienteDao.GetInstance;
+  if (dao.Operacao = TTipoOperacaoDao.toIncluido) then
+  begin
+    AddClienteListView(dao.Model);
+    ListViewCliente.ItemIndex := (ListViewCliente.Items.Count - 1);
+  end
+  else
+  if (dao.Operacao = TTipoOperacaoDao.toEditado) then
+  begin
+    aItem := TListViewItem(ListViewCliente.Items.Item[ListViewCliente.ItemIndex]);
+    aItem.TagObject := dao.Model;
+    FormatarItemClienteListView(aItem);
+  end
+  else
+  if (dao.Operacao = TTipoOperacaoDao.toExcluido) then
+  begin
+    aItemIndex := ListViewCliente.ItemIndex;
+    ListViewCliente.Items.Delete(aItemIndex);
+  end;
 end;
 
 procedure TFrmPrincipal.BuscarClientes(aBusca: String; aPagina: Integer);
@@ -426,7 +456,7 @@ end;
 
 procedure TFrmPrincipal.imageAddClienteClick(Sender: TObject);
 begin
-  NovoCadastroCliente;
+  NovoCadastroCliente(Self);
 end;
 
 procedure TFrmPrincipal.imageAddPedidoClick(Sender: TObject);

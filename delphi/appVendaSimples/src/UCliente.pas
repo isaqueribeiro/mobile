@@ -4,8 +4,10 @@ interface
 
 uses
   System.StrUtils,
+  System.Generics.Collections,
   model.Cliente,
   dao.Cliente,
+  interfaces.Cliente,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
@@ -13,7 +15,7 @@ uses
   FMX.Controls.Presentation, FMX.Layouts;
 
 type
-  TFrmCliente = class(TFrmPadraoCadastro)
+  TFrmCliente = class(TFrmPadraoCadastro, IClienteObservado)
     LayoutCPF_CNPJ: TLayout;
     LineCPF_CNPJ: TLine;
     LabelCPF_CNPJ: TLabel;
@@ -41,12 +43,17 @@ type
     lblObs: TLabel;
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarCliente(Sender: TObject);
+    procedure DoExcluirCliente(Sender : TObject);
 
     procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
     { Private declarations }
     aDao : TClienteDao;
+    FObservers : TList<IObservadorCliente>;
     procedure FormatarValorCampo(var aStr : String);
+    procedure ExcluirCliente(Sender: TObject);
 
     class var aInstance : TFrmCliente;
   public
@@ -55,13 +62,17 @@ type
 
     procedure TeclaBackSpace; override;
     procedure TeclaNumero(const aValue : String); override;
-    procedure Notificar; virtual; abstract;
+
+    procedure AdicionarObservador(Observer : IObservadorCliente);
+    procedure RemoverObservador(Observer : IObservadorCliente);
+    procedure RemoverTodosObservadores;
+    procedure Notificar;
 
     class function GetInstance : TFrmCliente;
   end;
 
-  procedure ExibirCadastroCliente;
-  procedure NovoCadastroCliente;
+  procedure ExibirCadastroCliente(Observer : IObservadorCliente);
+  procedure NovoCadastroCliente(Observer : IObservadorCliente);
 
 //var
 //  FrmCliente: TFrmCliente;
@@ -75,19 +86,21 @@ uses
   , UConstantes
   , UMensagem;
 
-procedure ExibirCadastroCliente;
+procedure ExibirCadastroCliente(Observer : IObservadorCliente);
 var
   aForm : TFrmCliente;
 begin
   aForm := TFrmCliente.GetInstance;
+  aForm.AdicionarObservador(Observer);
   aForm.Show;
 end;
 
-procedure NovoCadastroCliente;
+procedure NovoCadastroCliente(Observer : IObservadorCliente);
 var
   aForm : TFrmCliente;
 begin
   aForm := TFrmCliente.GetInstance;
+  aForm.AdicionarObservador(Observer);
 
   with aForm do
   begin
@@ -118,6 +131,12 @@ begin
 end;
 
 { TFrmCliente }
+
+procedure TFrmCliente.AdicionarObservador(Observer: IObservadorCliente);
+begin
+  if (FObservers.IndexOf(Observer) = -1) then
+    FObservers.Add(Observer);
+end;
 
 procedure TFrmCliente.DoEditarCampo(Sender: TObject);
 var
@@ -220,10 +239,14 @@ begin
   ChangeTabActionEditar.ExecuteTarget(Sender);
 end;
 
+procedure TFrmCliente.DoExcluirCliente(Sender: TObject);
+begin
+  ExibirMsgConfirmacao('Excluir', 'Deseja excluir o cliente selecionado?', ExcluirCliente);
+end;
+
 procedure TFrmCliente.DoSalvarCliente(Sender: TObject);
 var
   ins : Boolean;
-  dao : TClienteDao;
   inf : Extended;
 begin
   try
@@ -248,8 +271,6 @@ begin
       ExibirMsgAlerta('Número de CPF/CNPJ inválido!')
     else
     begin
-      dao := TClienteDao.GetInstance;
-
       dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
       dao.Model.Codigo    := labelTituloCadastro.TagFloat;
 
@@ -281,6 +302,30 @@ begin
   end;
 end;
 
+procedure TFrmCliente.ExcluirCliente(Sender: TObject);
+var
+  msg : TFrmMensagem;
+begin
+  try
+    if Assigned(dao.Model) then
+    begin
+      msg.Close;
+      if dao.PodeExcluir then
+      begin
+        dao.Delete();
+
+        Self.Notificar;
+        Self.Close;
+      end
+      else
+        ExibirMsgAlerta('Cliente não pode ser excluído por está sendo usado em pedidos');
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar excluir o cliente.' + #13 + E.Message);
+  end;
+end;
+
 procedure TFrmCliente.FormActivate(Sender: TObject);
 begin
   inherited;
@@ -308,6 +353,18 @@ begin
   labelValorCampo.Text := aStr;
 end;
 
+procedure TFrmCliente.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  RemoverTodosObservadores;
+end;
+
+procedure TFrmCliente.FormCreate(Sender: TObject);
+begin
+  inherited;
+  FObservers := TList<IObservadorCliente>.Create;
+end;
+
 class function TFrmCliente.GetInstance: TFrmCliente;
 begin
   if not Assigned(aInstance) then
@@ -316,9 +373,37 @@ begin
     Application.RealCreateForms;
   end;
 
+  if not Assigned(aInstance.FObservers) then
+    aInstance.FObservers := TList<IObservadorCliente>.Create;
+
   aInstance.aDao := TClienteDao.GetInstance;
 
   Result := aInstance;
+end;
+
+procedure TFrmCliente.Notificar;
+var
+  Observer : IObservadorCliente;
+begin
+  for Observer in FObservers do
+     Observer.AtualizarCliente;
+end;
+
+procedure TFrmCliente.RemoverObservador(Observer: IObservadorCliente);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TFrmCliente.RemoverTodosObservadores;
+var
+  I : Integer;
+//var
+//  Observer : IObservadorCliente;
+begin
+  for I := 0 to (FObservers.Count - 1) do
+    FObservers.Delete(I);
+//  for Observer in FObservers do
+//    FObservers.Delete(FObservers.IndexOf(Observer));
 end;
 
 procedure TFrmCliente.TeclaBackSpace;

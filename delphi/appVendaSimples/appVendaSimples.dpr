@@ -21,6 +21,7 @@ uses
   dao.Cliente in 'src\dao.Cliente.pas',
   dao.Notificacao in 'src\dao.Notificacao.pas',
   dao.Produto in 'src\dao.Produto.pas',
+  interfaces.Cliente in 'src\interfaces.Cliente.pas',
   UProduto in 'src\UProduto.pas' {FrmProduto},
   UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar},
   UPadraoCadastro in 'src\UPadraoCadastro.pas' {FrmPadraoCadastro},

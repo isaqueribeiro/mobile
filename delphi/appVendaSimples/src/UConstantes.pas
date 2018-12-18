@@ -4,6 +4,7 @@ interface
 
 Type
   TTipoCliente = (tcPessoaFisica, tcPessoaJuridica);
+  TTipoOperacaoDao = (toBrowser, toIncluir, toEditar, toExcluir, toIncluido, toEditado, toExcluido);
   TTipoLoja = TTipoCliente;
   TTipoPedido = (tpOrcamento, tpPedido);
 

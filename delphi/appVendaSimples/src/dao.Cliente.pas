@@ -16,6 +16,7 @@ type
       aDDL   : TScriptDDL;
       aModel : TCliente;
       aLista : TClientes;
+      aOperacao : TTipoOperacaoDao;
       constructor Create();
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TCliente);
       procedure ClearLista;
@@ -23,15 +24,18 @@ type
     public
       property Model : TCliente read aModel write aModel;
       property Lista : TClientes read aLista write aLista;
+      property Operacao : TTipoOperacaoDao read aOperacao;
 
       procedure Load(const aBusca : String);
       procedure Insert();
       procedure Update();
+      procedure Delete();
       procedure AddLista; overload;
       procedure AddLista(aCliente : TCliente); overload;
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
+      function PodeExcluir : Boolean;
 
       class function GetInstance : TClienteDao;
   end;
@@ -79,9 +83,36 @@ end;
 constructor TClienteDao.Create;
 begin
   inherited Create;
-  aDDL   := TScriptDDL.GetInstance;
-  aModel := TCliente.Create;
+  aDDL      := TScriptDDL.GetInstance;
+  aModel    := TCliente.Create;
+  aOperacao := TTipoOperacaoDao.toBrowser;
   SetLength(aLista, 0);
+end;
+
+procedure TClienteDao.Delete;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Delete from ' + aDDL.getTableNameCliente);
+    aSQL.Add('where id_cliente    = :id_cliente ');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_cliente').AsString := GUIDToString(aModel.ID);
+
+      ExecSQL;
+      aOperacao := TTipoOperacaoDao.toExcluido;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 function TClienteDao.Find(const aCodigo: Currency;
@@ -221,13 +252,13 @@ begin
 
       if (Length(aModel.Telefone) > 14) then // (91) 3295-3390
       begin
-        ParamByName('nr_telefone').Clear;
+        ParamByName('nr_telefone').AsString := EmptyStr;
         ParamByName('nr_celular').AsString  := aModel.Telefone;
       end
       else
       begin
         ParamByName('nr_telefone').AsString := aModel.Telefone;
-        ParamByName('nr_celular').Clear;
+        ParamByName('nr_celular').AsString  := EmptyStr;
       end;
 
       ParamByName('ds_email').AsString      := aModel.Email;
@@ -241,6 +272,7 @@ begin
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
       ExecSQL;
+      aOperacao := TTipoOperacaoDao.toIncluido;
     end;
   finally
     aSQL.Free;
@@ -301,6 +333,39 @@ begin
   end;
 end;
 
+function TClienteDao.PodeExcluir: Boolean;
+var
+  aRetorno : Boolean;
+  aSQL : TStringList;
+begin
+  aRetorno := True;
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Select ');
+    aSQL.Add('  count(id_cliente) as qt_clientes');
+    aSQL.Add('from ' + aDDL.getTableNamePedido);
+    aSQL.Add('where id_cliente = :id_cliente');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+      ParamByName('id_cliente').AsString := GUIDToString(aModel.ID);
+      OpenOrExecute;
+
+      aRetorno := (FieldByName('qt_clientes').AsInteger = 0);
+
+      qrySQL.Close;
+    end;
+  finally
+    aSQL.Free;
+
+    Result := aRetorno;
+  end;
+end;
+
 procedure TClienteDao.SetValues(const aDataSet: TFDQuery;
   const aObject: TCliente);
 begin
@@ -332,8 +397,72 @@ begin
 end;
 
 procedure TClienteDao.Update;
+var
+  aSQL : TStringList;
 begin
-  ;
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Update ' + aDDL.getTableNameCliente + ' Set');
+    aSQL.Add('    cd_cliente      = :cd_cliente  ');
+    aSQL.Add('  , nm_cliente      = :nm_cliente  ');
+    aSQL.Add('  , tp_cliente      = :tp_cliente  ');
+    aSQL.Add('  , nr_cpf_cnpj     = :nr_cpf_cnpj ');
+    aSQL.Add('  , ds_contato      = :ds_contato  ');
+    aSQL.Add('  , nr_telefone     = :nr_telefone ');
+    aSQL.Add('  , nr_celular      = :nr_celular  ');
+    aSQL.Add('  , ds_email        = :ds_email    ');
+    aSQL.Add('  , ds_endereco     = :ds_endereco ');
+    aSQL.Add('  , ds_observacao   = :ds_observacao   ');
+    aSQL.Add('  , sn_ativo        = :sn_ativo        ');
+    aSQL.Add('  , sn_sincronizado = :sn_sincronizado ');
+
+    if (aModel.Referencia <> GUID_NULL) then
+      aSQL.Add('  , cd_referencia = :cd_referencia   ');
+
+    aSQL.Add('where id_cliente =  :id_cliente ');
+
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_cliente').AsString   := GUIDToString(aModel.ID);
+      ParamByName('cd_cliente').AsCurrency := aModel.Codigo;
+      ParamByName('nm_cliente').AsString   := aModel.Nome;
+      ParamByName('tp_cliente').AsString   := GetTipoClienteStr(aModel.Tipo);
+      ParamByName('nr_cpf_cnpj').AsString  := aModel.CpfCnpj;
+      ParamByName('ds_contato').AsString   := aModel.Contato;
+
+      if (Length(aModel.Telefone) > 14) then // (91) 3295-3390
+      begin
+        ParamByName('nr_telefone').AsString := EmptyStr;
+        ParamByName('nr_celular').AsString  := aModel.Telefone;
+      end
+      else
+      begin
+        ParamByName('nr_telefone').AsString := aModel.Telefone;
+        ParamByName('nr_celular').AsString  := EmptyStr;
+      end;
+
+      ParamByName('ds_email').AsString      := aModel.Email;
+      ParamByName('ds_endereco').AsString   := aModel.Endereco;
+      ParamByName('ds_observacao').AsString := aModel.Observacao;
+
+      ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+
+      if (aModel.Referencia <> GUID_NULL) then
+        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
+
+      ExecSQL;
+      aOperacao := TTipoOperacaoDao.toEditado;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 end.

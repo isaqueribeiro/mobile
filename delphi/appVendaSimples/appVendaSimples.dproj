@@ -371,20 +371,18 @@
         <DCCReference Include="src\dao.Cliente.pas"/>
         <DCCReference Include="src\dao.Notificacao.pas"/>
         <DCCReference Include="src\dao.Produto.pas"/>
+        <DCCReference Include="src\interfaces.Cliente.pas"/>
         <DCCReference Include="src\UProduto.pas">
             <Form>FrmProduto</Form>
         </DCCReference>
         <DCCReference Include="src\UPadraoEditar.pas">
             <Form>FrmPadraoEditar</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="src\UPadraoCadastro.pas">
             <Form>FrmPadraoCadastro</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="src\UCliente.pas">
             <Form>FrmCliente</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -440,6 +438,11 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
                         <Overwrite>true</Overwrite>
@@ -463,11 +466,6 @@
                     <Platform Name="Win64">
                         <RemoteDir>.\db\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
