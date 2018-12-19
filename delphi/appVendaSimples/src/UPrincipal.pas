@@ -97,10 +97,12 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure imageAddPedidoClick(Sender: TObject);
+    procedure imageAddClienteClick(Sender: TObject);
     procedure ListViewNotificacaoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure ListViewPedidoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure ListViewClienteUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
-    procedure imageAddClienteClick(Sender: TObject);
+    procedure ListViewClienteItemClickEx(const Sender: TObject; ItemIndex: Integer;
+      const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
   private
     { Private declarations }
     procedure DefinirIndices;
@@ -169,6 +171,7 @@ var
   aItemIndex : Integer;
 begin
   dao := TClienteDao.GetInstance;
+
   if (dao.Operacao = TTipoOperacaoDao.toIncluido) then
   begin
     AddClienteListView(dao.Model);
@@ -187,6 +190,8 @@ begin
     aItemIndex := ListViewCliente.ItemIndex;
     ListViewCliente.Items.Delete(aItemIndex);
   end;
+
+  ImgSemCliente.Visible := (ListViewCliente.Items.Count = 0);
 end;
 
 procedure TFrmPrincipal.BuscarClientes(aBusca: String; aPagina: Integer);
@@ -463,6 +468,16 @@ procedure TFrmPrincipal.imageAddPedidoClick(Sender: TObject);
 begin
   // Para teste
   AddPedidoListView(TPedido.Create);
+end;
+
+procedure TFrmPrincipal.ListViewClienteItemClickEx(const Sender: TObject; ItemIndex: Integer;
+  const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+var
+  dao : TClienteDao;
+begin
+  dao := TClienteDao.GetInstance;
+  dao.Model := TCliente(ListViewCliente.Items.Item[ItemIndex].TagObject);
+  ExibirCadastroCliente(Self);
 end;
 
 procedure TFrmPrincipal.ListViewClienteUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

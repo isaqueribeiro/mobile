@@ -4,6 +4,7 @@ interface
 
 uses
   System.StrUtils,
+  System.Math,
   System.Generics.Collections,
   model.Cliente,
   dao.Cliente,
@@ -71,8 +72,8 @@ type
     class function GetInstance : TFrmCliente;
   end;
 
-  procedure ExibirCadastroCliente(Observer : IObservadorCliente);
   procedure NovoCadastroCliente(Observer : IObservadorCliente);
+  procedure ExibirCadastroCliente(Observer : IObservadorCliente);
 
 //var
 //  FrmCliente: TFrmCliente;
@@ -85,15 +86,6 @@ uses
     app.Funcoes
   , UConstantes
   , UMensagem;
-
-procedure ExibirCadastroCliente(Observer : IObservadorCliente);
-var
-  aForm : TFrmCliente;
-begin
-  aForm := TFrmCliente.GetInstance;
-  aForm.AdicionarObservador(Observer);
-  aForm.Show;
-end;
 
 procedure NovoCadastroCliente(Observer : IObservadorCliente);
 var
@@ -125,6 +117,41 @@ begin
     lblObs.TagFloat       := 0;
 
     lytExcluir.Visible := False;
+  end;
+
+  aForm.Show;
+end;
+
+procedure ExibirCadastroCliente(Observer : IObservadorCliente);
+var
+  aForm : TFrmCliente;
+begin
+  aForm := TFrmCliente.GetInstance;
+  aForm.AdicionarObservador(Observer);
+
+  with aForm, dao do
+  begin
+    tbsControle.ActiveTab := tbsCadastro;
+
+    labelTituloCadastro.Text      := 'CADASTRO CLIENTE';
+    labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
+    labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
+
+    lblCPF_CNPJ.Text  := Model.CpfCnpj;
+    lblDescricao.Text := Model.Nome;
+    lblEndereco.Text  := Model.Endereco;
+    lblTelefone.Text  := Model.Telefone;
+    lblEmail.Text     := Model.Email;
+    lblObs.Text       := Model.Observacao;
+
+    lblCPF_CNPJ.TagFloat  := IfThen(Trim(Model.CpfCnpj)    = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
+    lblDescricao.TagFloat := IfThen(Trim(Model.Nome)       = EmptyStr, 0, 1);
+    lblEndereco.TagFloat  := IfThen(Trim(Model.Endereco)   = EmptyStr, 0, 1);
+    lblTelefone.TagFloat  := IfThen(Trim(Model.Telefone)   = EmptyStr, 0, 1);
+    lblEmail.TagFloat     := IfThen(Trim(Model.Email)      = EmptyStr, 0, 1);
+    lblObs.TagFloat       := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
+
+    lytExcluir.Visible := True;
   end;
 
   aForm.Show;
@@ -307,6 +334,7 @@ var
   msg : TFrmMensagem;
 begin
   try
+    msg := TFrmMensagem.GetInstance;
     if Assigned(dao.Model) then
     begin
       msg.Close;

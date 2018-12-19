@@ -97,7 +97,7 @@ begin
   try
     aSQL.BeginUpdate;
     aSQL.Add('Delete from ' + aDDL.getTableNameCliente);
-    aSQL.Add('where id_cliente    = :id_cliente ');
+    aSQL.Add('where id_cliente = :id_cliente ');
     aSQL.EndUpdate;
 
     with DM, qrySQL do
