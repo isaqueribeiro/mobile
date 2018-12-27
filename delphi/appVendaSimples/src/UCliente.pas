@@ -169,6 +169,7 @@ procedure TFrmCliente.DoEditarCampo(Sender: TObject);
 var
   aTag : Integer;
 begin
+  // Propriedade TAG é usada para armazenar as sequencia dos campos no formulário
   if (Sender is TLabel) then
     aTag := TLabel(Sender).Tag
   else
@@ -206,6 +207,9 @@ begin
         editEditCampo.TextPrompt   := 'Informe aqui o nome completo';
         editEditCampo.TagString    := EmptyStr;
         editEditCampo.TagObject    := TObject(lblDescricao);
+//
+//        editEditCampo.SetFocus;
+//        editEditCampo.SelStart := Length(editEditCampo.Text);
       end;
 
     2 :
@@ -220,6 +224,9 @@ begin
         mmMemoCampo.KeyboardType := TVirtualKeyboardType.Default;
         mmMemoCampo.TagString    := EmptyStr;
         mmMemoCampo.TagObject    := TObject(lblEndereco);
+//
+//        mmMemoCampo.SetFocus;
+//        mmMemoCampo.SelStart := Length(mmMemoCampo.Text);
       end;
 
     3 :
@@ -246,6 +253,9 @@ begin
         editEditCampo.TextPrompt   := 'Informe aqui o e-mail';
         editEditCampo.TagString    := EmptyStr;
         editEditCampo.TagObject    := TObject(lblEmail);
+//
+//        editEditCampo.SetFocus;
+//        editEditCampo.SelStart := Length(editEditCampo.Text);
       end;
 
     5 :
@@ -260,6 +270,9 @@ begin
         mmMemoCampo.KeyboardType := TVirtualKeyboardType.Default;
         mmMemoCampo.TagString    := EmptyStr;
         mmMemoCampo.TagObject    := TObject(lblObs);
+//
+//        mmMemoCampo.SetFocus;
+//        mmMemoCampo.SelStart := Length(mmMemoCampo.Text);
       end;
   end;
 

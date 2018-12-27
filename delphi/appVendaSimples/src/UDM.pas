@@ -113,7 +113,7 @@ begin
       SQL.BeginUpdate;
       SQL.Clear;
       SQL.Add('Select');
-      SQL.Add('  max(' + aCampo + ') as valor');
+      SQL.Add('  ifnull(max(' + aCampo + '), 0) as valor');
       SQL.Add('from ' + aTabela);
       SQL.EndUpdate;
 

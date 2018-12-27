@@ -344,9 +344,9 @@ begin
     else
       TListItemText(Objects.FindDrawable('Text3')).Text := '**';
 
-    // Status
+    // Sincronizado com o Servidor Web
     aImage := TListItemImage(Objects.FindDrawable('Image4'));
-    if aCliente.Ativo then
+    if aCliente.Sincronizado then
       aImage.Bitmap := img_sinc.Bitmap
     else
       aImage.Bitmap := img_nao_sinc.Bitmap;
@@ -452,6 +452,8 @@ begin
   img_lida.Visible     := False;
   img_nao_lida.Visible := False;
   img_update.Visible   := False;
+
+  Application.MainForm := Self;
 end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);

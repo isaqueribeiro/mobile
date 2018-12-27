@@ -65,6 +65,8 @@ begin
       LabelTitulo.Text := 'ERRO';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgErro.Bitmap;
+
+      LabelOK.Text     := 'OK';
       LabelFechar.Text := 'FECHAR';
 
       RectangleOK.Visible     := False;
@@ -90,6 +92,8 @@ begin
       LabelTitulo.Text := 'ALERTA!';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgAlerta.Bitmap;
+
+      LabelOK.Text     := 'OK';
       LabelFechar.Text := 'FECHAR';
 
       RectangleOK.Visible     := False;
@@ -115,10 +119,14 @@ begin
       LabelTitulo.Text := 'SUCESSO!';
       LabelMsg.Text    := Trim(aMensagem);
       ImageMsg.Bitmap  := ImageMsgSucesso.Bitmap;
+
+      LabelOK.Text     := 'OK';
       LabelFechar.Text := 'FECHAR';
 
       RectangleOK.Visible     := True;
       RectangleFechar.Visible := False;
+
+      LabelOK.OnClick := DoOK;
 
       RectangleOK.Align := TAlignLayout.Center;
       Show;
@@ -148,6 +156,9 @@ begin
 
       RectangleOK.Visible     := True;
       RectangleFechar.Visible := True;
+
+      RectangleOK.Align     := TAlignLayout.Left;
+      RectangleFechar.Align := TAlignLayout.Right;
 
       Show;
     end;
