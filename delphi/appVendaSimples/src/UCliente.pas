@@ -133,7 +133,7 @@ begin
   begin
     tbsControle.ActiveTab := tbsCadastro;
 
-    labelTituloCadastro.Text      := 'CADASTRO CLIENTE';
+    labelTituloCadastro.Text      := 'EDITAR CLIENTE';
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
 

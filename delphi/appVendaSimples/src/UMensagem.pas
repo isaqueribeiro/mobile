@@ -30,6 +30,7 @@ type
     procedure DoFechar(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
     { Private declarations }
     aConfirmado : Boolean;
@@ -152,10 +153,10 @@ begin
       LabelOK.Text     := 'SIM';
       LabelFechar.Text := 'NÃO';
 
-      LabelOK.OnClick  := aEvento;
-
       RectangleOK.Visible     := True;
       RectangleFechar.Visible := True;
+
+      LabelOK.OnClick  := aEvento;
 
       RectangleOK.Align     := TAlignLayout.Left;
       RectangleFechar.Align := TAlignLayout.Right;
@@ -183,6 +184,12 @@ end;
 procedure TFrmMensagem.FormActivate(Sender: TObject);
 begin
   RectangleMensagem.Visible := True;
+end;
+
+procedure TFrmMensagem.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  RectangleOK.Visible     := False;
+  RectangleFechar.Visible := False;
 end;
 
 procedure TFrmMensagem.FormCreate(Sender: TObject);
