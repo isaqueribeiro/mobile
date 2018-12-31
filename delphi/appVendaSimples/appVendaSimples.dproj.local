@@ -11,6 +11,7 @@
     <Transaction>2018/11/30 12:19:19.000.850,D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPadraoEditar.fmx=D:\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\Unit1.fmx</Transaction>
     <Transaction>2018/12/09 11:56:05.000.730,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPadraoCadastro.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\Unit1.fmx</Transaction>
     <Transaction>2018/12/09 12:18:59.000.901,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UCliente.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\Unit1.fmx</Transaction>
+    <Transaction>2018/12/31 13:02:27.386,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\UPerfil.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\Unit1.fmx</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<PMacOS iOSSimulator="iPhone5"/>

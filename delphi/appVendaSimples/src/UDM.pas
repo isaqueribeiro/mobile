@@ -142,6 +142,7 @@ var
 begin
   aScriptDDL := TScriptDDL.GetInstance;
   conn.ExecSQL(aScriptDDL.getCreateTableVersao.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTableConfiguracao.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableUsuario.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableCliente.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTablePedido.Text, True);

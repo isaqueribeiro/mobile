@@ -107,6 +107,7 @@ type
     procedure DoCloseApp(Sender: TObject);
     procedure DoSelecinarTab(Sender: TObject);
     procedure DoExibirProdutos(Sender: TObject);
+    procedure DoExibirPerfil(Sender: TObject);
 
     procedure DoBuscaPedidos(Sender: TObject);
     procedure DoBuscaClientes(Sender: TObject);
@@ -148,6 +149,7 @@ type
 
     procedure AtualizarNotificacao;
     procedure AtualizarCliente;
+    procedure AtualizarUsuario; virtual; abstract;
   public
     { Public declarations }
   end;
@@ -169,7 +171,8 @@ uses
   UConstantes,
   UMensagem,
   UCliente,
-  UProduto;
+  UProduto,
+  UPerfil;
 
 { TFrmPrincipal }
 
@@ -370,6 +373,11 @@ end;
 procedure TFrmPrincipal.DoCloseApp(Sender: TObject);
 begin
   Halt(0);
+end;
+
+procedure TFrmPrincipal.DoExibirPerfil(Sender: TObject);
+begin
+  ExibirPerfilUsuario(Self);
 end;
 
 procedure TFrmPrincipal.DoExibirProdutos(Sender: TObject);

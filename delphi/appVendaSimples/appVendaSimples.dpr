@@ -25,7 +25,8 @@ uses
   UProduto in 'src\UProduto.pas' {FrmProduto},
   UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar},
   UPadraoCadastro in 'src\UPadraoCadastro.pas' {FrmPadraoCadastro},
-  UCliente in 'src\UCliente.pas' {FrmCliente};
+  UCliente in 'src\UCliente.pas' {FrmCliente},
+  UPerfil in 'src\UPerfil.pas' {FrmPerfil};
 
 {$R *.res}
 

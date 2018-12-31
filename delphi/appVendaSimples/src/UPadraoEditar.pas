@@ -78,14 +78,17 @@ function TFrmPadraoEditar.DevolverValorEditado: Boolean;
 var
   aObj  : TObject;
   aStr  : String;
+  aPwd  ,
   aPost : Boolean;
 begin
   aObj := nil;
   aStr := EmptyStr;
+  aPwd := False;
   if layoutEditCampo.Visible then
   begin
     aObj := editEditCampo.TagObject;
     aStr := Trim(editEditCampo.Text);
+    aPwd := editEditCampo.Password;
     if (Trim(editEditCampo.TagString) <> EmptyStr) then  // Máscara para formatação numérica
     begin
       aStr := aStr.Replace('.', '', [rfReplaceAll]);
@@ -118,13 +121,21 @@ begin
   begin
     if aObj is TLabel then
     begin
-      TLabel(aObj).Text     := aStr;
+      if aPwd then
+        TLabel(aObj).TagString := aStr // Senha na propriedade "TagString"
+      else
+        TLabel(aObj).Text := aStr;
+
       TLabel(aObj).TagFloat := 1;
     end
     else
     if aObj is TEdit then
     begin
-      TEdit(aObj).Text     := aStr;
+      if aPwd then
+        TEdit(aObj).TagString := aStr  // Senha na propriedade "TagString"
+      else
+        TEdit(aObj).Text := aStr;
+
       TEdit(aObj).TagFloat := 1;
     end;
   end;

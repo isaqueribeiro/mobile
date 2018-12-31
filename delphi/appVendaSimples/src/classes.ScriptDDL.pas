@@ -12,7 +12,7 @@ type
       const
         NUMBER_VERSION_DB = 1;
         TABLE_VERSAO      = 'app_versao';
-        TABLE_INFO        = 'app_info';
+        TABLE_CONFIG      = 'app_configuracao';
         TABLE_NOTIFICACAO = 'app_notificacao';
         TABLE_USUARIO     = 'tbl_usuario';
         TABLE_PEDIDO      = 'tbl_pedido';
@@ -23,6 +23,7 @@ type
       class function GetInstance : TScriptDDL;
 
       function getCreateTableVersao : TStringList;
+      function getCreateTableConfiguracao : TStringList;
       function getCreateTableNotificacao : TStringList;
       function getCreateTableUsuario : TStringList;
       function getCreateTablePedido : TStringList;
@@ -31,7 +32,7 @@ type
       function getCreateTableProduto : TStringList;
 
       function getTableNameVersao : String;
-      function getTableNameInfo : String;
+      function getTableNameConfiguracao : String;
       function getTableNameNotificacao : String;
       function getTableNameUsuario : String;
       function getTableNamePedido : String;
@@ -70,6 +71,24 @@ begin
     aSQL.Add('    , cd_referencia    VARCHAR (38)'); // Referência do Cliente no Servidor Web (ID)
     aSQL.Add('    , dt_ultima_compra DATE');
     aSQL.Add('    , vl_ultima_compra NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add(')');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
+end;
+
+function TScriptDDL.getCreateTableConfiguracao: TStringList;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_CONFIG + ' (');
+    aSQL.Add('      ky_campo VARCHAR (50) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , vl_campo VARCHAR (250)');
     aSQL.Add(')');
     aSQL.EndUpdate;
   finally
@@ -169,12 +188,12 @@ begin
     aSQL.BeginUpdate;
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_USUARIO + ' (');
     aSQL.Add('      id_usuario     VARCHAR (38) NOT NULL PRIMARY KEY');
-    aSQL.Add('    , nm_usuario     VARCHAR (50)');
-    aSQL.Add('    , ds_email       VARCHAR (50)');
+    aSQL.Add('    , nm_usuario     VARCHAR (100)');
+    aSQL.Add('    , ds_email       VARCHAR (150)');
     aSQL.Add('    , ds_senha       VARCHAR (100)');
     aSQL.Add('    , nr_celular     VARCHAR (50)');
     aSQL.Add('    , nr_cpf         VARCHAR (15)');
-    aSQL.Add('    , id_dispositivo VARCHAR (250)');
+    //aSQL.Add('    , id_dispositivo VARCHAR (250)');
     aSQL.Add('    , tk_dispositivo VARCHAR (250)');
     aSQL.Add('    , sn_ativo       CHAR (1) DEFAULT (' + QuotedStr('1') + ') NOT NULL');
     aSQL.Add(')');
@@ -216,9 +235,9 @@ begin
   Result := TABLE_CLIENTE;
 end;
 
-function TScriptDDL.getTableNameInfo: String;
+function TScriptDDL.getTableNameConfiguracao: String;
 begin
-  Result := TABLE_INFO;
+  Result := TABLE_CONFIG;
 end;
 
 function TScriptDDL.getTableNameNotificacao: String;
