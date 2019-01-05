@@ -45,6 +45,9 @@ implementation
 
 { TScriptDDL }
 
+uses
+  UConstantes;
+
 function TScriptDDL.getCreateTableCliente: TStringList;
 var
   aSQL : TStringList;
@@ -66,8 +69,8 @@ begin
     aSQL.Add('    , ds_email         VARCHAR (150)');
     aSQL.Add('    , ds_endereco      VARCHAR (500)');
     aSQL.Add('    , ds_observacao    VARCHAR (500)');
-    aSQL.Add('    , sn_ativo         CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
-    aSQL.Add('    , sn_sincronizado  CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , sn_ativo         CHAR(1) DEFAULT (' + QuotedStr(FLAG_SIM) + ') NOT NULL');
+    aSQL.Add('    , sn_sincronizado  CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia    VARCHAR (38)'); // Referência do Cliente no Servidor Web (ID)
     aSQL.Add('    , dt_ultima_compra DATE');
     aSQL.Add('    , vl_ultima_compra NUMERIC (15,2) DEFAULT (0)');
@@ -111,8 +114,8 @@ begin
     aSQL.Add('    , dt_notificacao DATE  NOT NULL');
     aSQL.Add('    , ds_titulo      VARCHAR (150)');
     aSQL.Add('    , ds_mensagem    VARCHAR (500)');
-    aSQL.Add('    , sn_lida        CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
-    aSQL.Add('    , sn_destacar    CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , sn_lida        CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
+    aSQL.Add('    , sn_destacar    CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add(')');
     aSQL.EndUpdate;
   finally
@@ -140,9 +143,9 @@ begin
     aSQL.Add('    , vl_total        NUMERIC (15,2) DEFAULT (0)');
     aSQL.Add('    , vl_desconto     NUMERIC (15,2) DEFAULT (0)');
     aSQL.Add('    , vl_pedido       NUMERIC (15,2) DEFAULT (0)'); //  (vl_pedido = vl_total -  vl_desconto)
-    aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
-    aSQL.Add('    , sn_entregue     CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL'); // Pedido Entregue ao Cliente ?
-    aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr(FLAG_SIM) + ') NOT NULL');
+    aSQL.Add('    , sn_entregue     CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL'); // Pedido Entregue ao Cliente ?
+    aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Pedido no Servidor Web (ID)
     aSQL.Add(')');
     aSQL.EndUpdate;
@@ -167,8 +170,8 @@ begin
     aSQL.Add('    , ds_produto      VARCHAR (250)');
     aSQL.Add('    , ft_produto      IMAGE');
     aSQL.Add('    , vl_produto      NUMERIC (15,2) DEFAULT (0)');
-    aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr('S') + ') NOT NULL');
-    aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr('N') + ') NOT NULL');
+    aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr(FLAG_SIM) + ') NOT NULL');
+    aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Produto no Servidor Web (ID)
     aSQL.Add(')');
     aSQL.EndUpdate;
@@ -193,9 +196,8 @@ begin
     aSQL.Add('    , ds_senha       VARCHAR (100)');
     aSQL.Add('    , nr_celular     VARCHAR (50)');
     aSQL.Add('    , nr_cpf         VARCHAR (15)');
-    //aSQL.Add('    , id_dispositivo VARCHAR (250)');
     aSQL.Add('    , tk_dispositivo VARCHAR (250)');
-    aSQL.Add('    , sn_ativo       CHAR (1) DEFAULT (' + QuotedStr('1') + ') NOT NULL');
+    aSQL.Add('    , sn_ativo       CHAR (1) DEFAULT (' + QuotedStr(FLAG_SIM) + ') NOT NULL');
     aSQL.Add(')');
     aSQL.EndUpdate;
   finally

@@ -11,22 +11,27 @@ uses
   UMensagem in 'src\UMensagem.pas' {FrmMensagem},
   UPadrao in 'src\UPadrao.pas' {FrmPadrao},
   classes.ScriptDDL in 'src\classes.ScriptDDL.pas',
+  app.OpenViewUrl in 'src\app.OpenViewUrl.pas',
   app.Funcoes in 'src\app.Funcoes.pas',
+  model.Usuario in 'src\model.Usuario.pas',
   model.Pedido in 'src\model.Pedido.pas',
   model.Cliente in 'src\model.Cliente.pas',
   model.Loja in 'src\model.Loja.pas',
   model.Notificacao in 'src\model.Notificacao.pas',
   model.Produto in 'src\model.Produto.pas',
+  dao.Usuario in 'src\dao.Usuario.pas',
   dao.Pedido in 'src\dao.Pedido.pas',
   dao.Cliente in 'src\dao.Cliente.pas',
   dao.Notificacao in 'src\dao.Notificacao.pas',
   dao.Produto in 'src\dao.Produto.pas',
+  interfaces.Usuario in 'src\interfaces.Usuario.pas',
   interfaces.Cliente in 'src\interfaces.Cliente.pas',
   UProduto in 'src\UProduto.pas' {FrmProduto},
   UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar},
   UPadraoCadastro in 'src\UPadraoCadastro.pas' {FrmPadraoCadastro},
   UCliente in 'src\UCliente.pas' {FrmCliente},
-  UPerfil in 'src\UPerfil.pas' {FrmPerfil};
+  UPerfil in 'src\UPerfil.pas' {FrmPerfil},
+  UCompartilhar in 'src\UCompartilhar.pas' {FrmCompartilhar};
 
 {$R *.res}
 

@@ -61,7 +61,7 @@ type
     procedure TeclaBackSpace; virtual;
     procedure TeclaNumero(const aValue : String); virtual;
 
-    function DevolverValorEditado : Boolean;
+    function DevolverValorEditado : Boolean; virtual;
   end;
 
 var

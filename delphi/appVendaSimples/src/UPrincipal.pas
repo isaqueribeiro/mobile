@@ -6,9 +6,11 @@ uses
   model.Pedido,
   model.Cliente,
   model.Notificacao,
+  dao.Usuario,
   dao.Pedido,
   dao.Cliente,
   dao.Notificacao,
+  interfaces.Usuario,
   interfaces.Cliente,
 
   System.StrUtils,
@@ -20,7 +22,7 @@ uses
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.Ani;
 
 type
-  TFrmPrincipal = class(TForm, IObservadorCliente)
+  TFrmPrincipal = class(TForm, IObservadorCliente, IObservadorUsuario)
     StyleBook: TStyleBook;
     layoutTabs: TLayout;
     layoutTabPedido: TLayout;
@@ -108,6 +110,7 @@ type
     procedure DoSelecinarTab(Sender: TObject);
     procedure DoExibirProdutos(Sender: TObject);
     procedure DoExibirPerfil(Sender: TObject);
+    procedure DoCompartilharApp(Sender: TObject);
 
     procedure DoBuscaPedidos(Sender: TObject);
     procedure DoBuscaClientes(Sender: TObject);
@@ -149,7 +152,7 @@ type
 
     procedure AtualizarNotificacao;
     procedure AtualizarCliente;
-    procedure AtualizarUsuario; virtual; abstract;
+    procedure AtualizarUsuario;
   public
     { Public declarations }
   end;
@@ -172,7 +175,8 @@ uses
   UMensagem,
   UCliente,
   UProduto,
-  UPerfil;
+  UPerfil,
+  UCompartilhar;
 
 { TFrmPrincipal }
 
@@ -252,6 +256,14 @@ begin
 //  end;
 
   imgSemNotificacao.Visible  := (ListViewNotificacao.Items.Count = 0);
+end;
+
+procedure TFrmPrincipal.AtualizarUsuario;
+var
+  dao : TUsuarioDao;
+begin
+  dao := TUsuarioDao.GetInstance;
+  ;
 end;
 
 procedure TFrmPrincipal.BuscarClientes(aBusca: String; aPagina: Integer);
@@ -373,6 +385,11 @@ end;
 procedure TFrmPrincipal.DoCloseApp(Sender: TObject);
 begin
   Halt(0);
+end;
+
+procedure TFrmPrincipal.DoCompartilharApp(Sender: TObject);
+begin
+  CompartilharApp;
 end;
 
 procedure TFrmPrincipal.DoExibirPerfil(Sender: TObject);

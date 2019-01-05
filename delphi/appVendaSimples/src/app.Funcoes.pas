@@ -3,16 +3,24 @@ unit app.Funcoes;
 interface
 
 uses
+  app.OpenViewUrl,
+
   {$IF DEFINED (ANDROID)}
+  Androidapi.Jni,
+  Androidapi.Jni.Net,
+  Androidapi.Jni.JavaTypes,
   Androidapi.JNI.Telephony,
   Androidapi.JNI.Provider,
-  Androidapi.JNIBridge,
   Androidapi.JNI.GraphicsContentViewText,
-  Androidapi.JNI.JavaTypes,
+  Androidapi.JNIBridge,
   Androidapi.Helpers,
+
   FMX.Helpers.Android,
+
   {$ENDIF}
   {$IF DEFINED (IOS)}
+  Macapi.Helpers,
+  IOSapi.Foundation,
   IOSApi.Helpers,
   FMX.Helpers.IOS,
   {$ENDIF}
@@ -24,6 +32,8 @@ uses
 
   procedure CriarForm(InstanceClass: TComponentClass; var Referencia;
     const Exibir : Boolean = TRUE);
+  procedure CallWhasApp(const aProtocolo, aMensagem : String);
+  procedure SendEmail(const aEmail, aAssunto, aMensagem : String);
 
   function MD5(const aTexto : String) : String;
   function IsEmailValido(const aEmail : String) : Boolean;
@@ -45,6 +55,41 @@ begin
     if Exibir then
       TForm(Referencia).Show;
   end;
+end;
+
+procedure CallWhasApp(const aProtocolo, aMensagem : String);
+var
+  aMsg : String;
+  {$IF DEFINED (ANDROID)}
+  aIntentsWhatsApp : JIntent;
+  {$ENDIF}
+  {$IF DEFINED (IOS)}
+  aNSU : NSUrl;
+  aRetorno : Boolean;
+  {$ENDIF}
+begin
+  aMsg := Trim(aProtocolo) + Trim(aMensagem);
+
+  {$IF DEFINED (ANDROID)}
+  aIntentsWhatsApp := TJIntent.JavaClass.init(TJIntent.JavaClass.ACTION_SEND);
+  aIntentsWhatsApp.setType(StringToJString('text/plain'));
+  aIntentsWhatsApp.putExtra(TJIntent.JavaClass.EXTRA_TEXT, StringToJString(aMsg));
+  aIntentsWhatsApp.setPackage(StringToJString('com.whatsapp'));
+  SharedActivity.startActivity(aIntentsWhatsApp);
+  {$ENDIF}
+  {$IF DEFINED (IOS)}
+  aNSU := StrToNSUrl(aMsg);
+  aRetorno := SharedApplication.openUrl(aNSU);
+  {$ENDIF}
+end;
+
+procedure SendEmail(const aEmail, aAssunto, aMensagem : String);
+var
+  aUrl : String;
+begin
+  //mailto:heber@99coders.com.br?subject=Assunto&body=Texto
+  aUrl := 'mailto:' + AnsiLowerCase(Trim(aEmail)) + '?subject=' + Trim(aAssunto) + '&body=' + Trim(aMensagem);
+  OpenURL(aUrl);
 end;
 
 function MD5(const aTexto : String) : String;

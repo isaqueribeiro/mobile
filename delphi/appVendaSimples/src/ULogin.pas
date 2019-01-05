@@ -3,6 +3,7 @@ unit ULogin;
 interface
 
 uses
+  dao.Usuario,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.TabControl,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, System.Actions, FMX.ActnList;
@@ -53,10 +54,12 @@ type
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
+    FDao : TUsuarioDao;
     procedure DefinirLink;
     function Autenticar : Boolean;
   public
     { Public declarations }
+    property Dao : TUsuarioDao read FDao write FDao;
   end;
 
 var
@@ -80,6 +83,7 @@ begin
   Application.CreateForm(TFrmLogin, FrmLogin);
   Application.RealCreateForms;
   try
+    FrmLogin.Dao := TUsuarioDao.GetInstance;
     FrmLogin.TabControl.ActiveTab := FrmLogin.TabCadastro;
     FrmLogin.ShowModal;
   finally
@@ -92,6 +96,7 @@ begin
   Application.CreateForm(TFrmLogin, FrmLogin);
   Application.RealCreateForms;
   try
+    FrmLogin.Dao := TUsuarioDao.GetInstance;
     FrmLogin.TabControl.ActiveTab := FrmLogin.TabLogin;
     FrmLogin.Show;
   finally
@@ -139,6 +144,7 @@ procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
   TabControl.ActiveTab   := TabLogin;
   TabControl.TabPosition := TTabPosition.None;
+  FDao := TUsuarioDao.GetInstance;
 end;
 
 procedure TFrmLogin.FormShow(Sender: TObject);

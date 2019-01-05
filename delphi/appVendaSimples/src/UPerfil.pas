@@ -37,6 +37,11 @@ type
     LabelCpf: TLabel;
     imgCpf: TImage;
     lblCpf: TLabel;
+    layoutSenhaCampo: TLayout;
+    rectangleSenhaCampo: TRectangle;
+    editSenhaCampo: TEdit;
+    rectangleConfirmeSenhaCampo: TRectangle;
+    editConfirmeSenhaCampo: TEdit;
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarPerfil(Sender: TObject);
 
@@ -50,9 +55,12 @@ type
     class var aInstance : TFrmPerfil;
   public
     { Public declarations }
+    property Dao : TUsuarioDao read aDao;
 
     procedure TeclaBackSpace; override;
     procedure TeclaNumero(const aValue : String); override;
+
+    function DevolverValorEditado : Boolean; override;
 
     procedure AdicionarObservador(Observer : IObservadorUsuario);
     procedure RemoverObservador(Observer : IObservadorUsuario);
@@ -85,26 +93,24 @@ begin
 
   with aForm, dao do
   begin
+    dao.Load(EmptyStr);
     tbsControle.ActiveTab := tbsCadastro;
 
     labelTituloCadastro.Text      := 'MEU PERFIL';
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
-//    labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
-//
-//    lblCPF_CNPJ.Text  := Model.CpfCnpj;
-//    lblDescricao.Text := Model.Nome;
-//    lblEndereco.Text  := Model.Endereco;
-//    lblTelefone.Text  := Model.Telefone;
-//    lblEmail.Text     := Model.Email;
-//    lblObs.Text       := Model.Observacao;
-//
-//    lblCPF_CNPJ.TagFloat  := IfThen(Trim(Model.CpfCnpj)    = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
-//    lblDescricao.TagFloat := IfThen(Trim(Model.Nome)       = EmptyStr, 0, 1);
-//    lblEndereco.TagFloat  := IfThen(Trim(Model.Endereco)   = EmptyStr, 0, 1);
-//    lblTelefone.TagFloat  := IfThen(Trim(Model.Telefone)   = EmptyStr, 0, 1);
-//    lblEmail.TagFloat     := IfThen(Trim(Model.Email)      = EmptyStr, 0, 1);
-//    lblObs.TagFloat       := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
-//
+
+    lblDescricao.Text  := IfThen(Trim(Model.Nome)    = EmptyStr, 'Informe aqui seu nome completo', Model.Nome);
+    lblCPF.Text        := IfThen(Trim(Model.Cpf)     = EmptyStr, 'Informe aqui o número do seu CPF', Model.Cpf);
+    lblCelular.Text    := IfThen(Trim(Model.Celular) = EmptyStr, 'Informe aqui o número do seu celular', Model.Celular);
+    lblEmail.Text      := IfThen(Trim(Model.Email)   = EmptyStr, 'Informe aqui seu e-mail', Model.Email);
+    lblSenha.TagString := Model.Senha;
+
+    lblDescricao.TagFloat := IfThen(Trim(Model.Nome)    = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
+    lblCPF.TagFloat       := IfThen(Trim(Model.Cpf)     = EmptyStr, 0, 1);
+    lblCelular.TagFloat   := IfThen(Trim(Model.Celular) = EmptyStr, 0, 1);
+    lblEmail.TagFloat     := IfThen(Trim(Model.Email)   = EmptyStr, 0, 1);
+    lblSenha.TagFloat     := IfThen(Trim(Model.Senha)   = EmptyStr, 0, 1);
+
     lytExcluir.Visible := False;
   end;
 
@@ -117,6 +123,56 @@ procedure TFrmPerfil.AdicionarObservador(Observer: IObservadorUsuario);
 begin
   if (FObservers.IndexOf(Observer) = -1) then
     FObservers.Add(Observer);
+end;
+
+function TFrmPerfil.DevolverValorEditado: Boolean;
+var
+  aObj  : TObject;
+  aStr  : String;
+  aPwd  ,
+  aPost : Boolean;
+begin
+  if not layoutSenhaCampo.Visible then
+    Result := inherited
+  else
+  begin
+    aObj := editSenhaCampo.TagObject;
+    aStr := Trim(editSenhaCampo.Text);
+    aPwd := editSenhaCampo.Password;
+
+    aPost := ((Trim(aStr) <> EmptyStr) and (labelTituloEditar.TagString = '*')) or (labelTituloEditar.TagString = EmptyStr);
+
+    if aPost and (aObj <> nil) then
+    begin
+      if aObj is TLabel then
+      begin
+        if aPwd then
+          TLabel(aObj).TagString := aStr // Senha na propriedade "TagString"
+        else
+          TLabel(aObj).Text := aStr;
+
+        TLabel(aObj).TagFloat := 1;
+      end
+      else
+      if aObj is TEdit then
+      begin
+        if aPwd then
+          TEdit(aObj).TagString := aStr  // Senha na propriedade "TagString"
+        else
+          TEdit(aObj).Text := aStr;
+
+        TEdit(aObj).TagFloat := 1;
+      end;
+    end;
+
+    if (Trim(aStr) = EmptyStr) and (labelTituloEditar.TagString = '*') then
+      ExibirMsgAlerta('Esta informação é obrigatória!')
+    else
+    if (Trim(aStr) <> Trim(editConfirmeSenhaCampo.Text)) then
+      ExibirMsgAlerta('Senha não confere!' + #13 + 'Informe novamente.')
+    else
+      Result := ( (Trim(aStr) <> EmptyStr) or (aObj <> nil) );
+  end;
 end;
 
 procedure TFrmPerfil.DoEditarCampo(Sender: TObject);
@@ -133,6 +189,7 @@ begin
     aTag := 0;
 
   layoutEditCampo.Visible  := False;
+  layoutSenhaCampo.Visible := False;
   layoutMemoCampo.Visible  := False;
   layoutValorCampo.Visible := False;
 
@@ -179,7 +236,7 @@ begin
       begin
         layoutEditCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelEmail.Text);
-        labelTituloEditar.TagString := EmptyStr;
+        labelTituloEditar.TagString := '*';                // Campo obrigatório
 
         editEditCampo.Text         := IfThen(lblEmail.TagFloat = 0, EmptyStr, lblEmail.Text);
         editEditCampo.MaxLength    := 150;
@@ -193,18 +250,29 @@ begin
 
     4 :
       begin
-        layoutEditCampo.Visible     := True;
+//        layoutEditCampo.Visible     := True;
+//        labelTituloEditar.Text      := AnsiUpperCase(LabelSenha.Text);
+//        labelTituloEditar.TagString := '*';                // Campo obrigatório
+//
+//        editEditCampo.Text         := IfThen(lblSenha.TagFloat = 0, EmptyStr, lblSenha.TagString);
+//        editEditCampo.MaxLength    := 100;
+//        editEditCampo.TextAlign    := TTextAlign.Leading;
+//        editEditCampo.KeyboardType := TVirtualKeyboardType.Default;
+//        editEditCampo.Password     := True;                // Flag informando que o campo é para "senha"
+//        editEditCampo.TextPrompt   := 'Informe aqui sua senha';
+//        editEditCampo.TagString    := EmptyStr;
+//        editEditCampo.TagObject    := TObject(lblSenha);
+        layoutSenhaCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelSenha.Text);
-        labelTituloEditar.TagString := EmptyStr;
+        labelTituloEditar.TagString := '*';                // Campo obrigatório
 
-        editEditCampo.Text         := IfThen(lblSenha.TagFloat = 0, EmptyStr, lblSenha.TagString);
-        editEditCampo.MaxLength    := 100;
-        editEditCampo.TextAlign    := TTextAlign.Leading;
-        editEditCampo.KeyboardType := TVirtualKeyboardType.Default;
-        editEditCampo.Password     := True;
-        editEditCampo.TextPrompt   := 'Informe aqui sua senha';
-        editEditCampo.TagString    := EmptyStr;
-        editEditCampo.TagObject    := TObject(lblSenha);
+        editSenhaCampo.Text       := IfThen(lblSenha.TagFloat = 0, EmptyStr, lblSenha.TagString);
+        editSenhaCampo.MaxLength  := 100;
+        editSenhaCampo.TagString  := EmptyStr;
+        editSenhaCampo.TagObject  := TObject(lblSenha);
+
+        editConfirmeSenhaCampo.Text       := IfThen(lblSenha.TagFloat = 0, EmptyStr, lblSenha.TagString);
+        editConfirmeSenhaCampo.MaxLength  := 100;
       end;
   end;
 
@@ -212,8 +280,55 @@ begin
 end;
 
 procedure TFrmPerfil.DoSalvarPerfil(Sender: TObject);
+var
+  ins : Boolean;
+  inf : Extended;
 begin
-  ;
+  try
+    inf :=
+      lblDescricao.TagFloat +
+      lblCPF.TagFloat       +
+      lblCelular.TagFloat   +
+      lblEmail.TagFloat     +
+      lblSenha.TagFloat;
+
+    if (inf = 0) then
+      ExibirMsgAlerta('Sem dados informados!')
+    else
+    if (lblDescricao.TagFloat = 0) or (Trim(lblDescricao.Text) = EmptyStr) then
+      ExibirMsgAlerta('Informe seu nome completo!')
+    else
+//    if (lblCPF.TagFloat = 0) or (Trim(lblCPF.Text) = EmptyStr) then
+//      ExibirMsgAlerta('Informe o número de CPF!')
+//    else
+    if (lblCPF.TagFloat = 1) and (not StrIsCPF(lblCPF.Text)) then
+      ExibirMsgAlerta('Número de CPF inválido!')
+    else
+    if (lblEmail.TagFloat = 0) or (Trim(lblEmail.Text) = EmptyStr) then
+      ExibirMsgAlerta('Informe seu e-mail!')
+    else
+    begin
+      dao.Model.ID      := StringToGUID(labelTituloCadastro.TagString);
+      dao.Model.Nome    := IfThen(lblDescricao.TagFloat = 0, EmptyStr, lblDescricao.Text);
+      dao.Model.Cpf     := IfThen(lblCPF.TagFloat       = 0, EmptyStr, lblCPF.Text);  // Postar dados na classe caso ele tenha sido editado
+      dao.Model.Celular := IfThen(lblCelular.TagFloat   = 0, EmptyStr, lblCelular.Text);
+      dao.Model.Email   := IfThen(lblEmail.TagFloat     = 0, EmptyStr, lblEmail.Text);
+      dao.Model.Senha   := IfThen(lblSenha.TagFloat     = 0, EmptyStr, lblSenha.TagString);
+
+      ins := (dao.Model.ID = GUID_NULL);
+
+      if ins then
+        dao.Insert()
+      else
+        dao.Update();
+
+      Self.Notificar;
+      Self.Close;
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar salvar o cliente.' + #13 + E.Message);
+  end;
 end;
 
 procedure TFrmPerfil.FormActivate(Sender: TObject);
