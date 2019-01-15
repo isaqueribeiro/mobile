@@ -31,7 +31,8 @@ uses
   UPadraoCadastro in 'src\UPadraoCadastro.pas' {FrmPadraoCadastro},
   UCliente in 'src\UCliente.pas' {FrmCliente},
   UPerfil in 'src\UPerfil.pas' {FrmPerfil},
-  UCompartilhar in 'src\UCompartilhar.pas' {FrmCompartilhar};
+  UCompartilhar in 'src\UCompartilhar.pas' {FrmCompartilhar},
+  UPedido in 'src\UPedido.pas' {FrmPedido};
 
 {$R *.res}
 
