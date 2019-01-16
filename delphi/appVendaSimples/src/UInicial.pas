@@ -91,6 +91,7 @@ begin
   aSlide := 1;
   layoutWizard.Visible := True;
   LayoutFundo.Visible  := False;
+  DM.UpgradeDB;
 end;
 
 procedure TFrmInicial.FormShow(Sender: TObject);

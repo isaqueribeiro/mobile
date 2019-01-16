@@ -31,6 +31,8 @@ type
       function getCreateTableCliente : TStringList;
       function getCreateTableProduto : TStringList;
 
+      function getUpgradeTableVersao : TStringList;
+
       function getTableNameVersao : String;
       function getTableNameConfiguracao : String;
       function getTableNameNotificacao : String;
@@ -270,6 +272,48 @@ end;
 function TScriptDDL.getTableNameVersao: String;
 begin
   Result := TABLE_VERSAO;
+end;
+
+function TScriptDDL.getUpgradeTableVersao: TStringList;
+var
+  aSQL : TStringList;
+begin
+  // Modelo de script para atualização de estruturas de tabelas no SQLite
+  aSQL := TStringList.Create;
+  try
+    aSQL := TStringList.Create;
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+
+    // 1. Desativar chaves estrangeiras
+    aSQL.Add('PRAGMA foreign_keys = 0;');
+    // 2. Criar tabela temporária com os dados existentes
+    aSQL.Add('CREATE TABLE sqlitestudio_temp_' + getTableNameVersao + ' AS SELECT * FROM ' + getTableNameVersao + ';');
+    // 3. Deletar tabela atual da base
+    aSQL.Add('DROP TABLE ' + getTableNameVersao + ';');
+    // 4. Criar tabela como nova estrutura
+    aSQL.AddStrings( getCreateTableVersao );
+    aSQL.Add(';');
+    // 5. Inserir dados na tabela temporária na nova tabela
+    aSQL.Add('INSERT INTO ' + getTableNameVersao + ' (');
+    aSQL.Add('    cd_versao ');
+    aSQL.Add('  , ds_versao ');
+    aSQL.Add('  , dt_versao ');
+    aSQL.Add(')                  ');
+    aSQL.Add('SELECT             ');
+    aSQL.Add('    cd_versao ');
+    aSQL.Add('  , ds_versao ');
+    aSQL.Add('  , dt_versao ');
+    aSQL.Add('FROM sqlitestudio_temp_' + getTableNameVersao + ';');
+    // 6. Deletar tabela temporári da base
+    aSQL.Add('DROP TABLE sqlitestudio_temp_' + getTableNameVersao + ';');
+    // 7. Reativar as chaves estrangeiras
+    aSQL.Add('PRAGMA foreign_keys = 1;');
+
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
 end;
 
 end.

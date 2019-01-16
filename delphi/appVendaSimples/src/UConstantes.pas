@@ -9,6 +9,9 @@ Type
   TTipoPedido = (tpOrcamento, tpPedido);
 
 const
+  VERSION_CODE = 1;
+  VERSION_NAME = '1.0.0';
+
   cnsNameDB     = 'venda_simples.db';
   crBranco      = $FFFFFFFF;
   crVermelho    = $FFE25E5E;

@@ -4,6 +4,7 @@ interface
 
 uses
   UConstantes,
+  dao.Versao,
   System.Threading,
   System.IOUtils,
   FMX.DialogService,
@@ -30,10 +31,14 @@ type
   private
     { Private declarations }
     procedure SetArquivoDB(const aFileName : String);
-    procedure CriarTabela;
   public
     { Public declarations }
     procedure ConectarDB;
+    procedure UpgradeDB;
+    procedure LimparDB; virtual; abstract;
+    procedure CriarTabela;
+
+    function IsConectado : Boolean;
   end;
 
 var
@@ -172,10 +177,70 @@ begin
   SetArquivoDB(aFileDB);
 end;
 
+function TDM.IsConectado: Boolean;
+var
+  aRetorno : Boolean;
+  aFileDB  : String;
+begin
+  aRetorno := False;
+  try
+    try
+      if not conn.Connected then
+        conn.Connected := True;
+      aRetorno := True;
+    except
+      aFileDB := EmptyStr;
+
+      {$IF DEFINED (ANDROID) || (IOS)}
+      aFileDB := TPath.Combine(TPath.GetDocumentsPath, cnsNameDB);
+      {$ENDIF}
+      {$IF DEFINED (MSWINDOWS)}
+      //aFileDB := '.\db\' + cnsNameDB;
+      aFileDB := System.SysUtils.GetCurrentDir + '\db\' + cnsNameDB;
+      {$ENDIF}
+
+      if (Trim(aFileDB) = EmptyStr) then
+        aFileDB := TPath.Combine(TPath.GetDocumentsPath, cnsNameDB);
+
+      SetArquivoDB(aFileDB);
+
+      if not conn.Connected then
+        conn.Connected := True;
+
+      aRetorno := True;
+    end;
+  finally
+    Result := aRetorno;
+  end;
+end;
+
 procedure TDM.SetArquivoDB(const aFileName : String);
 begin
   conn.Params.Values['DriverID'] := 'SQLite';
   conn.Params.Values['Database'] := aFileName;
+end;
+
+procedure TDM.UpgradeDB;
+var
+  aScriptDDL : TScriptDDL;
+  aVersao : TVersaoDao;
+begin
+  if conn.Connected then
+  begin
+    aVersao := TVersaoDao.GetInstance;
+    aVersao.Load;
+    if (aVersao.Model.Codigo <> VERSION_CODE) then
+    begin
+      aScriptDDL := TScriptDDL.GetInstance;
+      conn.ExecSQL(aScriptDDL.getUpgradeTableVersao.Text, True);
+
+      // Manter última versão como registro
+      aVersao.Delete();
+      aVersao.Model.Codigo    := VERSION_CODE;
+      aVersao.Model.Descricao := VERSION_NAME;
+      aVersao.Insert();
+    end;
+  end;
 end;
 
 end.
