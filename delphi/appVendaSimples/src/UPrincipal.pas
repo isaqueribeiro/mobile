@@ -175,6 +175,7 @@ uses
   UMensagem,
   UCliente,
   UProduto,
+  UPedido,
   UPerfil,
   UCompartilhar;
 
@@ -580,8 +581,9 @@ end;
 
 procedure TFrmPrincipal.imageAddPedidoClick(Sender: TObject);
 begin
-  // Para teste
-  AddPedidoListView(TPedido.Create);
+//  // Para teste
+//  AddPedidoListView(TPedido.Create);
+  NovoCadastroPedido;
 end;
 
 procedure TFrmPrincipal.lblCancelarImagemClick(Sender: TObject);
