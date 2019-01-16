@@ -13,12 +13,14 @@ uses
   classes.ScriptDDL in 'src\classes.ScriptDDL.pas',
   app.OpenViewUrl in 'src\app.OpenViewUrl.pas',
   app.Funcoes in 'src\app.Funcoes.pas',
+  model.Versao in 'src\model.Versao.pas',
   model.Usuario in 'src\model.Usuario.pas',
   model.Pedido in 'src\model.Pedido.pas',
   model.Cliente in 'src\model.Cliente.pas',
   model.Loja in 'src\model.Loja.pas',
   model.Notificacao in 'src\model.Notificacao.pas',
   model.Produto in 'src\model.Produto.pas',
+  dao.Versao in 'src\dao.Versao.pas',
   dao.Usuario in 'src\dao.Usuario.pas',
   dao.Pedido in 'src\dao.Pedido.pas',
   dao.Cliente in 'src\dao.Cliente.pas',
@@ -32,7 +34,8 @@ uses
   UCliente in 'src\UCliente.pas' {FrmCliente},
   UPerfil in 'src\UPerfil.pas' {FrmPerfil},
   UCompartilhar in 'src\UCompartilhar.pas' {FrmCompartilhar},
-  UPedido in 'src\UPedido.pas' {FrmPedido};
+  UPedido in 'src\UPedido.pas' {FrmPedido},
+  UPedidoItem in 'src\UPedidoItem.pas' {FrmPedidoItem};
 
 {$R *.res}
 

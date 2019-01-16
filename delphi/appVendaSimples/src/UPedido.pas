@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
   System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects,
-  FMX.Layouts, FMX.Controls.Presentation;
+  FMX.Layouts, FMX.Controls.Presentation, FMX.ListView.Types,
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
   TFrmPedido = class(TFrmPadraoCadastro)
@@ -33,6 +34,34 @@ type
     LayoutCliente: TLayout;
     iconCliente: TImage;
     lineItem: TLine;
+    lytData: TLayout;
+    lineData: TLine;
+    LabelData: TLabel;
+    imgData: TImage;
+    lblData: TLabel;
+    lytContato: TLayout;
+    lineContato: TLine;
+    LabelContato: TLabel;
+    imgContato: TImage;
+    lblContato: TLabel;
+    lytObs: TLayout;
+    lineObs: TLine;
+    LabelObs: TLabel;
+    imgObs: TImage;
+    lblObs: TLabel;
+    lytRodapePedido: TLayout;
+    recInserirItem: TRectangle;
+    lblInserirItem: TLabel;
+    lytTotalPedido: TLayout;
+    LabelTotalPedido: TLabel;
+    lblTotalPedido: TLabel;
+    ListViewItemPedido: TListView;
+    img_produto_sem_foto: TImage;
+    imgSemProduto: TImage;
+    lblSemProduto: TLabel;
+    img_item_menos: TImage;
+    img_item_mais: TImage;
+    lineRodapePedido: TLine;
     procedure DoMudarAbaPedido(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
@@ -73,19 +102,24 @@ begin
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := 0;                       // Destinado a guardar o CODIGO numérico do registro
 
-//    lblCPF_CNPJ.Text  := 'Informe aqui o número de CPF/CNPJ do novo cliente';
-//    lblDescricao.Text := 'Informe aqui o nome do novo cliente';
-//    lblEndereco.Text  := 'Informe aqui o endereço do novo cliente';
-//    lblTelefone.Text  := 'Informe aqui o númeor de telefone do novo cliente';
-//    lblEmail.Text     := 'Informe aqui o e-mail do novo cliente';
-//    lblObs.Text       := 'Insira aqui as observações sobre o cliente';
-//
-//    lblCPF_CNPJ.TagFloat  := 0; // Flags: 0 - Sem edição; 1 - Dado editado
-//    lblDescricao.TagFloat := 0;
-//    lblEndereco.TagFloat  := 0;
-//    lblTelefone.TagFloat  := 0;
-//    lblEmail.TagFloat     := 0;
-//    lblObs.TagFloat       := 0;
+    lblCliente.Text := 'Informe aqui o cliente do novo pedido';
+    lblTipo.Text    := 'Informe aqui o tipo do novo pedido';
+    lblData.Text    := FormatDateTime('dd/mm/yyyy', Date);
+    lblContato.Text := 'Informe aqui o(s) contato(s) do novo pedido';
+    lblObs.Text     := 'Informe aqui as observações para o novo pedido';
+
+    ListViewItemPedido.BeginUpdate;
+    ListViewItemPedido.Items.Clear;
+    ListViewItemPedido.EndUpdate;
+
+    lblTotalPedido.TagString := ',0.00';
+    lblTotalPedido.Text      := FormatFloat(lblTotalPedido.TagString, 0);
+
+    lblCliente.TagFloat := 0; // Flags: 0 - Sem edição; 1 - Dado editado
+    lblTipo.TagFloat    := 0;
+    lblData.TagFloat    := 0;
+    lblContato.TagFloat := 0;
+    lblObs.TagFloat     := 0;
 
     lytExcluir.Visible := False;
 
@@ -133,6 +167,10 @@ begin
   lblDuplicar.Margins.Top    := 60;
   lblExcluir.Margins.Bottom  := 0;
   lblExcluir.Margins.Top     := 60;
+
+  img_produto_sem_foto.Visible := False;
+  img_item_mais.Visible  := False;
+  img_item_menos.Visible := False;
 end;
 
 class function TFrmPedido.GetInstance: TFrmPedido;
