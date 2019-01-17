@@ -243,6 +243,7 @@ begin
   begin
     aBitmat := TBitmap.Create;
     aBitmat.LoadFromStream(aProduto.Foto);
+    aImage.OwnsBitmap  := True;
     aImage.Bitmap      := aBitmat;
     aImage.ScalingMode := TImageScalingMode.Stretch;
   end
@@ -574,6 +575,7 @@ begin
 //    begin
 //      aBitmat := TBitmap.Create;
 //      aBitmat.LoadFromStream(aProduto.Foto);
+//      aImage.OwnsBitmap  := True;
 //      aImage.Bitmap      := aBitmat;
 //      aImage.ScalingMode := TImageScalingMode.Stretch;
 //    end

@@ -3,14 +3,22 @@ unit UPedido;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
+  model.Cliente,
+  dao.Pedido,
+  dao.Cliente,
+  interfaces.Cliente,
+
+  System.StrUtils,
+  System.Math,
+
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
   System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects,
   FMX.Layouts, FMX.Controls.Presentation, FMX.ListView.Types,
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
-  TFrmPedido = class(TFrmPadraoCadastro)
+  TFrmPedido = class(TFrmPadraoCadastro, IObservadorCliente)
     imgDuplicar: TImage;
     lblDuplicar: TLabel;
     lytAbaPedido: TLayout;
@@ -63,14 +71,22 @@ type
     img_item_mais: TImage;
     lineRodapePedido: TLine;
     procedure DoMudarAbaPedido(Sender: TObject);
+    procedure DoBuscarCliente(Sender: TObject);
+    procedure DoEditarCampo(Sender: TObject);
     procedure DoInserirItemPedido(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
   strict private
     { Private declarations }
+    aDao : TPedidoDao;
+
+    procedure AtualizarCliente;
+
     class var aInstance : TFrmPedido;
   public
     { Public declarations }
+    property Dao : TPedidoDao read aDao;
+
     class function GetInstance : TFrmPedido;
   end;
 
@@ -87,6 +103,7 @@ uses
     app.Funcoes
   , UConstantes
   , UMensagem
+  , UCliente
   , UPedidoItem;
 
 procedure NovoCadastroPedido(); //(Observer : IObservadorPedido);
@@ -98,15 +115,20 @@ begin
 
   with aForm do
   begin
-    tbsControle.ActiveTab := tbsCadastro;
+    tbsControle.ActiveTab       := tbsCadastro;
+    imageVoltarConsulta.OnClick := imageVoltarClick;
+
+    Dao.Model.ID   := GUID_NULL;
+    Dao.Model.Tipo := TTipoPedido.tpOrcamento;
+    Dao.Model.DataEmissao := Date;
 
     labelTituloCadastro.Text      := 'NOVO PEDIDO';
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := 0;                       // Destinado a guardar o CODIGO numérico do registro
 
     lblCliente.Text := 'Informe aqui o cliente do novo pedido';
-    lblTipo.Text    := 'Informe aqui o tipo do novo pedido';
-    lblData.Text    := FormatDateTime('dd/mm/yyyy', Date);
+    lblTipo.Text    := 'Orçamento'; // 'Informe aqui o tipo do novo pedido';
+    lblData.Text    := FormatDateTime('dd/mm/yyyy', Dao.Model.DataEmissao);
     lblContato.Text := 'Informe aqui o(s) contato(s) do novo pedido';
     lblObs.Text     := 'Informe aqui as observações para o novo pedido';
 
@@ -129,6 +151,83 @@ begin
   end;
 
   aForm.Show;
+end;
+
+procedure TFrmPedido.AtualizarCliente;
+var
+  daoCliente : TClienteDao;
+begin
+  daoCliente := TClienteDao.GetInstance;
+  lblCliente.Text     := daoCliente.Model.Nome + ' - ' + daoCliente.Model.CpfCnpj;
+  lblCliente.TagFloat := 1;
+end;
+
+procedure TFrmPedido.DoBuscarCliente(Sender: TObject);
+begin
+  if Dao.Model.Tipo = TTipoPedido.tpOrcamento then
+    SelecionarCliente(Self);
+end;
+
+procedure TFrmPedido.DoEditarCampo(Sender: TObject);
+var
+  aTag : Integer;
+begin
+  // Propriedade TAG é usada para armazenar as sequencia dos campos no formulário
+  if (Sender is TLabel) then
+    aTag := TLabel(Sender).Tag
+  else
+  if (Sender is TImage) then
+    aTag := TImage(Sender).Tag
+  else
+    aTag := 0;
+
+  layoutEditCampo.Visible  := False;
+  layoutMemoCampo.Visible  := False;
+  layoutValorCampo.Visible := False;
+
+  Case aTag of
+    2 : // Data
+      begin
+        layoutEditCampo.Visible     := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelData.Text);
+        labelTituloEditar.TagString := EmptyStr;
+
+
+
+
+
+      end;
+
+    3 : // Contato(s)
+      begin
+        layoutMemoCampo.Visible     := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelContato.Text);
+        labelTituloEditar.TagString := EmptyStr;
+
+        mmMemoCampo.Text         := IfThen(lblContato.TagFloat = 0, EmptyStr, lblContato.Text);
+        mmMemoCampo.MaxLength    := 100;
+        mmMemoCampo.TextAlign    := TTextAlign.Leading;
+        mmMemoCampo.KeyboardType := TVirtualKeyboardType.Default;
+        mmMemoCampo.TagString    := EmptyStr;
+        mmMemoCampo.TagObject    := TObject(lblContato);
+      end;
+
+    4 : // Observações
+      begin
+        layoutMemoCampo.Visible     := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelObs.Text);
+        labelTituloEditar.TagString := EmptyStr;
+
+        mmMemoCampo.Text         := IfThen(lblObs.TagFloat = 0, EmptyStr, lblObs.Text);
+        mmMemoCampo.MaxLength    := 500;
+        mmMemoCampo.TextAlign    := TTextAlign.Leading;
+        mmMemoCampo.KeyboardType := TVirtualKeyboardType.Default;
+        mmMemoCampo.TagString    := EmptyStr;
+        mmMemoCampo.TagObject    := TObject(lblObs);
+      end;
+  End;
+
+  ChangeTabActionEditar.ExecuteTarget(Sender);
 end;
 
 procedure TFrmPedido.DoInserirItemPedido(Sender: TObject);
@@ -178,6 +277,9 @@ begin
   img_produto_sem_foto.Visible := False;
   img_item_mais.Visible  := False;
   img_item_menos.Visible := False;
+
+  imgTipo.Visible := False;
+  lblTipo.Margins.Right := imgTipo.Margins.Right + imgTipo.Width;
 end;
 
 class function TFrmPedido.GetInstance: TFrmPedido;
@@ -189,10 +291,10 @@ begin
   end;
 
 //  if not Assigned(aInstance.FObservers) then
-//    aInstance.FObservers := TList<IObservadorCliente>.Create;
-//
-//  aInstance.aDao := TClienteDao.GetInstance;
-//
+//    aInstance.FObservers := TList<IObservadorPedido>.Create;
+
+  aInstance.aDao := TPedidoDao.GetInstance;
+
   Result := aInstance;
 end;
 

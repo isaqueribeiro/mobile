@@ -13,7 +13,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
   System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects,
-  FMX.Controls.Presentation, FMX.Layouts;
+  FMX.Controls.Presentation, FMX.Layouts, FMX.ListView.Types, FMX.ListView.Appearances,
+  FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
   TFrmCliente = class(TFrmPadraoCadastro, IClienteObservado)
@@ -42,24 +43,43 @@ type
     LabelObs: TLabel;
     imgObs: TImage;
     lblObs: TLabel;
+    layoutBuscaCliente: TLayout;
+    rectangleBuscaCliente: TRectangle;
+    editBuscaCliente: TEdit;
+    imageBuscaCliente: TImage;
+    ListViewCliente: TListView;
+    imgSemCliente: TImage;
+    lblSemCliente: TLabel;
+    img_sinc: TImage;
+    img_nao_sinc: TImage;
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarCliente(Sender: TObject);
     procedure DoExcluirCliente(Sender : TObject);
+    procedure DoBuscaClientes(Sender: TObject);
 
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ListViewClienteUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+    procedure ListViewClienteItemClickEx(const Sender: TObject; ItemIndex: Integer;
+      const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
   strict private
     { Private declarations }
     aDao : TClienteDao;
+    aSelecionarCliente : Boolean;
     FObservers : TList<IObservadorCliente>;
     procedure FormatarValorCampo(var aStr : String);
     procedure ExcluirCliente(Sender: TObject);
+    procedure BuscarClientes(aBusca : String; aPagina : Integer);
+
+    procedure FormatarItemClienteListView(aItem  : TListViewItem);
+    procedure AddClienteListView(aCliente : TCliente);
 
     class var aInstance : TFrmCliente;
   public
     { Public declarations }
     property Dao : TClienteDao read aDao;
+    property SelecionarCliente : Boolean read aSelecionarCliente write aSelecionarCliente;
 
     procedure TeclaBackSpace; override;
     procedure TeclaNumero(const aValue : String); override;
@@ -74,6 +94,7 @@ type
 
   procedure NovoCadastroCliente(Observer : IObservadorCliente);
   procedure ExibirCadastroCliente(Observer : IObservadorCliente);
+  procedure SelecionarCliente(Observer : IObservadorCliente);
 
 //var
 //  FrmCliente: TFrmCliente;
@@ -96,7 +117,8 @@ begin
 
   with aForm do
   begin
-    tbsControle.ActiveTab := tbsCadastro;
+    tbsControle.ActiveTab       := tbsCadastro;
+    imageVoltarConsulta.OnClick := imageVoltarClick;
 
     labelTituloCadastro.Text      := 'NOVO CLIENTE';
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
@@ -117,6 +139,7 @@ begin
     lblObs.TagFloat       := 0;
 
     lytExcluir.Visible := False;
+    SelecionarCliente  := False;
   end;
 
   aForm.Show;
@@ -131,7 +154,8 @@ begin
 
   with aForm, dao do
   begin
-    tbsControle.ActiveTab := tbsCadastro;
+    tbsControle.ActiveTab       := tbsCadastro;
+    imageVoltarConsulta.OnClick := imageVoltarClick;
 
     labelTituloCadastro.Text      := 'EDITAR CLIENTE';
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
@@ -152,17 +176,83 @@ begin
     lblObs.TagFloat       := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
 
     lytExcluir.Visible := True;
+    SelecionarCliente  := False;
   end;
 
   aForm.Show;
 end;
 
+procedure SelecionarCliente(Observer : IObservadorCliente);
+var
+  aForm : TFrmCliente;
+begin
+  aForm := TFrmCliente.GetInstance;
+  aForm.AdicionarObservador(Observer);
+
+  with aForm, dao do
+  begin
+    tbsControle.ActiveTab       := tbsConsulta;
+    imageVoltarConsulta.OnClick := imageVoltarConsultaClick;
+
+    labelTitulo.Text       := 'BUSCAR CLIENTE';
+    imageAdicionar.Visible := False;
+    editBuscaCliente.Text  := EmptyStr;
+
+    ListViewCliente.BeginUpdate;
+    ListViewCliente.Items.Clear;
+    ListViewCliente.EndUpdate;
+
+    SelecionarCliente := True;
+  end;
+
+  aForm.Show;
+  aForm.editBuscaCliente.SetFocus;
+end;
+
 { TFrmCliente }
+
+procedure TFrmCliente.AddClienteListView(aCliente: TCliente);
+var
+  aItem  : TListViewItem;
+begin
+  aItem := ListViewCliente.Items.Add;
+  aItem.TagObject := aCliente;
+  FormatarItemClienteListView(aItem);
+end;
 
 procedure TFrmCliente.AdicionarObservador(Observer: IObservadorCliente);
 begin
   if (FObservers.IndexOf(Observer) = -1) then
     FObservers.Add(Observer);
+end;
+
+procedure TFrmCliente.BuscarClientes(aBusca: String; aPagina: Integer);
+var
+  dao : TClienteDao;
+  I : Integer;
+begin
+  dao := TClienteDao.GetInstance;
+  dao.Load(aBusca);
+  for I := Low(dao.Lista) to High(dao.Lista) do
+    AddClienteListView(dao.Lista[I]);
+end;
+
+procedure TFrmCliente.DoBuscaClientes(Sender: TObject);
+begin
+  try
+    ImgSemCliente.Visible := False;
+
+    ListViewCliente.BeginUpdate;
+    ListViewCliente.Items.Clear;
+
+    BuscarClientes(editBuscaCliente.Text, 0);
+
+    ListViewCliente.EndUpdate;
+    ImgSemCliente.Visible := (ListViewCliente.Items.Count = 0);
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tenta carregar os clientes.' + #13 + E.Message);
+  end;
 end;
 
 procedure TFrmCliente.DoEditarCampo(Sender: TObject);
@@ -373,6 +463,36 @@ begin
   lytExcluir.Visible := (Trim(labelTituloCadastro.TagString) <> EmptyStr) and (labelTituloCadastro.TagString <> GUIDToString(GUID_NULL));
 end;
 
+procedure TFrmCliente.FormatarItemClienteListView(aItem: TListViewItem);
+var
+  aText  : TListItemText;
+  aImage : TListItemImage;
+  aCliente : TCliente;
+begin
+  with aItem do
+  begin
+    aCliente := TCliente(aItem.TagObject);
+
+    TListItemText(Objects.FindDrawable('Text1')).Text := aCliente.Nome;
+    TListItemText(Objects.FindDrawable('Text2')).Text := IfThen(Trim(aCliente.Endereco) = EmptyStr, '* SEM ENDEREÇO INFORMADO!', Trim(aCliente.Endereco));
+    if (aCliente.DataUltimaCompra <> StrToDate(EMPTY_DATE)) then
+    begin
+      TListItemText(Objects.FindDrawable('Text3')).Text :=
+        '** Última Compra : ' + FormatDateTime('dd/mm/yyyy', aCliente.DataUltimaCompra) + ', ' +
+        'R$ ' + FormatFloat(',0.00', aCliente.ValorUltimaCompra);
+    end
+    else
+      TListItemText(Objects.FindDrawable('Text3')).Text := '**';
+
+    // Sincronizado com o Servidor Web
+    aImage := TListItemImage(Objects.FindDrawable('Image4'));
+    if aCliente.Sincronizado then
+      aImage.Bitmap := img_sinc.Bitmap
+    else
+      aImage.Bitmap := img_nao_sinc.Bitmap;
+  end;
+end;
+
 procedure TFrmCliente.FormatarValorCampo(var aStr : String);
 begin
   if (labelValorCampo.TagString = 'cpf/cnpj') then
@@ -403,7 +523,11 @@ end;
 procedure TFrmCliente.FormCreate(Sender: TObject);
 begin
   inherited;
+  aSelecionarCliente := False;
   FObservers := TList<IObservadorCliente>.Create;
+
+  img_sinc.Visible     := False;
+  img_nao_sinc.Visible := False;
 end;
 
 class function TFrmCliente.GetInstance: TFrmCliente;
@@ -420,6 +544,26 @@ begin
   aInstance.aDao := TClienteDao.GetInstance;
 
   Result := aInstance;
+end;
+
+procedure TFrmCliente.ListViewClienteItemClickEx(const Sender: TObject; ItemIndex: Integer;
+  const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+begin
+  if (TListView(Sender).Selected <> nil) then
+  begin
+    Dao.Model := TCliente(ListViewCliente.Items.Item[ItemIndex].TagObject);
+
+    if SelecionarCliente then
+    begin
+      Self.Notificar;
+      Self.Close;
+    end;
+  end;
+end;
+
+procedure TFrmCliente.ListViewClienteUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+begin
+  FormatarItemClienteListView(AItem);
 end;
 
 procedure TFrmCliente.Notificar;
