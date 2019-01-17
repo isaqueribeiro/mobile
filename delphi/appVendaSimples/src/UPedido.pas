@@ -63,6 +63,7 @@ type
     img_item_mais: TImage;
     lineRodapePedido: TLine;
     procedure DoMudarAbaPedido(Sender: TObject);
+    procedure DoInserirItemPedido(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
   strict private
@@ -85,7 +86,8 @@ implementation
 uses
     app.Funcoes
   , UConstantes
-  , UMensagem;
+  , UMensagem
+  , UPedidoItem;
 
 procedure NovoCadastroPedido(); //(Observer : IObservadorPedido);
 var
@@ -127,6 +129,11 @@ begin
   end;
 
   aForm.Show;
+end;
+
+procedure TFrmPedido.DoInserirItemPedido(Sender: TObject);
+begin
+  NovoItemPedido();
 end;
 
 procedure TFrmPedido.DoMudarAbaPedido(Sender: TObject);
