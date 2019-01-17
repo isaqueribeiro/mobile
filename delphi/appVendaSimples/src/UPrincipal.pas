@@ -130,6 +130,8 @@ type
     procedure lblExcluirNotificacaoClick(Sender: TObject);
     procedure ListViewClienteItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+    procedure ListViewPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
+      const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
   private
     { Private declarations }
     procedure DefinirIndices;
@@ -153,6 +155,7 @@ type
     procedure AtualizarNotificacao;
     procedure AtualizarCliente;
     procedure AtualizarUsuario;
+    procedure AtualizarPedido;
   public
     { Public declarations }
   end;
@@ -257,6 +260,36 @@ begin
 //  end;
 
   imgSemNotificacao.Visible  := (ListViewNotificacao.Items.Count = 0);
+end;
+
+procedure TFrmPrincipal.AtualizarPedido;
+var
+  dao   : TPedidoDao;
+  aItem : TListViewItem;
+  aItemIndex : Integer;
+begin
+  dao := TPedidoDao.GetInstance;
+
+  if (dao.Operacao = TTipoOperacaoDao.toIncluido) then
+  begin
+    AddPedidoListView(dao.Model);
+    ListViewPedido.ItemIndex := (ListViewPedido.Items.Count - 1);
+  end
+  else
+  if (dao.Operacao = TTipoOperacaoDao.toEditado) then
+  begin
+    aItem := TListViewItem(ListViewPedido.Items.Item[ListViewPedido.ItemIndex]);
+    aItem.TagObject := dao.Model;
+    FormatarItemPedidoListView(aItem);
+  end
+  else
+  if (dao.Operacao = TTipoOperacaoDao.toExcluido) then
+  begin
+    aItemIndex := ListViewPedido.ItemIndex;
+    ListViewPedido.Items.Delete(aItemIndex);
+  end;
+
+  ImgSemPedido.Visible := (ListViewPedido.Items.Count = 0);
 end;
 
 procedure TFrmPrincipal.AtualizarUsuario;
@@ -677,6 +710,19 @@ end;
 procedure TFrmPrincipal.ListViewNotificacaoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
 begin
   FormatarItemNotificacaoListView(AItem);
+end;
+
+procedure TFrmPrincipal.ListViewPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
+  const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+var
+  dao : TPedidoDao;
+begin
+  if (TListView(Sender).Selected <> nil) then
+  begin
+    dao := TPedidoDao.GetInstance;
+    dao.Model := TPedido(ListViewCliente.Items.Item[ItemIndex].TagObject);
+    ExibirCadastroPedido(); //(Self);
+  end;
 end;
 
 procedure TFrmPrincipal.ListViewPedidoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

@@ -16,6 +16,7 @@ type
       aDDL   : TScriptDDL;
       aModel : TPedido;
       aLista : TPedidos;
+      aOperacao : TTipoOperacaoDao;
       constructor Create();
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TPedido);
       procedure ClearLista;
@@ -23,10 +24,12 @@ type
     public
       property Model : TPedido read aModel write aModel;
       property Lista : TPedidos read aLista write aLista;
+      property Operacao : TTipoOperacaoDao read aOperacao;
 
       procedure Load(const aBusca : String);
       procedure Insert();
       procedure Update();
+      procedure Delete();
       procedure AddLista; overload;
       procedure AddLista(aPedido : TPedido); overload;
 
@@ -79,9 +82,36 @@ end;
 constructor TPedidoDao.Create;
 begin
   inherited Create;
-  aDDL   := TScriptDDL.GetInstance;
-  aModel := TPedido.Create;
+  aDDL      := TScriptDDL.GetInstance;
+  aModel    := TPedido.Create;
+  aOperacao := TTipoOperacaoDao.toBrowser;
   SetLength(aLista, 0);
+end;
+
+procedure TPedidoDao.Delete;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Delete from ' + aDDL.getTableNamePedido);
+    aSQL.Add('where id_pedido = :id_pedido ');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_pedido').AsString := GUIDToString(aModel.ID);
+
+      ExecSQL;
+      aOperacao := TTipoOperacaoDao.toExcluido;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 function TPedidoDao.Find(const aCodigo: Currency;
@@ -183,7 +213,9 @@ begin
       ParamByName('id_pedido').AsString   := GUIDToString(Model.ID);
       ParamByName('cd_pedido').AsCurrency := Model.Codigo;
       //ParamByName('ds_especialidade').AsString  := Model.Descricao;
+
       ExecSQL;
+      aOperacao := TTipoOperacaoDao.toIncluido;
     end;
   finally
     aSQL.Free;
@@ -304,7 +336,9 @@ begin
 //
 //      ParamByName('cd_especialidade').AsInteger := Model.Codigo;
 //      ParamByName('ds_especialidade').AsString  := Model.Descricao;
+//
 //      ExecSQL;
+//      aOperacao := TTipoOperacaoDao.toEditado;
 //    end;
 //  finally
 //    aSQL.Free;

@@ -15,7 +15,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
   System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects,
   FMX.Layouts, FMX.Controls.Presentation, FMX.ListView.Types,
-  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.DateTimeCtrls;
 
 type
   TFrmPedido = class(TFrmPadraoCadastro, IObservadorCliente)
@@ -91,6 +91,7 @@ type
   end;
 
   procedure NovoCadastroPedido(); //(Observer : IObservadorPedido);
+  procedure ExibirCadastroPedido(); //(Observer : IObservadorPedido);
 
 //var
 //  FrmPedido: TFrmPedido;
@@ -102,6 +103,7 @@ implementation
 uses
     app.Funcoes
   , UConstantes
+  , UDM
   , UMensagem
   , UCliente
   , UPedidoItem;
@@ -113,21 +115,21 @@ begin
   aForm := TFrmPedido.GetInstance;
 //  aForm.AdicionarObservador(Observer);
 
-  with aForm do
+  with aForm, dao do
   begin
     tbsControle.ActiveTab       := tbsCadastro;
     imageVoltarConsulta.OnClick := imageVoltarClick;
 
-    Dao.Model.ID   := GUID_NULL;
-    Dao.Model.Tipo := TTipoPedido.tpOrcamento;
-    Dao.Model.DataEmissao := Date;
+    Model.ID   := GUID_NULL;
+    Model.Tipo := TTipoPedido.tpOrcamento;
+    Model.DataEmissao := Date;
 
     labelTituloCadastro.Text      := 'NOVO PEDIDO';
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := 0;                       // Destinado a guardar o CODIGO numérico do registro
 
     lblCliente.Text := 'Informe aqui o cliente do novo pedido';
-    lblTipo.Text    := 'Orçamento'; // 'Informe aqui o tipo do novo pedido';
+    lblTipo.Text    := GetTipoPedidoStr(Model.Tipo); // 'Informe aqui o tipo do novo pedido';
     lblData.Text    := FormatDateTime('dd/mm/yyyy', Dao.Model.DataEmissao);
     lblContato.Text := 'Informe aqui o(s) contato(s) do novo pedido';
     lblObs.Text     := 'Informe aqui as observações para o novo pedido';
@@ -153,6 +155,46 @@ begin
   aForm.Show;
 end;
 
+procedure ExibirCadastroPedido(); //(Observer : IObservadorPedido);
+var
+  aForm : TFrmPedido;
+begin
+  aForm := TFrmPedido.GetInstance;
+//  aForm.AdicionarObservador(Observer);
+
+  with aForm, dao do
+  begin
+    tbsControle.ActiveTab       := tbsCadastro;
+    imageVoltarConsulta.OnClick := imageVoltarClick;
+
+    if (Model.Tipo = TTipoPedido.tpOrcamento) then
+      labelTituloCadastro.Text := 'EDITAR PEDIDO'
+    else
+      labelTituloCadastro.Text := 'PEDIDO';
+
+    labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
+    labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
+
+    lblCliente.Text  := Model.Cliente.Nome + ' - ' + Model.Cliente.CpfCnpj;
+    lblTipo.Text     := GetTipoPedidoStr(Model.Tipo); // 'Informe aqui o tipo do novo pedido';
+    lblData.Text     := FormatDateTime('dd/mm/yyyy', Model.DataEmissao);
+    lblContato.Text  := Model.Contato;
+    lblObs.Text      := Model.Observacao;
+
+    lblCliente.TagFloat  := IfThen(Trim(Model.Cliente.Nome) = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
+    lblTipo.TagFloat     := 0;
+    lblData.TagFloat     := 0;
+    lblContato.TagFloat  := IfThen(Trim(Model.Contato)    = EmptyStr, 0, 1);
+    lblObs.TagFloat      := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
+
+    lytExcluir.Visible := True;
+
+    DoMudarAbaPedido(lblAbaDadoPedido);
+  end;
+
+  aForm.Show;
+end;
+
 procedure TFrmPedido.AtualizarCliente;
 var
   daoCliente : TClienteDao;
@@ -160,6 +202,7 @@ begin
   daoCliente := TClienteDao.GetInstance;
   lblCliente.Text     := daoCliente.Model.Nome + ' - ' + daoCliente.Model.CpfCnpj;
   lblCliente.TagFloat := 1;
+  Dao.Model.Cliente   := daoCliente.Model;
 end;
 
 procedure TFrmPedido.DoBuscarCliente(Sender: TObject);
@@ -182,20 +225,21 @@ begin
     aTag := 0;
 
   layoutEditCampo.Visible  := False;
+  layoutDataCampo.Visible  := False;
   layoutMemoCampo.Visible  := False;
   layoutValorCampo.Visible := False;
 
   Case aTag of
     2 : // Data
       begin
-        layoutEditCampo.Visible     := True;
+        layoutDataCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelData.Text);
         labelTituloEditar.TagString := EmptyStr;
+        labelTituloEditar.TagString := '*'; // Campo obrigatório
 
-
-
-
-
+        editDateCampo.DateTime  := StrToDate('dd/mm/yyyy', lblData.Text);
+        editDateCampo.TagString := EmptyStr;
+        editDateCampo.TagObject := TObject(lblData);
       end;
 
     3 : // Contato(s)
@@ -203,6 +247,7 @@ begin
         layoutMemoCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelContato.Text);
         labelTituloEditar.TagString := EmptyStr;
+        labelTituloEditar.TagString := '*'; // Campo obrigatório
 
         mmMemoCampo.Text         := IfThen(lblContato.TagFloat = 0, EmptyStr, lblContato.Text);
         mmMemoCampo.MaxLength    := 100;

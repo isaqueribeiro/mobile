@@ -39,6 +39,7 @@ uses
   function IsEmailValido(const aEmail : String) : Boolean;
   function GetNumeroSIM : String;
   function FormatarTexto(aFormato, aStr : String) : String;
+  function StrToDate(aFormato, aStr : String) : TDateTime;
   function StrIsCPF(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
   function StrIsCNPJ(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
 
@@ -143,6 +144,35 @@ end;
 function FormatarTexto(aFormato, aStr : String) : String;
 begin
   Result := FormatMaskText(aFormato, aStr);
+end;
+
+function StrToDate(aFormato, aStr : String) : TDateTime;
+var
+  aAno ,
+  aMes ,
+  aDia : Word;
+begin
+  if (AnsiUpperCase(Trim(aFormato)) = 'DD/MM/YYYY') then
+  begin
+    aDia := StrToIntDef( Copy(Trim(aStr), 1, 2), 1);
+    aMes := StrToIntDef( Copy(Trim(aStr), 4, 2), 1);
+    aAno := StrToIntDef( Copy(Trim(aStr), 7, 4), 1);
+  end
+  else
+  if (AnsiUpperCase(Trim(aFormato)) = 'MM/DD/YYYY') then
+  begin
+    aMes := StrToIntDef( Copy(Trim(aStr), 1, 2), 1);
+    aDia := StrToIntDef( Copy(Trim(aStr), 4, 2), 1);
+    aAno := StrToIntDef( Copy(Trim(aStr), 7, 4), 1);
+  end
+  else
+  begin
+    aMes := 1;
+    aDia := 1;
+    aAno := 1;
+  end;
+
+  Result := EncodeDate(aAno, aMes, aDia)
 end;
 
 function StrIsCPF(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;

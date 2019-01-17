@@ -48,6 +48,7 @@ var
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoPedido) : TTipoPedido; overload;
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoCliente) : TTipoCliente; overload;
   function GetTipoClienteStr(aTipo : TTipoCliente) : String;
+  function GetTipoPedidoStr(aTipo : TTipoPedido) : String;
 
   function GetNewID(const aTabela, aCampo : String) : Currency;
 
@@ -89,6 +90,14 @@ begin
   case aTipo of
     tcPessoaFisica   : Result := 'F';
     tcPessoaJuridica : Result := 'J';
+  end;
+end;
+
+function GetTipoPedidoStr(aTipo : TTipoPedido) : String;
+begin
+  case aTipo of
+    TTipoPedido.tpOrcamento : Result := 'Orçamento';
+    TTipoPedido.tpPedido    : Result := 'Pedido';
   end;
 end;
 

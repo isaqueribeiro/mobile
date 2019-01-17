@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   UPadrao, System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.Objects,
-  FMX.Controls.Presentation, FMX.Layouts, FMX.Edit, FMX.ScrollBox, FMX.Memo;
+  FMX.Controls.Presentation, FMX.Layouts, FMX.Edit, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls;
 
 type
   TFrmPadraoEditar = class(TFrmPadrao)
@@ -50,10 +50,14 @@ type
     lblTecla0: TLabel;
     lytTeclaBackSpace: TLayout;
     imgTeclaBackSpace: TImage;
+    layoutDataCampo: TLayout;
+    rectangleDataCampo: TRectangle;
+    editDateCampo: TDateEdit;
     procedure DoTeclaBackSpace(Sender : TObject);
     procedure DoTeclaNumero(Sender : TObject);
     procedure imageVoltarConsultaClick(Sender: TObject);
     procedure imageSalvarEdicaoClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -94,6 +98,12 @@ begin
       aStr := aStr.Replace('.', '', [rfReplaceAll]);
       aStr := FormatFloat(Trim(editEditCampo.TagString), StrToCurrDef(aStr, 0));
     end;
+  end
+  else
+  if layoutDataCampo.Visible then
+  begin
+    aObj := editDateCampo.TagObject;
+    aStr := FormatDateTime('dd/mm/yyyy', editDateCampo.DateTime);
   end
   else
   if layoutMemoCampo.Visible then
@@ -154,6 +164,15 @@ end;
 procedure TFrmPadraoEditar.DoTeclaNumero(Sender: TObject);
 begin
   TeclaNumero( TLabel(Sender).Text );
+end;
+
+procedure TFrmPadraoEditar.FormCreate(Sender: TObject);
+begin
+  inherited;
+  layoutEditCampo.Visible  := False;
+  layoutDataCampo.Visible  := False;
+  layoutMemoCampo.Visible  := False;
+  layoutValorCampo.Visible := False;
 end;
 
 procedure TFrmPadraoEditar.imageSalvarEdicaoClick(Sender: TObject);
