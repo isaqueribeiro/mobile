@@ -49,6 +49,8 @@ var
   function IfThen(aExpressao : Boolean; aTrue, aFalse : TTipoCliente) : TTipoCliente; overload;
   function GetTipoClienteStr(aTipo : TTipoCliente) : String;
   function GetTipoPedidoStr(aTipo : TTipoPedido) : String;
+  function GetDescricaoTipoPedidoStr(aTipo : TTipoPedido) : String;
+  function GetTipoPedido(aStrTipo : String) : TTipoPedido;
 
   function GetNewID(const aTabela, aCampo : String) : Currency;
 
@@ -96,9 +98,29 @@ end;
 function GetTipoPedidoStr(aTipo : TTipoPedido) : String;
 begin
   case aTipo of
+    TTipoPedido.tpOrcamento : Result := 'O';
+    TTipoPedido.tpPedido    : Result := 'P';
+  end;
+end;
+
+function GetDescricaoTipoPedidoStr(aTipo : TTipoPedido) : String;
+begin
+  case aTipo of
     TTipoPedido.tpOrcamento : Result := 'Orçamento';
     TTipoPedido.tpPedido    : Result := 'Pedido';
   end;
+end;
+
+function GetTipoPedido(aStrTipo : String) : TTipoPedido;
+var
+  aTipo : String;
+begin
+  aTipo := AnsiUpperCase(Trim(aStrTipo));
+  if aTipo = GetTipoPedidoStr(TTipoPedido.tpOrcamento) then
+    Result := TTipoPedido.tpOrcamento
+  else
+  if aTipo = GetTipoPedidoStr(TTipoPedido.tpPedido) then
+    Result := TTipoPedido.tpPedido;
 end;
 
 procedure TDM.ConectarDB;

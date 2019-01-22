@@ -45,7 +45,7 @@ implementation
 { TClienteDao }
 
 uses
-  UDM;
+  UDM, app.Funcoes;
 
 procedure TClienteDao.AddLista;
 var
@@ -296,6 +296,9 @@ begin
 
     if (StrToCurrDef(aFiltro, 0) > 0) then
       aSQL.Add('where c.cd_cliente = ' + aFiltro)
+    else
+    if StrIsGUID(aBusca) then
+      aSQL.Add('where c.id_cliente = ' + QuotedStr(aFiltro))
     else
     if (Trim(aBusca) <> EmptyStr) then
     begin

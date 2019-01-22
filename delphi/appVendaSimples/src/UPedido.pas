@@ -10,6 +10,7 @@ uses
 
   System.StrUtils,
   System.Math,
+  System.DateUtils,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
@@ -73,14 +74,24 @@ type
     procedure DoMudarAbaPedido(Sender: TObject);
     procedure DoBuscarCliente(Sender: TObject);
     procedure DoEditarCampo(Sender: TObject);
+    procedure DoSalvarPedido(Sender: TObject);
     procedure DoInserirItemPedido(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
+    procedure imgClienteClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   strict private
     { Private declarations }
     aDao : TPedidoDao;
 
     procedure AtualizarCliente;
+
+    procedure ControleEdicao(const aEditar : Boolean);
+
+//    procedure AdicionarObservador(Observer : IObservadorCliente);
+//    procedure RemoverObservador(Observer : IObservadorCliente);
+//    procedure RemoverTodosObservadores;
+    procedure Notificar;
 
     class var aInstance : TFrmPedido;
   public
@@ -128,11 +139,14 @@ begin
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := 0;                       // Destinado a guardar o CODIGO numérico do registro
 
-    lblCliente.Text := 'Informe aqui o cliente do novo pedido';
-    lblTipo.Text    := GetTipoPedidoStr(Model.Tipo); // 'Informe aqui o tipo do novo pedido';
-    lblData.Text    := FormatDateTime('dd/mm/yyyy', Dao.Model.DataEmissao);
-    lblContato.Text := 'Informe aqui o(s) contato(s) do novo pedido';
-    lblObs.Text     := 'Informe aqui as observações para o novo pedido';
+    lblCliente.Text      := 'Informe aqui o cliente do novo pedido';
+    lblCliente.TagString := GUIDToString(GUID_NULL);
+    lblTipo.Text         := GetDescricaoTipoPedidoStr(Model.Tipo); // 'Informe aqui o tipo do novo pedido';
+    lblTipo.TagString    := GetTipoPedidoStr(Model.Tipo);
+    lblData.Text         := FormatDateTime('dd/mm/yyyy', Dao.Model.DataEmissao);
+    lblData.TagString    := 'dd/mm/yyyy';
+    lblContato.Text      := 'Informe aqui o(s) contato(s) do novo pedido';
+    lblObs.Text          := 'Informe aqui as observações para o novo pedido';
 
     ListViewItemPedido.BeginUpdate;
     ListViewItemPedido.Items.Clear;
@@ -146,6 +160,7 @@ begin
     lblData.TagFloat    := 0;
     lblContato.TagFloat := 0;
     lblObs.TagFloat     := 0;
+    lblTotalPedido.TagFloat := 0;
 
     lytExcluir.Visible := False;
 
@@ -170,22 +185,29 @@ begin
     if (Model.Tipo = TTipoPedido.tpOrcamento) then
       labelTituloCadastro.Text := 'EDITAR PEDIDO'
     else
-      labelTituloCadastro.Text := 'PEDIDO';
+      labelTituloCadastro.Text := 'PEDIDO #' + FormatFloat('00000', Model.Codigo);
 
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
 
-    lblCliente.Text  := Model.Cliente.Nome + ' - ' + Model.Cliente.CpfCnpj;
-    lblTipo.Text     := GetTipoPedidoStr(Model.Tipo); // 'Informe aqui o tipo do novo pedido';
-    lblData.Text     := FormatDateTime('dd/mm/yyyy', Model.DataEmissao);
-    lblContato.Text  := Model.Contato;
-    lblObs.Text      := Model.Observacao;
+    lblCliente.Text      := Model.Cliente.Nome + ' - ' + Model.Cliente.CpfCnpj;
+    lblCliente.TagString := GUIDToString(Model.Cliente.ID);
+    lblTipo.Text         := GetDescricaoTipoPedidoStr(Model.Tipo); // 'Informe aqui o tipo do novo pedido';
+    lblTipo.TagString    := GetTipoPedidoStr(Model.Tipo);
+    lblData.Text         := FormatDateTime('dd/mm/yyyy', Model.DataEmissao);
+    lblData.TagString    := 'dd/mm/yyyy';
+    lblContato.Text      := Model.Contato;
+    lblObs.Text          := Model.Observacao;
 
-    lblCliente.TagFloat  := IfThen(Trim(Model.Cliente.Nome) = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
-    lblTipo.TagFloat     := 0;
-    lblData.TagFloat     := 0;
-    lblContato.TagFloat  := IfThen(Trim(Model.Contato)    = EmptyStr, 0, 1);
-    lblObs.TagFloat      := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
+    lblTotalPedido.TagString := ',0.00';
+    lblTotalPedido.Text      := FormatFloat(lblTotalPedido.TagString, Model.ValorPedido);
+
+    lblCliente.TagFloat     := IfThen(Trim(Model.Cliente.Nome) = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
+    lblTipo.TagFloat        := 0;
+    lblData.TagFloat        := 0;
+    lblContato.TagFloat     := IfThen(Trim(Model.Contato)    = EmptyStr, 0, 1);
+    lblObs.TagFloat         := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
+    lblTotalPedido.TagFloat := IfThen(Model.ValorTotal      <= 0.0     , 0, 1);
 
     lytExcluir.Visible := True;
 
@@ -200,9 +222,16 @@ var
   daoCliente : TClienteDao;
 begin
   daoCliente := TClienteDao.GetInstance;
-  lblCliente.Text     := daoCliente.Model.Nome + ' - ' + daoCliente.Model.CpfCnpj;
-  lblCliente.TagFloat := 1;
-  Dao.Model.Cliente   := daoCliente.Model;
+  lblCliente.Text      := daoCliente.Model.Nome + ' - ' + daoCliente.Model.CpfCnpj;
+  lblCliente.TagString := GUIDToString(daoCliente.Model.ID);
+  lblCliente.TagFloat  := 1;
+  Dao.Model.Cliente    := daoCliente.Model;
+end;
+
+procedure TFrmPedido.ControleEdicao(const aEditar: Boolean);
+begin
+  imageSalvarCadastro.Visible := aEditar;
+  imageSalvarEdicao.Visible   := aEditar;
 end;
 
 procedure TFrmPedido.DoBuscarCliente(Sender: TObject);
@@ -307,6 +336,66 @@ begin
 
 end;
 
+procedure TFrmPedido.DoSalvarPedido(Sender: TObject);
+var
+  ins : Boolean;
+  inf : Extended;
+begin
+  try
+    inf :=
+      lblCliente.TagFloat  +
+//      lblTipo.TagFloat     +
+//      lblData.TagFloat     +
+      lblContato.TagFloat  +
+      lblObs.TagFloat      +
+      lblTotalPedido.TagFloat;
+
+    if (inf = 0) then
+      ExibirMsgAlerta('Sem dados informados!')
+    else
+    if (lblCliente.TagFloat = 0) or (Trim(lblCliente.Text) = EmptyStr) then
+      ExibirMsgAlerta('Selecione um cliente para o pedido!')
+    else
+    if (lblTotalPedido.TagFloat = 0) then
+      ExibirMsgAlerta('Pedido não possuem itens!')
+    else
+    begin
+      dao.Model.ID     := StringToGUID(labelTituloCadastro.TagString);
+      dao.Model.Codigo := labelTituloCadastro.TagFloat;
+
+      dao.Model.Cliente.ID   := StringToGUID( IfThen(lblCliente.TagFloat  = 0, GUIDToString(GUID_NULL), lblCliente.TagString) );  // Postar dados na classe caso ele tenha sido editado
+      dao.Model.Tipo         := GetTipoPedido(lblTipo.TagString);
+      dao.Model.DataEmissao  := StrToDate(lblData.TagString, lblData.Text);
+      dao.Model.Contato      := IfThen(lblContato.TagFloat   = 0, EmptyStr, lblContato.Text);
+      dao.Model.Observacao   := IfThen(lblObs.TagFloat       = 0, EmptyStr, lblObs.Text);
+
+      if (lblTotalPedido.TagFloat = 0) then
+        dao.Model.ValorPedido := 0.0
+      else
+        dao.Model.ValorPedido := StrToCurr(lblTotalPedido.Text.Replace('.', '').Replace(',', '')) / 100;
+
+      ins := (dao.Model.ID = GUID_NULL);
+
+      if ins then
+        dao.Insert()
+      else
+        dao.Update();
+
+      Self.Notificar;
+      Self.Close;
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar salvar o pedido.' + #13 + E.Message);
+  end;
+end;
+
+procedure TFrmPedido.FormActivate(Sender: TObject);
+begin
+  inherited;
+  ControleEdicao( (Dao.Model.Tipo = TTipoPedido.tpOrcamento) );
+end;
+
 procedure TFrmPedido.FormCreate(Sender: TObject);
 begin
   inherited;
@@ -341,6 +430,24 @@ begin
   aInstance.aDao := TPedidoDao.GetInstance;
 
   Result := aInstance;
+end;
+
+procedure TFrmPedido.imgClienteClick(Sender: TObject);
+var
+  daoCliente : TClienteDao;
+begin
+  if (lblCliente.TagFloat = 1) then
+  begin
+    daoCliente := TClienteDao.GetInstance;
+    daoCliente.Load(lblCliente.TagString);
+    daoCliente.Model := daoCliente.Lista[0];
+    ExibirCadastroCliente(Self, False);
+  end;
+end;
+
+procedure TFrmPedido.Notificar;
+begin
+  ;
 end;
 
 end.

@@ -7,6 +7,9 @@ uses
   classes.ScriptDDL,
   model.Pedido,
 
+  System.StrUtils,
+  System.Math,
+
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet;
 
@@ -197,11 +200,41 @@ begin
   try
     aSQL.BeginUpdate;
     aSQL.Add('Insert Into ' + aDDL.getTableNamePedido + '(');
-    aSQL.Add('    id_pedido ');
-    aSQL.Add('  , cd_pedido ');
+    aSQL.Add('    id_pedido       ');
+    aSQL.Add('  , cd_pedido       ');
+    aSQL.Add('  , tp_pedido       ');
+    aSQL.Add('  , id_cliente      ');
+    aSQL.Add('  , dt_pedido       ');
+    aSQL.Add('  , vl_total        ');
+    aSQL.Add('  , vl_desconto     ');
+    aSQL.Add('  , vl_pedido       ');
+    aSQL.Add('  , ds_contato      ');
+    aSQL.Add('  , ds_observacao   ');
+    aSQL.Add('  , sn_ativo        ');
+    aSQL.Add('  , sn_entregue     ');
+    aSQL.Add('  , sn_sincronizado ');
+
+    if (aModel.Referencia <> GUID_NULL) then
+      aSQL.Add('  , cd_referencia   ');
+
     aSQL.Add(') values (');
-    aSQL.Add('    :id_pedido ');
-    aSQL.Add('  , :cd_pedido ');
+    aSQL.Add('    :id_pedido      ');
+    aSQL.Add('  , :cd_pedido      ');
+    aSQL.Add('  , :tp_pedido      ');
+    aSQL.Add('  , :id_cliente     ');
+    aSQL.Add('  , :dt_pedido      ');
+    aSQL.Add('  , :vl_total       ');
+    aSQL.Add('  , :vl_desconto    ');
+    aSQL.Add('  , :vl_pedido      ');
+    aSQL.Add('  , :ds_contato     ');
+    aSQL.Add('  , :ds_observacao  ');
+    aSQL.Add('  , :sn_ativo       ');
+    aSQL.Add('  , :sn_entregue    ');
+    aSQL.Add('  , :sn_sincronizado');
+
+    if (aModel.Referencia <> GUID_NULL) then
+      aSQL.Add('  , :cd_referencia  ');
+
     aSQL.Add(')');
     aSQL.EndUpdate;
 
@@ -210,9 +243,23 @@ begin
       qrySQL.Close;
       qrySQL.SQL.Text := aSQL.Text;
 
-      ParamByName('id_pedido').AsString   := GUIDToString(Model.ID);
-      ParamByName('cd_pedido').AsCurrency := Model.Codigo;
-      //ParamByName('ds_especialidade').AsString  := Model.Descricao;
+      ParamByName('id_pedido').AsString     := GUIDToString(Model.ID);
+      ParamByName('cd_pedido').AsCurrency   := Model.Codigo;
+      ParamByName('tp_pedido').AsString     := GetTipoPedidoStr(Model.Tipo);
+      ParamByName('id_cliente').AsString    := GUIDToString(Model.Cliente.ID);
+      ParamByName('dt_pedido').AsDateTime   := Model.DataEmissao;
+      ParamByName('vl_total').AsCurrency    := Model.ValorTotal;
+      ParamByName('vl_desconto').AsCurrency := Model.ValorDesconto;
+      ParamByName('vl_pedido').AsCurrency   := Model.ValorPedido;
+      ParamByName('ds_contato').AsString    := Trim(Model.Contato);
+      ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
+
+      ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_entregue').AsString     := FLAG_NAO;
+      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+
+      if (aModel.Referencia <> GUID_NULL) then
+        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toIncluido;
@@ -322,27 +369,57 @@ procedure TPedidoDao.Update;
 var
   aSQL : TStringList;
 begin
-//  aSQL := TStringList.Create;
-//  try
-//    aSQL.BeginUpdate;
-//    aSQL.Add('Update ' + aDDL.getTableNameEspecialidade + ' Set');
-//    aSQL.Add('  ds_especialidade     = :ds_especialidade');
-//    aSQL.Add('where cd_especialidade = :cd_especialidade');
-//    aSQL.EndUpdate;
-//    with DtmDados, qrySQL do
-//    begin
-//      qrySQL.Close;
-//      qrySQL.SQL.Text := aSQL.Text;
-//
-//      ParamByName('cd_especialidade').AsInteger := Model.Codigo;
-//      ParamByName('ds_especialidade').AsString  := Model.Descricao;
-//
-//      ExecSQL;
-//      aOperacao := TTipoOperacaoDao.toEditado;
-//    end;
-//  finally
-//    aSQL.Free;
-//  end;
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Update ' + aDDL.getTableNamePedido + ' Set');
+    aSQL.Add('    cd_pedido       = :cd_pedido      ');
+    aSQL.Add('  , tp_pedido       = :tp_pedido      ');
+    aSQL.Add('  , id_cliente      = :id_cliente     ');
+    aSQL.Add('  , dt_pedido       = :dt_pedido      ');
+    aSQL.Add('  , vl_total        = :vl_total       ');
+    aSQL.Add('  , vl_desconto     = :vl_desconto    ');
+    aSQL.Add('  , vl_pedido       = :vl_pedido      ');
+    aSQL.Add('  , ds_contato      = :ds_contato     ');
+    aSQL.Add('  , ds_observacao   = :ds_observacao  ');
+    aSQL.Add('  , sn_ativo        = :sn_ativo       ');
+    aSQL.Add('  , sn_entregue     = :sn_entregue    ');
+    aSQL.Add('  , sn_sincronizado = :sn_sincronizado');
+
+    if (aModel.Referencia <> GUID_NULL) then
+      aSQL.Add('  , cd_referencia   = :cd_referencia  ');
+
+    aSQL.Add('where id_pedido = :id_pedido');
+    aSQL.EndUpdate;
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_pedido').AsString     := GUIDToString(Model.ID);
+      ParamByName('cd_pedido').AsCurrency   := Model.Codigo;
+      ParamByName('tp_pedido').AsString     := GetTipoPedidoStr(Model.Tipo);
+      ParamByName('id_cliente').AsString    := GUIDToString(Model.Cliente.ID);
+      ParamByName('dt_pedido').AsDateTime   := Model.DataEmissao;
+      ParamByName('vl_total').AsCurrency    := Model.ValorTotal;
+      ParamByName('vl_desconto').AsCurrency := Model.ValorDesconto;
+      ParamByName('vl_pedido').AsCurrency   := Model.ValorPedido;
+      ParamByName('ds_contato').AsString    := Trim(Model.Contato);
+      ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
+
+      ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_entregue').AsString     := FLAG_NAO;
+      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+
+      if (aModel.Referencia <> GUID_NULL) then
+        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
+
+      ExecSQL;
+      aOperacao := TTipoOperacaoDao.toEditado;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 end.

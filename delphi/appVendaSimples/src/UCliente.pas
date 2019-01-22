@@ -83,6 +83,7 @@ type
 
     procedure TeclaBackSpace; override;
     procedure TeclaNumero(const aValue : String); override;
+    procedure ControleEdicao(const aEditar : Boolean);
 
     procedure AdicionarObservador(Observer : IObservadorCliente);
     procedure RemoverObservador(Observer : IObservadorCliente);
@@ -93,7 +94,7 @@ type
   end;
 
   procedure NovoCadastroCliente(Observer : IObservadorCliente);
-  procedure ExibirCadastroCliente(Observer : IObservadorCliente);
+  procedure ExibirCadastroCliente(Observer : IObservadorCliente; const aEditar : Boolean);
   procedure SelecionarCliente(Observer : IObservadorCliente);
 
 //var
@@ -140,12 +141,14 @@ begin
 
     lytExcluir.Visible := False;
     SelecionarCliente  := False;
+
+    ControleEdicao(True);
   end;
 
   aForm.Show;
 end;
 
-procedure ExibirCadastroCliente(Observer : IObservadorCliente);
+procedure ExibirCadastroCliente(Observer : IObservadorCliente; const aEditar : Boolean);
 var
   aForm : TFrmCliente;
 begin
@@ -157,9 +160,11 @@ begin
     tbsControle.ActiveTab       := tbsCadastro;
     imageVoltarConsulta.OnClick := imageVoltarClick;
 
-    labelTituloCadastro.Text      := 'EDITAR CLIENTE';
+    labelTituloCadastro.Text      := IfThen(aEditar, 'EDITAR CLIENTE', 'CLIENTE');
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
+
+    imageSalvarCadastro.Visible := aEditar;
 
     lblCPF_CNPJ.Text  := Model.CpfCnpj;
     lblDescricao.Text := Model.Nome;
@@ -175,8 +180,10 @@ begin
     lblEmail.TagFloat     := IfThen(Trim(Model.Email)      = EmptyStr, 0, 1);
     lblObs.TagFloat       := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
 
-    lytExcluir.Visible := True;
+    lytExcluir.Visible := aEditar;
     SelecionarCliente  := False;
+
+    ControleEdicao(aEditar);
   end;
 
   aForm.Show;
@@ -203,6 +210,7 @@ begin
     ListViewCliente.EndUpdate;
 
     SelecionarCliente := True;
+    ControleEdicao(False);
   end;
 
   aForm.Show;
@@ -235,6 +243,23 @@ begin
   dao.Load(aBusca);
   for I := Low(dao.Lista) to High(dao.Lista) do
     AddClienteListView(dao.Lista[I]);
+end;
+
+procedure TFrmCliente.ControleEdicao(const aEditar: Boolean);
+begin
+  imgCPF_CNPJ.Visible  := aEditar;
+  imgDescricao.Visible := aEditar;
+  imgEndereco.Visible  := aEditar;
+  imgTelefone.Visible  := aEditar;
+  imgEmail.Visible     := aEditar;
+  imgObs.Visible       := aEditar;
+
+  lblCPF_CNPJ.Margins.Right  := IfThen(aEditar, 5, imgCPF_CNPJ.Margins.Right);
+  lblDescricao.Margins.Right := IfThen(aEditar, 5, imgDescricao.Margins.Right);
+  lblEndereco.Margins.Right  := IfThen(aEditar, 5, imgEndereco.Margins.Right);
+  lblTelefone.Margins.Right  := IfThen(aEditar, 5, imgTelefone.Margins.Right);
+  lblEmail.Margins.Right     := IfThen(aEditar, 5, imgEmail.Margins.Right);
+  lblObs.Margins.Right       := IfThen(aEditar, 5, imgObs.Margins.Right);
 end;
 
 procedure TFrmCliente.DoBuscaClientes(Sender: TObject);
@@ -462,6 +487,7 @@ procedure TFrmCliente.FormActivate(Sender: TObject);
 begin
   inherited;
   lytExcluir.Visible := (Trim(labelTituloCadastro.TagString) <> EmptyStr) and (labelTituloCadastro.TagString <> GUIDToString(GUID_NULL));
+  lytExcluir.Visible := lytExcluir.Visible and imageSalvarCadastro.Visible;
 end;
 
 procedure TFrmCliente.FormatarItemClienteListView(aItem: TListViewItem);
@@ -476,7 +502,7 @@ begin
 
     TListItemText(Objects.FindDrawable('Text1')).Text := aCliente.Nome;
     TListItemText(Objects.FindDrawable('Text2')).Text := IfThen(Trim(aCliente.Endereco) = EmptyStr, '* SEM ENDEREÇO INFORMADO!', Trim(aCliente.Endereco));
-    if (aCliente.DataUltimaCompra <> StrToDate(EMPTY_DATE)) then
+    if (aCliente.DataUltimaCompra <> StrToDateTime(EMPTY_DATE)) then
     begin
       TListItemText(Objects.FindDrawable('Text3')).Text :=
         '** Última Compra : ' + FormatDateTime('dd/mm/yyyy', aCliente.DataUltimaCompra) + ', ' +

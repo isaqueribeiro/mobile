@@ -676,7 +676,7 @@ begin
   begin
     dao := TClienteDao.GetInstance;
     dao.Model := TCliente(ListViewCliente.Items.Item[ItemIndex].TagObject);
-    ExibirCadastroCliente(Self);
+    ExibirCadastroCliente(Self, True);
   end;
 end;
 
@@ -720,7 +720,7 @@ begin
   if (TListView(Sender).Selected <> nil) then
   begin
     dao := TPedidoDao.GetInstance;
-    dao.Model := TPedido(ListViewCliente.Items.Item[ItemIndex].TagObject);
+    dao.Model := TPedido(ListViewPedido.Items.Item[ItemIndex].TagObject);
     ExibirCadastroPedido(); //(Self);
   end;
 end;

@@ -40,6 +40,7 @@ uses
   function GetNumeroSIM : String;
   function FormatarTexto(aFormato, aStr : String) : String;
   function StrToDate(aFormato, aStr : String) : TDateTime;
+  function StrIsGUID(const aStr: String): Boolean;
   function StrIsCPF(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
   function StrIsCNPJ(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
 
@@ -173,6 +174,18 @@ begin
   end;
 
   Result := EncodeDate(aAno, aMes, aDia)
+end;
+
+function StrIsGUID(const aStr: String): Boolean;
+var
+  aGuid : TGUID;
+begin
+  try
+    aGuid := StringToGUID(Trim(aStr));
+    Result := True;
+  except
+    Result := False;
+  end;
 end;
 
 function StrIsCPF(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
