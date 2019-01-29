@@ -27,7 +27,7 @@ type
       function getCreateTableNotificacao : TStringList;
       function getCreateTableUsuario : TStringList;
       function getCreateTablePedido : TStringList;
-      function getCreateTablePedidoItem : TStringList; virtual; abstract;
+      function getCreateTablePedidoItem : TStringList;
       function getCreateTableCliente : TStringList;
       function getCreateTableProduto : TStringList;
 
@@ -149,6 +149,42 @@ begin
     aSQL.Add('    , sn_entregue     CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL'); // Pedido Entregue ao Cliente ?
     aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Pedido no Servidor Web (ID)
+    aSQL.Add(')');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
+end;
+
+function TScriptDDL.getCreateTablePedidoItem: TStringList;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL := TStringList.Create;
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_PEDIDO_ITEM + ' (');
+    aSQL.Add('      id_item         VARCHAR (38) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , cd_item         INTEGER NOT NULL');
+    aSQL.Add('    , id_pedido       VARCHAR (38) NOT NULL');
+    aSQL.Add('    , id_produto      VARCHAR (38) NOT NULL');
+    aSQL.Add('    , qt_item         NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('    , vl_item         NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('    , vl_total        NUMERIC (15,2) DEFAULT (0)'); // (vl_total   = qt_item * vl_item)
+    aSQL.Add('    , vl_desconto     NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('    , vl_liquido      NUMERIC (15,2) DEFAULT (0)'); // (vl_liquido = vl_total - vl_desconto)
+    aSQL.Add('    , ds_observacao   VARCHAR (500)');
+    aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Item do Pedido no Servidor Web (ID)
+    aSQL.Add('    , FOREIGN KEY (   ');
+    aSQL.Add('        id_pedido     ');
+    aSQL.Add('      )               ');
+    aSQL.Add('      REFERENCES ' + TABLE_PEDIDO + ' (id_pedido) ON DELETE CASCADE ');
+    aSQL.Add('    , FOREIGN KEY (   ');
+    aSQL.Add('        id_produto    ');
+    aSQL.Add('      )               ');
+    aSQL.Add('      REFERENCES ' + TABLE_PRODUTO + ' (id_produto) ');
     aSQL.Add(')');
     aSQL.EndUpdate;
   finally

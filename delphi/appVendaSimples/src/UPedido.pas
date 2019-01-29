@@ -5,8 +5,10 @@ interface
 uses
   model.Cliente,
   dao.Pedido,
+  dao.PedidoItem,
   dao.Cliente,
   interfaces.Cliente,
+  interfaces.PedidoItem,
 
   System.StrUtils,
   System.Math,
@@ -19,7 +21,7 @@ uses
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.DateTimeCtrls;
 
 type
-  TFrmPedido = class(TFrmPadraoCadastro, IObservadorCliente)
+  TFrmPedido = class(TFrmPadraoCadastro, IObservadorCliente, IObservadorPedidoItem)
     imgDuplicar: TImage;
     lblDuplicar: TLabel;
     lytAbaPedido: TLayout;
@@ -78,13 +80,14 @@ type
     procedure DoInserirItemPedido(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
-    procedure imgClienteClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure imgClienteClick(Sender: TObject);
   strict private
     { Private declarations }
     aDao : TPedidoDao;
 
     procedure AtualizarCliente;
+    procedure AtualizarPedidoItem;
 
     procedure ControleEdicao(const aEditar : Boolean);
 
@@ -228,6 +231,13 @@ begin
   Dao.Model.Cliente    := daoCliente.Model;
 end;
 
+procedure TFrmPedido.AtualizarPedidoItem;
+var
+  daoItem : TPedidoItemDao;
+begin
+  daoItem := TPedidoItemDao.GetInstance;
+end;
+
 procedure TFrmPedido.ControleEdicao(const aEditar: Boolean);
 begin
   imageSalvarCadastro.Visible := aEditar;
@@ -306,7 +316,7 @@ end;
 
 procedure TFrmPedido.DoInserirItemPedido(Sender: TObject);
 begin
-  NovoItemPedido();
+  NovoItemPedido(dao.Model, Self);
 end;
 
 procedure TFrmPedido.DoMudarAbaPedido(Sender: TObject);

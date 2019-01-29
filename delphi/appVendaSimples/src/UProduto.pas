@@ -4,18 +4,22 @@ interface
 
 uses
   System.StrUtils,
+  System.Math,
+  System.Generics.Collections,
+
   model.Produto,
   dao.Produto,
+  interfaces.Produto,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadrao, FMX.Objects,
-  FMX.Controls.Presentation, FMX.Layouts, FMX.Edit, FMX.ListView.Types, FMX.ListView.Appearances,
-  FMX.ListView.Adapters.Base, FMX.ListView, System.Actions, FMX.ActnList,
-  FMX.TabControl, FMX.MediaLibrary.Actions, FMX.StdActns, FMX.Ani,
-  FMX.ScrollBox, FMX.Memo;
+  System.Actions, UPadrao, UPadraoCadastro, FMX.ActnList, FMX.TabControl, FMX.Ani,
+  FMX.Memo, FMX.Edit, FMX.Objects, FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms,
+  FMX.Dialogs, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Layouts, FMX.ListView.Types,
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.DateTimeCtrls,
+  FMX.ScrollBox, FMX.MediaLibrary.Actions, FMX.StdActns;
 
 type
-  TFrmProduto = class(TFrmPadrao)
+  TFrmProduto = class(TFrmPadrao, IProdutoObservado)
     layoutBuscaProduto: TLayout;
     rectangleBuscaProduto: TRectangle;
     editBuscaProduto: TEdit;
@@ -122,8 +126,12 @@ type
       ItemIndex: Integer; const LocalClickPos: TPointF;
       const ItemObject: TListItemDrawable);
     procedure imageSalvarCadastroClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
     { Private declarations }
+    aDao : TProdutoDao;
+    aSelecionarProduto : Boolean;
+    FObservers : TList<IObservadorProduto>;
     procedure FormatarItemProdutoListView(aItem  : TListViewItem);
     procedure AdicionarProdutoListView(aProduto : TProduto);
 
@@ -139,10 +147,21 @@ type
     class var aInstance : TFrmProduto;
   public
     { Public declarations }
+    property Dao : TProdutoDao read aDao;
+    property SelecionarProduto : Boolean read aSelecionarProduto write aSelecionarProduto;
+
+    procedure ControleEdicao(const aEditar : Boolean);
+    procedure AdicionarObservador(Observer : IObservadorProduto);
+    procedure RemoverObservador(Observer : IObservadorProduto);
+    procedure RemoverTodosObservadores;
+    procedure Notificar;
+
     class function GetInstance : TFrmProduto;
   end;
 
   procedure ExibirListaProdutos;
+  procedure ExibirCadastroProduto(Observer : IObservadorProduto; const aEditar : Boolean);
+  procedure SelecionarProduto(Observer : IObservadorProduto);
 
 implementation
 
@@ -157,7 +176,90 @@ var
   aForm : TFrmProduto;
 begin
   aForm := TFrmProduto.GetInstance;
+
+  with aForm do
+  begin
+    tbsControle.ActiveTab       := tbsConsulta;
+    imageVoltarConsulta.OnClick := imageVoltarConsultaClick;
+
+    SelecionarProduto := False;
+    ControleEdicao(True);
+  end;
+
   aForm.Show;
+end;
+
+procedure ExibirCadastroProduto(Observer : IObservadorProduto; const aEditar : Boolean);
+var
+  aForm : TFrmProduto;
+begin
+  aForm := TFrmProduto.GetInstance;
+  aForm.AdicionarObservador(Observer);
+
+  with aForm, dao do
+  begin
+    tbsControle.ActiveTab       := tbsCadastro;
+    imageVoltarConsulta.OnClick := imageVoltarClick;
+
+    labelTituloCadastro.Text      := IfThen(aEditar, 'EDITAR PRODUTO', 'PRODUTO');
+    labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
+    labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
+
+    imageSalvarCadastro.Visible := aEditar;
+
+    lblProdutoDescricao.Text  := Model.Descricao;
+    lblProdutoValor.TagString := ',0.00';
+    lblProdutoValor.Text      := FormatFloat(lblProdutoValor.TagString, Model.Valor);
+
+    lblProdutoDescricao.TagFloat := IfThen(Trim(Model.Descricao) = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
+    lblProdutoValor.TagFloat     := IfThen(Model.Valor = 0.0, 0, 1);
+
+    if (Model.Foto = nil) then
+    begin
+      imgProdutoFoto.Bitmap   := img_foto_novo_produto.Bitmap;
+      imgProdutoFoto.TagFloat := 0;
+    end
+    else
+    begin
+      imgProdutoFoto.Bitmap.LoadFromStream(Model.Foto);
+      imgProdutoFoto.TagFloat := 1;
+    end;
+
+    lytProdutoExcluir.Visible := aEditar;
+    SelecionarProduto         := False;
+
+    ControleEdicao(aEditar);
+  end;
+
+  aForm.Show;
+end;
+
+procedure SelecionarProduto(Observer : IObservadorProduto);
+var
+  aForm : TFrmProduto;
+begin
+  aForm := TFrmProduto.GetInstance;
+  aForm.AdicionarObservador(Observer);
+
+  with aForm, dao do
+  begin
+    tbsControle.ActiveTab       := tbsConsulta;
+    imageVoltarConsulta.OnClick := imageVoltarConsultaClick;
+
+    labelTitulo.Text       := 'BUSCAR PRODUTO';
+    imageAdicionar.Visible := False;
+    editBuscaProduto.Text  := EmptyStr;
+
+    ListViewProduto.BeginUpdate;
+    ListViewProduto.Items.Clear;
+    ListViewProduto.EndUpdate;
+
+    SelecionarProduto := True;
+    ControleEdicao(False);
+  end;
+
+  aForm.Show;
+  aForm.editBuscaProduto.SetFocus;
 end;
 
 { TFrmProduto }
@@ -169,6 +271,11 @@ begin
     Application.CreateForm(TFrmProduto, aInstance);
     Application.RealCreateForms;
   end;
+
+  if not Assigned(aInstance.FObservers) then
+    aInstance.FObservers := TList<IObservadorProduto>.Create;
+
+  aInstance.aDao := TProdutoDao.GetInstance;
 
   Result := aInstance;
 end;
@@ -228,6 +335,12 @@ begin
   imgProdutoFoto.Bitmap := Image;
 end;
 
+procedure TFrmProduto.AdicionarObservador(Observer: IObservadorProduto);
+begin
+  if (FObservers.IndexOf(Observer) = -1) then
+    FObservers.Add(Observer);
+end;
+
 procedure TFrmProduto.AdicionarProdutoListView(aProduto: TProduto);
 var
   aItem   : TListViewItem;
@@ -265,6 +378,12 @@ begin
   dao.Load(aBusca);
   for I := Low(dao.Lista) to High(dao.Lista) do
     AdicionarProdutoListView(dao.Lista[I]);
+end;
+
+procedure TFrmProduto.ControleEdicao(const aEditar: Boolean);
+begin
+  imageSalvarCadastro.Visible := aEditar;
+  imageSalvarEdicao.Visible   := aEditar;
 end;
 
 function TFrmProduto.DevolverValorEditado : Boolean;
@@ -448,6 +567,14 @@ begin
   TeclaNumero( TLabel(Sender).Text );
 end;
 
+procedure TFrmProduto.Notificar;
+var
+  Observer : IObservadorProduto;
+begin
+  for Observer in FObservers do
+     Observer.AtualizarProduto;
+end;
+
 procedure TFrmProduto.NovoProduto;
 begin
   labelTituloCadastro.Text      := 'NOVO PRODUTO';
@@ -460,6 +587,20 @@ begin
   imgProdutoFoto.TagFloat  := 0;
 
   lytProdutoExcluir.Visible := False;
+  SelecionarProduto         := False;
+end;
+
+procedure TFrmProduto.RemoverObservador(Observer: IObservadorProduto);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TFrmProduto.RemoverTodosObservadores;
+var
+  I : Integer;
+begin
+  for I := 0 to (FObservers.Count - 1) do
+    FObservers.Delete(I);
 end;
 
 procedure TFrmProduto.TeclaBackSpace;
@@ -503,8 +644,9 @@ begin
   labelTituloCadastro.TagString := GUIDToString(aProduto.ID);
   labelTituloCadastro.TagFloat  := aProduto.Codigo;
 
-  lblProdutoDescricao.Text := aProduto.Descricao;
-  lblProdutoValor.Text     := FormatFloat(',0.00', aProduto.Valor);
+  lblProdutoDescricao.Text  := aProduto.Descricao;
+  lblProdutoValor.TagString := ',0.00';
+  lblProdutoValor.Text      := FormatFloat(lblProdutoValor.TagString, aProduto.Valor);
 
   if (aProduto.Foto = nil) then
   begin
@@ -518,6 +660,7 @@ begin
   end;
 
   lytProdutoExcluir.Visible := True;
+  SelecionarProduto         := False;
 end;
 
 procedure TFrmProduto.ExcluirProduto(Sender: TObject);
@@ -587,9 +730,18 @@ begin
   end;
 end;
 
+procedure TFrmProduto.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  RemoverTodosObservadores;
+end;
+
 procedure TFrmProduto.FormCreate(Sender: TObject);
 begin
   inherited;
+  aSelecionarProduto := False;
+//  FObservers := TList<IObservadorProduto>.Create;
+
   img_produto_sem_foto.Visible  := False;
   img_foto_novo_produto.Visible := False;
 end;
@@ -604,8 +756,21 @@ procedure TFrmProduto.ListViewProdutoItemClickEx(const Sender: TObject;
   ItemIndex: Integer; const LocalClickPos: TPointF;
   const ItemObject: TListItemDrawable);
 begin
-  EditarProduto(ItemIndex);
-  ChangeTabActionCadastro.ExecuteTarget(Sender);
+  if (TListView(Sender).Selected <> nil) then
+  begin
+    Dao.Model := TProduto(ListViewProduto.Items.Item[ItemIndex].TagObject);
+
+    if SelecionarProduto then
+    begin
+      Self.Notificar;
+      Self.Close;
+    end
+    else
+    begin
+      EditarProduto(ItemIndex);
+      ChangeTabActionCadastro.ExecuteTarget(Sender);
+    end;
+  end;
 end;
 
 procedure TFrmProduto.ListViewProdutoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

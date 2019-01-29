@@ -182,6 +182,7 @@ begin
   conn.ExecSQL(aScriptDDL.getCreateTableUsuario.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableCliente.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTablePedido.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTablePedidoItem.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableNotificacao.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableProduto.Text, True);
 end;

@@ -3,14 +3,24 @@ unit UPedidoItem;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
-  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  UPadraoCadastro, System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani,
-  FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects, FMX.Layouts,
-  FMX.Controls.Presentation, FMX.DateTimeCtrls;
+  System.StrUtils,
+  System.Math,
+  System.Generics.Collections,
+
+  model.Pedido,
+  model.PedidoItem,
+  dao.PedidoItem,
+  dao.Produto,
+  interfaces.Produto,
+  interfaces.PedidoItem,
+
+  System.SysUtils, System.Classes, System.Actions, System.UITypes, System.Types,
+  UPadraoCadastro, FMX.Forms, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.DateTimeCtrls,
+  FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects, FMX.Layouts, FMX.Controls.Presentation,
+  FMX.StdCtrls, FMX.Controls, FMX.Types;
 
 type
-  TFrmPedidoItem = class(TFrmPadraoCadastro)
+  TFrmPedidoItem = class(TFrmPadraoCadastro, IObservadorProduto)
     LayoutProduto: TLayout;
     recCliente: TRectangle;
     lytProduto: TLayout;
@@ -31,15 +41,36 @@ type
     LabelValorUnit: TLabel;
     imgValorUnit: TImage;
     lblValorUnit: TLabel;
+    procedure DoBuscarProduto(Sender: TObject);
+    procedure DoEditarCampo(Sender: TObject);
+    procedure DoSalvarPedido(Sender: TObject);
+
+    procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure imgProdutoClick(Sender: TObject);
   strict private
     { Private declarations }
+    aDao : TPedidoItemDao;
+    FObservers : TList<IObservadorPedidoItem>;
+
+    procedure AtualizarProduto;
+    procedure ControleEdicao(const aEditar : Boolean);
+
     class var aInstance : TFrmPedidoItem;
   public
     { Public declarations }
+    property Dao : TPedidoItemDao read aDao;
+
+    procedure AdicionarObservador(Observer : IObservadorPedidoItem);
+    procedure RemoverObservador(Observer : IObservadorPedidoItem);
+    procedure RemoverTodosObservadores;
+    procedure Notificar;
+
     class function GetInstance : TFrmPedidoItem;
   end;
 
-  procedure NovoItemPedido(); //(Observer : IObservadorItemPedido);
+  procedure NovoItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
 
 //var
 //  FrmPedidoItem: TFrmPedidoItem;
@@ -51,18 +82,34 @@ implementation
 uses
     app.Funcoes
   , UConstantes
-  , UMensagem;
+  , UMensagem
+  , UProduto;
 
-procedure NovoItemPedido(); //(Observer : IObservadorItemPedido);
+procedure NovoItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
 var
   aForm : TFrmPedidoItem;
 begin
   aForm := TFrmPedidoItem.GetInstance;
-//  aForm.AdicionarObservador(Observer);
+  aForm.AdicionarObservador(Observer);
 
-  with aForm do
+  with aForm, dao do
   begin
     tbsControle.ActiveTab := tbsCadastro;
+
+    Model.ID     := GUID_NULL;
+    Model.Codigo := 0;
+    Model.Pedido := aPedido;
+
+    Model.Quantidade    := 1;
+    Model.ValorUnitario := 0.0;
+    Model.ValorTotal    := 0.0;
+    Model.ValorDesconto := 0.0;
+    Model.ValorLiquido  := 0.0;
+
+    Model.Produto.ID        := GUID_NULL;
+    Model.Produto.Codigo    := 0;
+    Model.Produto.Descricao := EmptyStr;
+    Model.Produto.Valor     := 0.0;
 
     labelTituloCadastro.Text      := 'INSERIR ITEM';
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
@@ -71,11 +118,11 @@ begin
     lblProduto.Text    := 'Informe aqui o produto para o pedido';
 
     lblQuantidade.TagString := ',0.###';
-    lblQuantidade.Text      := FormatFloat(lblQuantidade.TagString, 1);
+    lblQuantidade.Text      := FormatFloat(lblQuantidade.TagString, Model.Quantidade);
     lblValorUnit.TagString  := ',0.00';
-    lblValorUnit.Text       := FormatFloat(lblValorUnit.TagString, 0);
+    lblValorUnit.Text       := FormatFloat(lblValorUnit.TagString, Model.ValorUnitario);
     lblDescricao.TagString  := ',0.00';
-    lblDescricao.Text       := FormatFloat(lblDescricao.TagString, 0);
+    lblDescricao.Text       := FormatFloat(lblDescricao.TagString, Model.ValorLiquido);
 
     lblProduto.TagFloat    := 0; // Flags: 0 - Sem edição; 1 - Dado editado
     lblQuantidade.TagFloat := 0;
@@ -90,6 +137,77 @@ end;
 
 { TFrmPedidoItem }
 
+procedure TFrmPedidoItem.AdicionarObservador(Observer: IObservadorPedidoItem);
+begin
+  if (FObservers.IndexOf(Observer) = -1) then
+    FObservers.Add(Observer);
+end;
+
+procedure TFrmPedidoItem.AtualizarProduto;
+var
+  daoProduto : TProdutoDao;
+begin
+  daoProduto := TProdutoDao.GetInstance;
+
+  lblProduto.Text       := FormatFloat('###00000', daoProduto.Model.Codigo) + ' - ' + daoProduto.Model.Descricao;
+  lblProduto.TagString  := GUIDToString(daoProduto.Model.ID);
+  lblProduto.TagFloat   := 1;
+
+  lblValorUnit.Text     := FormatFloat(lblValorUnit.TagString, daoProduto.Model.Valor);
+  lblValorUnit.TagFloat := 1;
+
+  Dao.Model.Produto := daoProduto.Model;
+end;
+
+procedure TFrmPedidoItem.ControleEdicao(const aEditar: Boolean);
+begin
+  imageSalvarCadastro.Visible := aEditar;
+  imageSalvarEdicao.Visible   := aEditar;
+end;
+
+procedure TFrmPedidoItem.DoBuscarProduto(Sender: TObject);
+begin
+  if Dao.Model.Pedido.Tipo = TTipoPedido.tpOrcamento then
+    SelecionarProduto(Self);
+end;
+
+procedure TFrmPedidoItem.DoEditarCampo(Sender: TObject);
+begin
+  ;
+end;
+
+procedure TFrmPedidoItem.DoSalvarPedido(Sender: TObject);
+begin
+  ;
+end;
+
+procedure TFrmPedidoItem.FormActivate(Sender: TObject);
+begin
+  inherited;
+  ControleEdicao( (Dao.Model.Pedido.Tipo = TTipoPedido.tpOrcamento) );
+end;
+
+procedure TFrmPedidoItem.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  RemoverTodosObservadores;
+end;
+
+procedure TFrmPedidoItem.FormCreate(Sender: TObject);
+begin
+  inherited;
+  lytExcluir.Visible := False;
+
+//  lblDuplicar.Margins.Bottom := 0;
+//  lblDuplicar.Margins.Top    := 60;
+  lblExcluir.Margins.Bottom  := 0;
+  lblExcluir.Margins.Top     := 60;
+//
+//  img_produto_sem_foto.Visible := False;
+//  img_item_mais.Visible  := False;
+//  img_item_menos.Visible := False;
+end;
+
 class function TFrmPedidoItem.GetInstance: TFrmPedidoItem;
 begin
   if not Assigned(aInstance) then
@@ -98,12 +216,46 @@ begin
     Application.RealCreateForms;
   end;
 
-//  if not Assigned(aInstance.FObservers) then
-//    aInstance.FObservers := TList<IObservadorCliente>.Create;
-//
-//  aInstance.aDao := TClienteDao.GetInstance;
-//
+  if not Assigned(aInstance.FObservers) then
+    aInstance.FObservers := TList<IObservadorPedidoItem>.Create;
+
+  aInstance.aDao := TPedidoItemDao.GetInstance;
+
   Result := aInstance;
+end;
+
+procedure TFrmPedidoItem.imgProdutoClick(Sender: TObject);
+var
+  daoProduto : TProdutoDao;
+begin
+  if (lblProduto.TagFloat = 1) then
+  begin
+    daoProduto := TProdutoDao.GetInstance;
+    daoProduto.Load(lblProduto.TagString);
+    daoProduto.Model := daoProduto.Lista[0];
+    ExibirCadastroProduto(Self, False);
+  end;
+end;
+
+procedure TFrmPedidoItem.Notificar;
+var
+  Observer : IObservadorPedidoItem;
+begin
+  for Observer in FObservers do
+     Observer.AtualizarPedidoItem;
+end;
+
+procedure TFrmPedidoItem.RemoverObservador(Observer: IObservadorPedidoItem);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TFrmPedidoItem.RemoverTodosObservadores;
+var
+  I : Integer;
+begin
+  for I := 0 to (FObservers.Count - 1) do
+    FObservers.Delete(I);
 end;
 
 end.

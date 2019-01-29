@@ -369,19 +369,23 @@
         <DCCReference Include="src\app.Funcoes.pas"/>
         <DCCReference Include="src\model.Versao.pas"/>
         <DCCReference Include="src\model.Usuario.pas"/>
-        <DCCReference Include="src\model.Pedido.pas"/>
         <DCCReference Include="src\model.Cliente.pas"/>
         <DCCReference Include="src\model.Loja.pas"/>
         <DCCReference Include="src\model.Notificacao.pas"/>
         <DCCReference Include="src\model.Produto.pas"/>
+        <DCCReference Include="src\model.Pedido.pas"/>
+        <DCCReference Include="src\model.PedidoItem.pas"/>
         <DCCReference Include="src\dao.Versao.pas"/>
         <DCCReference Include="src\dao.Usuario.pas"/>
-        <DCCReference Include="src\dao.Pedido.pas"/>
         <DCCReference Include="src\dao.Cliente.pas"/>
         <DCCReference Include="src\dao.Notificacao.pas"/>
         <DCCReference Include="src\dao.Produto.pas"/>
+        <DCCReference Include="src\dao.Pedido.pas"/>
+        <DCCReference Include="src\dao.PedidoItem.pas"/>
         <DCCReference Include="src\interfaces.Usuario.pas"/>
         <DCCReference Include="src\interfaces.Cliente.pas"/>
+        <DCCReference Include="src\interfaces.Produto.pas"/>
+        <DCCReference Include="src\interfaces.PedidoItem.pas"/>
         <DCCReference Include="src\UProduto.pas">
             <Form>FrmProduto</Form>
         </DCCReference>
@@ -405,7 +409,6 @@
         </DCCReference>
         <DCCReference Include="src\UPedidoItem.pas">
             <Form>FrmPedidoItem</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -465,6 +468,13 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\db\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
                     <Platform Name="iOSDevice64">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>
@@ -473,6 +483,13 @@
                 </DeployFile>
                 <DeployFile LocalName="bin\Android\Debug\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
                     <Platform Name="Android">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -491,20 +508,6 @@
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
                     <Platform Name="iOSDevice32">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>venda_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="db\venda_simples.db" Configuration="Debug" Class="File">
-                    <Platform Name="iOSDevice64">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>venda_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="Win64">
-                        <RemoteDir>.\db\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
