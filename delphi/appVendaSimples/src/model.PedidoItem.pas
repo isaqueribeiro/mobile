@@ -12,31 +12,36 @@ type
   TPedidoItem = class(TObject)
     private
       aID       : TGUID;
-      aCodigo   : Currency;
+      aCodigo   : Integer;
       aPedido   : TPedido;
       aProduto  : TProduto;
       aQuantidade   ,
       aValorUnitario,
       aValorTotal   ,
-      aValorDesconto,
+      aValorTotalDesconto,
       aValorLiquido : Currency;
       aObservacao   : String;
       aReferencia   : TGUID;
 
+      procedure SetQuantidade(Value : Currency);
+      procedure SetValorUnitario(Value : Currency);
+
       function GetPedidoID : TGUID;
+      function GetProdutoID : TGUID;
     public
       constructor Create; overload;
       destructor Destroy; overload;
 
-      property ID       : TGUID read aID write aID;
-      property Codigo   : Currency read aCodigo write aCodigo;
-      property PedidoID : TGUID read GetPedidoID;
-      property Pedido   : TPedido read aPedido write aPedido;
-      property Produto  : TProduto read aProduto write aProduto;
-      property Quantidade    : Currency read aQuantidade write aQuantidade;
-      property ValorUnitario : Currency read aValorUnitario write aValorUnitario;
+      property ID        : TGUID read aID write aID;
+      property Codigo    : Integer read aCodigo write aCodigo;
+      property PedidoID  : TGUID read GetPedidoID;
+      property Pedido    : TPedido read aPedido write aPedido;
+      property Produto   : TProduto read aProduto write aProduto;
+      property ProdutoID : TGUID read GetProdutoID;
+      property Quantidade    : Currency read aQuantidade write SetQuantidade;
+      property ValorUnitario : Currency read aValorUnitario write SetValorUnitario;
       property ValorTotal    : Currency read aValorTotal write aValorTotal;
-      property ValorDesconto : Currency read aValorDesconto write aValorDesconto;
+      property ValorTotalDesconto : Currency read aValorTotalDesconto write aValorTotalDesconto;
       property ValorLiquido  : Currency read aValorLiquido write aValorLiquido;
       property Observacao    : String read aObservacao write aObservacao;
       property Referencia    : TGUID read aReferencia write aReferencia;
@@ -60,7 +65,7 @@ begin
   aQuantidade    := 1;
   aValorUnitario := 0.0;
   aValorTotal    := 0.0;
-  aValorDesconto := 0.0;
+  aValorTotalDesconto := 0.0;
   aValorLiquido  := 0.0;
   aObservacao    := EmptyStr;
   aReferencia    := GUID_NULL;
@@ -81,12 +86,31 @@ begin
   Result := aPedido.ID;
 end;
 
+function TPedidoItem.GetProdutoID: TGUID;
+begin
+  Result := aProduto.ID;
+end;
+
 procedure TPedidoItem.NewID;
 var
   aGuid : TGUID;
 begin
   CreateGUID(aGuid);
   aId := aGuid;
+end;
+
+procedure TPedidoItem.SetQuantidade(Value: Currency);
+begin
+  aQuantidade   := Value;
+  aValorTotal   := (aQuantidade * aValorUnitario);
+  aValorLiquido := (aValorTotal - aValorTotalDesconto);
+end;
+
+procedure TPedidoItem.SetValorUnitario(Value: Currency);
+begin
+  aValorUnitario := Value;
+  aValorTotal    := (aQuantidade * aValorUnitario);
+  aValorLiquido  := (aValorTotal - aValorTotalDesconto);
 end;
 
 function TPedidoItem.ToString: String;

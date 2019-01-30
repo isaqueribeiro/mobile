@@ -43,12 +43,14 @@ type
     lblValorUnit: TLabel;
     procedure DoBuscarProduto(Sender: TObject);
     procedure DoEditarCampo(Sender: TObject);
-    procedure DoSalvarPedido(Sender: TObject);
+    procedure DoSalvarItemPedido(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure imgProdutoClick(Sender: TObject);
+    procedure imgQuantidadeMaisClick(Sender: TObject);
+    procedure imgQuantidadeMenosClick(Sender: TObject);
   strict private
     { Private declarations }
     aDao : TPedidoItemDao;
@@ -71,6 +73,7 @@ type
   end;
 
   procedure NovoItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
+  procedure EditarItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
 
 //var
 //  FrmPedidoItem: TFrmPedidoItem;
@@ -103,7 +106,7 @@ begin
     Model.Quantidade    := 1;
     Model.ValorUnitario := 0.0;
     Model.ValorTotal    := 0.0;
-    Model.ValorDesconto := 0.0;
+    Model.ValorTotalDesconto := 0.0;
     Model.ValorLiquido  := 0.0;
 
     Model.Produto.ID        := GUID_NULL;
@@ -133,6 +136,11 @@ begin
   end;
 
   aForm.Show;
+end;
+
+procedure EditarItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
+begin
+  ;
 end;
 
 { TFrmPedidoItem }
@@ -176,9 +184,49 @@ begin
   ;
 end;
 
-procedure TFrmPedidoItem.DoSalvarPedido(Sender: TObject);
+procedure TFrmPedidoItem.DoSalvarItemPedido(Sender: TObject);
+var
+  ins : Boolean;
+  inf : Extended;
 begin
-  ;
+  try
+    inf :=
+      lblProduto.TagFloat    +
+      lblQuantidade.TagFloat +
+      lblValorUnit.TagFloat;
+
+    if (inf = 0) then
+      ExibirMsgAlerta('Sem dados informados!')
+    else
+    if (lblProduto.TagFloat = 0) or (Trim(lblProduto.Text) = EmptyStr) then
+      ExibirMsgAlerta('Selecione um produto para o pedido!')
+    else
+    begin
+      dao.Model.ID     := StringToGUID(labelTituloCadastro.TagString);
+      dao.Model.Codigo := Round( labelTituloCadastro.TagFloat );
+
+      dao.Model.Produto.ID := StringToGUID( IfThen(lblProduto.TagFloat  = 0, GUIDToString(GUID_NULL), lblProduto.TagString) );  // Postar dados na classe caso ele tenha sido editado
+      dao.Model.Quantidade := StrToCurr(lblQuantidade.Text);
+
+      if (lblValorUnit.TagFloat = 0) then
+        dao.Model.ValorUnitario := 0.0
+      else
+        dao.Model.ValorUnitario := StrToCurr(lblValorUnit.Text.Replace('.', '').Replace(',', '')) / 100;
+
+      ins := (dao.Model.ID = GUID_NULL);
+
+      if ins then
+        dao.Insert()
+      else
+        dao.Update();
+
+      Self.Notificar;
+      Self.Close;
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar salvar o pedido.' + #13 + E.Message);
+  end;
 end;
 
 procedure TFrmPedidoItem.FormActivate(Sender: TObject);
@@ -235,6 +283,18 @@ begin
     daoProduto.Model := daoProduto.Lista[0];
     ExibirCadastroProduto(Self, False);
   end;
+end;
+
+procedure TFrmPedidoItem.imgQuantidadeMaisClick(Sender: TObject);
+begin
+  dao.IncrementarQuantidade();
+  lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, dao.Model.Quantidade);
+end;
+
+procedure TFrmPedidoItem.imgQuantidadeMenosClick(Sender: TObject);
+begin
+  dao.DecrementarQuantidade();
+  lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, dao.Model.Quantidade);
 end;
 
 procedure TFrmPedidoItem.Notificar;

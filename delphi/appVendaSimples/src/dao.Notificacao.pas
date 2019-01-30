@@ -254,7 +254,7 @@ begin
         aModel.NewID;
 
       if (aModel.Codigo = 0) then
-        aModel.Codigo := GetNewID(aDDL.getTableNameNotificacao, 'cd_notificacao');
+        aModel.Codigo := GetNewID(aDDL.getTableNameNotificacao, 'cd_notificacao', EmptyStr);
 
       ParamByName('id_notificacao').AsString   := GUIDToString(aModel.ID);
       ParamByName('cd_notificacao').AsCurrency := aModel.Codigo;

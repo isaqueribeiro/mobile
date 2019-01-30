@@ -35,6 +35,7 @@ type
       procedure Delete();
       procedure AddLista; overload;
       procedure AddLista(aPedido : TPedido); overload;
+      procedure RecalcularValorTotalPedido();
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
@@ -217,6 +218,9 @@ begin
     if (aModel.Referencia <> GUID_NULL) then
       aSQL.Add('  , cd_referencia   ');
 
+    if (aModel.Loja.ID <> GUID_NULL) then
+      aSQL.Add('  , id_loja         ');
+
     aSQL.Add(') values (');
     aSQL.Add('    :id_pedido      ');
     aSQL.Add('  , :cd_pedido      ');
@@ -235,6 +239,9 @@ begin
     if (aModel.Referencia <> GUID_NULL) then
       aSQL.Add('  , :cd_referencia  ');
 
+    if (aModel.Loja.ID <> GUID_NULL) then
+      aSQL.Add('  , :id_loja        ');
+
     aSQL.Add(')');
     aSQL.EndUpdate;
 
@@ -242,6 +249,12 @@ begin
     begin
       qrySQL.Close;
       qrySQL.SQL.Text := aSQL.Text;
+
+      if (aModel.ID = GUID_NULL) then
+        aModel.NewID;
+
+      if (aModel.Codigo = 0) then
+        aModel.Codigo := GetNewID(aDDL.getTableNamePedido, 'cd_pedido', EmptyStr);
 
       ParamByName('id_pedido').AsString     := GUIDToString(Model.ID);
       ParamByName('cd_pedido').AsCurrency   := Model.Codigo;
@@ -260,6 +273,9 @@ begin
 
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
+
+      if (aModel.Loja.ID <> GUID_NULL) then
+        ParamByName('id_loja').AsString := GUIDToString(aModel.Loja.ID);
 
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toIncluido;
@@ -322,6 +338,55 @@ begin
       end;
       qrySQL.Close;
     end;
+  finally
+    aSQL.Free;
+  end;
+end;
+
+procedure TPedidoDao.RecalcularValorTotalPedido;
+var
+  aSQL : TStringList;
+  aValorTotal   ,
+  aValorDesconto,
+  aValorPedido  : Currency;
+begin
+  aSQL := TStringList.Create;
+  try
+    aValorTotal    := 0.0;
+    aValorDesconto := 0.0;
+    aValorPedido   := 0.0;
+
+    aSQL.BeginUpdate;
+    aSQL.Add('Select');
+    aSQL.Add('    sum(i.vl_total)    as vl_total    ');
+    aSQL.Add('  , sum(i.vl_desconto) as vl_desconto ');
+    aSQL.Add('  , sum(i.vl_liquido)  as vl_liquido  ');
+    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + ' i ');
+    aSQL.Add('where (i.id_pedido = :id_pedido)');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
+      if qrySQL.OpenOrExecute then
+      begin
+        aValorTotal    := FieldByName('vl_total').AsCurrency;
+        aValorDesconto := FieldByName('vl_desconto').AsCurrency;
+        aValorPedido   := FieldByName('vl_liquido').AsCurrency;
+      end;
+
+      qrySQL.Close;
+    end;
+
+    aModel.ValorTotal    := aValorTotal;
+    aModel.ValorDesconto := aValorDesconto;
+    aModel.ValorPedido   := aValorPedido;
+
+    if (aModel.ID <> GUID_NULL) then
+      Self.Update();
   finally
     aSQL.Free;
   end;

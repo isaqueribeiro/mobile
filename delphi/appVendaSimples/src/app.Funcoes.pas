@@ -181,8 +181,13 @@ var
   aGuid : TGUID;
 begin
   try
-    aGuid := StringToGUID(Trim(aStr));
-    Result := True;
+    if (Trim(aStr) <> EmptyStr) then
+    begin
+      aGuid := StringToGUID(Trim(aStr));
+      Result := True;
+    end
+    else
+      Result := False;
   except
     Result := False;
   end;

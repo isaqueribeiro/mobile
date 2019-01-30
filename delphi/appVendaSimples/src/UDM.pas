@@ -52,7 +52,7 @@ var
   function GetDescricaoTipoPedidoStr(aTipo : TTipoPedido) : String;
   function GetTipoPedido(aStrTipo : String) : TTipoPedido;
 
-  function GetNewID(const aTabela, aCampo : String) : Currency;
+  function GetNewID(const aTabela, aCampo, aFiltro : String) : Currency;
 
 implementation
 
@@ -133,7 +133,7 @@ begin
   end;
 end;
 
-function GetNewID(const aTabela, aCampo : String) : Currency;
+function GetNewID(const aTabela, aCampo, aFiltro : String) : Currency;
 var
   aRetorno : Currency;
   aQuery   : TFDQuery;
@@ -151,6 +151,10 @@ begin
       SQL.Add('Select');
       SQL.Add('  ifnull(max(' + aCampo + '), 0) as valor');
       SQL.Add('from ' + aTabela);
+
+      if (Trim(aFiltro) <> EmptyStr) then
+        SQL.Add('where ' + Trim(aFiltro));
+
       SQL.EndUpdate;
 
       if OpenOrExecute then

@@ -241,7 +241,7 @@ begin
         aModel.NewID;
 
       if (aModel.Codigo = 0) then
-        aModel.Codigo := GetNewID(aDDL.getTableNameCliente, 'cd_cliente');
+        aModel.Codigo := GetNewID(aDDL.getTableNameCliente, 'cd_cliente', EmptyStr);
 
       ParamByName('id_cliente').AsString   := GUIDToString(aModel.ID);
       ParamByName('cd_cliente').AsCurrency := aModel.Codigo;

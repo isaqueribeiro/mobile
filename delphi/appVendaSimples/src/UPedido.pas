@@ -4,6 +4,8 @@ interface
 
 uses
   model.Cliente,
+  model.Pedido,
+  model.PedidoItem,
   dao.Pedido,
   dao.PedidoItem,
   dao.Cliente,
@@ -68,7 +70,7 @@ type
     lblTotalPedido: TLabel;
     ListViewItemPedido: TListView;
     img_produto_sem_foto: TImage;
-    imgSemProduto: TImage;
+    imgSemItemPedido: TImage;
     lblSemProduto: TLabel;
     img_item_menos: TImage;
     img_item_mais: TImage;
@@ -78,10 +80,14 @@ type
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarPedido(Sender: TObject);
     procedure DoInserirItemPedido(Sender: TObject);
+    procedure DoCarregarItens(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure imgClienteClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ListViewItemPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
+      const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
   strict private
     { Private declarations }
     aDao : TPedidoDao;
@@ -90,6 +96,10 @@ type
     procedure AtualizarPedidoItem;
 
     procedure ControleEdicao(const aEditar : Boolean);
+    procedure CarregarItens(aPedidoID: TGUID; aPagina: Integer);
+
+    procedure FormatarItemPedidoListView(aItem  : TListViewItem);
+    procedure AdicionarItemPedidoListView(aPedidoIten : TPedidoItem);
 
 //    procedure AdicionarObservador(Observer : IObservadorCliente);
 //    procedure RemoverObservador(Observer : IObservadorCliente);
@@ -220,6 +230,44 @@ begin
   aForm.Show;
 end;
 
+procedure TFrmPedido.AdicionarItemPedidoListView(aPedidoIten: TPedidoItem);
+var
+  aItem   : TListViewItem;
+  aImage  : TListItemImage;
+  aBitmat : TBitmap;
+begin
+  aItem := ListViewItemPedido.Items.Add;
+  aItem.TagObject := aPedidoIten;
+
+  // Foto
+  aImage := TListItemImage(aItem.Objects.FindDrawable('Image4'));
+  if Assigned(aPedidoIten.Produto.Foto) then
+  begin
+    aBitmat := TBitmap.Create;
+    aBitmat.LoadFromStream(aPedidoIten.Produto.Foto);
+    aImage.OwnsBitmap  := True; // Para imagens que vêm da base de dados
+    aImage.Bitmap      := aBitmat;
+    aImage.ScalingMode := TImageScalingMode.Stretch;
+  end
+  else
+  begin
+    aImage.Bitmap      := img_produto_sem_foto.Bitmap;
+    aImage.ScalingMode := TImageScalingMode.Original;
+  end;
+
+  // Ícone (-)
+  aImage := TListItemImage(aItem.Objects.FindDrawable('Image5'));
+  aImage.Bitmap      := img_item_menos.Bitmap;
+  aImage.ScalingMode := TImageScalingMode.Stretch;
+
+  // Ícone (+)
+  aImage := TListItemImage(aItem.Objects.FindDrawable('Image6'));
+  aImage.Bitmap      := img_item_mais.Bitmap;
+  aImage.ScalingMode := TImageScalingMode.Stretch;
+
+  FormatarItemPedidoListView(aItem);
+end;
+
 procedure TFrmPedido.AtualizarCliente;
 var
   daoCliente : TClienteDao;
@@ -236,6 +284,25 @@ var
   daoItem : TPedidoItemDao;
 begin
   daoItem := TPedidoItemDao.GetInstance;
+
+  // Inserir item na lista ou atualizá-lo na mesma lista
+  // ...
+
+  Dao.RecalcularValorTotalPedido();
+
+  lblTotalPedido.TagFloat := IfThen(Dao.Model.ValorTotal <= 0.0, 0, 1);
+  lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, Dao.Model.ValorPedido);
+end;
+
+procedure TFrmPedido.CarregarItens(aPedidoID: TGUID; aPagina: Integer);
+var
+  dao : TPedidoItemDao;
+  I : Integer;
+begin
+  dao := TPedidoItemDao.GetInstance;
+  dao.Load(aPedidoID);
+  for I := Low(dao.Lista) to High(dao.Lista) do
+    AdicionarItemPedidoListView(dao.Lista[I]);
 end;
 
 procedure TFrmPedido.ControleEdicao(const aEditar: Boolean);
@@ -248,6 +315,24 @@ procedure TFrmPedido.DoBuscarCliente(Sender: TObject);
 begin
   if Dao.Model.Tipo = TTipoPedido.tpOrcamento then
     SelecionarCliente(Self);
+end;
+
+procedure TFrmPedido.DoCarregarItens(Sender: TObject);
+begin
+  try
+    imgSemItemPedido.Visible := False;
+
+    ListViewItemPedido.BeginUpdate;
+    ListViewItemPedido.Items.Clear;
+
+    CarregarItens(Dao.Model.ID, 0);
+
+    ListViewItemPedido.EndUpdate;
+    imgSemItemPedido.Visible := (ListViewItemPedido.Items.Count = 0);
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar carregar os itens do pedido.' + #13 + E.Message);
+  end;
 end;
 
 procedure TFrmPedido.DoEditarCampo(Sender: TObject);
@@ -316,7 +401,18 @@ end;
 
 procedure TFrmPedido.DoInserirItemPedido(Sender: TObject);
 begin
-  NovoItemPedido(dao.Model, Self);
+  if (lblCliente.TagFloat = 0) then
+    ExibirMsgAlerta('Selecione um cliente para que o orçamento antes de inserir um item')
+  else
+  begin
+    if (dao.Model.ID = GUID_NULL) then
+    begin
+      dao.Insert();
+      Self.Notificar;
+    end;
+
+    NovoItemPedido(dao.Model, Self);
+  end;
 end;
 
 procedure TFrmPedido.DoMudarAbaPedido(Sender: TObject);
@@ -342,6 +438,8 @@ begin
     recAbaItemPedido.Opacity   := 1;
     recAbaItemPedido.Fill.Color:= crAzul;
     lblAbaItemPedido.FontColor := crBranco;
+
+    DoCarregarItens(Sender);
   end;
 
 end;
@@ -406,6 +504,60 @@ begin
   ControleEdicao( (Dao.Model.Tipo = TTipoPedido.tpOrcamento) );
 end;
 
+procedure TFrmPedido.FormatarItemPedidoListView(aItem: TListViewItem);
+var
+  aPedidoItem : TPedidoItem;
+  aText    : TListItemText;
+//  aImage   : TListItemImage;
+//  aBitmat  : TBitmap;
+begin
+  with aItem do
+  begin
+    aPedidoItem := TPedidoItem(aItem.TagObject);
+
+    // Descrição
+    aText := TListItemText(Objects.FindDrawable('Text2'));
+    aText.Text     := aPedidoItem.Produto.Descricao;
+    aText.WordWrap := True;
+
+    // Valor Unitário (R$)
+    aText := TListItemText(Objects.FindDrawable('Text1'));
+    aText.Text := 'R$ ' + FormatFloat(',0.00', aPedidoItem.Produto.Valor);
+
+    // Quantidade
+    aText := TListItemText(Objects.FindDrawable('Text7'));
+    aText.Text := FormatFloat(',0.###', aPedidoItem.Quantidade);
+
+    // Total Líquido (R$)
+    aText := TListItemText(Objects.FindDrawable('Text4'));
+    aText.Text := 'R$ ' + FormatFloat(',0.00', aPedidoItem.ValorLiquido);
+//
+//    // Foto
+//    aImage := TListItemImage(Objects.FindDrawable('Image4'));
+//    if Assigned(aPedidoItem.Produto.Foto) then
+//    begin
+//      aBitmat := TBitmap.Create;
+//      aBitmat.LoadFromStream(aPedidoItem.Produto.Foto);
+//      aImage.OwnsBitmap  := True;
+//      aImage.Bitmap      := aBitmat;
+//      aImage.ScalingMode := TImageScalingMode.Stretch;
+//    end
+//    else
+//    begin
+//      aImage.Bitmap      := img_produto_sem_foto.Bitmap;
+//      aImage.ScalingMode := TImageScalingMode.Original;
+//    end;
+  end;
+end;
+
+procedure TFrmPedido.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  if (lblTotalPedido.TagFloat = 0) then
+    if (Dao.Model.ID <> GUID_NULL) then
+      Dao.Delete();
+end;
+
 procedure TFrmPedido.FormCreate(Sender: TObject);
 begin
   inherited;
@@ -452,6 +604,40 @@ begin
     daoCliente.Load(lblCliente.TagString);
     daoCliente.Model := daoCliente.Lista[0];
     ExibirCadastroCliente(Self, False);
+  end;
+end;
+
+procedure TFrmPedido.ListViewItemPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
+  const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+var
+  aItem   : TListViewItem;
+  daoItem : TPedidoItemDao;
+begin
+  if (TListView(Sender).Selected <> nil) then
+  begin
+    daoItem := TPedidoItemDao.GetInstance;
+    daoItem.Model := TPedidoItem(ListViewItemPedido.Items.Item[ItemIndex].TagObject);
+
+    if ItemObject is TListItemImage then
+    begin
+      // Ícone (-)
+      if (TListItemImage(ItemObject).Name = 'Image5') then
+        daoItem.DecrementarQuantidade
+      else
+      // Ícone (+)
+      if (TListItemImage(ItemObject).Name = 'Image6') then
+        daoItem.IncrementarQuantidade;
+
+      daoItem.Update();
+      dao.RecalcularValorTotalPedido();
+
+      aItem := TListViewItem(ListViewItemPedido.Items.Item[ListViewItemPedido.ItemIndex]);
+      aItem.TagObject := daoItem.Model;
+
+      FormatarItemPedidoListView(aItem);
+    end
+    else
+      EditarItemPedido(Dao.Model, Self);
   end;
 end;
 
