@@ -243,7 +243,7 @@ begin
       qrySQL.Close;
       qrySQL.SQL.Text := aSQL.Text;
 
-      ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
+      ParamByName('id_pedido').AsString := GUIDToString(aPedidoID);
 
       if qrySQL.OpenOrExecute then
       begin

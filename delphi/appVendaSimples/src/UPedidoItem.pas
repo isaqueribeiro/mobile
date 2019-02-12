@@ -164,7 +164,11 @@ begin
   lblValorUnit.Text     := FormatFloat(lblValorUnit.TagString, daoProduto.Model.Valor);
   lblValorUnit.TagFloat := 1;
 
-  Dao.Model.Produto := daoProduto.Model;
+  Dao.Model.Produto       := daoProduto.Model;
+  Dao.Model.ValorUnitario := daoProduto.Model.Valor;
+
+  lblDescricao.Text     := FormatFloat(lblDescricao.TagString,  dao.Model.ValorLiquido);
+  lblDescricao.TagFloat := IfThen(dao.Model.ValorLiquido <= 0.0, 0, 1);
 end;
 
 procedure TFrmPedidoItem.ControleEdicao(const aEditar: Boolean);
@@ -289,12 +293,14 @@ procedure TFrmPedidoItem.imgQuantidadeMaisClick(Sender: TObject);
 begin
   dao.IncrementarQuantidade();
   lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, dao.Model.Quantidade);
+  lblDescricao.Text  := FormatFloat(lblDescricao.TagString,  dao.Model.ValorLiquido);
 end;
 
 procedure TFrmPedidoItem.imgQuantidadeMenosClick(Sender: TObject);
 begin
   dao.DecrementarQuantidade();
   lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, dao.Model.Quantidade);
+  lblDescricao.Text  := FormatFloat(lblDescricao.TagString,  dao.Model.ValorLiquido);
 end;
 
 procedure TFrmPedidoItem.Notificar;
@@ -302,7 +308,7 @@ var
   Observer : IObservadorPedidoItem;
 begin
   for Observer in FObservers do
-     Observer.AtualizarPedidoItem;
+    Observer.AtualizarPedidoItem;
 end;
 
 procedure TFrmPedidoItem.RemoverObservador(Observer: IObservadorPedidoItem);

@@ -3,6 +3,11 @@ unit UPedido;
 interface
 
 uses
+  System.StrUtils,
+  System.Math,
+  System.DateUtils,
+  System.Generics.Collections,
+
   model.Cliente,
   model.Pedido,
   model.PedidoItem,
@@ -11,10 +16,7 @@ uses
   dao.Cliente,
   interfaces.Cliente,
   interfaces.PedidoItem,
-
-  System.StrUtils,
-  System.Math,
-  System.DateUtils,
+  interfaces.Pedido,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
@@ -23,7 +25,7 @@ uses
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.DateTimeCtrls;
 
 type
-  TFrmPedido = class(TFrmPadraoCadastro, IObservadorCliente, IObservadorPedidoItem)
+  TFrmPedido = class(TFrmPadraoCadastro, IObservadorCliente, IObservadorPedidoItem, IPedidoObservado)
     imgDuplicar: TImage;
     lblDuplicar: TLabel;
     lytAbaPedido: TLayout;
@@ -91,6 +93,7 @@ type
   strict private
     { Private declarations }
     aDao : TPedidoDao;
+    FObservers : TList<IObservadorPedido>;
 
     procedure AtualizarCliente;
     procedure AtualizarPedidoItem;
@@ -101,9 +104,9 @@ type
     procedure FormatarItemPedidoListView(aItem  : TListViewItem);
     procedure AdicionarItemPedidoListView(aPedidoIten : TPedidoItem);
 
-//    procedure AdicionarObservador(Observer : IObservadorCliente);
-//    procedure RemoverObservador(Observer : IObservadorCliente);
-//    procedure RemoverTodosObservadores;
+//    procedure AdicionarObservador(Observer : IObservadorPedido);
+    procedure RemoverObservador(Observer : IObservadorPedido);
+    procedure RemoverTodosObservadores;
     procedure Notificar;
 
     class var aInstance : TFrmPedido;
@@ -111,11 +114,16 @@ type
     { Public declarations }
     property Dao : TPedidoDao read aDao;
 
+    procedure AdicionarObservador(Observer : IObservadorPedido);
+//    procedure RemoverObservador(Observer : IObservadorPedido);
+//    procedure RemoverTodosObservadores;
+//    procedure Notificar;
+//
     class function GetInstance : TFrmPedido;
   end;
 
-  procedure NovoCadastroPedido(); //(Observer : IObservadorPedido);
-  procedure ExibirCadastroPedido(); //(Observer : IObservadorPedido);
+  procedure NovoCadastroPedido(Observer : IObservadorPedido);
+  procedure ExibirCadastroPedido(Observer : IObservadorPedido);
 
 //var
 //  FrmPedido: TFrmPedido;
@@ -132,12 +140,12 @@ uses
   , UCliente
   , UPedidoItem;
 
-procedure NovoCadastroPedido(); //(Observer : IObservadorPedido);
+procedure NovoCadastroPedido(Observer : IObservadorPedido);
 var
   aForm : TFrmPedido;
 begin
   aForm := TFrmPedido.GetInstance;
-//  aForm.AdicionarObservador(Observer);
+  aForm.AdicionarObservador(Observer);
 
   with aForm, dao do
   begin
@@ -183,12 +191,12 @@ begin
   aForm.Show;
 end;
 
-procedure ExibirCadastroPedido(); //(Observer : IObservadorPedido);
+procedure ExibirCadastroPedido(Observer : IObservadorPedido);
 var
   aForm : TFrmPedido;
 begin
   aForm := TFrmPedido.GetInstance;
-//  aForm.AdicionarObservador(Observer);
+  aForm.AdicionarObservador(Observer);
 
   with aForm, dao do
   begin
@@ -268,6 +276,12 @@ begin
   FormatarItemPedidoListView(aItem);
 end;
 
+procedure TFrmPedido.AdicionarObservador(Observer: IObservadorPedido);
+begin
+  if (FObservers.IndexOf(Observer) = -1) then
+    FObservers.Add(Observer);
+end;
+
 procedure TFrmPedido.AtualizarCliente;
 var
   daoCliente : TClienteDao;
@@ -282,11 +296,29 @@ end;
 procedure TFrmPedido.AtualizarPedidoItem;
 var
   daoItem : TPedidoItemDao;
+  aItem   : TListViewItem;
+  aItemIndex : Integer;
 begin
-  daoItem := TPedidoItemDao.GetInstance;
+  daoItem    := TPedidoItemDao.GetInstance;
+  aItemIndex := ListViewItemPedido.ItemIndex;
 
-  // Inserir item na lista ou atualizá-lo na mesma lista
-  // ...
+  if (daoItem.Operacao = TTipoOperacaoDao.toIncluido) then
+  begin
+    AdicionarItemPedidoListView(daoItem.Model);
+    ListViewItemPedido.ItemIndex := (ListViewItemPedido.Items.Count - 1);
+  end
+  else
+  if (daoItem.Operacao = TTipoOperacaoDao.toEditado) and (aItemIndex > -1) then
+  begin
+    aItem := TListViewItem(ListViewItemPedido.Items.Item[aItemIndex]);
+    aItem.TagObject := daoItem.Model;
+    FormatarItemPedidoListView(aItem);
+  end
+  else
+  if (daoItem.Operacao = TTipoOperacaoDao.toExcluido) and (aItemIndex > -1) then
+    ListViewItemPedido.Items.Delete(aItemIndex);
+
+  imgSemItemPedido.Visible := (ListViewItemPedido.Items.Count = 0);
 
   Dao.RecalcularValorTotalPedido();
 
@@ -296,13 +328,13 @@ end;
 
 procedure TFrmPedido.CarregarItens(aPedidoID: TGUID; aPagina: Integer);
 var
-  dao : TPedidoItemDao;
+  daoItem : TPedidoItemDao;
   I : Integer;
 begin
-  dao := TPedidoItemDao.GetInstance;
-  dao.Load(aPedidoID);
-  for I := Low(dao.Lista) to High(dao.Lista) do
-    AdicionarItemPedidoListView(dao.Lista[I]);
+  daoItem := TPedidoItemDao.GetInstance;
+  daoItem.Load(aPedidoID);
+  for I := Low(dao.Lista) to High(daoItem.Lista) do
+    AdicionarItemPedidoListView(daoItem.Lista[I]);
 end;
 
 procedure TFrmPedido.ControleEdicao(const aEditar: Boolean);
@@ -556,11 +588,15 @@ begin
   if (lblTotalPedido.TagFloat = 0) then
     if (Dao.Model.ID <> GUID_NULL) then
       Dao.Delete();
+  Self.Notificar;
+  RemoverTodosObservadores;
 end;
 
 procedure TFrmPedido.FormCreate(Sender: TObject);
 begin
   inherited;
+  FObservers := TList<IObservadorPedido>.Create;
+
   lytExcluir.Visible := False;
   lytExcluir.Align   := TAlignLayout.Bottom;
   lytExcluir.Parent  := LayoutDadoPedido;
@@ -586,8 +622,8 @@ begin
     Application.RealCreateForms;
   end;
 
-//  if not Assigned(aInstance.FObservers) then
-//    aInstance.FObservers := TList<IObservadorPedido>.Create;
+  if not Assigned(aInstance.FObservers) then
+    aInstance.FObservers := TList<IObservadorPedido>.Create;
 
   aInstance.aDao := TPedidoDao.GetInstance;
 
@@ -631,6 +667,9 @@ begin
       daoItem.Update();
       dao.RecalcularValorTotalPedido();
 
+      lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
+      lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
+
       aItem := TListViewItem(ListViewItemPedido.Items.Item[ListViewItemPedido.ItemIndex]);
       aItem.TagObject := daoItem.Model;
 
@@ -642,8 +681,24 @@ begin
 end;
 
 procedure TFrmPedido.Notificar;
+var
+  Observer : IObservadorPedido;
 begin
-  ;
+  for Observer in FObservers do
+     Observer.AtualizarPedido;
+end;
+
+procedure TFrmPedido.RemoverObservador(Observer: IObservadorPedido);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TFrmPedido.RemoverTodosObservadores;
+var
+  I : Integer;
+begin
+  for I := 0 to (FObservers.Count - 1) do
+    FObservers.Delete(I);
 end;
 
 end.

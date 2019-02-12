@@ -12,6 +12,7 @@ uses
   dao.Notificacao,
   interfaces.Usuario,
   interfaces.Cliente,
+  interfaces.Pedido,
 
   System.StrUtils,
   System.Math,
@@ -22,7 +23,7 @@ uses
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.Ani;
 
 type
-  TFrmPrincipal = class(TForm, IObservadorCliente, IObservadorUsuario)
+  TFrmPrincipal = class(TForm, IObservadorCliente, IObservadorPedido, IObservadorUsuario)
     StyleBook: TStyleBook;
     layoutTabs: TLayout;
     layoutTabPedido: TLayout;
@@ -616,7 +617,7 @@ procedure TFrmPrincipal.imageAddPedidoClick(Sender: TObject);
 begin
 //  // Para teste
 //  AddPedidoListView(TPedido.Create);
-  NovoCadastroPedido;
+  NovoCadastroPedido(Self);
 end;
 
 procedure TFrmPrincipal.lblCancelarImagemClick(Sender: TObject);
@@ -721,7 +722,7 @@ begin
   begin
     dao := TPedidoDao.GetInstance;
     dao.Model := TPedido(ListViewPedido.Items.Item[ItemIndex].TagObject);
-    ExibirCadastroPedido(); //(Self);
+    ExibirCadastroPedido(Self);
   end;
 end;
 

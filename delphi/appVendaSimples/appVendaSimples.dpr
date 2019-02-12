@@ -31,6 +31,7 @@ uses
   interfaces.Usuario in 'src\interfaces.Usuario.pas',
   interfaces.Cliente in 'src\interfaces.Cliente.pas',
   interfaces.Produto in 'src\interfaces.Produto.pas',
+  interfaces.Pedido in 'src\interfaces.Pedido.pas',
   interfaces.PedidoItem in 'src\interfaces.PedidoItem.pas',
   UProduto in 'src\UProduto.pas' {FrmProduto},
   UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar},
