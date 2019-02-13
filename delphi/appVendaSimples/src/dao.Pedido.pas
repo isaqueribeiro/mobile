@@ -39,6 +39,7 @@ type
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
+      function PodeExcluir : Boolean;
 
       class function GetInstance : TPedidoDao;
   end;
@@ -341,6 +342,11 @@ begin
   finally
     aSQL.Free;
   end;
+end;
+
+function TPedidoDao.PodeExcluir: Boolean;
+begin
+  Result := not aModel.Entregue;
 end;
 
 procedure TPedidoDao.RecalcularValorTotalPedido;

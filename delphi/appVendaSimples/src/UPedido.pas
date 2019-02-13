@@ -81,6 +81,8 @@ type
     procedure DoBuscarCliente(Sender: TObject);
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarPedido(Sender: TObject);
+    procedure DoExcluirPedido(Sender: TObject);
+    procedure DoDuplicarPedido(Sender: TObject);
     procedure DoInserirItemPedido(Sender: TObject);
     procedure DoCarregarItens(Sender: TObject);
 
@@ -100,6 +102,8 @@ type
 
     procedure ControleEdicao(const aEditar : Boolean);
     procedure CarregarItens(aPedidoID: TGUID; aPagina: Integer);
+    procedure ExcluirPedido(Sender: TObject);
+    procedure DuplicarPedido(Sender: TObject);
 
     procedure FormatarItemPedidoListView(aItem  : TListViewItem);
     procedure AdicionarItemPedidoListView(aPedidoIten : TPedidoItem);
@@ -324,6 +328,8 @@ begin
 
   lblTotalPedido.TagFloat := IfThen(Dao.Model.ValorTotal <= 0.0, 0, 1);
   lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, Dao.Model.ValorPedido);
+
+  Self.Notificar;
 end;
 
 procedure TFrmPedido.CarregarItens(aPedidoID: TGUID; aPagina: Integer);
@@ -333,7 +339,7 @@ var
 begin
   daoItem := TPedidoItemDao.GetInstance;
   daoItem.Load(aPedidoID);
-  for I := Low(dao.Lista) to High(daoItem.Lista) do
+  for I := Low(daoItem.Lista) to High(daoItem.Lista) do
     AdicionarItemPedidoListView(daoItem.Lista[I]);
 end;
 
@@ -365,6 +371,11 @@ begin
     On E : Exception do
       ExibirMsgErro('Erro ao tentar carregar os itens do pedido.' + #13 + E.Message);
   end;
+end;
+
+procedure TFrmPedido.DoDuplicarPedido(Sender: TObject);
+begin
+  ExibirMsgConfirmacao('Duplicar', 'Deseja duplicar o pedido selecionado?', DuplicarPedido);
 end;
 
 procedure TFrmPedido.DoEditarCampo(Sender: TObject);
@@ -431,6 +442,11 @@ begin
   ChangeTabActionEditar.ExecuteTarget(Sender);
 end;
 
+procedure TFrmPedido.DoExcluirPedido(Sender: TObject);
+begin
+  ExibirMsgConfirmacao('Excluir', 'Deseja excluir o pedido selecionado?', ExcluirPedido);
+end;
+
 procedure TFrmPedido.DoInserirItemPedido(Sender: TObject);
 begin
   if (lblCliente.TagFloat = 0) then
@@ -441,6 +457,9 @@ begin
     begin
       dao.Insert();
       Self.Notificar;
+
+      labelTituloCadastro.TagString := GUIDToString(dao.Model.ID); // Destinado a guardar o ID guid do registro
+      labelTituloCadastro.TagFloat  := dao.Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
     end;
 
     NovoItemPedido(dao.Model, Self);
@@ -530,6 +549,84 @@ begin
   end;
 end;
 
+procedure TFrmPedido.DuplicarPedido(Sender: TObject);
+var
+  daoItem : TPedidoItemDao;
+  msg : TFrmMensagem;
+  I : Integer;
+  aPedidoID : TGUID;
+begin
+  try
+    msg := TFrmMensagem.GetInstance;
+    msg.Close;
+
+    if Assigned(dao.Model) then
+    begin
+      aPedidoID := dao.Model.ID;
+
+      // Preparar para duplicação do Pedido
+      dao.Model.ID     := GUID_NULL;
+      dao.Model.Codigo := 0;
+      dao.Model.Tipo   := TTipoPedido.tpOrcamento;
+      dao.Model.Entregue    := False;
+      dao.Model.DataEmissao := Date;
+
+      dao.Insert(); // Inserir novo pedido
+
+      // Guarda referências do novo pedido
+      labelTituloCadastro.TagString := GUIDToString(dao.Model.ID); // Destinado a guardar o ID guid do registro
+      labelTituloCadastro.TagFloat  := dao.Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
+      lblTipo.Text      := GetDescricaoTipoPedidoStr(dao.Model.Tipo);
+      lblTipo.TagString := GetTipoPedidoStr(dao.Model.Tipo);
+      lblData.Text      := FormatDateTime('dd/mm/yyyy', Dao.Model.DataEmissao);
+
+      daoItem := TPedidoItemDao.GetInstance;
+      daoItem.Load(aPedidoID);
+
+      for I := Low(daoItem.Lista) to High(daoItem.Lista) do
+      begin
+        daoItem.Model := daoItem.Lista[I];
+        daoItem.Model.ID         := GUID_NULL;
+        daoItem.Model.Pedido     := Dao.Model;
+        daoItem.Model.Referencia := GUID_NULL;
+        daoItem.Insert();
+      end;
+
+      Self.Notificar;
+      CarregarItens(dao.Model.ID, 0);
+
+      ExibirMsgSucesso('Pedido duplicado com sucesso');
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar duplicar o pedido.' + #13 + E.Message);
+  end;
+end;
+
+procedure TFrmPedido.ExcluirPedido(Sender: TObject);
+var
+  msg : TFrmMensagem;
+begin
+  try
+    msg := TFrmMensagem.GetInstance;
+    if Assigned(dao.Model) then
+    begin
+      msg.Close;
+      if dao.PodeExcluir then
+      begin
+        dao.Delete();
+        Self.Notificar;
+        Self.Close;
+      end
+      else
+        ExibirMsgAlerta('Pedido não pode ser excluído por já ter sido entregue');
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar excluir o pedido.' + #13 + E.Message);
+  end;
+end;
+
 procedure TFrmPedido.FormActivate(Sender: TObject);
 begin
   inherited;
@@ -585,10 +682,11 @@ end;
 procedure TFrmPedido.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
-  if (lblTotalPedido.TagFloat = 0) then
-    if (Dao.Model.ID <> GUID_NULL) then
-      Dao.Delete();
-  Self.Notificar;
+//  if (lblTotalPedido.TagFloat = 0) then
+//    if (Dao.Model.ID <> GUID_NULL) then
+//      Dao.Delete();
+//
+//  Self.Notificar;
   RemoverTodosObservadores;
 end;
 
@@ -674,6 +772,7 @@ begin
       aItem.TagObject := daoItem.Model;
 
       FormatarItemPedidoListView(aItem);
+      Self.Notificar;
     end
     else
       EditarItemPedido(Dao.Model, Self);
