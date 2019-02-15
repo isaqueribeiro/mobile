@@ -77,6 +77,7 @@ type
     img_item_menos: TImage;
     img_item_mais: TImage;
     lineRodapePedido: TLine;
+    img_item_excluir: TImage;
     procedure DoMudarAbaPedido(Sender: TObject);
     procedure DoBuscarCliente(Sender: TObject);
     procedure DoEditarCampo(Sender: TObject);
@@ -85,6 +86,7 @@ type
     procedure DoDuplicarPedido(Sender: TObject);
     procedure DoInserirItemPedido(Sender: TObject);
     procedure DoCarregarItens(Sender: TObject);
+    procedure DoExcluirItem(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -92,6 +94,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ListViewItemPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+  private
+    aPedidoSalvo : Boolean;
   strict private
     { Private declarations }
     aDao : TPedidoDao;
@@ -188,6 +192,7 @@ begin
     lblTotalPedido.TagFloat := 0;
 
     lytExcluir.Visible := False;
+    aPedidoSalvo := False;
 
     DoMudarAbaPedido(lblAbaDadoPedido);
   end;
@@ -235,6 +240,7 @@ begin
     lblTotalPedido.TagFloat := IfThen(Model.ValorTotal      <= 0.0     , 0, 1);
 
     lytExcluir.Visible := True;
+    aPedidoSalvo := True;
 
     DoMudarAbaPedido(lblAbaDadoPedido);
   end;
@@ -276,6 +282,12 @@ begin
   aImage := TListItemImage(aItem.Objects.FindDrawable('Image6'));
   aImage.Bitmap      := img_item_mais.Bitmap;
   aImage.ScalingMode := TImageScalingMode.Stretch;
+
+  // Excluir
+  aImage := TListItemImage(aItem.Objects.FindDrawable('Image8'));
+  aImage.Bitmap      := img_item_excluir.Bitmap;
+  aImage.ScalingMode := TImageScalingMode.Stretch;
+  aImage.Visible     := not Dao.Model.Entregue;
 
   FormatarItemPedidoListView(aItem);
 end;
@@ -442,6 +454,29 @@ begin
   ChangeTabActionEditar.ExecuteTarget(Sender);
 end;
 
+procedure TFrmPedido.DoExcluirItem(Sender: TObject);
+var
+  aMsg  : TFrmMensagem;
+  aItem : TPedidoItemDao;
+begin
+  aMsg  := TFrmMensagem.GetInstance;
+  aMsg.Close;
+
+  aItem := TPedidoItemDao.GetInstance;
+  if not dao.Model.Entregue then
+  begin
+    aItem.Delete;
+    ListViewItemPedido.Items.Delete(ListViewItemPedido.ItemIndex);
+
+    dao.RecalcularValorTotalPedido();
+
+    lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
+    lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
+
+    Self.Notificar;
+  end;
+end;
+
 procedure TFrmPedido.DoExcluirPedido(Sender: TObject);
 begin
   ExibirMsgConfirmacao('Excluir', 'Deseja excluir o pedido selecionado?', ExcluirPedido);
@@ -539,6 +574,8 @@ begin
         dao.Insert()
       else
         dao.Update();
+
+      aPedidoSalvo := True;
 
       Self.Notificar;
       Self.Close;
@@ -682,11 +719,13 @@ end;
 procedure TFrmPedido.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
-//  if (lblTotalPedido.TagFloat = 0) then
-//    if (Dao.Model.ID <> GUID_NULL) then
-//      Dao.Delete();
-//
-//  Self.Notificar;
+  if (aPedidoSalvo = False) then
+  begin
+    if (Dao.Model.ID <> GUID_NULL) then
+      Dao.Delete();
+    Self.Notificar;
+  end;
+
   RemoverTodosObservadores;
 end;
 
@@ -705,8 +744,9 @@ begin
   lblExcluir.Margins.Top     := 60;
 
   img_produto_sem_foto.Visible := False;
-  img_item_mais.Visible  := False;
-  img_item_menos.Visible := False;
+  img_item_mais.Visible    := False;
+  img_item_menos.Visible   := False;
+  img_item_excluir.Visible := False;
 
   imgTipo.Visible := False;
   lblTipo.Margins.Right := imgTipo.Margins.Right + imgTipo.Width;
@@ -746,6 +786,7 @@ procedure TFrmPedido.ListViewItemPedidoItemClickEx(const Sender: TObject; ItemIn
 var
   aItem   : TListViewItem;
   daoItem : TPedidoItemDao;
+  aQuantidade : Boolean;
 begin
   if (TListView(Sender).Selected <> nil) then
   begin
@@ -754,6 +795,15 @@ begin
 
     if ItemObject is TListItemImage then
     begin
+      // Excluir
+      if (TListItemImage(ItemObject).Name = 'Image8') then
+      begin
+        if Dao.Model.Entregue then
+          ExibirMsgAlerta('Produto não poderá ser excluído porque o pedido já foi entregue.')
+        else
+          ExibirMsgConfirmacao('Excluir', 'Confirma a exclusão do produto?', DoExcluirItem);
+      end
+      else
       // Ícone (-)
       if (TListItemImage(ItemObject).Name = 'Image5') then
         daoItem.DecrementarQuantidade
@@ -762,17 +812,23 @@ begin
       if (TListItemImage(ItemObject).Name = 'Image6') then
         daoItem.IncrementarQuantidade;
 
-      daoItem.Update();
-      dao.RecalcularValorTotalPedido();
+      aQuantidade := (TListItemImage(ItemObject).Name = 'Image5') or (TListItemImage(ItemObject).Name = 'Image6');
 
-      lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
-      lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
+      if aQuantidade then
+      begin
+        daoItem.Update();
 
-      aItem := TListViewItem(ListViewItemPedido.Items.Item[ListViewItemPedido.ItemIndex]);
-      aItem.TagObject := daoItem.Model;
+        aItem := TListViewItem(ListViewItemPedido.Items.Item[ListViewItemPedido.ItemIndex]);
+        aItem.TagObject := daoItem.Model;
 
-      FormatarItemPedidoListView(aItem);
-      Self.Notificar;
+        dao.RecalcularValorTotalPedido();
+
+        lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
+        lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
+
+        Self.Notificar;
+        FormatarItemPedidoListView(aItem);
+      end;
     end
     else
       EditarItemPedido(Dao.Model, Self);

@@ -379,9 +379,18 @@ begin
       ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
       if qrySQL.OpenOrExecute then
       begin
-        aValorTotal    := FieldByName('vl_total').AsCurrency;
-        aValorDesconto := FieldByName('vl_desconto').AsCurrency;
-        aValorPedido   := FieldByName('vl_liquido').AsCurrency;
+        if not FieldByName('vl_total').IsNull then
+        begin
+          aValorTotal    := FieldByName('vl_total').AsCurrency;
+          aValorDesconto := FieldByName('vl_desconto').AsCurrency;
+          aValorPedido   := FieldByName('vl_liquido').AsCurrency;
+        end
+        else
+        begin
+          aValorTotal    := 0.0;
+          aValorDesconto := 0.0;
+          aValorPedido   := 0.0;
+        end;
       end;
 
       qrySQL.Close;
