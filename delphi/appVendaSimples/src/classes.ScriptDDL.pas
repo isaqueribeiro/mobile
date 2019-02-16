@@ -76,7 +76,7 @@ begin
     aSQL.Add('    , cd_referencia    VARCHAR (38)'); // Referência do Cliente no Servidor Web (ID)
     aSQL.Add('    , dt_ultima_compra DATE');
     aSQL.Add('    , vl_ultima_compra NUMERIC (15,2) DEFAULT (0)');
-    aSQL.Add(')');
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -94,7 +94,7 @@ begin
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_CONFIG + ' (');
     aSQL.Add('      ky_campo VARCHAR (50) NOT NULL PRIMARY KEY');
     aSQL.Add('    , vl_campo VARCHAR (250)');
-    aSQL.Add(')');
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -118,7 +118,7 @@ begin
     aSQL.Add('    , ds_mensagem    VARCHAR (500)');
     aSQL.Add('    , sn_lida        CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , sn_destacar    CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
-    aSQL.Add(')');
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -150,7 +150,7 @@ begin
     aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Pedido no Servidor Web (ID)
     aSQL.Add('    , id_item         VARCHAR (38)');
-    aSQL.Add(')');
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -186,7 +186,21 @@ begin
     aSQL.Add('        id_produto    ');
     aSQL.Add('      )               ');
     aSQL.Add('      REFERENCES ' + TABLE_PRODUTO + ' (id_produto) ');
-    aSQL.Add(')');
+    aSQL.Add(');');
+
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_PEDIDO_ITEM + '_temp (');
+    aSQL.Add('      id_item         VARCHAR (38) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , cd_item         INTEGER NOT NULL');
+    aSQL.Add('    , id_pedido       VARCHAR (38)');
+    aSQL.Add('    , id_produto      VARCHAR (38) NOT NULL');
+    aSQL.Add('    , qt_item         NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('    , vl_item         NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('    , vl_total        NUMERIC (15,2) DEFAULT (0)'); // (vl_total   = qt_item * vl_item)
+    aSQL.Add('    , vl_desconto     NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('    , vl_liquido      NUMERIC (15,2) DEFAULT (0)'); // (vl_liquido = vl_total - vl_desconto)
+    aSQL.Add('    , ds_observacao   VARCHAR (500)');
+    aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Item do Pedido no Servidor Web (ID)
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -212,7 +226,7 @@ begin
     aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr(FLAG_SIM) + ') NOT NULL');
     aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Produto no Servidor Web (ID)
-    aSQL.Add(')');
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -237,7 +251,7 @@ begin
     aSQL.Add('    , nr_cpf         VARCHAR (15)');
     aSQL.Add('    , tk_dispositivo VARCHAR (250)');
     aSQL.Add('    , sn_ativo       CHAR (1) DEFAULT (' + QuotedStr(FLAG_SIM) + ') NOT NULL');
-    aSQL.Add(')');
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -256,7 +270,7 @@ begin
     aSQL.Add('      cd_versao INTEGER NOT NULL PRIMARY KEY');
     aSQL.Add('    , ds_versao VARCHAR (30)');
     aSQL.Add('    , dt_versao DATE');
-    aSQL.Add(')');
+    aSQL.Add(');');
     aSQL.EndUpdate;
   finally
     Result := aSQL;
@@ -330,7 +344,6 @@ begin
     aSQL.Add('DROP TABLE ' + getTableNameVersao + ';');
     // 4. Criar tabela como nova estrutura
     aSQL.AddStrings( getCreateTableVersao );
-    aSQL.Add(';');
     // 5. Inserir dados na tabela temporária na nova tabela
     aSQL.Add('INSERT INTO ' + getTableNameVersao + ' (');
     aSQL.Add('    cd_versao ');

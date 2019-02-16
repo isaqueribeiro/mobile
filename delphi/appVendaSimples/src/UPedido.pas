@@ -94,8 +94,6 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ListViewItemPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
-  private
-    aPedidoSalvo : Boolean;
   strict private
     { Private declarations }
     aDao : TPedidoDao;
@@ -192,8 +190,8 @@ begin
     lblTotalPedido.TagFloat := 0;
 
     lytExcluir.Visible := False;
-    aPedidoSalvo := False;
 
+    dao.InserirItensTemp();
     DoMudarAbaPedido(lblAbaDadoPedido);
   end;
 
@@ -240,8 +238,8 @@ begin
     lblTotalPedido.TagFloat := IfThen(Model.ValorTotal      <= 0.0     , 0, 1);
 
     lytExcluir.Visible := True;
-    aPedidoSalvo := True;
 
+    dao.InserirItensTemp();
     DoMudarAbaPedido(lblAbaDadoPedido);
   end;
 
@@ -465,15 +463,13 @@ begin
   aItem := TPedidoItemDao.GetInstance;
   if not dao.Model.Entregue then
   begin
-    aItem.Delete;
+    aItem.Delete();
     ListViewItemPedido.Items.Delete(ListViewItemPedido.ItemIndex);
 
-    dao.RecalcularValorTotalPedido();
+    dao.CalcularValorTotalPedidoTemp();
 
     lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
     lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
-
-    Self.Notificar;
   end;
 end;
 
@@ -484,21 +480,7 @@ end;
 
 procedure TFrmPedido.DoInserirItemPedido(Sender: TObject);
 begin
-  if (lblCliente.TagFloat = 0) then
-    ExibirMsgAlerta('Selecione um cliente para que o orçamento antes de inserir um item')
-  else
-  begin
-    if (dao.Model.ID = GUID_NULL) then
-    begin
-      dao.Insert();
-      Self.Notificar;
-
-      labelTituloCadastro.TagString := GUIDToString(dao.Model.ID); // Destinado a guardar o ID guid do registro
-      labelTituloCadastro.TagFloat  := dao.Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
-    end;
-
-    NovoItemPedido(dao.Model, Self);
-  end;
+  NovoItemPedido(dao.Model, Self);
 end;
 
 procedure TFrmPedido.DoMudarAbaPedido(Sender: TObject);
@@ -550,8 +532,8 @@ begin
     if (lblCliente.TagFloat = 0) or (Trim(lblCliente.Text) = EmptyStr) then
       ExibirMsgAlerta('Selecione um cliente para o pedido!')
     else
-    if (lblTotalPedido.TagFloat = 0) then
-      ExibirMsgAlerta('Pedido não possuem itens!')
+    if (ListViewItemPedido.Items.Count = 0) then
+      ExibirMsgAlerta('Pedido não possuem produto(s)!')
     else
     begin
       dao.Model.ID     := StringToGUID(labelTituloCadastro.TagString);
@@ -571,13 +553,17 @@ begin
       ins := (dao.Model.ID = GUID_NULL);
 
       if ins then
-        dao.Insert()
+      begin
+        dao.Insert();
+        Self.Notificar; // Notifica inserção
+      end
       else
         dao.Update();
 
-      aPedidoSalvo := True;
+      dao.GravarItens();
+      dao.RecalcularValorTotalPedido();
 
-      Self.Notificar;
+      Self.Notificar; // Notifica atualizãção de valores
       Self.Close;
     end;
   except
@@ -608,8 +594,6 @@ begin
       dao.Model.Entregue    := False;
       dao.Model.DataEmissao := Date;
 
-      dao.Insert(); // Inserir novo pedido
-
       // Guarda referências do novo pedido
       labelTituloCadastro.TagString := GUIDToString(dao.Model.ID); // Destinado a guardar o ID guid do registro
       labelTituloCadastro.TagFloat  := dao.Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
@@ -618,7 +602,7 @@ begin
       lblData.Text      := FormatDateTime('dd/mm/yyyy', Dao.Model.DataEmissao);
 
       daoItem := TPedidoItemDao.GetInstance;
-      daoItem.Load(aPedidoID);
+      daoItem.DeleteAllTemp();
 
       for I := Low(daoItem.Lista) to High(daoItem.Lista) do
       begin
@@ -629,8 +613,8 @@ begin
         daoItem.Insert();
       end;
 
-      Self.Notificar;
-      CarregarItens(dao.Model.ID, 0);
+      lytExcluir.Visible := False;
+      DoCarregarItens(Sender);
 
       ExibirMsgSucesso('Pedido duplicado com sucesso');
     end;
@@ -719,13 +703,6 @@ end;
 procedure TFrmPedido.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
-  if (aPedidoSalvo = False) then
-  begin
-    if (Dao.Model.ID <> GUID_NULL) then
-      Dao.Delete();
-    Self.Notificar;
-  end;
-
   RemoverTodosObservadores;
 end;
 
@@ -821,12 +798,11 @@ begin
         aItem := TListViewItem(ListViewItemPedido.Items.Item[ListViewItemPedido.ItemIndex]);
         aItem.TagObject := daoItem.Model;
 
-        dao.RecalcularValorTotalPedido();
+        dao.CalcularValorTotalPedidoTemp();
 
         lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
         lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
 
-        Self.Notificar;
         FormatarItemPedidoListView(aItem);
       end;
     end

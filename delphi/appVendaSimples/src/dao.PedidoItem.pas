@@ -34,6 +34,7 @@ type
       procedure Insert();
       procedure Update();
       procedure Delete();
+      procedure DeleteAllTemp();
       procedure AddLista; overload;
       procedure AddLista(aPedidoItem : TPedidoItem); overload;
       procedure IncrementarQuantidade();
@@ -115,8 +116,8 @@ begin
   aSQL := TStringList.Create;
   try
     aSQL.BeginUpdate;
-    aSQL.Add('Delete from ' + aDDL.getTableNamePedidoItem);
-    aSQL.Add('where id_item = :id_item ');
+    aSQL.Add('Delete from ' + aDDL.getTableNamePedidoItem + '_temp ');
+    aSQL.Add('where (id_item = :id_item) ');
     aSQL.EndUpdate;
 
     with DM, qrySQL do
@@ -128,6 +129,28 @@ begin
 
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toExcluido;
+    end;
+  finally
+    aSQL.Free;
+  end;
+end;
+
+procedure TPedidoItemDao.DeleteAllTemp;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Delete from ' + aDDL.getTableNamePedidoItem + '_temp ');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ExecSQL;
     end;
   finally
     aSQL.Free;
@@ -149,7 +172,7 @@ begin
   aSQL := TStringList.Create;
   try
     aSQL.BeginUpdate;
-    aSQL.Add('Insert Into ' + aDDL.getTableNamePedidoItem + '(');
+    aSQL.Add('Insert Into ' + aDDL.getTableNamePedidoItem + '_temp (');
     aSQL.Add('    id_item         ');
     aSQL.Add('  , cd_item         ');
     aSQL.Add('  , id_pedido       ');
@@ -160,10 +183,6 @@ begin
     aSQL.Add('  , vl_desconto     ');
     aSQL.Add('  , vl_liquido      ');
     aSQL.Add('  , ds_observacao   ');
-
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , cd_referencia   ');
-
     aSQL.Add(') values (');
     aSQL.Add('    :id_item        ');
     aSQL.Add('  , :cd_item        ');
@@ -175,10 +194,6 @@ begin
     aSQL.Add('  , :vl_desconto    ');
     aSQL.Add('  , :vl_liquido     ');
     aSQL.Add('  , :ds_observacao  ');
-
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , :cd_referencia  ');
-
     aSQL.Add(')');
     aSQL.EndUpdate;
 
@@ -191,7 +206,7 @@ begin
         aModel.NewID;
 
       if (aModel.Codigo = 0) then
-        aModel.Codigo := Round( GetNewID(aDDL.getTableNamePedidoItem, 'cd_item', 'id_pedido = ' + QuotedStr(GUIDToString(Model.PedidoID))) );
+        aModel.Codigo := Round( GetNewID(aDDL.getTableNamePedidoItem, 'cd_item', EmptyStr) );
 
       ParamByName('id_item').AsString       := GUIDToString(Model.ID);
       ParamByName('cd_item').AsInteger      := Model.Codigo;
@@ -203,9 +218,6 @@ begin
       ParamByName('vl_desconto').AsCurrency := Model.ValorTotalDesconto;
       ParamByName('vl_liquido').AsCurrency  := Model.ValorLiquido;
       ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
-
-      if (aModel.Referencia <> GUID_NULL) then
-        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toIncluido;
@@ -230,7 +242,7 @@ begin
     aSQL.Add('  , p.ds_produto  ');
     aSQL.Add('  , p.ft_produto ');
     aSQL.Add('  , p.vl_produto ');
-    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + ' i ');
+    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp i ');
     aSQL.Add('  join ' + aDDL.getTableNameProduto + ' p on (p.id_produto = i.id_produto)');
     aSQL.Add('where (i.id_pedido = :id_pedido) ');
     aSQL.Add('order by');
@@ -317,7 +329,7 @@ begin
   aSQL := TStringList.Create;
   try
     aSQL.BeginUpdate;
-    aSQL.Add('Update ' + aDDL.getTableNamePedidoItem + ' Set ');
+    aSQL.Add('Update ' + aDDL.getTableNamePedidoItem + '_temp Set ');
     aSQL.Add('    cd_item       = :cd_item       ');
     aSQL.Add('  , id_pedido     = :id_pedido     ');
     aSQL.Add('  , id_produto    = :id_produto    ');
@@ -327,11 +339,7 @@ begin
     aSQL.Add('  , vl_desconto   = :vl_desconto   ');
     aSQL.Add('  , vl_liquido    = :vl_liquido    ');
     aSQL.Add('  , ds_observacao = :ds_observacao ');
-
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , cd_referencia = :cd_referencia ');
-
-    aSQL.Add('where id_item = :id_item ');
+    aSQL.Add('where (id_item = :id_item) ');
     aSQL.EndUpdate;
 
     with DM, qrySQL do
@@ -349,10 +357,6 @@ begin
       ParamByName('vl_desconto').AsCurrency := Model.ValorTotalDesconto;
       ParamByName('vl_liquido').AsCurrency  := Model.ValorLiquido;
       ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
-
-      if (aModel.Referencia <> GUID_NULL) then
-        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
-
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toEditado;
     end;

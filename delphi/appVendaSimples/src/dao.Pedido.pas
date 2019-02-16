@@ -35,6 +35,9 @@ type
       procedure Delete();
       procedure AddLista; overload;
       procedure AddLista(aPedido : TPedido); overload;
+      procedure InserirItensTemp();
+      procedure GravarItens();
+      procedure CalcularValorTotalPedidoTemp();
       procedure RecalcularValorTotalPedido();
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
@@ -77,6 +80,59 @@ begin
 
   SetLength(aLista, I);
   aLista[I - 1] := aPedido;
+end;
+
+procedure TPedidoDao.CalcularValorTotalPedidoTemp;
+var
+  aSQL : TStringList;
+  aValorTotal   ,
+  aValorDesconto,
+  aValorPedido  : Currency;
+begin
+  aSQL := TStringList.Create;
+  try
+    aValorTotal    := 0.0;
+    aValorDesconto := 0.0;
+    aValorPedido   := 0.0;
+
+    aSQL.BeginUpdate;
+    aSQL.Add('Select');
+    aSQL.Add('    sum(i.vl_total)    as vl_total    ');
+    aSQL.Add('  , sum(i.vl_desconto) as vl_desconto ');
+    aSQL.Add('  , sum(i.vl_liquido)  as vl_liquido  ');
+    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp i ');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      if qrySQL.OpenOrExecute then
+      begin
+        if not FieldByName('vl_total').IsNull then
+        begin
+          aValorTotal    := FieldByName('vl_total').AsCurrency;
+          aValorDesconto := FieldByName('vl_desconto').AsCurrency;
+          aValorPedido   := FieldByName('vl_liquido').AsCurrency;
+        end
+        else
+        begin
+          aValorTotal    := 0.0;
+          aValorDesconto := 0.0;
+          aValorPedido   := 0.0;
+        end;
+      end;
+
+      qrySQL.Close;
+    end;
+
+    aModel.ValorTotal    := aValorTotal;
+    aModel.ValorDesconto := aValorDesconto;
+    aModel.ValorPedido   := aValorPedido;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 procedure TPedidoDao.ClearLista;
@@ -192,6 +248,65 @@ begin
     aInstance := TPedidoDao.Create();
 
   Result := aInstance;
+end;
+
+procedure TPedidoDao.GravarItens;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Update ' + aDDL.getTableNamePedidoItem + '_temp Set');
+    aSQL.Add('  id_pedido = :id_pedido;');
+
+    aSQL.Add('Delete ');
+    aSQL.Add('from   ' + aDDL.getTableNamePedidoItem);
+    aSQL.Add('where id_pedido = :id_pedido;');
+
+    aSQL.Add('Insert Into '   + aDDL.getTableNamePedidoItem + ' ');
+    aSQL.Add('Select * from ' + aDDL.getTableNamePedidoItem + '_temp;');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
+      qrySQL.ExecSQL;
+    end;
+  finally
+    aSQL.Free;
+  end;
+end;
+
+procedure TPedidoDao.InserirItensTemp;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.BeginUpdate;
+    aSQL.Add('Delete');
+    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp;');
+
+    aSQL.Add('Insert Into '   + aDDL.getTableNamePedidoItem + '_temp ');
+    aSQL.Add('Select * from ' + aDDL.getTableNamePedidoItem + ' i');
+    aSQL.Add('where (i.id_pedido = :id_pedido)');
+    aSQL.EndUpdate;
+
+    with DM, qrySQL do
+    begin
+      qrySQL.Close;
+      qrySQL.SQL.Text := aSQL.Text;
+
+      ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
+      qrySQL.ExecSQL;
+    end;
+  finally
+    aSQL.Free;
+  end;
 end;
 
 procedure TPedidoDao.Insert;
