@@ -807,7 +807,7 @@ begin
       end;
     end
     else
-      EditarItemPedido(Dao.Model, Self);
+      EditarItemPedido(Dao.Model, Self, (dao.Model.Tipo = TTipoPedido.tpOrcamento));
   end;
 end;
 

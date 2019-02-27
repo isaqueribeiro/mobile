@@ -56,14 +56,15 @@ type
     aDao : TPedidoItemDao;
     FObservers : TList<IObservadorPedidoItem>;
 
+    procedure DefinirFormatacaoCampo();
     procedure AtualizarProduto;
-    procedure ControleEdicao(const aEditar : Boolean);
 
     class var aInstance : TFrmPedidoItem;
   public
     { Public declarations }
     property Dao : TPedidoItemDao read aDao;
 
+    procedure ControleEdicao(const aEditar : Boolean);
     procedure AdicionarObservador(Observer : IObservadorPedidoItem);
     procedure RemoverObservador(Observer : IObservadorPedidoItem);
     procedure RemoverTodosObservadores;
@@ -73,7 +74,7 @@ type
   end;
 
   procedure NovoItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
-  procedure EditarItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
+  procedure EditarItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem; const aEditar : Boolean);
 
 //var
 //  FrmPedidoItem: TFrmPedidoItem;
@@ -118,14 +119,11 @@ begin
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := 0;                       // Destinado a guardar o CODIGO numérico do registro
 
-    lblProduto.Text    := 'Informe aqui o produto para o pedido';
+    lblProduto.Text := 'Informe aqui o produto para o pedido';
 
-    lblQuantidade.TagString := ',0.###';
-    lblQuantidade.Text      := FormatFloat(lblQuantidade.TagString, Model.Quantidade);
-    lblValorUnit.TagString  := ',0.00';
-    lblValorUnit.Text       := FormatFloat(lblValorUnit.TagString, Model.ValorUnitario);
-    lblDescricao.TagString  := ',0.00';
-    lblDescricao.Text       := FormatFloat(lblDescricao.TagString, Model.ValorLiquido);
+    lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, Model.Quantidade);
+    lblValorUnit.Text  := FormatFloat(lblValorUnit.TagString, Model.ValorUnitario);
+    lblDescricao.Text  := FormatFloat(lblDescricao.TagString, Model.ValorLiquido);
 
     lblProduto.TagFloat    := 0; // Flags: 0 - Sem edição; 1 - Dado editado
     lblQuantidade.TagFloat := 0;
@@ -138,9 +136,41 @@ begin
   aForm.Show;
 end;
 
-procedure EditarItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem);
+procedure EditarItemPedido(aPedido : TPedido; Observer : IObservadorPedidoItem; const aEditar : Boolean);
+var
+  aForm : TFrmPedidoItem;
 begin
-  ;
+  aForm := TFrmPedidoItem.GetInstance;
+  aForm.AdicionarObservador(Observer);
+
+  with aForm, dao do
+  begin
+    tbsControle.ActiveTab       := tbsCadastro;
+    imageVoltarConsulta.OnClick := imageVoltarClick;
+
+    labelTituloCadastro.Text      := IfThen(aEditar, 'EDITAR ITEM PEDIDO', 'ITEM PEDIDO');
+    labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
+    labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
+
+    imageSalvarCadastro.Visible := aEditar;
+
+    lblProduto.Text      := FormatFloat('###00000', dao.Model.Produto.Codigo) + ' - ' + dao.Model.Produto.Descricao;
+    lblProduto.TagString := GUIDToString(dao.Model.Produto.ID);
+    lblQuantidade.Text   := FormatFloat(lblQuantidade.TagString, Model.Quantidade);
+    lblValorUnit.Text    := FormatFloat(lblValorUnit.TagString, Model.ValorUnitario);
+    lblDescricao.Text    := FormatFloat(lblDescricao.TagString, Model.ValorLiquido);
+
+    lblProduto.TagFloat    := 1; // Flags: 0 - Sem edição; 1 - Dado editado
+    lblQuantidade.TagFloat := 1;
+    lblValorUnit.TagFloat  := 1;
+    lblDescricao.TagFloat  := 1;
+
+    lytExcluir.Visible := aEditar;
+
+    ControleEdicao(aEditar);
+  end;
+
+  aForm.Show;
 end;
 
 { TFrmPedidoItem }
@@ -175,6 +205,23 @@ procedure TFrmPedidoItem.ControleEdicao(const aEditar: Boolean);
 begin
   imageSalvarCadastro.Visible := aEditar;
   imageSalvarEdicao.Visible   := aEditar;
+
+  imgProduto.Visible    := aEditar;
+  imgQuantidade.Visible := aEditar;
+  imgValorUnit.Visible  := aEditar;
+  imgDescricao.Visible  := aEditar;
+
+  imgProduto.Margins.Right    := IfThen(aEditar, 5, imgProduto.Margins.Right);
+  imgQuantidade.Margins.Right := IfThen(aEditar, 5, imgQuantidade.Margins.Right);
+  imgValorUnit.Margins.Right  := IfThen(aEditar, 5, imgValorUnit.Margins.Right);
+  imgDescricao.Margins.Right  := IfThen(aEditar, 5, imgDescricao.Margins.Right);
+end;
+
+procedure TFrmPedidoItem.DefinirFormatacaoCampo;
+begin
+  lblQuantidade.TagString := ',0.###';
+  lblValorUnit.TagString  := ',0.00';
+  lblDescricao.TagString  := ',0.00';
 end;
 
 procedure TFrmPedidoItem.DoBuscarProduto(Sender: TObject);
@@ -229,7 +276,7 @@ begin
     end;
   except
     On E : Exception do
-      ExibirMsgErro('Erro ao tentar salvar o pedido.' + #13 + E.Message);
+      ExibirMsgErro('Erro ao tentar salvar o item do pedido.' + #13 + E.Message);
   end;
 end;
 
@@ -258,6 +305,7 @@ begin
 //  img_produto_sem_foto.Visible := False;
 //  img_item_mais.Visible  := False;
 //  img_item_menos.Visible := False;
+  DefinirFormatacaoCampo();
 end;
 
 class function TFrmPedidoItem.GetInstance: TFrmPedidoItem;
