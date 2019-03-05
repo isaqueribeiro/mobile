@@ -200,7 +200,9 @@ begin
   else
     aStr := '0';
 
-  aValor := StrToCurrDef(aStr, 0) / 100;
+  if (Trim(labelValorCampo.TagString) = ',0.00') or (Trim(labelValorCampo.TagString) = ',0.##') then
+    aValor := StrToCurrDef(aStr, 0) / 100;
+
   labelValorCampo.Text := FormatFloat(labelValorCampo.TagString, aValor);
 end;
 
@@ -213,7 +215,9 @@ begin
   aStr := aStr.Replace('.', '', [rfReplaceAll]);
   aStr := aStr.Replace(',', '', [rfReplaceAll]);
 
-  aValor := StrToCurrDef(aStr, 0) / 100;
+  if (Trim(labelValorCampo.TagString) = ',0.00') or (Trim(labelValorCampo.TagString) = ',0.##') then
+    aValor := StrToCurrDef(aStr, 0) / 100;
+
   labelValorCampo.Text := FormatFloat(labelValorCampo.TagString, aValor);
 end;
 

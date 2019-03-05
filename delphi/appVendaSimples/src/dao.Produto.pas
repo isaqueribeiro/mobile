@@ -43,7 +43,7 @@ implementation
 { TProdutoDao }
 
 uses
-  UDM;
+  UDM, app.Funcoes;
 
 procedure TProdutoDao.AddLista;
 var
@@ -270,6 +270,9 @@ begin
 
     if (StrToCurrDef(aFiltro, 0) > 0) then
       aSQL.Add('where p.cd_produto = ' + aFiltro)
+    else
+    if StrIsGUID(aFiltro) then
+      aSQL.Add('where p.id_produto = ' + QuotedStr(aFiltro))
     else
     if (Trim(aBusca) <> EmptyStr) then
     begin

@@ -334,7 +334,7 @@ begin
 
   imgSemItemPedido.Visible := (ListViewItemPedido.Items.Count = 0);
 
-  Dao.RecalcularValorTotalPedido();
+  dao.CalcularValorTotalPedidoTemp();
 
   lblTotalPedido.TagFloat := IfThen(Dao.Model.ValorTotal <= 0.0, 0, 1);
   lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, Dao.Model.ValorPedido);
@@ -672,7 +672,7 @@ begin
 
     // Valor Unitário (R$)
     aText := TListItemText(Objects.FindDrawable('Text1'));
-    aText.Text := 'R$ ' + FormatFloat(',0.00', aPedidoItem.Produto.Valor);
+    aText.Text := 'R$ ' + FormatFloat(',0.00', IfThen(aPedidoItem.ValorUnitario > 0, aPedidoItem.ValorUnitario, aPedidoItem.Produto.Valor));
 
     // Quantidade
     aText := TListItemText(Objects.FindDrawable('Text7'));
@@ -772,38 +772,44 @@ begin
 
     if ItemObject is TListItemImage then
     begin
-      // Excluir
-      if (TListItemImage(ItemObject).Name = 'Image8') then
+      // Foto do produto
+      if (TListItemImage(ItemObject).Name = 'Image4') then
+        EditarItemPedido(Dao.Model, Self, (dao.Model.Tipo = TTipoPedido.tpOrcamento))
+      else
       begin
-        if Dao.Model.Entregue then
-          ExibirMsgAlerta('Produto não poderá ser excluído porque o pedido já foi entregue.')
+        // Excluir
+        if (TListItemImage(ItemObject).Name = 'Image8') then
+        begin
+          if Dao.Model.Entregue then
+            ExibirMsgAlerta('Produto não poderá ser excluído porque o pedido já foi entregue.')
+          else
+            ExibirMsgConfirmacao('Excluir', 'Confirma a exclusão do produto?', DoExcluirItem);
+        end
         else
-          ExibirMsgConfirmacao('Excluir', 'Confirma a exclusão do produto?', DoExcluirItem);
-      end
-      else
-      // Ícone (-)
-      if (TListItemImage(ItemObject).Name = 'Image5') then
-        daoItem.DecrementarQuantidade
-      else
-      // Ícone (+)
-      if (TListItemImage(ItemObject).Name = 'Image6') then
-        daoItem.IncrementarQuantidade;
+        // Ícone (-)
+        if (TListItemImage(ItemObject).Name = 'Image5') then
+          daoItem.DecrementarQuantidade
+        else
+        // Ícone (+)
+        if (TListItemImage(ItemObject).Name = 'Image6') then
+          daoItem.IncrementarQuantidade;
 
-      aQuantidade := (TListItemImage(ItemObject).Name = 'Image5') or (TListItemImage(ItemObject).Name = 'Image6');
+        aQuantidade := (TListItemImage(ItemObject).Name = 'Image5') or (TListItemImage(ItemObject).Name = 'Image6');
 
-      if aQuantidade then
-      begin
-        daoItem.Update();
+        if aQuantidade then
+        begin
+          daoItem.Update();
 
-        aItem := TListViewItem(ListViewItemPedido.Items.Item[ListViewItemPedido.ItemIndex]);
-        aItem.TagObject := daoItem.Model;
+          aItem := TListViewItem(ListViewItemPedido.Items.Item[ListViewItemPedido.ItemIndex]);
+          aItem.TagObject := daoItem.Model;
 
-        dao.CalcularValorTotalPedidoTemp();
+          dao.CalcularValorTotalPedidoTemp();
 
-        lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
-        lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
+          lblTotalPedido.Text     := FormatFloat(lblTotalPedido.TagString, dao.Model.ValorPedido);
+          lblTotalPedido.TagFloat := IfThen(dao.Model.ValorTotal <= 0.0, 0, 1);
 
-        FormatarItemPedidoListView(aItem);
+          FormatarItemPedidoListView(aItem);
+        end;
       end;
     end
     else

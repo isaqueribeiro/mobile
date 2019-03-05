@@ -44,6 +44,7 @@ type
     procedure DoBuscarProduto(Sender: TObject);
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarItemPedido(Sender: TObject);
+    procedure DoExcluirItemPedido(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -51,6 +52,7 @@ type
     procedure imgProdutoClick(Sender: TObject);
     procedure imgQuantidadeMaisClick(Sender: TObject);
     procedure imgQuantidadeMenosClick(Sender: TObject);
+    procedure imageSalvarEdicaoClick(Sender: TObject);
   strict private
     { Private declarations }
     aDao : TPedidoItemDao;
@@ -66,6 +68,7 @@ type
 
     procedure ControleEdicao(const aEditar : Boolean);
     procedure AdicionarObservador(Observer : IObservadorPedidoItem);
+    procedure ExcluirItemPedido(Sender: TObject);
     procedure RemoverObservador(Observer : IObservadorPedidoItem);
     procedure RemoverTodosObservadores;
     procedure Notificar;
@@ -219,7 +222,7 @@ end;
 
 procedure TFrmPedidoItem.DefinirFormatacaoCampo;
 begin
-  lblQuantidade.TagString := ',0.###';
+  lblQuantidade.TagString := ',0';
   lblValorUnit.TagString  := ',0.00';
   lblDescricao.TagString  := ',0.00';
 end;
@@ -231,8 +234,67 @@ begin
 end;
 
 procedure TFrmPedidoItem.DoEditarCampo(Sender: TObject);
+var
+  aTag : Integer;
+  aValorUnitario : Currency;
 begin
-  ;
+  DefinirFormatacaoCampo;
+
+  // Propriedade TAG é usada para armazenar as sequencia dos campos no formulário
+  if (Sender is TLabel) then
+    aTag := TLabel(Sender).Tag
+  else
+  if (Sender is TImage) then
+    aTag := TImage(Sender).Tag
+  else
+    aTag := 0;
+
+  layoutEditCampo.Visible  := False;
+  layoutDataCampo.Visible  := False;
+  layoutMemoCampo.Visible  := False;
+  layoutValorCampo.Visible := False;
+
+  Case aTag of
+    1 :
+      begin
+        layoutValorCampo.Visible    := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelQuantidade.Text);
+        labelTituloEditar.TagString := EmptyStr;
+
+        labelValorCampo.Text      := IfThen(lblQuantidade.TagFloat = 0, EmptyStr, lblQuantidade.Text);
+        labelValorCampo.TagString := lblQuantidade.TagString;
+        labelValorCampo.TagObject := TObject(lblQuantidade);
+      end;
+
+    2 :
+      begin
+        layoutValorCampo.Visible    := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelValorUnit.Text);
+        labelTituloEditar.TagString := EmptyStr;
+
+        labelValorCampo.Text      := IfThen(lblValorUnit.TagFloat = 0, EmptyStr, lblValorUnit.Text);
+        labelValorCampo.TagString := lblValorUnit.TagString;
+        labelValorCampo.TagObject := TObject(lblValorUnit);
+      end;
+
+    3 :
+      begin
+        layoutValorCampo.Visible    := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelDescricao.Text);
+        labelTituloEditar.TagString := EmptyStr;
+
+        labelValorCampo.Text      := IfThen(lblDescricao.TagFloat = 0, EmptyStr, lblDescricao.Text);
+        labelValorCampo.TagString := lblDescricao.TagString;
+        labelValorCampo.TagObject := TObject(lblDescricao);
+      end;
+  end;
+
+  ChangeTabActionEditar.ExecuteTarget(Sender);
+end;
+
+procedure TFrmPedidoItem.DoExcluirItemPedido(Sender: TObject);
+begin
+  ExibirMsgConfirmacao('Excluir', 'Deseja excluir o produto selecionado?', ExcluirItemPedido);
 end;
 
 procedure TFrmPedidoItem.DoSalvarItemPedido(Sender: TObject);
@@ -276,7 +338,31 @@ begin
     end;
   except
     On E : Exception do
-      ExibirMsgErro('Erro ao tentar salvar o item do pedido.' + #13 + E.Message);
+      ExibirMsgErro('Erro ao tentar salvar o produto do pedido.' + #13 + E.Message);
+  end;
+end;
+
+procedure TFrmPedidoItem.ExcluirItemPedido(Sender: TObject);
+var
+  msg : TFrmMensagem;
+begin
+  try
+    msg := TFrmMensagem.GetInstance;
+    if Assigned(dao.Model) then
+    begin
+      msg.Close;
+      if lytExcluir.Visible then
+      begin
+        dao.Delete();
+        Self.Notificar;
+        Self.Close;
+      end
+      else
+        ExibirMsgAlerta('Produto do pedido não pode ser excluído por já ter sido entregue');
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar excluir o produto do pedido.' + #13 + E.Message);
   end;
 end;
 
@@ -324,6 +410,24 @@ begin
   Result := aInstance;
 end;
 
+procedure TFrmPedidoItem.imageSalvarEdicaoClick(Sender: TObject);
+begin
+  inherited;
+
+  if (labelValorCampo.TagObject = TObject(lblQuantidade)) or (labelValorCampo.TagObject = TObject(lblValorUnit))  then
+  begin
+    dao.Model.Quantidade    := StrToIntegerLocal(lblQuantidade.Text);
+    dao.Model.ValorUnitario := StrToMoneyLocal(lblValorUnit.Text);
+  end
+  else
+  if (labelValorCampo.TagObject = TObject(lblDescricao)) then
+    dao.Model.ValorUnitario := StrToMoneyLocal(lblDescricao.Text) / StrToIntegerLocal(lblQuantidade.Text);
+
+  lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, dao.Model.Quantidade);
+  lblValorUnit.Text  := FormatFloat(lblValorUnit.TagString,  dao.Model.ValorUnitario);
+  lblDescricao.Text  := FormatFloat(lblDescricao.TagString,  dao.Model.ValorLiquido);
+end;
+
 procedure TFrmPedidoItem.imgProdutoClick(Sender: TObject);
 var
   daoProduto : TProdutoDao;
@@ -339,6 +443,8 @@ end;
 
 procedure TFrmPedidoItem.imgQuantidadeMaisClick(Sender: TObject);
 begin
+  dao.Model.Quantidade    := StrToIntegerLocal(lblQuantidade.Text);
+  dao.Model.ValorUnitario := StrToMoneyLocal(lblValorUnit.Text);
   dao.IncrementarQuantidade();
   lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, dao.Model.Quantidade);
   lblDescricao.Text  := FormatFloat(lblDescricao.TagString,  dao.Model.ValorLiquido);
@@ -346,6 +452,8 @@ end;
 
 procedure TFrmPedidoItem.imgQuantidadeMenosClick(Sender: TObject);
 begin
+  dao.Model.Quantidade    := StrToIntegerLocal(lblQuantidade.Text);
+  dao.Model.ValorUnitario := StrToMoneyLocal(lblValorUnit.Text);
   dao.DecrementarQuantidade();
   lblQuantidade.Text := FormatFloat(lblQuantidade.TagString, dao.Model.Quantidade);
   lblDescricao.Text  := FormatFloat(lblDescricao.TagString,  dao.Model.ValorLiquido);

@@ -6,6 +6,7 @@ uses
   UConstantes,
   model.Pedido,
   model.Produto,
+  System.Math,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
 
 type
@@ -101,16 +102,18 @@ end;
 
 procedure TPedidoItem.SetQuantidade(Value: Currency);
 begin
-  aQuantidade   := Value;
-  aValorTotal   := (aQuantidade * aValorUnitario);
-  aValorLiquido := (aValorTotal - aValorTotalDesconto);
+  aQuantidade := Value;
+  aValorTotal := IfThen(aProduto.Valor <= 0, (aQuantidade * aValorUnitario), (aQuantidade * aProduto.Valor));
+  aValorTotalDesconto := IfThen(aProduto.Valor > aValorUnitario, (aQuantidade * (aProduto.Valor - aValorUnitario)), 0);
+  aValorLiquido       := (aValorTotal - aValorTotalDesconto);
 end;
 
 procedure TPedidoItem.SetValorUnitario(Value: Currency);
 begin
   aValorUnitario := Value;
-  aValorTotal    := (aQuantidade * aValorUnitario);
-  aValorLiquido  := (aValorTotal - aValorTotalDesconto);
+  aValorTotal    := IfThen(aProduto.Valor <= 0, (aQuantidade * aValorUnitario), (aQuantidade * aProduto.Valor));
+  aValorTotalDesconto := IfThen(aProduto.Valor > aValorUnitario, (aQuantidade * (aProduto.Valor - aValorUnitario)), 0);
+  aValorLiquido       := (aValorTotal - aValorTotalDesconto);
 end;
 
 function TPedidoItem.ToString: String;
