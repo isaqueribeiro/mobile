@@ -53,7 +53,9 @@ namespace webVendaSimples
                 conn.Conectar();
                 SqlCommand cmd = new SqlCommand("", conn.Conn());
 
-                String sql = "SET FORMATDATE DMY EXECUTE getValidarLogin(@email, @senha, @id  OUT, @codigo OUT, @nome OUT, @retorno OUT)";
+                String sql = 
+                    "SET FORMATDATE DMY " +
+                    "EXECUTE getValidarLogin(@email, @senha, @id  OUT, @codigo OUT, @nome OUT, @retorno OUT)";
 
                 cmd.Parameters.Add(new SqlParameter("@email", email));
                 cmd.Parameters.Add(new SqlParameter("@senha", senha));
