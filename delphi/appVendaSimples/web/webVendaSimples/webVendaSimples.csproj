@@ -74,7 +74,7 @@
     <Compile Include="ws_usuario.asmx.cs">
       <DependentUpon>ws_usuario.asmx</DependentUpon>
     </Compile>
-    <Content Include="App_Code\Conexao.cs" />
+    <Compile Include="App_Code\Conexao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

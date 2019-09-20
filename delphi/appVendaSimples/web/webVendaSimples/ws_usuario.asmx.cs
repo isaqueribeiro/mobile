@@ -27,29 +27,26 @@ namespace webVendaSimples
 
     [WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    // Para permitir que esse serviço da web seja chamado a partir do script, usando ASP.NET AJAX. 
+    // Para permitir que esse serviço da web seja chamado a partir do JavaScript, usando ASP.NET AJAX. 
     [System.Web.Script.Services.ScriptService]
 
     public class ws_usuario : System.Web.Services.WebService
     {
 
         [WebMethod]
-        public string HelloWorld()
-        {
+        public string HelloWorld() {
             return "Olá, Mundo";
         }
 
         [WebMethod]
-        public void ValidarLogin(String email, String senha)
-        {
+        public void ValidarLogin(String email, String senha) {
             Conexao conn = Conexao.Instance;
             List<Usuario> arr = new List<Usuario>();
 
             email = HttpUtility.UrlDecode(email);
             senha = HttpUtility.UrlDecode(senha);
 
-            try
-            {
+            try {
                 conn.Conectar();
                 SqlCommand cmd = new SqlCommand("", conn.Conn());
 
@@ -72,10 +69,15 @@ namespace webVendaSimples
                 cmd.Parameters["@nome"].Direction = ParameterDirection.InputOutput;
                 cmd.Parameters["@nome"].Size = 150;
 
+                cmd.Parameters.Add(new SqlParameter("@retorno", ""));
+                cmd.Parameters["@retorno"].Direction = ParameterDirection.InputOutput;
+                cmd.Parameters["@retorno"].Size = 250;
+
                 cmd.CommandText = sql;
                 SqlDataReader qry = cmd.ExecuteReader();
 
                 Usuario usr = new Usuario();
+
                 usr.id = Server.HtmlEncode(cmd.Parameters["@id"].Value.ToString());
                 usr.codigo = int.Parse(cmd.Parameters["@codigo"].Value.ToString());
                 usr.nome = Server.HtmlEncode(cmd.Parameters["@nome"].Value.ToString());
@@ -87,8 +89,7 @@ namespace webVendaSimples
 
                 conn.Fechar();
             }
-            catch
-            {
+            catch {
 
             }
 

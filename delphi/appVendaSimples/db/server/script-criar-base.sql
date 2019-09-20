@@ -19,6 +19,45 @@ BEGIN
 END;
 GO
 
+
+CREATE OR ALTER PROCEDURE dbo.spDocumentarCampo
+	@source_table	nvarchar (386)
+  , @source_field	nvarchar (386)
+  , @description	nvarchar (386)
+AS
+BEGIN
+  Declare @existe nvarchar (386);
+
+  if ((@source_table <> '') and (@source_field <> '') and (@description <> ''))
+  Begin
+	Select 
+	  @existe = x.name
+	from fn_listextendedproperty('MS_Description', 'SCHEMA', 'dbo', 'TABLE', @source_table, 'COLUMN', @source_field) x;
+	
+	If (coalesce(@existe, '') <> '') 
+	Begin
+	  EXEC sys.sp_dropextendedproperty 
+		  @name=N'MS_Description'
+		, @level0type=N'SCHEMA'
+		, @level0name=N'dbo'
+		, @level1type=N'TABLE'
+		, @level1name=@source_table
+		, @level2type=N'COLUMN'
+		, @level2name=@source_field;
+    End;
+
+	EXEC sys.sp_addextendedproperty 
+		  @name=N'MS_Description'
+		, @value=@description
+		, @level0type=N'SCHEMA'
+		, @level0name=N'dbo'
+		, @level1type=N'TABLE'
+		, @level1name=@source_table
+		, @level2type=N'COLUMN'
+		, @level2name=@source_field
+  End
+END
+
 /*Excluir Tabelas*/
 
 IF OBJECT_ID (N'dbo.tb_pedido_item') IS NOT NULL  
@@ -103,8 +142,8 @@ CREATE TABLE dbo.tb_notificacao (
   , dt_notificacao	DATETIME
   , ds_notificacao	VARCHAR(100)
   , tx_notificacao	VARCHAR(500)
-  , sn_lida			SMALLINT DEFAULT 0 NOT NULL
-  , sn_destacada	SMALLINT DEFAULT 0 NOT NULL
+  , sn_lida			SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_lida = 0) or (sn_lida = 1))
+  , sn_destacada	SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_destacada = 0) or (sn_destacada = 1))
 )
 GO
 
@@ -132,7 +171,7 @@ CREATE TABLE dbo.tb_produto_empresa (
   , id_empresa		VARCHAR(38) NOT NULL
   , br_produto		VARCHAR(38) 
   , ft_produto		VARCHAR(MAX)
-  , sn_ativo		SMALLINT DEFAULT 0 NOT NULL
+  , sn_ativo		SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_ativo = 0) or (sn_ativo = 1))
 )
 GO
 
@@ -196,7 +235,7 @@ CREATE TABLE dbo.tb_pedido (
   , vl_total_bruto		NUMERIC(18,2)
   , vl_total_desconto	NUMERIC(18,2)
   , vl_total_pedido		NUMERIC(18,2)
-  , sn_entregue			SMALLINT DEFAULT 0 NOT NULL
+  , sn_entregue			SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_entregue = 0) or (sn_entregue = 1))
   , id_usuario		VARCHAR(38) NOT NULL
 )
 GO
