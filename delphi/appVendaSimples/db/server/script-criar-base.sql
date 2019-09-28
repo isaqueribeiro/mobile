@@ -59,6 +59,7 @@ BEGIN
 END
 
 /*Excluir Tabelas*/
+/*
 
 IF OBJECT_ID (N'dbo.tb_pedido_item') IS NOT NULL  
     DROP TABLE dbo.tb_pedido_item;  
@@ -91,26 +92,41 @@ IF OBJECT_ID (N'dbo.sys_empresa') IS NOT NULL
     DROP TABLE dbo.sys_empresa;  
 GO
 
+*/
+
 /*Criar Tabelas*/
 
-CREATE TABLE dbo.sys_empresa (
-    id_empresa	VARCHAR(38) PRIMARY KEY 
-  , cd_empresa	INT IDENTITY(1,1) NOT NULL UNIQUE
-  , nm_empresa	VARCHAR(250)
-  , nm_fantasia	VARCHAR(150)
-  , nr_cnpj_cpf	VARCHAR(25) UNIQUE
-)
+IF OBJECT_ID (N'dbo.sys_empresa') IS NULL
+BEGIN
+	CREATE TABLE dbo.sys_empresa (
+		id_empresa	VARCHAR(38) PRIMARY KEY 
+	  , cd_empresa	INT IDENTITY(1,1) NOT NULL UNIQUE
+	  , nm_empresa	VARCHAR(250)
+	  , nm_fantasia	VARCHAR(150)
+	  , nr_cnpj_cpf	VARCHAR(25) UNIQUE
+	)
+END
 GO
 
-CREATE TABLE dbo.sys_usuario (
-    id_usuario		VARCHAR(38) PRIMARY KEY 
-  , cd_usuario		INT IDENTITY(1,1) NOT NULL UNIQUE
-  , nm_usuario		VARCHAR(150)
-  , ds_email		VARCHAR(150) UNIQUE NOT NULL
-  , ds_senha		VARCHAR(40)
-  , id_token		VARCHAR(200)
-  , tp_plataforma	SMALLINT DEFAULT 0 NOT NULL
-)
+IF OBJECT_ID (N'dbo.sys_usuario') IS NULL
+BEGIN
+	CREATE TABLE dbo.sys_usuario (
+		id_usuario		VARCHAR(38) PRIMARY KEY 
+	  , cd_usuario		BIGINT IDENTITY(1,1) NOT NULL UNIQUE
+	  , nm_usuario		VARCHAR(150)
+	  , ds_email		VARCHAR(150) UNIQUE NOT NULL
+	  , ds_senha		VARCHAR(40)
+	  , id_token		VARCHAR(250)
+	  , tp_plataforma	SMALLINT DEFAULT 0 NOT NULL CHECK (tp_plataforma between 0 and 3) 
+	);
+
+	Execute dbo.spDocumentarCampo N'sys_usuario', N'id_token',		N'TokenID do Dispositivo';
+	Execute dbo.spDocumentarCampo N'sys_usuario', N'tp_plataforma',	N'Plataforma:
+	0 - A Definir
+	1 - Android
+	2 - iSO
+	3 - Windows';
+END
 GO
 
 CREATE TABLE dbo.sys_usuario_empresa (
