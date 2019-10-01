@@ -71,6 +71,7 @@
     <Content Include="ws_usuario.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Code\Class1.cs" />
     <Compile Include="ws_usuario.asmx.cs">
       <DependentUpon>ws_usuario.asmx</DependentUpon>
     </Compile>
