@@ -50,7 +50,7 @@ namespace webVendaSimples
         public String data;
         public String titulo;
         public String texto;
-        public String destacar;
+        public int destacar = 0;
 
         public String retorno = "";
         public void Destroy()
@@ -333,7 +333,7 @@ namespace webVendaSimples
 
         // LISTAR NOTIFICAÇÕES DO USUÁRIO ==========================================================
         [WebMethod]
-        public void ListarNotificacoesUsuario(String usuario, String empresa, String token)
+        public void ListarNotificacoes(String usuario, String empresa, String token)
         {
             Conexao conn = Conexao.Instance;
             List<Notificacao> arr = new List<Notificacao>();
