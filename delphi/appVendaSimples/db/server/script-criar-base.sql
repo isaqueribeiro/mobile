@@ -154,7 +154,7 @@ CREATE TABLE dbo.tb_notificacao (
     id_notificacao	VARCHAR(38) PRIMARY KEY
   , id_empresa		VARCHAR(38) NOT NULL
   , id_usuario		VARCHAR(38) NOT NULL
-  , cd_notificacao	INT IDENTITY(1,1)
+  , cd_notificacao	BIGINT IDENTITY(1,1)
   , dt_notificacao	DATETIME
   , ds_notificacao	VARCHAR(100)
   , tx_notificacao	VARCHAR(500)

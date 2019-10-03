@@ -13,6 +13,17 @@ using webVendaSimples.App_Code;
 namespace webVendaSimples
 {
 
+    class SimpleObject 
+    {
+        public String id = String.Concat("{", System.Guid.NewGuid().ToString().ToUpper(),  "}");
+        public String texto = "";
+        public String chave = "";
+        public String data = DateTime.Today.ToString("dd/MM/yyyy");
+        public String hash1 = "";
+        public String hash2 = "";
+        public String hash3 = "";
+    }
+
     class Empresa
     {
         public String id;
@@ -45,14 +56,16 @@ namespace webVendaSimples
     }
 
     class Notificacao {
-        public String id;
-        public Int64 codigo;
-        public String data;
-        public String titulo;
-        public String texto;
+        public String id = "{00000000-0000-0000-0000-000000000000}";
+        public Int64 codigo = 0;
+        public String data = "";
+        public String hora = "";
+        public String titulo = "";
+        public String texto = "";
         public int destacar = 0;
 
         public String retorno = "";
+
         public void Destroy()
         {
             GC.SuppressFinalize(this);
@@ -70,6 +83,36 @@ namespace webVendaSimples
         [WebMethod]
         public string HelloWorld() {
             return "Olá, Mundo";
+        }
+
+        // ENCRIPTAR STRINGS =======================================================================
+        [WebMethod]
+        public void EncriptString(String texto, String chave) {
+            List<SimpleObject> arr = new List<SimpleObject>();
+
+            texto = HttpUtility.UrlDecode(texto);
+            chave = HttpUtility.UrlDecode(chave);
+
+            if (chave == "") {
+                chave = "TheLordIsGod";
+            }
+
+            SimpleObject obj = new SimpleObject();
+            obj.texto = texto;
+            obj.chave = Server.HtmlEncode(Funcoes.Encriptar(chave));
+            obj.hash1 = Server.HtmlEncode(Funcoes.HashString(Funcoes.Encriptar(texto)));
+            obj.hash2 = Server.HtmlEncode(Funcoes.Encriptar_v2(texto));
+            obj.hash3 = Server.HtmlEncode(Funcoes.EncriptarHashBytes(texto));
+
+            arr.Add(obj);
+
+            // Serializar JSON
+            JavaScriptSerializer js = new JavaScriptSerializer();
+
+            Context.Response.Clear();
+            Context.Response.Write(js.Serialize(arr));
+            Context.Response.Flush();
+            Context.Response.End();
         }
 
         // VALIDAR LOGIN ===========================================================================
@@ -342,13 +385,8 @@ namespace webVendaSimples
             empresa = HttpUtility.UrlDecode(empresa);
             token = HttpUtility.UrlDecode(token);
 
-            if (token != Funcoes.Encriptar("TheLordIsGod")) {
+            if (token != Funcoes.EncriptarHashBytes( String.Concat("TheLordIsGod", DateTime.Today.ToString("dd/MM/yyyy")) )) {
                 Notificacao err = new Notificacao();
-
-                err.id = "{00000000-0000-0000-0000-000000000000}";
-                err.codigo = 0;
-                err.titulo = "";
-                err.texto = "";
                 err.retorno = Server.HtmlEncode("Token de segurança inválido!");
                 arr.Add(err);
 
@@ -363,23 +401,11 @@ namespace webVendaSimples
 
                     String sql =
                         "SET DATEFORMAT DMY " +
-                        "EXECUTE dbo.getValidarLogin @email, @senha, @token, @id  OUT, @codigo OUT, @nome OUT, @retorno OUT";
-
-                    cmd.Parameters.Add(new SqlParameter("@email", email));
-                    cmd.Parameters.Add(new SqlParameter("@senha", senha));
+                        "EXECUTE dbo.getListarNotificacoes @usuario, @empresa, @token, @retorno OUT";
+                    
+                    cmd.Parameters.Add(new SqlParameter("@usuario", usuario));
+                    cmd.Parameters.Add(new SqlParameter("@empresa", empresa));
                     cmd.Parameters.Add(new SqlParameter("@token", token));
-
-                    cmd.Parameters.Add(new SqlParameter("@id", ""));
-                    cmd.Parameters["@id"].Direction = ParameterDirection.InputOutput;
-                    cmd.Parameters["@id"].Size = 38;
-
-                    cmd.Parameters.Add(new SqlParameter("@codigo", "0"));
-                    cmd.Parameters["@codigo"].Direction = ParameterDirection.InputOutput;
-                    cmd.Parameters["@codigo"].Size = 10;
-
-                    cmd.Parameters.Add(new SqlParameter("@nome", ""));
-                    cmd.Parameters["@nome"].Direction = ParameterDirection.InputOutput;
-                    cmd.Parameters["@nome"].Size = 150;
 
                     cmd.Parameters.Add(new SqlParameter("@retorno", ""));
                     cmd.Parameters["@retorno"].Direction = ParameterDirection.InputOutput;
@@ -388,33 +414,29 @@ namespace webVendaSimples
                     cmd.CommandText = sql;
                     SqlDataReader qry = cmd.ExecuteReader();
 
-                    Notificacao notif = new Notificacao();
+                    while (qry.Read()) {
+                        Notificacao notif = new Notificacao();
 
-                    usr.id = Server.HtmlEncode(cmd.Parameters["@id"].Value.ToString());
-                    usr.codigo = Int64.Parse(cmd.Parameters["@codigo"].Value.ToString());
-                    usr.nome = Server.HtmlEncode(cmd.Parameters["@nome"].Value.ToString());
-                    usr.email = email;
-                    usr.retorno = Server.HtmlEncode(cmd.Parameters["@retorno"].Value.ToString());
-                    arr.Add(usr);
+                        notif.id = Server.HtmlEncode(qry.GetString(0).ToString());
+                        notif.codigo = Int64.Parse(qry.GetString(1).ToString());
+                        notif.data = Server.HtmlEncode(qry.GetString(2).ToString());  //notif.data = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy}", qry.GetString(2)));
+                        notif.hora = Server.HtmlEncode(qry.GetString(3).ToString());
+                        notif.titulo = Server.HtmlEncode(qry.GetString(4).ToString());
+                        notif.texto = Server.HtmlEncode(qry.GetString(5).ToString());
+                        notif.destacar = int.Parse(qry.GetString(6).ToString());
+                        arr.Add(notif);
+                    }
 
-                    //usr = null;
-                    //cmd = null;
-                    GC.SuppressFinalize(usr);
                     GC.SuppressFinalize(cmd);
-
+                    
                     conn.Fechar();
                 }
                 catch (System.IndexOutOfRangeException e)
                 {
                     Notificacao err = new Notificacao();
-
-                    err.id = "{00000000-0000-0000-0000-000000000000}";
-                    err.codigo = 0;
-                    err.nome = "";
-                    err.email = email;
                     err.retorno = Server.HtmlEncode("ERRO - " + e.Message);
                     arr.Add(err);
-
+                    
                     //err = null;
                     GC.SuppressFinalize(err);
                 }

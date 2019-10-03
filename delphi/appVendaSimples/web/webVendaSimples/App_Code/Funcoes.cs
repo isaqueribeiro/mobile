@@ -35,5 +35,45 @@ namespace webVendaSimples.App_Code
 
             return retorno;
         }
+
+        public static String Encriptar_v2(String input) {
+            SHA1Managed sha1 = new SHA1Managed();
+            var hash = sha1.ComputeHash(Encoding.Unicode.GetBytes(input));
+            var sb = new StringBuilder(hash.Length * 2);
+
+            foreach (byte b in hash) {
+                // can be "x2" if you want lowercase
+                sb.Append(b.ToString("X2"));
+            }
+
+            return sb.ToString();
+        }
+
+        public static String EncriptarHashBytes(String valueToHash) {
+            HashAlgorithm hasher = new SHA1CryptoServiceProvider();
+            Byte[] valueToHashAsByte = Encoding.UTF8.GetBytes(valueToHash);
+            Byte[] returnBytes = hasher.ComputeHash(valueToHashAsByte);
+            StringBuilder hex = new StringBuilder(returnBytes.Length * 2);
+            
+            foreach (byte b in returnBytes) {
+                hex.AppendFormat("{0:x2}", b);
+            };
+
+            return "0x" + hex.ToString().ToUpper();
+        }
+
+        public static String HashBytes(byte[] clearBytes) {
+            SHA1 hasher = SHA1.Create();
+            byte[] hashBytes = hasher.ComputeHash(clearBytes);
+            string hash = System.Convert.ToBase64String(hashBytes);
+            hasher.Clear();
+
+            return hash;
+        }
+
+        public static String HashString(String cleartext) {
+            byte[] clearBytes = Encoding.UTF8.GetBytes(cleartext);
+            return HashBytes(clearBytes);
+        }
     }
 }

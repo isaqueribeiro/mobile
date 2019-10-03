@@ -252,3 +252,41 @@ BEGIN CATCH
   Set @retorno = 'Erro ao tentar editar perfil do usuário';
 END CATCH
 GO
+
+-- =================================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	02/10/2019
+-- Description	:	Listar Notificões do Usuário
+-- =================================================
+CREATE or ALTER PROCEDURE dbo.getListarNotificacoes(
+	@usuario	VARCHAR(38)
+  , @empresa	VARCHAR(38)
+  , @token		VARCHAR(40)
+  , @retorno	VARCHAR(250) OUT)
+AS
+BEGIN TRY
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+	Set @retorno = '';
+
+	Select
+	    n.id_notificacao
+	  , n.cd_notificacao
+	  , convert(varchar(10), n.dt_notificacao, 103) as dt_notificacao
+	  , convert(varchar(10), n.dt_notificacao, 108) as hr_notificacao
+	  , n.ds_notificacao
+	  , n.tx_notificacao
+	  , n.sn_destacada
+	from dbo.tb_notificacao n
+	where (n.id_usuario = @usuario)
+	  and (n.id_empresa = @empresa)
+	  and (n.sn_lida = 0);
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar listar notificações do usuário';
+END CATCH
+GO
