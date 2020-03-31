@@ -22,6 +22,7 @@ namespace webVendaSimples
         public String hash1 = "";
         public String hash2 = "";
         public String hash3 = "";
+        public String md5 = "";
     }
 
     class Empresa
@@ -103,6 +104,7 @@ namespace webVendaSimples
             obj.hash1 = Server.HtmlEncode(Funcoes.HashString(Funcoes.Encriptar(texto)));
             obj.hash2 = Server.HtmlEncode(Funcoes.Encriptar_v2(texto));
             obj.hash3 = Server.HtmlEncode(Funcoes.EncriptarHashBytes(texto));
+            obj.md5 = Server.HtmlEncode(Funcoes.Md5String(texto));
 
             arr.Add(obj);
 

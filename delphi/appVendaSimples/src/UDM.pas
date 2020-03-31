@@ -5,17 +5,24 @@ interface
 uses
   UConstantes,
   dao.Versao,
+  dao.Usuario,
+
   System.Threading,
   System.IOUtils,
-  FMX.DialogService,
+  System.Json,
   System.UITypes,
 
-  System.SysUtils, System.Classes, FMX.Types, FMX.Controls, FireDAC.Stan.Intf, FireDAC.Stan.Option,
-  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool,
-  FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  FireDAC.FMXUI.Wait, Data.DB, FireDAC.Comp.Client, FireDAC.Comp.UI,
-  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet;
+  FMX.DialogService,
+  Web.HttpApp,
+
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.ExprFuncs, FireDAC.FMXUI.Wait, Data.DB, FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Stan.Param,
+  FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
+
+  REST.Types, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope,
+
+  System.SysUtils, System.Classes, FMX.Types, FMX.Controls;
 
 type
   TDM = class(TDataModule)
@@ -26,11 +33,13 @@ type
     qrySQL: TFDQuery;
     updPedido: TFDUpdateSQL;
     qryPedido: TFDQuery;
+    rscUsuario: TRESTClient;
     procedure DataModuleCreate(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
     { Private declarations }
     procedure SetArquivoDB(const aFileName : String);
+    procedure ConfigurarUrlUsuario;
   public
     { Public declarations }
     procedure ConectarDB;
@@ -39,6 +48,7 @@ type
     procedure CriarTabela;
 
     function IsConectado : Boolean;
+    function GetValidarLogin : TJSONObject;
   end;
 
 var
@@ -171,6 +181,16 @@ begin
   end;
 end;
 
+procedure TDM.ConfigurarUrlUsuario;
+begin
+  with rscUsuario do
+  begin
+    BaseURL := URL_ROOT + URL_USUARIO;
+    Accept  := 'application/json, text/plain; q=0.9, text/html;q=0.8,';
+    AcceptCharset := 'utf-8, *;q=0.8';
+  end;
+end;
+
 procedure TDM.connAfterConnect(Sender: TObject);
 begin
   CriarTabela;
@@ -211,6 +231,55 @@ begin
     aFileDB := TPath.Combine(TPath.GetDocumentsPath, cnsNameDB);
 
   SetArquivoDB(aFileDB);
+end;
+
+function TDM.GetValidarLogin: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestLogin : TRESTRequest;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlUsuario;
+
+    aRetorno := nil;
+    aRequestLogin := TRESTRequest.Create(rscUsuario);
+
+    with aRequestLogin do
+    begin
+      Client := rscUsuario;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscUsuario.Accept;
+      AcceptCharset      := rscUsuario.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'ValidarLogin';
+      Timeout  := 30000;
+
+      aUsr := TUsuarioDao.GetInstance;
+
+      Params.Clear;
+      AddParameter('email', HTTPEncode(aUsr.Model.Email), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('senha', HTTPEncode(aUsr.Model.Senha), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token', HTTPEncode(EmptyStr) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestLogin.DisposeOf;
+    Result := aRetorno;
+  end;
 end;
 
 function TDM.IsConectado: Boolean;

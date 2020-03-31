@@ -82,7 +82,7 @@ BEGIN TRY
   Begin
 	Select
 		@id		= u.id_usuario
-	, @codigo	= u.cd_usuario
+	  , @codigo	= u.cd_usuario
 	from dbo.sys_usuario u
 	where (u.ds_email = @email);
 

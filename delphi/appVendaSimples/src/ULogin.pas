@@ -4,6 +4,9 @@ interface
 
 uses
   dao.Usuario,
+  Web.HttpApp,
+  System.Json,
+
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.TabControl,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, System.Actions, FMX.ActnList;
@@ -104,8 +107,26 @@ begin
 end;
 
 function TFrmLogin.Autenticar: Boolean;
+var
+  aUser  : TUsuarioDao;
+  aJason : TJSONObject;
+  aRetorno : String;
 begin
-  Result := True;
+  aUser := TUsuarioDao.GetInstance;
+  aUser.Model.Email := editEmail.Text;
+  aUser.Model.Senha := editSenha.Text;
+
+  aJason := DM.GetValidarLogin;
+
+  if Assigned(aJason) then
+  begin
+    aRetorno := StringReplace(HTMLDecode(aJason.Get('retorno').JsonValue.ToString), '"', '', [rfReplaceAll]);
+    Result   := (aRetorno.ToUpper = 'OK');
+
+    ShowMessage(aRetorno);
+  end
+  else
+    Result := False;
 end;
 
 procedure TFrmLogin.DefinirLink;

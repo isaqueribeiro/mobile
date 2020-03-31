@@ -26,6 +26,9 @@ const
   FLAG_SIM = 'S';
   FLAG_NAO = 'N';
 
+  URL_ROOT    = 'http://localhost:51358';
+  URL_USUARIO = '/ws_usuario.asmx';
+
 implementation
 
 end.

@@ -13,7 +13,7 @@ namespace webVendaSimples.App_Code
         private static readonly Conexao instance = new Conexao();
 
         private SqlConnection conn;
-        private String servidor = "localhost";
+        private String servidor = @"IMR-DELL\SQLEXPRESS";
         private String banco = "venda_simples_server";
         private String usuario = "sa";
         private String senha = "TheLordIsGod";
@@ -31,7 +31,8 @@ namespace webVendaSimples.App_Code
 
         public void Conectar()
         {
-            strConexao = "Data Source=" + servidor + ";Initial Catalog=" + banco + ";User Id=" + usuario + ";Password=" + senha;
+            // "Persist Security Info=False;User ID=*****;Password=*****;Initial Catalog=AdventureWorks;Server=MySqlServer" 
+            strConexao = "Persist Security Info=False;User Id=" + usuario + ";Password=" + senha + ";Initial Catalog=" + banco  + ";Server=" + servidor;
             conn = new SqlConnection(strConexao);
             conn.Open();
         }

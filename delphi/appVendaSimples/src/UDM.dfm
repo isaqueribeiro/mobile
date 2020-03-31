@@ -1,8 +1,8 @@
 object DM: TDM
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 290
-  Width = 339
+  Height = 485
+  Width = 705
   object conn: TFDConnection
     Params.Strings = (
       
@@ -36,8 +36,8 @@ object DM: TDM
     Connection = conn
     Transaction = trans
     UpdateTransaction = trans
-    Left = 168
-    Top = 56
+    Left = 48
+    Top = 232
   end
   object updPedido: TFDUpdateSQL
     Connection = conn
@@ -87,8 +87,8 @@ object DM: TDM
       '  SN_SINCRONIZADO, CD_REFERENCIA'
       'FROM TBL_PEDIDO'
       'WHERE ID_PEDIDO = :ID_PEDIDO')
-    Left = 168
-    Top = 176
+    Left = 48
+    Top = 336
   end
   object qryPedido: TFDQuery
     Connection = conn
@@ -104,8 +104,8 @@ object DM: TDM
       'from tbl_pedido p'
       '  left join tbl_cliente c on (c.id_cliente = p.id_cliente)'
       'where p.cd_pedido = :cd_pedido')
-    Left = 168
-    Top = 128
+    Left = 48
+    Top = 288
     ParamData = <
       item
         Name = 'CD_PEDIDO'
@@ -113,5 +113,14 @@ object DM: TDM
         ParamType = ptInput
         Value = 20000c
       end>
+  end
+  object rscUsuario: TRESTClient
+    Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
+    AcceptCharset = 'utf-8, *;q=0.8'
+    BaseURL = 'http://localhost:51358/ws_usuario.asmx'
+    Params = <>
+    RaiseExceptionOn500 = False
+    Left = 416
+    Top = 184
   end
 end

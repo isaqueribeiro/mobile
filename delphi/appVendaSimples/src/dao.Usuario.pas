@@ -84,7 +84,7 @@ begin
       qrySQL.Close;
     end;
   finally
-    aSQL.Free;
+    aSQL.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -146,7 +146,7 @@ begin
       aOperacao := TTipoOperacaoDao.toIncluido;
     end;
   finally
-    aSQL.Free;
+    aSQL.DisposeOf;
   end;
 end;
 
@@ -197,7 +197,7 @@ begin
       qrySQL.Close;
     end;
   finally
-    aSQL.Free;
+    aSQL.DisposeOf;
   end;
 end;
 
@@ -258,7 +258,7 @@ begin
       aOperacao := TTipoOperacaoDao.toEditado;
     end;
   finally
-    aSQL.Free;
+    aSQL.DisposeOf;
   end;
 end;
 

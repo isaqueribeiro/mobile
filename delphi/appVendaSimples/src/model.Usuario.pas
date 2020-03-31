@@ -107,7 +107,7 @@ end;
 
 procedure TUsuario.SetSenha(Value: String);
 begin
-  aSenha := Trim(Value);
+  aSenha := AnsiLowerCase(Trim(Value));
 end;
 
 procedure TUsuario.SetTokenID(Value: String);
