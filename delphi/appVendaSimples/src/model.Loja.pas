@@ -4,6 +4,7 @@ interface
 
 uses
   UConstantes,
+  app.Funcoes,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
 
 type
@@ -11,20 +12,27 @@ type
     private
       aID      : TGUID;
       aCodigo  : Currency;
-      aTipo    : TTipoLoja;
       aNome    ,
       aFantasia,
       aCpfCnpj : String;
       procedure SetNome(Value : String);
+      procedure SetCpfCnpj(Value : String);
+
+      function GetTipo : TTipoLoja;
+      function GetCpfCnpj : String;
     public
       constructor Create; overload;
 
       property ID       : TGUID read aID write aID;
       property Codigo   : Currency read aCodigo write aCodigo;
-      property Tipo     : TTipoLoja read aTipo write aTipo;
+      property Tipo     : TTipoLoja read GetTipo;
       property Nome     : String read aNome write SetNome;
       property Fantasia : String read aFantasia write aFantasia;
-      property CpfCnpj  : String read aCpfCnpj write aCpfCnpj;
+      property CpfCnpj  : String read GetCpfCnpj write aCpfCnpj;
+
+      procedure NewID;
+
+      function ToString : String; override;
   end;
 
 implementation
@@ -36,15 +44,48 @@ begin
   inherited Create;
   aId       := GUID_NULL;
   aCodigo   := 0;
-  aTipo     := tcPessoaJuridica;
   aNome     := EmptyStr;
   aFantasia := EmptyStr;
   aCpfCnpj  := EmptyStr;
 end;
 
+function TLoja.GetCpfCnpj: String;
+begin
+  if StrIsCNPJ(aCpfCnpj) then
+    Result := FormatarTexto('99.999.999/9999-99;0', aCpfCnpj)
+  else
+    Result := FormatarTexto('999.999.999-99;0', aCpfCnpj);
+end;
+
+function TLoja.GetTipo: TTipoLoja;
+begin
+  if StrIsCNPJ(aCpfCnpj) then
+    Result := TTipoCliente.tcPessoaJuridica
+  else
+    Result := TTipoCliente.tcPessoaFisica;
+end;
+
+procedure TLoja.NewID;
+var
+  aGuid : TGUID;
+begin
+  CreateGUID(aGuid);
+  aId := aGuid;
+end;
+
+procedure TLoja.SetCpfCnpj(Value: String);
+begin
+  aCpfCnpj := SomenteNumero(Trim(Value));
+end;
+
 procedure TLoja.SetNome(Value: String);
 begin
   aNome := Trim(Value);
+end;
+
+function TLoja.ToString: String;
+begin
+  Result := aFantasia + ' (' + aCpfCnpj + ')';
 end;
 
 end.

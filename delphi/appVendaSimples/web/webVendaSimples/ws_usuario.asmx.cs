@@ -133,7 +133,8 @@ namespace webVendaSimples
 
                 String sql = 
                     "SET DATEFORMAT DMY " +
-                    "EXECUTE dbo.getValidarLogin @email, @senha, @token, @id  OUT, @codigo OUT, @nome OUT, @retorno OUT";
+                    "EXECUTE dbo.getValidarLogin @email, @senha, @token, @id  OUT, @codigo OUT, @nome OUT, @retorno OUT" +
+                        ", @id_empresa OUT, @cd_empresa OUT, @nm_empresa OUT, @nm_fantasia OUT, @nr_cnpj_cpf OUT";
 
                 cmd.Parameters.Add(new SqlParameter("@email", email));
                 cmd.Parameters.Add(new SqlParameter("@senha", senha));
@@ -145,7 +146,7 @@ namespace webVendaSimples
 
                 cmd.Parameters.Add(new SqlParameter("@codigo", "0"));
                 cmd.Parameters["@codigo"].Direction = ParameterDirection.InputOutput;
-                cmd.Parameters["@codigo"].Size = 10;
+                //cmd.Parameters["@codigo"].Size = 10;
 
                 cmd.Parameters.Add(new SqlParameter("@nome", ""));
                 cmd.Parameters["@nome"].Direction = ParameterDirection.InputOutput;
@@ -155,6 +156,25 @@ namespace webVendaSimples
                 cmd.Parameters["@retorno"].Direction = ParameterDirection.InputOutput;
                 cmd.Parameters["@retorno"].Size = 250;
 
+                cmd.Parameters.Add(new SqlParameter("@id_empresa", ""));
+                cmd.Parameters["@id_empresa"].Direction = ParameterDirection.InputOutput;
+                cmd.Parameters["@id_empresa"].Size = 38;
+
+                cmd.Parameters.Add(new SqlParameter("@cd_empresa", "0"));
+                cmd.Parameters["@cd_empresa"].Direction = ParameterDirection.InputOutput;
+
+                cmd.Parameters.Add(new SqlParameter("@nm_empresa", ""));
+                cmd.Parameters["@nm_empresa"].Direction = ParameterDirection.InputOutput;
+                cmd.Parameters["@nm_empresa"].Size = 250;
+
+                cmd.Parameters.Add(new SqlParameter("@nm_fantasia", ""));
+                cmd.Parameters["@nm_fantasia"].Direction = ParameterDirection.InputOutput;
+                cmd.Parameters["@nm_fantasia"].Size = 150;
+
+                cmd.Parameters.Add(new SqlParameter("@nr_cnpj_cpf", ""));
+                cmd.Parameters["@nr_cnpj_cpf"].Direction = ParameterDirection.InputOutput;
+                cmd.Parameters["@nr_cnpj_cpf"].Size = 25;
+
                 cmd.CommandText = sql;
                 SqlDataReader qry = cmd.ExecuteReader();
 
@@ -162,9 +182,16 @@ namespace webVendaSimples
 
                 usr.id = Server.HtmlEncode(cmd.Parameters["@id"].Value.ToString());
                 usr.codigo = Int64.Parse(cmd.Parameters["@codigo"].Value.ToString());
-                usr.nome = Server.HtmlEncode(cmd.Parameters["@nome"].Value.ToString());
-                usr.email = email;
+                usr.nome   = Server.HtmlEncode(cmd.Parameters["@nome"].Value.ToString());
+                usr.email  = email;
                 usr.retorno = Server.HtmlEncode(cmd.Parameters["@retorno"].Value.ToString());
+
+                usr.empresa.id       = Server.HtmlEncode(cmd.Parameters["@id_empresa"].Value.ToString());
+                usr.empresa.codigo   = Int32.Parse(cmd.Parameters["@cd_empresa"].Value.ToString());
+                usr.empresa.nome     = Server.HtmlEncode(cmd.Parameters["@nm_empresa"].Value.ToString());
+                usr.empresa.fantasia = Server.HtmlEncode(cmd.Parameters["@nm_fantasia"].Value.ToString());
+                usr.empresa.cpf_cnpj = Server.HtmlEncode(cmd.Parameters["@nr_cnpj_cpf"].Value.ToString());
+
                 arr.Add(usr);
 
                 //usr = null;
@@ -451,6 +478,12 @@ namespace webVendaSimples
             Context.Response.Write(js.Serialize(arr));
             Context.Response.Flush();
             Context.Response.End();
+        }
+
+        // LISTAR EMPRESAS DO USUÀRIO ==============================================================
+        [WebMethod]
+        public void ListarEmpresas(String usuario, String token) { 
+
         }
     }
 }

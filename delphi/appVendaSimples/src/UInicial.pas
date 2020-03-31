@@ -3,12 +3,17 @@ unit UInicial;
 interface
 
 uses
+  dao.Usuario,
+  app.Funcoes,
+
+  interfaces.Usuario,
+
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Controls.Presentation, FMX.StdCtrls,
   FMX.Objects, FMX.Layouts;
 
 type
-  TFrmInicial = class(TForm)
+  TFrmInicial = class(TForm, IObservadorUsuario)
     layoutWizard: TLayout;
     layoutSlide1: TLayout;
     imageWizard1: TImage;
@@ -40,6 +45,7 @@ type
     labelTenhoCadastro: TLabel;
     Rectangle1: TRectangle;
     Label1: TLabel;
+    TmrLoad: TTimer;
     procedure DoVoltarSlide(Sender: TObject);
     procedure DoProximoSlide(Sender: TObject);
     procedure DoLogar(Sender: TObject);
@@ -47,10 +53,13 @@ type
 
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure TmrLoadTimer(Sender: TObject);
   private
     { Private declarations }
+    aUser  : TUsuarioDao;
     aSlide : Smallint;
     procedure ExibriSlide(const aIndice : Smallint);
+    procedure AtualizarUsuario;
   public
     { Public declarations }
   end;
@@ -64,7 +73,7 @@ implementation
 
 uses
   UConstantes,
-  UDM, ULogin, app.Funcoes, UPrincipal;
+  UDM, ULogin, UPrincipal;
 
 { TFrmInicial }
 
@@ -89,23 +98,43 @@ end;
 procedure TFrmInicial.FormCreate(Sender: TObject);
 begin
   aSlide := 1;
-  layoutWizard.Visible := True;
+
+  layoutWizard.Visible := False;
   LayoutFundo.Visible  := False;
+
   DM.UpgradeDB;
+
+  aUser := TUsuarioDao.GetInstance();
 end;
 
 procedure TFrmInicial.FormShow(Sender: TObject);
 begin
   ExibriSlide(1);
+  TmrLoad.Enabled := True;
+end;
+
+procedure TFrmInicial.TmrLoadTimer(Sender: TObject);
+begin
+  TmrLoad.Enabled := False;
+
+  aUser.Load(EmptyStr);
+  if aUser.Model.Ativo then
+  begin
+    CriarForm(TFrmPrincipal, FrmPrincipal);
+    Self.Close;
+  end
+  else
+    layoutWizard.Visible := True;
+end;
+
+procedure TFrmInicial.AtualizarUsuario;
+begin
+  aUser := TUsuarioDao.GetInstance();
+  TmrLoad.Enabled := aUser.Model.Ativo;
 end;
 
 procedure TFrmInicial.DoLogar(Sender: TObject);
 begin
-//  if EfetuarLogin then
-//  begin
-//    Self.Hide;
-//    CriarForm(TFrmPrincipal, FrmPrincipal);
-//  end;
   EfetuarLogin;
 end;
 

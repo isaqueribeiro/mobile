@@ -15,6 +15,7 @@ type
         TABLE_CONFIG      = 'app_configuracao';
         TABLE_NOTIFICACAO = 'app_notificacao';
         TABLE_USUARIO     = 'tbl_usuario';
+        TABLE_LOJA        = 'tbl_empresa';
         TABLE_PEDIDO      = 'tbl_pedido';
         TABLE_PEDIDO_ITEM = 'tbl_pedido_item';
         TABLE_CLIENTE     = 'tbl_cliente';
@@ -26,6 +27,7 @@ type
       function getCreateTableConfiguracao : TStringList;
       function getCreateTableNotificacao : TStringList;
       function getCreateTableUsuario : TStringList;
+      function getCreateTableLoja : TStringList;
       function getCreateTablePedido : TStringList;
       function getCreateTablePedidoItem : TStringList;
       function getCreateTableCliente : TStringList;
@@ -37,6 +39,7 @@ type
       function getTableNameConfiguracao : String;
       function getTableNameNotificacao : String;
       function getTableNameUsuario : String;
+      function getTableNameLoja : String;
       function getTableNamePedido : String;
       function getTableNamePedidoItem : String;
       function getTableNameCliente : String;
@@ -94,6 +97,27 @@ begin
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_CONFIG + ' (');
     aSQL.Add('      ky_campo VARCHAR (50) NOT NULL PRIMARY KEY');
     aSQL.Add('    , vl_campo VARCHAR (250)');
+    aSQL.Add(');');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
+end;
+
+function TScriptDDL.getCreateTableLoja: TStringList;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL := TStringList.Create;
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_LOJA + ' (');
+    aSQL.Add('      id_empresa    VARCHAR (38) NOT NULL PRIMARY KEY');
+    aSQL.Add('    , nm_empresa    VARCHAR (250)');
+    aSQL.Add('    , nm_fantasia   VARCHAR (150)');
+    aSQL.Add('    , nr_cpf_cnpj   VARCHAR (25)');
     aSQL.Add(');');
     aSQL.EndUpdate;
   finally
@@ -293,6 +317,11 @@ end;
 function TScriptDDL.getTableNameConfiguracao: String;
 begin
   Result := TABLE_CONFIG;
+end;
+
+function TScriptDDL.getTableNameLoja: String;
+begin
+  Result := TABLE_LOJA;
 end;
 
 function TScriptDDL.getTableNameNotificacao: String;

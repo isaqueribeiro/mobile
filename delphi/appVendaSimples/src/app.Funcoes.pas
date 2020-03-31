@@ -39,12 +39,14 @@ uses
   function IsEmailValido(const aEmail : String) : Boolean;
   function GetNumeroSIM : String;
   function FormatarTexto(aFormato, aStr : String) : String;
+  function SomenteNumero(aStr : String) : String;
   function StrToIntegerLocal(aStr : String) : Integer;
   function StrToMoneyLocal(aStr : String) : Currency;
   function StrToDate(aFormato, aStr : String) : TDateTime;
   function StrIsGUID(const aStr: String): Boolean;
   function StrIsCPF(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
   function StrIsCNPJ(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
+  function StrClearValueJson(const aValue : String) : String;
 
 implementation
 
@@ -106,8 +108,8 @@ begin
   try
     aStr := AnsiLowerCase(idmd5.HashStringAsHex(aTexto));
   finally
+    idmd5.DisposeOf;
     Result := aStr;
-    idmd5.Free;
   end;
 end;
 
@@ -147,6 +149,21 @@ end;
 function FormatarTexto(aFormato, aStr : String) : String;
 begin
   Result := FormatMaskText(aFormato, aStr);
+end;
+
+function SomenteNumero(aStr : String) : String;
+var
+  aRetorno : String;
+  I : Byte;
+begin
+  aRetorno := '';
+  try
+    for I := 1 to Length(aStr) do
+      if (aStr[I] in ['0'..'9']) Then
+        aRetorno := aRetorno + aStr[I];
+  finally
+    Result := aRetorno;
+  end;
 end;
 
 function StrToIntegerLocal(aStr : String) : Integer;
@@ -366,6 +383,11 @@ begin
     if (Dv1 = Dig[13]) and (Dv2 = Dig[14]) then
       Result := True;
   end;
+end;
+
+function StrClearValueJson(const aValue : String) : String;
+begin
+  Result := StringReplace(StringReplace(aValue, '"', '', [rfReplaceAll]), '\/', '/', [rfReplaceAll]);
 end;
 
 end.

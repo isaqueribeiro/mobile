@@ -4,6 +4,7 @@ interface
 
 uses
   dao.Usuario,
+  dao.Loja,
   Web.HttpApp,
   System.Json,
 
@@ -52,6 +53,7 @@ type
     ChangeTabCadastro: TChangeTabAction;
     procedure DoExecutarLink(Sender: TObject);
     procedure DoAcessar(Sender: TObject);
+    procedure DoCriarConta(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -60,6 +62,7 @@ type
     FDao : TUsuarioDao;
     procedure DefinirLink;
     function Autenticar : Boolean;
+    function CriarConta : Boolean;
   public
     { Public declarations }
     property Dao : TUsuarioDao read FDao write FDao;
@@ -69,7 +72,7 @@ var
   FrmLogin: TFrmLogin;
 
   procedure CadastrarNovaConta;
-  procedure EfetuarLogin;
+  procedure EfetuarLogin(const IsMain : Boolean = FALSE);
 
 implementation
 
@@ -78,6 +81,7 @@ implementation
 uses
   app.Funcoes,
   UDM,
+  UMensagem,
   UInicial,
   UPrincipal;
 
@@ -94,7 +98,7 @@ begin
   end;
 end;
 
-procedure EfetuarLogin;
+procedure EfetuarLogin(const IsMain : Boolean = FALSE);
 begin
   Application.CreateForm(TFrmLogin, FrmLogin);
   Application.RealCreateForms;
@@ -103,30 +107,102 @@ begin
     FrmLogin.TabControl.ActiveTab := FrmLogin.TabLogin;
     FrmLogin.Show;
   finally
+    if IsMain then
+      Application.MainForm := FrmLogin;
   end;
 end;
 
 function TFrmLogin.Autenticar: Boolean;
 var
-  aUser  : TUsuarioDao;
-  aJason : TJSONObject;
+  aID : TGUID;
+  aUser : TUsuarioDao;
+  aLoja : TLojaDao;
+  aJson ,
+  aEmpr : TJSONObject;
   aRetorno : String;
 begin
-  aUser := TUsuarioDao.GetInstance;
-  aUser.Model.Email := editEmail.Text;
-  aUser.Model.Senha := editSenha.Text;
+  try
+    aUser := TUsuarioDao.GetInstance;
+    aUser.Limpar();
 
-  aJason := DM.GetValidarLogin;
+    aUser.Model.Email := editEmail.Text;
+    aUser.Model.Senha := editSenha.Text;
 
-  if Assigned(aJason) then
-  begin
-    aRetorno := StringReplace(HTMLDecode(aJason.Get('retorno').JsonValue.ToString), '"', '', [rfReplaceAll]);
-    Result   := (aRetorno.ToUpper = 'OK');
+    aJson := DM.GetValidarLogin;
 
-    ShowMessage(aRetorno);
-  end
-  else
-    Result := False;
+    if Assigned(aJson) then
+    begin
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+      Result   := (aRetorno.ToUpper = 'OK');
+
+      if not Result then
+        ExibirMsgAlerta(aRetorno)
+      else
+      begin
+        aID := StringToGUID( StrClearValueJson(HTMLDecode(aJson.Get('id').JsonValue.ToString)) );
+        if aUser.Find(aID, AnsiLowerCase(Trim(editEmail.Text)), False) then
+        begin
+          aUser.Model.Nome  := StrClearValueJson(HTMLDecode(aJson.Get('nome').JsonValue.ToString));
+          aUser.Model.Ativo := True;
+          aUser.Ativar();
+        end
+        else
+        begin
+          aUser.Model.ID    := StringToGUID( StrClearValueJson(HTMLDecode(aJson.Get('id').JsonValue.ToString)) );
+          aUser.Model.Nome  := StrClearValueJson(HTMLDecode(aJson.Get('nome').JsonValue.ToString));
+          aUser.Model.Email := AnsiLowerCase(Trim(editEmail.Text));
+          aUser.Model.Senha := MD5(AnsiLowerCase(Trim(editSenha.Text)));
+          aUser.Model.Ativo := True;
+          aUser.Insert();
+        end;
+
+        // Recuperar dados da empresa
+        aEmpr := aJson.Get('empresa').JsonValue as TJSONObject;
+
+        with aUser.Model do
+        begin
+          Empresa.ID       := StringToGUID(StrClearValueJson(HTMLDecode(aEmpr.Get('id').JsonValue.ToString)));
+          Empresa.Codigo   := StrToCurr(StrClearValueJson(HTMLDecode(aEmpr.Get('codigo').JsonValue.ToString)));
+          Empresa.Nome     := StrClearValueJson(HTMLDecode(aEmpr.Get('nome').JsonValue.ToString));
+          Empresa.Fantasia := StrClearValueJson(HTMLDecode(aEmpr.Get('fantasia').JsonValue.ToString));
+          Empresa.CpfCnpj  := StrClearValueJson(HTMLDecode(aEmpr.Get('cpf_cnpj').JsonValue.ToString));
+        end;
+
+        // Gravar dados da empresa retornada
+        aLoja := TLojaDao.GetInstance();
+        aLoja.Limpar();
+
+        if (aUser.Model.Empresa.Codigo > 0) then
+        begin
+          aID := StringToGUID( StrClearValueJson(HTMLDecode(aEmpr.Get('id').JsonValue.ToString)) );
+
+          if aLoja.Find(aId, aUser.Model.Empresa.CpfCnpj, False) then
+          begin
+            aLoja.Model := aUser.Model.Empresa;
+            aLoja.Update();
+          end
+          else
+          begin
+            aLoja.Model := aUser.Model.Empresa;
+            aLoja.Insert();
+          end;
+        end;
+      end;
+    end
+    else
+      Result := False;
+  except
+    On E : Exception do
+    begin
+      ExibirMsgErro('Erro ao tentar autenticar usuário/senha.' + #13 + E.Message);
+      Result := False;
+    end;
+  end;
+end;
+
+function TFrmLogin.CriarConta: Boolean;
+begin
+  Result := False;
 end;
 
 procedure TFrmLogin.DefinirLink;
@@ -144,8 +220,24 @@ begin
   if Autenticar then
   begin
     Self.Close;
+
     if Assigned(FrmInicial) then
       FrmInicial.Hide;
+
+    CriarForm(TFrmPrincipal, FrmPrincipal);
+  end;
+end;
+
+procedure TFrmLogin.DoCriarConta(Sender: TObject);
+begin
+  DM.ConectarDB;
+  if CriarConta then
+  begin
+    Self.Close;
+
+    if Assigned(FrmInicial) then
+      FrmInicial.Hide;
+
     CriarForm(TFrmPrincipal, FrmPrincipal);
   end;
 end;

@@ -17,6 +17,7 @@ type
       aModel : TUsuario;
       aOperacao : TTipoOperacaoDao;
       constructor Create();
+
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TUsuario);
       procedure ClearValues;
 
@@ -28,6 +29,9 @@ type
       procedure Load(const aBusca : String);
       procedure Insert();
       procedure Update();
+      procedure Limpar();
+      procedure Ativar();
+      procedure Desativar();
 
       function Find(const aID : TGUID; const aEmail : String; const IsLoadModel : Boolean) : Boolean;
 
@@ -99,36 +103,37 @@ end;
 
 procedure TUsuarioDao.Insert;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Insert Into ' + aDDL.getTableNameUsuario + '(');
-    aSQL.Add('    id_usuario     ');
-    aSQL.Add('  , nm_usuario     ');
-    aSQL.Add('  , ds_email       ');
-    aSQL.Add('  , ds_senha       ');
-    aSQL.Add('  , nr_celular     ');
-    aSQL.Add('  , nr_cpf         ');
-    aSQL.Add('  , tk_dispositivo ');
-    aSQL.Add('  , sn_ativo       ');
-    aSQL.Add(') values (');
-    aSQL.Add('    :id_usuario    ');
-    aSQL.Add('  , :nm_usuario    ');
-    aSQL.Add('  , :ds_email      ');
-    aSQL.Add('  , :ds_senha      ');
-    aSQL.Add('  , :nr_celular    ');
-    aSQL.Add('  , :nr_cpf        ');
-    aSQL.Add('  , :tk_dispositivo');
-    aSQL.Add('  , :sn_ativo      ');
-    aSQL.Add(')');
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Insert Into ' + aDDL.getTableNameUsuario + '(');
+      SQL.Add('    id_usuario     ');
+      SQL.Add('  , nm_usuario     ');
+      SQL.Add('  , ds_email       ');
+      SQL.Add('  , ds_senha       ');
+      SQL.Add('  , nr_celular     ');
+      SQL.Add('  , nr_cpf         ');
+      SQL.Add('  , tk_dispositivo ');
+      SQL.Add('  , sn_ativo       ');
+      SQL.Add(') values (');
+      SQL.Add('    :id_usuario    ');
+      SQL.Add('  , :nm_usuario    ');
+      SQL.Add('  , :ds_email      ');
+      SQL.Add('  , :ds_senha      ');
+      SQL.Add('  , :nr_celular    ');
+      SQL.Add('  , :nr_cpf        ');
+      SQL.Add('  , :tk_dispositivo');
+      SQL.Add('  , :sn_ativo      ');
+      SQL.Add(')');
+      SQL.EndUpdate;
 
       if (aModel.ID = GUID_NULL) then
         aModel.NewID;
@@ -146,58 +151,84 @@ begin
       aOperacao := TTipoOperacaoDao.toIncluido;
     end;
   finally
-    aSQL.DisposeOf;
+    aQry.DisposeOf;
+  end;
+end;
+
+procedure TUsuarioDao.Limpar;
+var
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Delete from ' + aDDL.getTableNameUsuario);
+      SQL.EndUpdate;
+
+      ExecSQL;
+      aModel.Ativo := False;
+      aOperacao := TTipoOperacaoDao.toExcluir;
+    end;
+  finally
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TUsuarioDao.Load(const aBusca: String);
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aUsuario : TUsuario;
   aFiltro  : String;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
     aFiltro := AnsiUpperCase(Trim(aBusca));
 
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    u.* ');
-    aSQL.Add('from ' + aDDL.getTableNameUsuario + ' u');
-    aSQL.Add('where (u.sn_ativo = ' + QuotedStr('S') + ')');
-
-    if (Trim(aBusca) <> EmptyStr) then
+    with DM, aQry do
     begin
-      aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
-      aSQL.Add('  and (u.nm_usuario like ' + QuotedStr(aFiltro) + ')');
-    end;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    u.* ');
+      SQL.Add('from ' + aDDL.getTableNameUsuario + ' u');
+      SQL.Add('where (u.sn_ativo = ' + QuotedStr('S') + ')');
 
-    aSQL.Add('order by');
-    aSQL.Add('    u.nm_usuario ');
-
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
-    begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
-
-      if qrySQL.OpenOrExecute then
+      if (Trim(aBusca) <> EmptyStr) then
       begin
-        if (qrySQL.RecordCount > 0) then
-          while not qrySQL.Eof do
+        aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
+        SQL.Add('  and (u.nm_usuario like ' + QuotedStr(aFiltro) + ')');
+      end;
+
+      SQL.Add('order by');
+      SQL.Add('    u.nm_usuario ');
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+      begin
+        if (RecordCount > 0) then
+          while not Eof do
           begin
             aUsuario := TUsuario.GetInstance;
-            SetValues(qrySQL, aUsuario);
-            qrySQL.Next;
+            SetValues(aQry, aUsuario);
+            aQry.Next;
           end
         else
           ClearValues;
       end;
-      qrySQL.Close;
+
+      aQry.Close;
     end;
   finally
-    aSQL.DisposeOf;
+    aQry.DisposeOf;
   end;
 end;
 
@@ -218,30 +249,30 @@ end;
 
 procedure TUsuarioDao.Update;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Update ' + aDDL.getTableNameUsuario + ' Set');
-    aSQL.Add('    nm_usuario     = :nm_usuario ');
-    aSQL.Add('  , ds_email       = :ds_email ');
-    aSQL.Add('  , ds_senha       = :ds_senha ');
-    aSQL.Add('  , nr_celular     = :nr_celular ');
-    aSQL.Add('  , nr_cpf         = :nr_cpf ');
-    aSQL.Add('  , sn_ativo       = :sn_ativo ');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    if (Trim(aModel.TokenID) <> EmptyStr) then
-      aSQL.Add('  , tk_dispositivo = :tk_dispositivo ');
-
-    aSQL.Add('where id_usuario   = :id_usuario');
-
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNameUsuario + ' Set');
+      SQL.Add('    nm_usuario     = :nm_usuario ');
+      SQL.Add('  , ds_email       = :ds_email ');
+      SQL.Add('  , ds_senha       = :ds_senha ');
+      SQL.Add('  , nr_celular     = :nr_celular ');
+      SQL.Add('  , nr_cpf         = :nr_cpf ');
+      SQL.Add('  , sn_ativo       = :sn_ativo ');
+
+      if (Trim(aModel.TokenID) <> EmptyStr) then
+        SQL.Add('  , tk_dispositivo = :tk_dispositivo ');
+
+      SQL.Add('where id_usuario   = :id_usuario');
+      SQL.EndUpdate;
 
       ParamByName('id_usuario').AsString := GUIDToString(aModel.ID);
       ParamByName('nm_usuario').AsString := aModel.Nome;
@@ -258,7 +289,39 @@ begin
       aOperacao := TTipoOperacaoDao.toEditado;
     end;
   finally
-    aSQL.DisposeOf;
+    aQry.DisposeOf;
+  end;
+end;
+
+procedure TUsuarioDao.Ativar;
+var
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNameUsuario + ' Set');
+      SQL.Add('    nm_usuario   = :nm_usuario ');
+      SQL.Add('  , sn_ativo     = :sn_ativo ');
+      SQL.Add('where id_usuario = :id_usuario');
+      SQL.EndUpdate;
+
+      ParamByName('id_usuario').AsString := GUIDToString(aModel.ID);
+      ParamByName('nm_usuario').AsString := aModel.Nome;
+      ParamByName('sn_ativo').AsString   := FLAG_SIM;
+
+      ExecSQL;
+      aModel.Ativo := True;
+      aOperacao := TTipoOperacaoDao.toEditado;
+    end;
+  finally
+    aQry.DisposeOf;
   end;
 end;
 
@@ -283,6 +346,36 @@ begin
   aDDL      := TScriptDDL.GetInstance;
   aModel    := TUsuario.GetInstance;
   aOperacao := TTipoOperacaoDao.toBrowser;
+end;
+
+procedure TUsuarioDao.Desativar;
+var
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNameUsuario + ' Set');
+      SQL.Add('    sn_ativo     = :sn_ativo ');
+      SQL.Add('where id_usuario = :id_usuario');
+      SQL.EndUpdate;
+
+      ParamByName('id_usuario').AsString := GUIDToString(aModel.ID);
+      ParamByName('sn_ativo').AsString   := FLAG_NAO;
+
+      ExecSQL;
+      aModel.Ativo := True;
+      aOperacao := TTipoOperacaoDao.toEditado;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
 end;
 
 end.

@@ -4,6 +4,7 @@ interface
 
 uses
   UConstantes,
+  model.Loja,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
 
 type
@@ -17,6 +18,7 @@ type
       aCelular ,
       aTokenID : String;
       aAtivo   : Boolean;
+      aEmpresa : TLoja;
 
       procedure SetNome(Value : String);
       procedure SetEmail(Value : String);
@@ -26,6 +28,8 @@ type
       procedure SetTokenID(Value : String);
 
       constructor Create();
+      destructor Destroy(); override;
+
       class var aInstance : TUsuario;
   private
     FID: TGUID;
@@ -39,6 +43,7 @@ type
       property Celular : String  read aCelular write SetCelular;
       property TokenID : String  read aTokenID write SetTokenID;
       property Ativo   : Boolean read aAtivo   write aAtivo;
+      property Empresa : TLoja   read aEmpresa write aEmpresa;
 
       procedure NewID;
 
@@ -51,10 +56,16 @@ implementation
 
 { TUsuario }
 
+destructor TUsuario.Destroy;
+begin
+  aEmpresa.DisposeOf;
+  inherited Destroy;
+end;
+
 class function TUsuario.GetInstance: TUsuario;
 begin
   if not Assigned(aInstance) then
-    aInstance := TUsuario.Create;
+    aInstance := TUsuario.Create();
 
   Result := aInstance;
 end;
@@ -78,6 +89,7 @@ begin
   aCelular := EmptyStr;
   aTokenID := EmptyStr;
   aAtivo   := False;
+  aEmpresa := TLoja.Create;
 end;
 
 procedure TUsuario.SetCelular(Value: String);

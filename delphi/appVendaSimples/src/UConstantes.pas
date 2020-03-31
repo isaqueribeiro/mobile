@@ -8,6 +8,12 @@ Type
   TTipoLoja = TTipoCliente;
   TTipoPedido = (tpOrcamento, tpPedido);
 
+  TDataHoraServer = record
+    Data : String;
+    Hora : String;
+    DataHora : String;
+  end;
+
 const
   VERSION_CODE = 1;
   VERSION_NAME = '1.0.0';
@@ -21,13 +27,15 @@ const
   crAzul        = $FF1E87AF;
   vlOpacityIcon = 0.3;
 
-  EMPTY_DATE = '30/12/1899';
+  EMPTY_DATE  = '30/12/1899';
+  KEY_ENCRIPT = 'TheLordIsGod';
 
   FLAG_SIM = 'S';
   FLAG_NAO = 'N';
 
   URL_ROOT    = 'http://localhost:51358';
   URL_USUARIO = '/ws_usuario.asmx';
+  URL_FUNCOES = '/ws_funcoes.asmx';
 
 implementation
 

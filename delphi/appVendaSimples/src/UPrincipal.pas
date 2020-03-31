@@ -7,6 +7,7 @@ uses
   model.Cliente,
   model.Notificacao,
   dao.Usuario,
+  dao.Loja,
   dao.Pedido,
   dao.Cliente,
   dao.Notificacao,
@@ -181,7 +182,8 @@ uses
   UProduto,
   UPedido,
   UPerfil,
-  UCompartilhar;
+  UCompartilhar,
+  ULogin;
 
 { TFrmPrincipal }
 
@@ -418,8 +420,22 @@ begin
 end;
 
 procedure TFrmPrincipal.DoCloseApp(Sender: TObject);
+var
+  msg   : TFrmMensagem;
+  aUser : TUsuarioDao;
+  aEmpr : TLojaDao;
 begin
-  Halt(0);
+  msg := TFrmMensagem.GetInstance;
+  msg.Close;
+
+  aUser := TUsuarioDao.GetInstance();
+  aUser.Desativar;
+
+  aEmpr := TLojaDao.GetInstance();
+  aEmpr.Limpar();
+
+  EfetuarLogin(True);
+  Self.Close;
 end;
 
 procedure TFrmPrincipal.DoCompartilharApp(Sender: TObject);

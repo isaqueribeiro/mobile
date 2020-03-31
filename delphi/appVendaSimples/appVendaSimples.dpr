@@ -40,7 +40,8 @@ uses
   UPerfil in 'src\UPerfil.pas' {FrmPerfil},
   UCompartilhar in 'src\UCompartilhar.pas' {FrmCompartilhar},
   UPedido in 'src\UPedido.pas' {FrmPedido},
-  UPedidoItem in 'src\UPedidoItem.pas' {FrmPedidoItem};
+  UPedidoItem in 'src\UPedidoItem.pas' {FrmPedidoItem},
+  dao.Loja in 'src\dao.Loja.pas';
 
 {$R *.res}
 

@@ -123,4 +123,13 @@ object DM: TDM
     Left = 416
     Top = 184
   end
+  object rscFuncoes: TRESTClient
+    Accept = 'application/json, text/plain; q=0.9, text/html;q=0.8,'
+    AcceptCharset = 'utf-8, *;q=0.8'
+    BaseURL = 'http://localhost:51358/ws_funcoes.asmx'
+    Params = <>
+    RaiseExceptionOn500 = False
+    Left = 416
+    Top = 128
+  end
 end

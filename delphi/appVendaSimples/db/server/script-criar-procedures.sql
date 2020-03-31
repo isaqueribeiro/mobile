@@ -3,6 +3,33 @@ GO
 
 -- =============================================
 -- Author		:	Isaque M. Ribeiro
+-- Create date	:	31/03/2020
+-- Description	:	Validar Usuário/Senha
+-- =============================================
+CREATE or ALTER PROCEDURE dbo.getDataHora(
+	@dh_server	DATETIME	 OUT
+  , @data		VARCHAR(10)  OUT
+  , @hora		VARCHAR(10)  OUT
+  , @data_hora	VARCHAR(20)  OUT
+  , @retorno	VARCHAR(250) OUT)
+AS
+BEGIN TRY
+  Set @retorno	= 'OK';
+
+  Select
+	  @dh_server = getdate()
+	, @data = convert(varchar(10), getdate(), 103)
+	, @hora = convert(varchar(10), getdate(), 108)
+	, @data_hora = concat(convert(varchar(10), getdate(), 103), ' ', convert(varchar(10), getdate(), 108)) 
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar recuperar a data e hora do servidor';
+END CATCH
+GO
+
+-- =============================================
+-- Author		:	Isaque M. Ribeiro
 -- Create date	:	27/09/2019
 -- Description	:	Validar Usuário/Senha
 -- =============================================
@@ -13,7 +40,12 @@ CREATE or ALTER PROCEDURE dbo.getValidarLogin(
   , @id		 VARCHAR(38)  OUT
   , @codigo	 BIGINT		  OUT
   , @nome	 VARCHAR(150) OUT
-  , @retorno VARCHAR(250) OUT)
+  , @retorno VARCHAR(250) OUT
+  , @id_empresa  VARCHAR(38)  OUT
+  , @cd_empresa  INT		  OUT 
+  , @nm_empresa  VARCHAR(250) OUT
+  , @nm_fantasia VARCHAR(150) OUT
+  , @nr_cnpj_cpf VARCHAR(25)  OUT)
 AS
 BEGIN TRY
   Declare @senhaTMP VARCHAR(40);
@@ -28,12 +60,19 @@ BEGIN TRY
     Set @retorno = 'Token Inválido';
   Else
   Begin
-	Select
+	Select TOP 1
 		@id		= u.id_usuario
 	  , @codigo	= u.cd_usuario
-	  , @nome		= u.nm_usuario
-	  , @senhaDB	= u.ds_senha
+	  , @nome		 = u.nm_usuario
+	  , @senhaDB	 = u.ds_senha
+	  , @id_empresa  = coalesce(e.id_empresa, '{00000000-0000-0000-0000-000000000000}')
+	  , @cd_empresa  = coalesce(c.cd_empresa, 0)
+	  , @nm_empresa  = c.nm_empresa
+	  , @nm_fantasia = c.nm_fantasia
+	  , @nr_cnpj_cpf = c.nr_cnpj_cpf
 	from dbo.sys_usuario u
+	  left join dbo.sys_usuario_empresa e on (e.id_usuario = u.id_usuario and e.sn_ativo = 1)
+	  left join dbo.sys_empresa c on (c.id_empresa = e.id_empresa)
 	where (u.ds_email = @email);
 
 	If (ISNULL(@codigo, 0) = 0)
@@ -45,7 +84,7 @@ BEGIN TRY
 	  If ((@senhaTMP = @senhaDB) or (SUBSTRING(@senha, 3, 40) = @senhaDB))
 		Set @retorno = 'OK';
 	  Else
-		Set @retorno = 'E-mail/Senha inválidos'; 
+		Set @retorno = 'E-mail e Senha inválidos'; 
 	End
   End
 END TRY

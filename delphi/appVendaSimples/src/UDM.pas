@@ -4,6 +4,7 @@ interface
 
 uses
   UConstantes,
+  app.Funcoes,
   dao.Versao,
   dao.Usuario,
 
@@ -34,12 +35,14 @@ type
     updPedido: TFDUpdateSQL;
     qryPedido: TFDQuery;
     rscUsuario: TRESTClient;
+    rscFuncoes: TRESTClient;
     procedure DataModuleCreate(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
     { Private declarations }
     procedure SetArquivoDB(const aFileName : String);
     procedure ConfigurarUrlUsuario;
+    procedure ConfigurarUrlFuncoes;
   public
     { Public declarations }
     procedure ConectarDB;
@@ -48,6 +51,7 @@ type
     procedure CriarTabela;
 
     function IsConectado : Boolean;
+    function GetDateTimeServer : TDataHoraServer;
     function GetValidarLogin : TJSONObject;
   end;
 
@@ -181,6 +185,16 @@ begin
   end;
 end;
 
+procedure TDM.ConfigurarUrlFuncoes;
+begin
+  with rscFuncoes do
+  begin
+    BaseURL := URL_ROOT + URL_FUNCOES;
+    Accept  := 'application/json, text/plain; q=0.9, text/html;q=0.8,';
+    AcceptCharset := 'utf-8, *;q=0.8';
+  end;
+end;
+
 procedure TDM.ConfigurarUrlUsuario;
 begin
   with rscUsuario do
@@ -203,6 +217,7 @@ begin
   aScriptDDL := TScriptDDL.GetInstance;
   conn.ExecSQL(aScriptDDL.getCreateTableVersao.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableConfiguracao.Text, True);
+  conn.ExecSQL(aScriptDDL.getCreateTableLoja.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableUsuario.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTableCliente.Text, True);
   conn.ExecSQL(aScriptDDL.getCreateTablePedido.Text, True);
@@ -233,16 +248,73 @@ begin
   SetArquivoDB(aFileDB);
 end;
 
+function TDM.GetDateTimeServer : TDataHoraServer;
+var
+  aRetorno : TDataHoraServer;
+  aRequestFuncoes : TRESTRequest;
+  aJson : TJSONObject;
+  aStr  : String;
+begin
+  try
+    ConfigurarUrlFuncoes;
+
+    aRetorno.Data := FormatDateTime('dd/mm/yyyy', Date);
+    aRetorno.Hora := FormatDateTime('hh:mm:ss',   Time);
+    aRetorno.DataHora := aRetorno.Data + ' ' + aRetorno.Hora;
+
+    aRequestFuncoes := TRESTRequest.Create(rscFuncoes);
+
+    with aRequestFuncoes do
+    begin
+      Client := rscFuncoes;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscFuncoes.Accept;
+      AcceptCharset      := rscFuncoes.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'DataHora';
+      Timeout  := 30000;
+
+      Params.Clear;
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aJson := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+          aStr  := StrClearValueJson( HTMLDecode(aJson.Get('retorno').JsonValue.ToString) );
+
+          if (aStr.ToUpper = 'OK') then
+          begin
+            aRetorno.Data     := StrClearValueJson( HTMLDecode(aJson.Get('data').JsonValue.ToString) );
+            aRetorno.Hora     := StrClearValueJson( HTMLDecode(aJson.Get('hora').JsonValue.ToString) );
+            aRetorno.DataHora := StrClearValueJson( HTMLDecode(aJson.Get('data_hora').JsonValue.ToString) );
+          end;
+        end;
+    end;
+  finally
+    aRequestFuncoes.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
 function TDM.GetValidarLogin: TJSONObject;
 var
   aRetorno : TJSONObject;
   aRequestLogin : TRESTRequest;
+  aKey : String;
   aStr : AnsiString;
   aUsr : TUsuarioDao;
 begin
   try
     ConfigurarUrlUsuario;
 
+    aKey := AnsiUpperCase( '0x' + MD5(KEY_ENCRIPT + GetDateTimeServer.Data) );
     aRetorno := nil;
     aRequestLogin := TRESTRequest.Create(rscUsuario);
 
@@ -262,7 +334,7 @@ begin
       Params.Clear;
       AddParameter('email', HTTPEncode(aUsr.Model.Email), TRESTRequestParameterKind.pkGETorPOST);
       AddParameter('senha', HTTPEncode(aUsr.Model.Senha), TRESTRequestParameterKind.pkGETorPOST);
-      AddParameter('token', HTTPEncode(EmptyStr) , TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token', HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
       Execute;
 
       if Assigned(Response) then
