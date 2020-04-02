@@ -173,7 +173,7 @@ begin
     aSQL.Add('    , sn_entregue     CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL'); // Pedido Entregue ao Cliente ?
     aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Pedido no Servidor Web (ID)
-    aSQL.Add('    , id_item         VARCHAR (38)');
+    aSQL.Add('    , id_loja         VARCHAR (38)');
     aSQL.Add(');');
     aSQL.EndUpdate;
   finally

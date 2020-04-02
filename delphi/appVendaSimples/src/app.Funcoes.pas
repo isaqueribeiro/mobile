@@ -387,7 +387,7 @@ end;
 
 function StrClearValueJson(const aValue : String) : String;
 begin
-  Result := StringReplace(StringReplace(aValue, '"', '', [rfReplaceAll]), '\/', '/', [rfReplaceAll]);
+  Result := StringReplace(StringReplace(StringReplace(aValue, '"', '', [rfReplaceAll]), '\/', '/', [rfReplaceAll]), '\r\n', #13, [rfReplaceAll]);
 end;
 
 end.

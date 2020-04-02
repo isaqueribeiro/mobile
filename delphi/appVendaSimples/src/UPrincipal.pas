@@ -429,7 +429,7 @@ begin
   msg.Close;
 
   aUser := TUsuarioDao.GetInstance();
-  aUser.Desativar;
+  aUser.Limpar();
 
   aEmpr := TLojaDao.GetInstance();
   aEmpr.Limpar();

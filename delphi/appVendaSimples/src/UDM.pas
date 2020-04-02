@@ -52,7 +52,9 @@ type
 
     function IsConectado : Boolean;
     function GetDateTimeServer : TDataHoraServer;
+    function GetEncriptString(aValue : String)  : String;
     function GetValidarLogin : TJSONObject;
+    function GetCriarNovaCOnta : TJSONObject;
   end;
 
 var
@@ -248,6 +250,60 @@ begin
   SetArquivoDB(aFileDB);
 end;
 
+function TDM.GetCriarNovaCOnta: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestConta : TRESTRequest;
+  aKey ,
+  aSen : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlUsuario;
+
+    aUsr := TUsuarioDao.GetInstance;
+    aKey := AnsiUpperCase( '0x' + MD5(KEY_ENCRIPT + GetDateTimeServer.Data) );
+    aSen := GetEncriptString(aUsr.Model.Senha);
+
+    aRetorno := nil;
+    aRequestConta := TRESTRequest.Create(rscUsuario);
+
+    with aRequestConta do
+    begin
+      Client := rscUsuario;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscUsuario.Accept;
+      AcceptCharset      := rscUsuario.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'CriarLogin';
+      Timeout  := 30000;
+
+      Params.Clear;
+      AddParameter('nome',  HTTPEncode(aUsr.Model.Nome),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('email', HTTPEncode(aUsr.Model.Email), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('senha', HTTPEncode(aSen), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token', HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestConta.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
 function TDM.GetDateTimeServer : TDataHoraServer;
 var
   aRetorno : TDataHoraServer;
@@ -295,6 +351,54 @@ begin
             aRetorno.Hora     := StrClearValueJson( HTMLDecode(aJson.Get('hora').JsonValue.ToString) );
             aRetorno.DataHora := StrClearValueJson( HTMLDecode(aJson.Get('data_hora').JsonValue.ToString) );
           end;
+        end;
+    end;
+  finally
+    aRequestFuncoes.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TDM.GetEncriptString(aValue: String): String;
+var
+  aRetorno : String;
+  aRequestFuncoes : TRESTRequest;
+  aJson : TJSONObject;
+  aStr  : String;
+begin
+  try
+    ConfigurarUrlFuncoes;
+
+    aRetorno := EmptyStr;
+
+    aRequestFuncoes := TRESTRequest.Create(rscFuncoes);
+
+    with aRequestFuncoes do
+    begin
+      Client := rscFuncoes;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscFuncoes.Accept;
+      AcceptCharset      := rscFuncoes.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'EncriptString';
+      Timeout  := 30000;
+
+      Params.Clear;
+      AddParameter('texto', HTTPEncode(aValue), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('chave', HTTPEncode(KEY_ENCRIPT), TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos(aValue, Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aJson    := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+          aRetorno := StrClearValueJson( HTMLDecode(aJson.Get('hash3').JsonValue.ToString) );
         end;
     end;
   finally

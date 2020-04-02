@@ -123,7 +123,6 @@ var
 begin
   try
     aUser := TUsuarioDao.GetInstance;
-    aUser.Limpar();
 
     aUser.Model.Email := editEmail.Text;
     aUser.Model.Senha := editSenha.Text;
@@ -151,7 +150,7 @@ begin
           aUser.Model.ID    := StringToGUID( StrClearValueJson(HTMLDecode(aJson.Get('id').JsonValue.ToString)) );
           aUser.Model.Nome  := StrClearValueJson(HTMLDecode(aJson.Get('nome').JsonValue.ToString));
           aUser.Model.Email := AnsiLowerCase(Trim(editEmail.Text));
-          aUser.Model.Senha := MD5(AnsiLowerCase(Trim(editSenha.Text)));
+          aUser.Model.Senha := AnsiLowerCase(Trim(editSenha.Text));
           aUser.Model.Ativo := True;
           aUser.Insert();
         end;
@@ -201,8 +200,45 @@ begin
 end;
 
 function TFrmLogin.CriarConta: Boolean;
+var
+  aID : TGUID;
+  aUser : TUsuarioDao;
+  aLoja : TLojaDao;
+  aJson ,
+  aEmpr : TJSONObject;
+  aRetorno : String;
 begin
-  Result := False;
+  try
+    aUser := TUsuarioDao.GetInstance;
+
+    aUser.Model.ID    := GUID_NULL;
+    aUser.Model.Nome  := editNomeCad.Text;
+    aUser.Model.Email := editEmailCad.Text;
+    aUser.Model.Senha := editSenhaCad.Text;
+    aUser.Model.Cpf   := EmptyStr;
+    aUser.Model.Celular := EmptyStr;
+    aUser.Model.TokenID := EmptyStr;
+    aUser.Model.Ativo   := False;
+
+    aJson := DM.GetCriarNovaCOnta;
+
+    if Assigned(aJson) then
+    begin
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+      Result   := (aRetorno.ToUpper = 'OK');
+
+      if not Result then
+        ExibirMsgAlerta(aRetorno);
+    end
+    else
+      Result := False;
+  except
+    On E : Exception do
+    begin
+      ExibirMsgErro('Erro ao tentar criar nova conta.' + #13 + E.Message);
+      Result := False;
+    end;
+  end;
 end;
 
 procedure TFrmLogin.DefinirLink;
@@ -219,12 +255,19 @@ begin
   DM.ConectarDB;
   if Autenticar then
   begin
-    Self.Close;
-
     if Assigned(FrmInicial) then
       FrmInicial.Hide;
 
     CriarForm(TFrmPrincipal, FrmPrincipal);
+
+    // Ajustas manual para correção de bug
+    if (Application.MainForm = Self) then
+    begin
+      Application.MainForm := FrmPrincipal;
+      FrmPrincipal.Show;
+    end;
+
+    Self.Close;
   end;
 end;
 
@@ -233,12 +276,17 @@ begin
   DM.ConectarDB;
   if CriarConta then
   begin
-    Self.Close;
+    editEmail.Text := editEmailCad.Text;
+    editSenha.Text := editSenhaCad.Text;
+
+    // Autenticar para trazer dados adicionais do Usuário do servidor web.
+    Autenticar;
 
     if Assigned(FrmInicial) then
       FrmInicial.Hide;
 
     CriarForm(TFrmPrincipal, FrmPrincipal);
+    Self.Close;
   end;
 end;
 

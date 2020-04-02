@@ -13,7 +13,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
   System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects,
-  FMX.Layouts, FMX.Controls.Presentation;
+  FMX.Layouts, FMX.Controls.Presentation, FMX.DateTimeCtrls;
 
 type
   TFrmPerfil = class(TFrmPadraoCadastro)
@@ -88,7 +88,7 @@ procedure ExibirPerfilUsuario(Observer : IObservadorUsuario);
 var
   aForm : TFrmPerfil;
 begin
-  aForm := TFrmPerfil.GetInstance;
+  aForm := TFrmPerfil.GetInstance();
   aForm.AdicionarObservador(Observer);
 
   with aForm, dao do
@@ -103,7 +103,7 @@ begin
     lblCPF.Text        := IfThen(Trim(Model.Cpf)     = EmptyStr, 'Informe aqui o número do seu CPF', Model.Cpf);
     lblCelular.Text    := IfThen(Trim(Model.Celular) = EmptyStr, 'Informe aqui o número do seu celular', Model.Celular);
     lblEmail.Text      := IfThen(Trim(Model.Email)   = EmptyStr, 'Informe aqui seu e-mail', Model.Email);
-    lblSenha.TagString := Model.Senha;
+    lblSenha.TagString := EmptyStr; // Model.Senha;
 
     lblDescricao.TagFloat := IfThen(Trim(Model.Nome)    = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
     lblCPF.TagFloat       := IfThen(Trim(Model.Cpf)     = EmptyStr, 0, 1);
@@ -298,11 +298,8 @@ begin
     if (lblDescricao.TagFloat = 0) or (Trim(lblDescricao.Text) = EmptyStr) then
       ExibirMsgAlerta('Informe seu nome completo!')
     else
-//    if (lblCPF.TagFloat = 0) or (Trim(lblCPF.Text) = EmptyStr) then
-//      ExibirMsgAlerta('Informe o número de CPF!')
-//    else
-    if (lblCPF.TagFloat = 1) and (not StrIsCPF(lblCPF.Text)) then
-      ExibirMsgAlerta('Número de CPF inválido!')
+    if (lblCPF.TagFloat = 1) and ((not StrIsCPF(lblCPF.Text)) or (not StrIsCNPJ(lblCPF.Text))) then
+      ExibirMsgAlerta('Número de CPF/CNPJ inválido!')
     else
     if (lblEmail.TagFloat = 0) or (Trim(lblEmail.Text) = EmptyStr) then
       ExibirMsgAlerta('Informe seu e-mail!')
@@ -375,7 +372,7 @@ begin
   if not Assigned(aInstance.FObservers) then
     aInstance.FObservers := TList<IObservadorUsuario>.Create;
 
-  aInstance.aDao := TUsuarioDao.GetInstance;
+  aInstance.aDao := TUsuarioDao.GetInstance();
 
   Result := aInstance;
 end;

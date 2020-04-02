@@ -102,31 +102,44 @@ GO
 CREATE or ALTER PROCEDURE dbo.setCriarLogin(
     @nome	 VARCHAR(150)
   , @email	 VARCHAR(150)
-  , @senha	 VARCHAR(40)
+  , @senha	 VARCHAR(42)
   , @token	 VARCHAR(40)
   , @id		 VARCHAR(38)  OUT
   , @codigo	 BIGINT		  OUT
   , @retorno VARCHAR(250) OUT)
 AS
 BEGIN TRY
-  Declare @senhaTMP VARCHAR(40);
+  Declare @validacao VARCHAR(200);
 
-  Set @id		= '{00000000-0000-0000-0000-000000000000}';
-  Set @codigo	= 0;
-  Set @retorno	= 'OK';
+  Set @id		 = '{00000000-0000-0000-0000-000000000000}';
+  Set @codigo	 = 0;
+  Set @retorno	 = 'OK';
+  Set @validacao = '';
+
+  if (trim(@nome) = '')
+    Set @validacao = concat(@validacao, 'Nome completo', char(13) + char(10));
+
+  if (trim(@email) = '')
+    Set @validacao = concat(@validacao, 'E-mail', char(13) + char(10));
+
+  if (trim(@senha) = '')
+    Set @validacao = concat(@validacao, 'Senha', char(13) + char(10));
 
   if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('MD5', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
     Set @retorno = 'Token Inválido';
   Else
+  if (@validacao != '')
+    Set @retorno  = concat('Este dados são obrigatórios para criação de uma nova conta:', char(13) + char(10), @validacao);
+  Else
   Begin
 	Select
 		@id		= u.id_usuario
-	  , @codigo	= u.cd_usuario
+	, @codigo	= u.cd_usuario
 	from dbo.sys_usuario u
 	where (u.ds_email = @email);
 
 	If (ISNULL(@codigo, 0) > 0)
-	  Set @retorno = 'E-mail/Conta já está em uso';
+	  Set @retorno = 'Este e-mail já está em uso por outra conta';
 	Else
 	Begin
 	  If (UPPER(SUBSTRING(@senha, 1, 2)) <> '0X') 
@@ -157,7 +170,7 @@ BEGIN TRY
 END TRY
 
 BEGIN CATCH
-  Set @retorno = 'Erro ao tentar criar usuário';
+  Set @retorno = 'Erro ao tentar criar nova conta';
 END CATCH
 GO
 

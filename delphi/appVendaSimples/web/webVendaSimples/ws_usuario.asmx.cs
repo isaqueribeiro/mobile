@@ -86,37 +86,6 @@ namespace webVendaSimples
             return "Olá, Mundo";
         }
 
-        // ENCRIPTAR STRINGS =======================================================================
-        [WebMethod]
-        public void EncriptString(String texto, String chave) {
-            List<SimpleObject> arr = new List<SimpleObject>();
-
-            texto = HttpUtility.UrlDecode(texto);
-            chave = HttpUtility.UrlDecode(chave);
-
-            if (chave == "") {
-                chave = "TheLordIsGod";
-            }
-
-            SimpleObject obj = new SimpleObject();
-            obj.texto = texto;
-            obj.chave = Server.HtmlEncode(Funcoes.Encriptar(chave));
-            obj.hash1 = Server.HtmlEncode(Funcoes.HashString(Funcoes.Encriptar(texto)));
-            obj.hash2 = Server.HtmlEncode(Funcoes.Encriptar_v2(texto));
-            obj.hash3 = Server.HtmlEncode(Funcoes.EncriptarHashBytes(texto));
-            obj.md5 = Server.HtmlEncode(Funcoes.Md5String(texto));
-
-            arr.Add(obj);
-
-            // Serializar JSON
-            JavaScriptSerializer js = new JavaScriptSerializer();
-
-            Context.Response.Clear();
-            Context.Response.Write(js.Serialize(arr));
-            Context.Response.Flush();
-            Context.Response.End();
-        }
-
         // VALIDAR LOGIN ===========================================================================
         [WebMethod]
         public void ValidarLogin(String email, String senha, String token) {

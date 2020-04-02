@@ -4,6 +4,7 @@ interface
 
 uses
   UConstantes,
+  app.Funcoes,
   classes.ScriptDDL,
   model.Usuario,
 
@@ -141,7 +142,7 @@ begin
       ParamByName('id_usuario').AsString := GUIDToString(aModel.ID);
       ParamByName('nm_usuario').AsString := aModel.Nome;
       ParamByName('ds_email').AsString   := aModel.Email;
-      ParamByName('ds_senha').AsString   := aModel.Senha;
+      ParamByName('ds_senha').AsString   := MD5(aModel.Senha + aModel.Email);
       ParamByName('nr_celular').AsString := aModel.Celular;
       ParamByName('nr_cpf').AsString     := aModel.Cpf;
       ParamByName('tk_dispositivo').AsString := aModel.TokenID;
@@ -263,7 +264,10 @@ begin
       SQL.Add('Update ' + aDDL.getTableNameUsuario + ' Set');
       SQL.Add('    nm_usuario     = :nm_usuario ');
       SQL.Add('  , ds_email       = :ds_email ');
-      SQL.Add('  , ds_senha       = :ds_senha ');
+
+      if (Trim(aModel.Senha) <> EmptyStr) then
+        SQL.Add('  , ds_senha       = :ds_senha ');
+
       SQL.Add('  , nr_celular     = :nr_celular ');
       SQL.Add('  , nr_cpf         = :nr_cpf ');
       SQL.Add('  , sn_ativo       = :sn_ativo ');
@@ -277,7 +281,10 @@ begin
       ParamByName('id_usuario').AsString := GUIDToString(aModel.ID);
       ParamByName('nm_usuario').AsString := aModel.Nome;
       ParamByName('ds_email').AsString   := aModel.Email;
-      ParamByName('ds_senha').AsString   := aModel.Senha;
+
+      if (Trim(aModel.Senha) <> EmptyStr) then
+        ParamByName('ds_senha').AsString   := MD5(aModel.Senha + aModel.Email);
+
       ParamByName('nr_celular').AsString := aModel.Celular;
       ParamByName('nr_cpf').AsString     := aModel.Cpf;
       ParamByName('sn_ativo').AsString   := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
@@ -325,29 +332,6 @@ begin
   end;
 end;
 
-procedure TUsuarioDao.ClearValues;
-begin
-  with aModel do
-  begin
-    ID      := GUID_NULL;
-    Nome    := EmptyStr;
-    Email   := EmptyStr;
-    Senha   := EmptyStr;
-    Cpf     := EmptyStr;
-    Celular := EmptyStr;
-    TokenID := EmptyStr;
-    Ativo   := False;
-  end;
-end;
-
-constructor TUsuarioDao.Create;
-begin
-  inherited Create;
-  aDDL      := TScriptDDL.GetInstance;
-  aModel    := TUsuario.GetInstance;
-  aOperacao := TTipoOperacaoDao.toBrowser;
-end;
-
 procedure TUsuarioDao.Desativar;
 var
   aQry : TFDQuery;
@@ -370,12 +354,35 @@ begin
       ParamByName('sn_ativo').AsString   := FLAG_NAO;
 
       ExecSQL;
-      aModel.Ativo := True;
+      aModel.Ativo := False;
       aOperacao := TTipoOperacaoDao.toEditado;
     end;
   finally
     aQry.DisposeOf;
   end;
+end;
+
+procedure TUsuarioDao.ClearValues;
+begin
+  with aModel do
+  begin
+    ID      := GUID_NULL;
+    Nome    := EmptyStr;
+    Email   := EmptyStr;
+    Senha   := EmptyStr;
+    Cpf     := EmptyStr;
+    Celular := EmptyStr;
+    TokenID := EmptyStr;
+    Ativo   := False;
+  end;
+end;
+
+constructor TUsuarioDao.Create;
+begin
+  inherited Create;
+  aDDL      := TScriptDDL.GetInstance;
+  aModel    := TUsuario.GetInstance;
+  aOperacao := TTipoOperacaoDao.toBrowser;
 end;
 
 end.
