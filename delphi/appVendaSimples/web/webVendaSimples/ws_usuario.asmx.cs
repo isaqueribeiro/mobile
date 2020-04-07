@@ -39,6 +39,17 @@ namespace webVendaSimples
         }
     }
 
+    class RetornoEmpresa
+    {
+        public String retorno = "";
+        public List<Empresa> empresas = new List<Empresa>();
+
+        public void Destroy()
+        {
+            GC.SuppressFinalize(this);
+        }
+    }
+
     class Usuario
     {
         public String id;
@@ -449,10 +460,83 @@ namespace webVendaSimples
             Context.Response.End();
         }
 
-        // LISTAR EMPRESAS DO USUÀRIO ==============================================================
+        // LISTAR EMPRESAS DO USUÁRIO ==============================================================
         [WebMethod]
-        public void ListarEmpresas(String usuario, String token) { 
+        public void ListarEmpresas(String usuario, String token) {
+            Conexao conn = Conexao.Instance;
+            RetornoEmpresa arr = new RetornoEmpresa();
 
+            usuario = HttpUtility.UrlDecode(usuario);
+            token = HttpUtility.UrlDecode(token);
+
+            if (token != Funcoes.EncriptarHashBytes(String.Concat("TheLordIsGod", DateTime.Today.ToString("dd/MM/yyyy"))).ToUpper())
+            {
+                Empresa emp = new Empresa();
+                arr.retorno = Server.HtmlEncode("Token de segurança inválido!");
+                arr.empresas.Add(emp);
+
+                //err = null;
+                GC.SuppressFinalize(emp);
+            }
+            else
+            {
+                try
+                {
+                    conn.Conectar();
+                    SqlCommand cmd = new SqlCommand("", conn.Conn());
+
+                    String sql =
+                        "SET DATEFORMAT DMY " +
+                        "EXECUTE dbo.getListarEmpresas @usuario, @token, @retorno OUT";
+
+                    cmd.Parameters.Add(new SqlParameter("@usuario", usuario));
+                    cmd.Parameters.Add(new SqlParameter("@token", token));
+
+                    cmd.Parameters.Add(new SqlParameter("@retorno", ""));
+                    cmd.Parameters["@retorno"].Direction = ParameterDirection.InputOutput;
+                    cmd.Parameters["@retorno"].Size = 250;
+                    
+                    cmd.CommandText = sql;
+                    SqlDataReader qry = cmd.ExecuteReader();
+
+                    arr.retorno = Server.HtmlEncode(cmd.Parameters["@retorno"].Value.ToString());
+
+                    while (qry.Read())
+                    {
+                        Empresa emp = new Empresa();
+
+                        emp.id = Server.HtmlEncode(qry.GetString(0).ToString());
+                        //emp.codigo = int.Parse( qry.GetString(1).ToString() );        // ESTA DANDO ERRO!!! (SOMENTE AQUI)
+                        emp.nome = Server.HtmlEncode(qry.GetString(2).ToString());
+                        emp.fantasia = Server.HtmlEncode(qry.GetString(3).ToString());
+                        emp.cpf_cnpj = Server.HtmlEncode(qry.GetString(4).ToString());
+
+                        arr.empresas.Add(emp);
+                    }
+
+                    arr.retorno = "OK";
+                    GC.SuppressFinalize(cmd);
+                    
+                    conn.Fechar();
+                }
+                catch (System.IndexOutOfRangeException e)
+                {
+                    Empresa emp = new Empresa();
+                    arr.retorno = Server.HtmlEncode("ERRO - " + e.Message);
+                    arr.empresas.Add(emp);
+
+                    //err = null;
+                    GC.SuppressFinalize(emp);
+                }
+            }
+
+            // Serializar JSON
+            JavaScriptSerializer js = new JavaScriptSerializer();
+
+            Context.Response.Clear();
+            Context.Response.Write(js.Serialize(arr));
+            Context.Response.Flush();
+            Context.Response.End();
         }
     }
 }

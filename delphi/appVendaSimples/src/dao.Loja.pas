@@ -108,6 +108,7 @@ begin
         if aRetorno and IsLoadModel then
           SetValues(qrySQL, aModel)
         else
+        if IsLoadModel then
           ClearValues;
       end;
       qrySQL.Close;
@@ -143,12 +144,12 @@ begin
       SQL.Add('    id_empresa    ');
       SQL.Add('  , nm_empresa    ');
       SQL.Add('  , nm_fantasia   ');
-      SQL.Add('  , nr_cnpj_cpf   ');
+      SQL.Add('  , nr_cpf_cnpj   ');
       SQL.Add(') values (');
       SQL.Add('    :id_empresa   ');
       SQL.Add('  , :nm_empresa   ');
       SQL.Add('  , :nm_fantasia  ');
-      SQL.Add('  , :nr_cnpj_cpf  ');
+      SQL.Add('  , :nr_cpf_cnpj  ');
       SQL.Add(')');
       SQL.EndUpdate;
 
@@ -158,7 +159,7 @@ begin
       ParamByName('id_empresa').AsString  := GUIDToString(aModel.ID);
       ParamByName('nm_empresa').AsString  := aModel.Nome;
       ParamByName('nm_fantasia').AsString := aModel.Fantasia;
-      ParamByName('nr_cnpj_cpf').AsString := aModel.CpfCnpj;
+      ParamByName('nr_cpf_cnpj').AsString := aModel.CpfCnpj;
 
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toIncluido;
@@ -230,6 +231,8 @@ begin
           begin
             aLoja := TLoja.Create;
             SetValues(aQry, aLoja);
+            Model := aLoja;
+
             aQry.Next;
           end
         else
@@ -270,14 +273,14 @@ begin
       SQL.Add('Update ' + aDDL.getTableNameLoja + ' Set');
       SQL.Add('    nm_empresa   = :nm_empresa  ');
       SQL.Add('  , nm_fantasia  = :nm_fantasia ');
-      SQL.Add('  , nr_cnpj_cpf  = :nr_cnpj_cpf ');
+      SQL.Add('  , nr_cpf_cnpj  = :nr_cpf_cnpj ');
       SQL.Add('where id_empresa = :id_empresa  ');
       SQL.EndUpdate;
 
       ParamByName('id_empresa').AsString  := GUIDToString(aModel.ID);
       ParamByName('nm_empresa').AsString  := aModel.Nome;
       ParamByName('nm_fantasia').AsString := aModel.Fantasia;
-      ParamByName('nr_cnpj_cpf').AsString := aModel.CpfCnpj;
+      ParamByName('nr_cpf_cnpj').AsString := aModel.CpfCnpj;
 
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toEditado;

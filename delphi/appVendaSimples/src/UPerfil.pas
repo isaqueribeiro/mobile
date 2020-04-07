@@ -32,16 +32,29 @@ type
     LabelCelular: TLabel;
     imgCelular: TImage;
     lblCelular: TLabel;
-    lytCpf: TLayout;
-    lineCpf: TLine;
-    LabelCpf: TLabel;
-    imgCpf: TImage;
-    lblCpf: TLabel;
+    lytCpfCnpj: TLayout;
+    lineCpfCnpj: TLine;
+    LabelCpfCnpj: TLabel;
+    imgCpfCnpj: TImage;
+    lblCpfCnpj: TLabel;
     layoutSenhaCampo: TLayout;
     rectangleSenhaCampo: TRectangle;
     editSenhaCampo: TEdit;
     rectangleConfirmeSenhaCampo: TRectangle;
     editConfirmeSenhaCampo: TEdit;
+    lytDadosEmpresa: TLayout;
+    LabelDadosEmpresa: TLabel;
+    lytRazaoSocial: TLayout;
+    lineRazaoSocial: TLine;
+    LabelRazaoSocial: TLabel;
+    imgRazaoSocial: TImage;
+    lblRazaoSocial: TLabel;
+    lytFantasia: TLayout;
+    lineFantasia: TLine;
+    LabelFantasia: TLabel;
+    imgFantasia: TImage;
+    lblFantasia: TLabel;
+    lineDadosEmpresa: TLine;
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarPerfil(Sender: TObject);
 
@@ -82,11 +95,12 @@ implementation
 uses
     app.Funcoes
   , UConstantes
-  , UMensagem;
+  , UMensagem, dao.Loja;
 
 procedure ExibirPerfilUsuario(Observer : IObservadorUsuario);
 var
   aForm : TFrmPerfil;
+  emp : TLojaDao;
 begin
   aForm := TFrmPerfil.GetInstance();
   aForm.AdicionarObservador(Observer);
@@ -94,19 +108,34 @@ begin
   with aForm, dao do
   begin
     dao.Load(EmptyStr);
+
+    emp := TLojaDao.GetInstance();
+    emp.Load(EmptyStr);
+
+    if (Trim(emp.Model.CpfCnpj) = EmptyStr) then
+    begin
+      emp.Model.CpfCnpj := dao.Model.Cpf;
+      dao.Model.Empresa.CpfCnpj := dao.Model.Cpf;
+    end
+    else
+      dao.Model.Empresa := emp.Model;
+
     tbsControle.ActiveTab := tbsCadastro;
 
     labelTituloCadastro.Text      := 'MEU PERFIL';
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
 
     lblDescricao.Text  := IfThen(Trim(Model.Nome)    = EmptyStr, 'Informe aqui seu nome completo', Model.Nome);
-    lblCPF.Text        := IfThen(Trim(Model.Cpf)     = EmptyStr, 'Informe aqui o número do seu CPF', Model.Cpf);
     lblCelular.Text    := IfThen(Trim(Model.Celular) = EmptyStr, 'Informe aqui o número do seu celular', Model.Celular);
     lblEmail.Text      := IfThen(Trim(Model.Email)   = EmptyStr, 'Informe aqui seu e-mail', Model.Email);
     lblSenha.TagString := EmptyStr; // Model.Senha;
 
+    lblCPFCnpj.Text     := IfThen(Trim(Model.Empresa.CpfCnpj) = EmptyStr, 'Informe aqui o número do CPF/CNPJ', Model.Empresa.CpfCnpj);
+    lblRazaoSocial.Text := IfThen(Trim(Model.Empresa.CpfCnpj) = EmptyStr, 'Informe aqui a razão social da empresa', Model.Empresa.Nome);
+    lblFantasia.Text    := IfThen(Trim(Model.Empresa.CpfCnpj) = EmptyStr, 'Informe aqui o nome fantasia da empresa', Model.Empresa.Fantasia);
+
     lblDescricao.TagFloat := IfThen(Trim(Model.Nome)    = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
-    lblCPF.TagFloat       := IfThen(Trim(Model.Cpf)     = EmptyStr, 0, 1);
+    lblCPFCnpj.TagFloat   := IfThen(Trim(Model.Cpf)     = EmptyStr, 0, 1);
     lblCelular.TagFloat   := IfThen(Trim(Model.Celular) = EmptyStr, 0, 1);
     lblEmail.TagFloat     := IfThen(Trim(Model.Email)   = EmptyStr, 0, 1);
     lblSenha.TagFloat     := IfThen(Trim(Model.Senha)   = EmptyStr, 0, 1);
@@ -213,12 +242,12 @@ begin
     1 :
       begin
         layoutValorCampo.Visible    := True;
-        labelTituloEditar.Text      := AnsiUpperCase(LabelCpf.Text);
+        labelTituloEditar.Text      := AnsiUpperCase(LabelCpfCnpj.Text);
         labelTituloEditar.TagString := '*';                // Campo obrigatório
 
-        labelValorCampo.Text      := IfThen(lblCpf.TagFloat = 0, EmptyStr, lblCpf.Text);
+        labelValorCampo.Text      := IfThen(lblCpfCnpj.TagFloat = 0, EmptyStr, lblCpfCnpj.Text);
         labelValorCampo.TagString := 'cpf/cnpj';           // Flag para formatação do valor
-        labelValorCampo.TagObject := TObject(lblCpf);      // Objeto de origem da informação. O dado editado será devolvido para ele.
+        labelValorCampo.TagObject := TObject(lblCpfCnpj);  // Objeto de origem da informação. O dado editado será devolvido para ele.
       end;
 
     2 :
@@ -274,6 +303,38 @@ begin
         editConfirmeSenhaCampo.Text       := IfThen(lblSenha.TagFloat = 0, EmptyStr, lblSenha.TagString);
         editConfirmeSenhaCampo.MaxLength  := 100;
       end;
+
+    5 :
+      begin
+        layoutEditCampo.Visible     := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelRazaoSocial.Text);
+        labelTituloEditar.TagString := '*';                // Campo obrigatório
+
+        editEditCampo.Text         := IfThen(lblRazaoSocial.TagFloat = 0, EmptyStr, lblRazaoSocial.Text);
+        editEditCampo.MaxLength    := 250;
+        editEditCampo.TextAlign    := TTextAlign.Leading;
+        editEditCampo.KeyboardType := TVirtualKeyboardType.Default;
+        editEditCampo.Password     := False;
+        editEditCampo.TextPrompt   := 'Informe aqui a razão social da empresa';
+        editEditCampo.TagString    := EmptyStr;
+        editEditCampo.TagObject    := TObject(lblRazaoSocial);
+      end;
+
+    6 :
+      begin
+        layoutEditCampo.Visible     := True;
+        labelTituloEditar.Text      := AnsiUpperCase(LabelFantasia.Text);
+        labelTituloEditar.TagString := '*';                // Campo obrigatório
+
+        editEditCampo.Text         := IfThen(lblFantasia.TagFloat = 0, EmptyStr, lblFantasia.Text);
+        editEditCampo.MaxLength    := 150;
+        editEditCampo.TextAlign    := TTextAlign.Leading;
+        editEditCampo.KeyboardType := TVirtualKeyboardType.Default;
+        editEditCampo.Password     := False;
+        editEditCampo.TextPrompt   := 'Informe aqui o nome fantasia da empresa';
+        editEditCampo.TagString    := EmptyStr;
+        editEditCampo.TagObject    := TObject(lblFantasia);
+      end;
   end;
 
   ChangeTabActionEditar.ExecuteTarget(Sender);
@@ -283,14 +344,17 @@ procedure TFrmPerfil.DoSalvarPerfil(Sender: TObject);
 var
   ins : Boolean;
   inf : Extended;
+  emp : TLojaDao;
 begin
   try
     inf :=
-      lblDescricao.TagFloat +
-      lblCPF.TagFloat       +
-      lblCelular.TagFloat   +
-      lblEmail.TagFloat     +
-      lblSenha.TagFloat;
+      lblDescricao.TagFloat   +
+      lblCPFCnpj.TagFloat     +
+      lblCelular.TagFloat     +
+      lblEmail.TagFloat       +
+      lblSenha.TagFloat       +
+      lblRazaoSocial.TagFloat +
+      lblFantasia.TagFloat;
 
     if (inf = 0) then
       ExibirMsgAlerta('Sem dados informados!')
@@ -298,19 +362,34 @@ begin
     if (lblDescricao.TagFloat = 0) or (Trim(lblDescricao.Text) = EmptyStr) then
       ExibirMsgAlerta('Informe seu nome completo!')
     else
-    if (lblCPF.TagFloat = 1) and ((not StrIsCPF(lblCPF.Text)) or (not StrIsCNPJ(lblCPF.Text))) then
+    if (lblCPFCnpj.TagFloat = 1) and ((not StrIsCPF(lblCPFCnpj.Text)) and (not StrIsCNPJ(lblCPFCnpj.Text))) then
       ExibirMsgAlerta('Número de CPF/CNPJ inválido!')
     else
     if (lblEmail.TagFloat = 0) or (Trim(lblEmail.Text) = EmptyStr) then
       ExibirMsgAlerta('Informe seu e-mail!')
     else
+    if (lblCpfCnpj.TagFloat = 0) or (Trim(lblCpfCnpj.Text) = EmptyStr) then
+      ExibirMsgAlerta('Informe o CPF/CNPJ da empresa!')
+    else
+    if (lblRazaoSocial.TagFloat = 0) or (Trim(lblRazaoSocial.Text) = EmptyStr) then
+      ExibirMsgAlerta('Informe a Razão Social da empresa!')
+    else
+    if (lblFantasia.TagFloat = 0) or (Trim(lblFantasia.Text) = EmptyStr) then
+      ExibirMsgAlerta('Informe o Nome Fantasia da empresa!')
+    else
     begin
       dao.Model.ID      := StringToGUID(labelTituloCadastro.TagString);
       dao.Model.Nome    := IfThen(lblDescricao.TagFloat = 0, EmptyStr, lblDescricao.Text);
-      dao.Model.Cpf     := IfThen(lblCPF.TagFloat       = 0, EmptyStr, lblCPF.Text);  // Postar dados na classe caso ele tenha sido editado
       dao.Model.Celular := IfThen(lblCelular.TagFloat   = 0, EmptyStr, lblCelular.Text);
       dao.Model.Email   := IfThen(lblEmail.TagFloat     = 0, EmptyStr, lblEmail.Text);
       dao.Model.Senha   := IfThen(lblSenha.TagFloat     = 0, EmptyStr, lblSenha.TagString);
+
+      if (lblCpfCnpj.TagFloat = 1) and StrIsCPF(lblCPFCnpj.Text) then
+        dao.Model.Cpf := lblCpfCnpj.Text;
+
+      dao.Model.Empresa.Nome     := IfThen(lblRazaoSocial.TagFloat = 0, EmptyStr, lblRazaoSocial.Text);
+      dao.Model.Empresa.Fantasia := IfThen(lblFantasia.TagFloat = 0, EmptyStr, lblFantasia.Text);
+      dao.Model.Empresa.CpfCnpj  := IfThen(lblCpfCnpj.TagFloat = 0, EmptyStr, lblCpfCnpj.Text);  // Postar dados na classe caso ele tenha sido editado
 
       ins := (dao.Model.ID = GUID_NULL);
 
@@ -318,6 +397,9 @@ begin
         dao.Insert()
       else
         dao.Update();
+
+      emp := TLojaDao.GetInstance();
+      emp.Model := dao.Model.Empresa;
 
       Self.Notificar;
       Self.Close;

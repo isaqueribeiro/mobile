@@ -121,7 +121,10 @@ begin
       SQL.Add('  , ds_email       ');
       SQL.Add('  , ds_senha       ');
       SQL.Add('  , nr_celular     ');
-      SQL.Add('  , nr_cpf         ');
+
+      if (aModel.Cpf <> EmptyStr) then
+        SQL.Add('  , nr_cpf         ');
+
       SQL.Add('  , tk_dispositivo ');
       SQL.Add('  , sn_ativo       ');
       SQL.Add(') values (');
@@ -144,7 +147,10 @@ begin
       ParamByName('ds_email').AsString   := aModel.Email;
       ParamByName('ds_senha').AsString   := MD5(aModel.Senha + aModel.Email);
       ParamByName('nr_celular').AsString := aModel.Celular;
-      ParamByName('nr_cpf').AsString     := aModel.Cpf;
+
+      if (aModel.Cpf <> EmptyStr) then
+        ParamByName('nr_cpf').AsString := aModel.Cpf;
+
       ParamByName('tk_dispositivo').AsString := aModel.TokenID;
       ParamByName('sn_ativo').AsString       := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
 
@@ -269,7 +275,10 @@ begin
         SQL.Add('  , ds_senha       = :ds_senha ');
 
       SQL.Add('  , nr_celular     = :nr_celular ');
-      SQL.Add('  , nr_cpf         = :nr_cpf ');
+
+      if (aModel.Cpf <> EmptyStr) then
+        SQL.Add('  , nr_cpf         = :nr_cpf ');
+
       SQL.Add('  , sn_ativo       = :sn_ativo ');
 
       if (Trim(aModel.TokenID) <> EmptyStr) then
@@ -286,7 +295,10 @@ begin
         ParamByName('ds_senha').AsString   := MD5(aModel.Senha + aModel.Email);
 
       ParamByName('nr_celular').AsString := aModel.Celular;
-      ParamByName('nr_cpf').AsString     := aModel.Cpf;
+
+      if (aModel.Cpf <> EmptyStr) then
+        ParamByName('nr_cpf').AsString := aModel.Cpf;
+
       ParamByName('sn_ativo').AsString   := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
 
       if (Trim(aModel.TokenID) <> EmptyStr) then

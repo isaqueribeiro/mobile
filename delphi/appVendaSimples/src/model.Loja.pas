@@ -16,6 +16,7 @@ type
       aFantasia,
       aCpfCnpj : String;
       procedure SetNome(Value : String);
+      procedure SetFantasia(Value : String);
       procedure SetCpfCnpj(Value : String);
 
       function GetTipo : TTipoLoja;
@@ -27,7 +28,7 @@ type
       property Codigo   : Currency read aCodigo write aCodigo;
       property Tipo     : TTipoLoja read GetTipo;
       property Nome     : String read aNome write SetNome;
-      property Fantasia : String read aFantasia write aFantasia;
+      property Fantasia : String read aFantasia write SetFantasia;
       property CpfCnpj  : String read GetCpfCnpj write aCpfCnpj;
 
       procedure NewID;
@@ -51,10 +52,7 @@ end;
 
 function TLoja.GetCpfCnpj: String;
 begin
-  if StrIsCNPJ(aCpfCnpj) then
-    Result := FormatarTexto('99.999.999/9999-99;0', aCpfCnpj)
-  else
-    Result := FormatarTexto('999.999.999-99;0', aCpfCnpj);
+  Result := aCpfCnpj;
 end;
 
 function TLoja.GetTipo: TTipoLoja;
@@ -74,8 +72,22 @@ begin
 end;
 
 procedure TLoja.SetCpfCnpj(Value: String);
+var
+  aStr : String;
 begin
-  aCpfCnpj := SomenteNumero(Trim(Value));
+  aStr :=  SomenteNumero(AnsiLowerCase(Trim(Value)));
+  if StrIsCPF(aStr) then
+    aCpfCnpj := FormatarTexto('999.999.999-99;0', aStr)
+  else
+  if StrIsCNPJ(aStr) then
+    aCpfCnpj := FormatarTexto('99.999.999/9999-99;0', aStr)
+  else
+    aCpfCnpj := EmptyStr;
+end;
+
+procedure TLoja.SetFantasia(Value: String);
+begin
+  aFantasia := Trim(Value);
 end;
 
 procedure TLoja.SetNome(Value: String);

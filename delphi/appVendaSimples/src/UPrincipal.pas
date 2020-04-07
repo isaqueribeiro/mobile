@@ -3,6 +3,7 @@ unit UPrincipal;
 interface
 
 uses
+  app.Funcoes,
   model.Pedido,
   model.Cliente,
   model.Notificacao,
@@ -17,6 +18,8 @@ uses
 
   System.StrUtils,
   System.Math,
+  System.JSON,
+  Web.HTTPApp,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
@@ -183,7 +186,8 @@ uses
   UPedido,
   UPerfil,
   UCompartilhar,
-  ULogin;
+  ULogin,
+  UDM;
 
 { TFrmPrincipal }
 
@@ -297,10 +301,47 @@ end;
 
 procedure TFrmPrincipal.AtualizarUsuario;
 var
-  dao : TUsuarioDao;
+  dao   : TUsuarioDao;
+  emp   : TLojaDao;
+  aJson ,
+  aEmpr : TJSONObject;
+  aRetorno : String;
+  aID : TGUID;
+  OK  : Boolean;
 begin
-  dao := TUsuarioDao.GetInstance;
-  ;
+  try
+    aJson := DM.GetEditarPerfil;
+    dao   := TUsuarioDao.GetInstance;
+    emp   := TLojaDao.GetInstance();
+
+    if Assigned(aJson) then
+    begin
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+
+      if (aRetorno.ToUpper = 'OK') then
+      begin
+        // Recuperar dados da empresa
+        aEmpr := aJson.Get('empresa').JsonValue as TJSONObject;
+        aID   := StringToGUID(StrClearValueJson(HTMLDecode(aEmpr.Get('id').JsonValue.ToString)));
+        OK    := emp.Find(aID, emp.Model.CpfCnpj, False);
+
+        emp.Model.ID       := StringToGUID(StrClearValueJson(HTMLDecode(aEmpr.Get('id').JsonValue.ToString)));
+        emp.Model.Codigo   := StrToCurr(StrClearValueJson(HTMLDecode(aEmpr.Get('codigo').JsonValue.ToString)));
+        emp.Model.Nome     := StrClearValueJson(HTMLDecode(aEmpr.Get('nome').JsonValue.ToString));
+        emp.Model.Fantasia := StrClearValueJson(HTMLDecode(aEmpr.Get('fantasia').JsonValue.ToString));
+
+        if (not OK) then
+          emp.Insert()
+        else
+          emp.Update();
+      end
+      else
+        ExibirMsgAlerta(aRetorno);
+    end;
+  except
+    On E : Exception do
+      ExibirMsgErro('Erro ao tentar gravar alteração no perfil do usuário.');
+  end;
 end;
 
 procedure TFrmPrincipal.BuscarClientes(aBusca: String; aPagina: Integer);

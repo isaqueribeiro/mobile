@@ -4,6 +4,7 @@ interface
 
 uses
   UConstantes,
+  app.Funcoes,
   model.Loja,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
 
@@ -98,8 +99,14 @@ begin
 end;
 
 procedure TUsuario.SetCpf(Value: String);
+var
+  aStr : String;
 begin
-  aCpf := Trim(Value);
+  aStr :=  SomenteNumero(AnsiLowerCase(Trim(Value)));
+  if StrIsCPF(aStr) then
+    aCpf := FormatarTexto('999.999.999-99;0', aStr)
+  else
+    aCpf := EmptyStr;
 end;
 
 procedure TUsuario.SetEmail(Value: String);

@@ -55,6 +55,8 @@ type
     function GetEncriptString(aValue : String)  : String;
     function GetValidarLogin : TJSONObject;
     function GetCriarNovaCOnta : TJSONObject;
+    function GetEditarPerfil : TJSONObject;
+    function GetListarLojas : TJSONObject;
   end;
 
 var
@@ -295,7 +297,7 @@ begin
           aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
           aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
 
-          aRetorno := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
         end;
     end;
   finally
@@ -342,7 +344,7 @@ begin
           aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
           aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
 
-          aJson := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+          aJson := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
           aStr  := StrClearValueJson( HTMLDecode(aJson.Get('retorno').JsonValue.ToString) );
 
           if (aStr.ToUpper = 'OK') then
@@ -355,6 +357,64 @@ begin
     end;
   finally
     aRequestFuncoes.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TDM.GetEditarPerfil: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestConta : TRESTRequest;
+  aKey ,
+  aSen : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlUsuario;
+
+    aUsr := TUsuarioDao.GetInstance;
+    aKey := AnsiUpperCase( '0x' + MD5(aUsr.Model.ID.ToString) );
+    aSen := GetEncriptString(aUsr.Model.Senha);
+
+    aRetorno := nil;
+    aRequestConta := TRESTRequest.Create(rscUsuario);
+
+    with aRequestConta do
+    begin
+      Client := rscUsuario;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscUsuario.Accept;
+      AcceptCharset      := rscUsuario.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'EditarPerfilLogin';
+      Timeout  := 30000;
+
+      Params.Clear;
+      AddParameter('id',  HTTPEncode(aUsr.Model.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('nome',  HTTPEncode(aUsr.Model.Nome),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('email', HTTPEncode(aUsr.Model.Email), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('senha', HTTPEncode(aSen), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('cpf_cnpj', HTTPEncode(aUsr.Model.Empresa.CpfCnpj), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa',  HTTPEncode(aUsr.Model.Empresa.Nome), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('fantasia', HTTPEncode(aUsr.Model.Empresa.Fantasia), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token', HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestConta.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -397,12 +457,62 @@ begin
           aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
           aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
 
-          aJson    := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+          aJson    := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
           aRetorno := StrClearValueJson( HTMLDecode(aJson.Get('hash3').JsonValue.ToString) );
         end;
     end;
   finally
     aRequestFuncoes.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TDM.GetListarLojas: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestLogin : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlUsuario;
+
+    aKey := AnsiUpperCase( '0x' + MD5(KEY_ENCRIPT + GetDateTimeServer.Data) );
+    aRetorno := nil;
+    aRequestLogin := TRESTRequest.Create(rscUsuario);
+
+    with aRequestLogin do
+    begin
+      Client := rscUsuario;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscUsuario.Accept;
+      AcceptCharset      := rscUsuario.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'ListarEmpresas';
+      Timeout  := 30000;
+
+      aUsr := TUsuarioDao.GetInstance;
+
+      Params.Clear;
+      AddParameter('usuario', HTTPEncode(aUsr.Model.ID.ToString), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token', HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestLogin.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -449,7 +559,7 @@ begin
           aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
           aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
 
-          aRetorno := TJSONObject.ParseJSONValue(TEncoding.ANSI.GetBytes(aStr), 0) as TJSONObject;
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
         end;
     end;
   finally

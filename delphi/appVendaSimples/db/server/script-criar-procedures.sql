@@ -35,8 +35,8 @@ GO
 -- =============================================
 CREATE or ALTER PROCEDURE dbo.getValidarLogin(
 	@email	 VARCHAR(150)
-  , @senha	 VARCHAR(40)
-  , @token	 VARCHAR(40)
+  , @senha	 VARCHAR(42)
+  , @token	 VARCHAR(42)
   , @id		 VARCHAR(38)  OUT
   , @codigo	 BIGINT		  OUT
   , @nome	 VARCHAR(150) OUT
@@ -103,7 +103,7 @@ CREATE or ALTER PROCEDURE dbo.setCriarLogin(
     @nome	 VARCHAR(150)
   , @email	 VARCHAR(150)
   , @senha	 VARCHAR(42)
-  , @token	 VARCHAR(40)
+  , @token	 VARCHAR(42)
   , @id		 VARCHAR(38)  OUT
   , @codigo	 BIGINT		  OUT
   , @retorno VARCHAR(250) OUT)
@@ -183,11 +183,11 @@ CREATE or ALTER PROCEDURE dbo.setEditarPerfilLogin(
     @id			VARCHAR(38)
   , @nome		VARCHAR(150)
   , @email		VARCHAR(150)
-  , @senha		VARCHAR(40)
+  , @senha		VARCHAR(42)
   , @cpf_cnpj	VARCHAR(25)
   , @empresa	VARCHAR(250)
   , @fantasia	VARCHAR(250)
-  , @token		VARCHAR(40)
+  , @token		VARCHAR(42)
   , @id_empresa	VARCHAR(38)	 OUT
   , @cd_empresa	INT			 OUT
   , @retorno	VARCHAR(250) OUT)
@@ -224,12 +224,12 @@ BEGIN TRY
 	  Set @retorno = 'E-mail já utilizado em outra conta';
 	Else
 	Begin
-	  If (UPPER(SUBSTRING(@senha, 1, 2)) <> '0X') 
+	  /*If (UPPER(SUBSTRING(@senha, 1, 2)) <> '0X') 
 		Set @retorno = 'A Senha não está criptografada'
 	  Else
 	  If (Trim(@senha) = '')
 		Set @retorno = 'Senha não informada'
-	  Else
+	  Else*/
 	  Begin
 	    -- Identificar a Empresa
 		Select
@@ -273,8 +273,20 @@ BEGIN TRY
 		Update dbo.sys_usuario Set
 			nm_usuario	= @nome
 		  , ds_email	= @email
-		  , ds_senha	= UPPER(SUBSTRING(@senha, 3, 40))
 		where (id_usuario = @id);
+
+		If (Trim(@senha) <> '')
+		Begin
+		  If (UPPER(SUBSTRING(@senha, 1, 2)) <> '0X') 
+			Set @retorno = 'A Senha não está criptografada'
+		  Else
+		  Begin
+			-- Atualizar senha do Usuário
+			Update dbo.sys_usuario Set
+				ds_senha	= UPPER(SUBSTRING(@senha, 3, 40))
+			where (id_usuario = @id);
+		  End
+		End
 
 		-- Associar Usuário/Empresa
 		if (not exists(
@@ -292,7 +304,7 @@ BEGIN TRY
 		  ) values (
 			  @id
 			, @id_empresa
-			, (Case when (LEN(@cpf_cnpj) = 14) then 1 else 0 end)
+			, (Case when (LEN(@cpf_cnpj) = 14) then 1 else 0 end) -- Se for CPF (000.000.000-00)
 		  );
 		End
 	  End
@@ -305,6 +317,41 @@ BEGIN CATCH
 END CATCH
 GO
 
+-- =============================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	06/04/2020
+-- Description	:	Listar Empresas do Usuário
+-- =============================================
+CREATE or ALTER PROCEDURE dbo.getListarEmpresas(
+	@usuario	VARCHAR(38)
+  , @token		VARCHAR(42)
+  , @retorno	VARCHAR(250) OUT)
+AS
+BEGIN TRY
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+	Set @retorno = 'OK';
+
+	Select 
+		e.id_empresa
+	  , e.cd_empresa
+	  , e.nm_empresa
+	  , e.nm_fantasia
+	  , e.nr_cnpj_cpf
+	from dbo.sys_usuario u
+	  inner join dbo.sys_usuario_empresa x on (x.id_usuario = u.id_usuario)
+	  inner join dbo.sys_empresa e on (e.id_empresa = x.id_empresa)
+	where (u.id_usuario = @usuario);
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar listar a(s) empresa(s) do usuário';
+END CATCH
+GO
+
 -- =================================================
 -- Author		:	Isaque M. Ribeiro
 -- Create date	:	02/10/2019
@@ -313,7 +360,7 @@ GO
 CREATE or ALTER PROCEDURE dbo.getListarNotificacoes(
 	@usuario	VARCHAR(38)
   , @empresa	VARCHAR(38)
-  , @token		VARCHAR(40)
+  , @token		VARCHAR(42)
   , @retorno	VARCHAR(250) OUT)
 AS
 BEGIN TRY
@@ -321,7 +368,7 @@ BEGIN TRY
     Set @retorno = 'Token Inválido';
   Else
   Begin
-	Set @retorno = '';
+	Set @retorno = 'OK';
 
 	Select
 	    n.id_notificacao
