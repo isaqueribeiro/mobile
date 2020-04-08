@@ -11,13 +11,13 @@ uses
 
 type
   TFrmCompartilhar = class(TFrmPadrao)
-    layoutMaisOpcoes: TLayout;
-    layoutMaisOpcoesL1: TLayout;
+    layoutOpcoes: TLayout;
+    layoutIcones: TLayout;
     imageWhasApp: TImage;
     labelWhasApp: TLabel;
     imageEmail: TImage;
     labelEmail: TLabel;
-    Label1: TLabel;
+    labelOpcoes: TLabel;
     procedure imageWhasAppClick(Sender: TObject);
     procedure imageEmailClick(Sender: TObject);
   strict private

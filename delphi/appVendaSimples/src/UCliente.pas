@@ -152,6 +152,7 @@ end;
 procedure ExibirCadastroCliente(Observer : IObservadorCliente; const aEditar : Boolean);
 var
   aForm : TFrmCliente;
+  aFone : String;
 begin
   aForm := TFrmCliente.GetInstance;
   aForm.AdicionarObservador(Observer);
@@ -167,17 +168,21 @@ begin
 
     imageSalvarCadastro.Visible := aEditar;
 
+    aFone := Model.Telefone.Trim;
+    if (SomenteNumero(aFone) = EmptyStr) then
+      aFone := Model.Celular.Trim;
+
     lblCPF_CNPJ.Text  := Model.CpfCnpj;
     lblDescricao.Text := Model.Nome;
     lblEndereco.Text  := Model.Endereco;
-    lblTelefone.Text  := Model.Telefone;
+    lblTelefone.Text  := aFone;
     lblEmail.Text     := Model.Email;
     lblObs.Text       := Model.Observacao;
 
     lblCPF_CNPJ.TagFloat  := IfThen(Trim(Model.CpfCnpj)    = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
     lblDescricao.TagFloat := IfThen(Trim(Model.Nome)       = EmptyStr, 0, 1);
     lblEndereco.TagFloat  := IfThen(Trim(Model.Endereco)   = EmptyStr, 0, 1);
-    lblTelefone.TagFloat  := IfThen(Trim(Model.Telefone)   = EmptyStr, 0, 1);
+    lblTelefone.TagFloat  := IfThen(Trim(aFone)            = EmptyStr, 0, 1);
     lblEmail.TagFloat     := IfThen(Trim(Model.Email)      = EmptyStr, 0, 1);
     lblObs.TagFloat       := IfThen(Trim(Model.Observacao) = EmptyStr, 0, 1);
 

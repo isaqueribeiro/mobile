@@ -200,6 +200,7 @@ begin
       SQL.Add('  , c.nr_cpf_cnpj ');
       SQL.Add('  , l.nm_empresa  ');
       SQL.Add('  , l.nm_fantasia ');
+      SQL.Add('  , l.nr_cpf_cnpj as nr_cpf_cnpj_loja ');
       SQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
       SQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
       SQL.Add('  left join ' + aDDL.getTableNameLoja    + ' l on (l.id_empresa = p.id_loja)');
@@ -437,6 +438,7 @@ begin
       SQL.Add('  , c.nr_cpf_cnpj ');
       SQL.Add('  , l.nm_empresa  ');
       SQL.Add('  , l.nm_fantasia ');
+      SQL.Add('  , l.nr_cpf_cnpj as nr_cpf_cnpj_loja ');
       SQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
       SQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
       SQL.Add('  left join ' + aDDL.getTableNameLoja    + ' l on (l.id_empresa = p.id_loja)');
@@ -575,6 +577,7 @@ begin
       Loja.ID := StringToGUID(FieldByName('id_loja').AsString);
       Loja.Nome     := FieldByName('nm_empresa').AsString;
       Loja.Fantasia := FieldByName('nm_fantasia').AsString;
+      Loja.CpfCnpj  := FieldByName('nr_cpf_cnpj_loja').AsString;
     end
     else
     begin

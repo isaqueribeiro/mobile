@@ -118,6 +118,7 @@ type
     procedure DoExibirProdutos(Sender: TObject);
     procedure DoExibirPerfil(Sender: TObject);
     procedure DoCompartilharApp(Sender: TObject);
+    procedure DoSincronizarDados(Sender: TObject);
 
     procedure DoBuscaPedidos(Sender: TObject);
     procedure DoBuscaClientes(Sender: TObject);
@@ -190,6 +191,7 @@ uses
   UPedido,
   UPerfil,
   UCompartilhar,
+  USincronizar,
   ULogin,
   UDM;
 
@@ -605,6 +607,11 @@ begin
     aTab := TLabel(Sender).Tag;
 
   SelecionarTab(aTab);
+end;
+
+procedure TFrmPrincipal.DoSincronizarDados(Sender: TObject);
+begin
+  SincronizarDados;
 end;
 
 procedure TFrmPrincipal.ExibirMenuNotificacao;

@@ -44,7 +44,8 @@ uses
   UCompartilhar in 'src\UCompartilhar.pas' {FrmCompartilhar},
   UPedido in 'src\UPedido.pas' {FrmPedido},
   UPedidoItem in 'src\UPedidoItem.pas' {FrmPedidoItem},
-  ULoja in 'src\ULoja.pas' {FrmLoja};
+  ULoja in 'src\ULoja.pas' {FrmLoja},
+  USincronizar in 'src\USincronizar.pas' {FrmSincronizar};
 
 {$R *.res}
 

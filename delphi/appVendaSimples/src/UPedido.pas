@@ -248,6 +248,10 @@ begin
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
 
+    lblLoja.Text      := Model.Loja.Fantasia + ' - ' + Model.Loja.CpfCnpj;
+    lblLoja.TagString := GUIDToString(Model.Loja.ID);
+    lblLoja.TagFloat  := IfThen(Model.Loja.ID = GUID_NULL, 0, 1);
+
     lblCliente.Text      := Model.Cliente.Nome + ' - ' + Model.Cliente.CpfCnpj;
     lblCliente.TagString := GUIDToString(Model.Cliente.ID);
     lblTipo.Text         := GetDescricaoTipoPedidoStr(Model.Tipo); // 'Informe aqui o tipo do novo pedido';
@@ -271,6 +275,7 @@ begin
 
     dao.InserirItensTemp();
     DoMudarAbaPedido(lblAbaDadoPedido);
+    DoCarregarItens(nil);
   end;
 
   aForm.Show;
