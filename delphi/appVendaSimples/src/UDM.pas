@@ -57,6 +57,7 @@ type
     function GetCriarNovaCOnta : TJSONObject;
     function GetEditarPerfil : TJSONObject;
     function GetListarLojas : TJSONObject;
+    function GetListarNotificacoes(aUsuarioID, aEmpresaID : String) : TJSONObject;
   end;
 
 var
@@ -478,7 +479,7 @@ begin
   try
     ConfigurarUrlUsuario;
 
-    aKey := AnsiUpperCase( '0x' + MD5(KEY_ENCRIPT + GetDateTimeServer.Data) );
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) );
     aRetorno := nil;
     aRequestLogin := TRESTRequest.Create(rscUsuario);
 
@@ -503,11 +504,53 @@ begin
       if Assigned(Response) then
         if (Pos('retorno', Response.Content) > 0) then
         begin
+          // Não remover '[' e ']' quando a devolução for JSON_ARRAY
           aStr := Response.JSONValue.ToString;
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestLogin.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
 
-          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
-          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+function TDM.GetListarNotificacoes(aUsuarioID, aEmpresaID: String): TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestLogin : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+begin
+  try
+    ConfigurarUrlUsuario;
 
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) );
+    aRetorno := nil;
+    aRequestLogin := TRESTRequest.Create(rscUsuario);
+
+    with aRequestLogin do
+    begin
+      Client := rscUsuario;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscUsuario.Accept;
+      AcceptCharset      := rscUsuario.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'ListarNotificacoes';
+      Timeout  := 30000;
+
+      Params.Clear;
+      AddParameter('usuario', HTTPEncode(aUsuarioID), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa', HTTPEncode(aEmpresaID), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token', HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          // Não remover '[' e ']' quando a devolução for JSON_ARRAY
+          aStr := Response.JSONValue.ToString;
           aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
         end;
     end;

@@ -336,7 +336,7 @@ BEGIN TRY
 
 	Select 
 		e.id_empresa
-	  , e.cd_empresa
+	  , trim(cast(e.cd_empresa as varchar(10))) as cd_empresa
 	  , e.nm_empresa
 	  , e.nm_fantasia
 	  , e.nr_cnpj_cpf
@@ -372,7 +372,7 @@ BEGIN TRY
 
 	Select
 	    n.id_notificacao
-	  , n.cd_notificacao
+	  , trim(cast(n.cd_notificacao as varchar(10))) as cd_notificacao
 	  , convert(varchar(10), n.dt_notificacao, 103) as dt_notificacao
 	  , convert(varchar(10), n.dt_notificacao, 108) as hr_notificacao
 	  , n.ds_notificacao

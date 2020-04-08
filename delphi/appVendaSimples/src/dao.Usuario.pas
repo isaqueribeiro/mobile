@@ -133,7 +133,10 @@ begin
       SQL.Add('  , :ds_email      ');
       SQL.Add('  , :ds_senha      ');
       SQL.Add('  , :nr_celular    ');
-      SQL.Add('  , :nr_cpf        ');
+
+      if (aModel.Cpf <> EmptyStr) then
+        SQL.Add('  , :nr_cpf        ');
+
       SQL.Add('  , :tk_dispositivo');
       SQL.Add('  , :sn_ativo      ');
       SQL.Add(')');
@@ -292,7 +295,7 @@ begin
       ParamByName('ds_email').AsString   := aModel.Email;
 
       if (Trim(aModel.Senha) <> EmptyStr) then
-        ParamByName('ds_senha').AsString   := MD5(aModel.Senha + aModel.Email);
+        ParamByName('ds_senha').AsString := MD5(aModel.Senha + aModel.Email);
 
       ParamByName('nr_celular').AsString := aModel.Celular;
 

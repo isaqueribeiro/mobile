@@ -76,7 +76,16 @@ namespace webVendaSimples
         public String texto = "";
         public int destacar = 0;
 
+        public void Destroy()
+        {
+            GC.SuppressFinalize(this);
+        }
+    }
+
+    class RetornoNotificacao
+    {
         public String retorno = "";
+        public List<Notificacao> notificacoes = new List<Notificacao>();
 
         public void Destroy()
         {
@@ -388,16 +397,18 @@ namespace webVendaSimples
         public void ListarNotificacoes(String usuario, String empresa, String token)
         {
             Conexao conn = Conexao.Instance;
-            List<Notificacao> arr = new List<Notificacao>();
+            //List<Notificacao> arr = new List<Notificacao>();
+            RetornoNotificacao arr = new RetornoNotificacao();
 
             usuario = HttpUtility.UrlDecode(usuario);
             empresa = HttpUtility.UrlDecode(empresa);
             token = HttpUtility.UrlDecode(token);
 
-            if (token != Funcoes.EncriptarHashBytes( String.Concat("TheLordIsGod", DateTime.Today.ToString("dd/MM/yyyy")) )) {
+            if (token != Funcoes.EncriptarHashBytes(String.Concat("TheLordIsGod", DateTime.Today.ToString("dd/MM/yyyy"))).ToUpper())
+            {
                 Notificacao err = new Notificacao();
-                err.retorno = Server.HtmlEncode("Token de segurança inválido!");
-                arr.Add(err);
+                arr.retorno = Server.HtmlEncode("Token de segurança inválido!");
+                arr.notificacoes.Add(err);
 
                 //err = null;
                 GC.SuppressFinalize(err);
@@ -433,9 +444,19 @@ namespace webVendaSimples
                         notif.titulo = Server.HtmlEncode(qry.GetString(4).ToString());
                         notif.texto = Server.HtmlEncode(qry.GetString(5).ToString());
                         notif.destacar = int.Parse(qry.GetString(6).ToString());
-                        arr.Add(notif);
+
+                        arr.notificacoes.Add(notif);
                     }
 
+                    if (arr.notificacoes.Count > 0)
+                    {
+                        arr.retorno = "OK";
+                    }
+                    else 
+                    {
+                        arr.retorno = "Nenhuma notificação encontrada!";
+                    }
+                    
                     GC.SuppressFinalize(cmd);
                     
                     conn.Fechar();
@@ -443,8 +464,8 @@ namespace webVendaSimples
                 catch (System.IndexOutOfRangeException e)
                 {
                     Notificacao err = new Notificacao();
-                    err.retorno = Server.HtmlEncode("ERRO - " + e.Message);
-                    arr.Add(err);
+                    arr.retorno = Server.HtmlEncode("ERRO - " + e.Message);
+                    arr.notificacoes.Add(err);
                     
                     //err = null;
                     GC.SuppressFinalize(err);
@@ -506,7 +527,7 @@ namespace webVendaSimples
                         Empresa emp = new Empresa();
 
                         emp.id = Server.HtmlEncode(qry.GetString(0).ToString());
-                        //emp.codigo = int.Parse( qry.GetString(1).ToString() );        // ESTA DANDO ERRO!!! (SOMENTE AQUI)
+                        emp.codigo = int.Parse( qry.GetString(1).ToString() );        
                         emp.nome = Server.HtmlEncode(qry.GetString(2).ToString());
                         emp.fantasia = Server.HtmlEncode(qry.GetString(3).ToString());
                         emp.cpf_cnpj = Server.HtmlEncode(qry.GetString(4).ToString());

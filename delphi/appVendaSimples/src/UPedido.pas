@@ -4,6 +4,7 @@ interface
 
 uses
   System.StrUtils,
+  System.SysUtils,
   System.Math,
   System.DateUtils,
   System.Generics.Collections,
@@ -18,7 +19,7 @@ uses
   interfaces.PedidoItem,
   interfaces.Pedido,
 
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls, UPadraoCadastro,
   System.Actions, FMX.ActnList, FMX.TabControl, FMX.Ani, FMX.ScrollBox, FMX.Memo, FMX.Edit, FMX.Objects,
   FMX.Layouts, FMX.Controls.Presentation, FMX.ListView.Types,
@@ -414,7 +415,7 @@ begin
         labelTituloEditar.TagString := EmptyStr;
         labelTituloEditar.TagString := '*'; // Campo obrigatório
 
-        editDateCampo.DateTime  := StrToDate('dd/mm/yyyy', lblData.Text);
+        editDateCampo.DateTime  := StrToDateLocal('dd/mm/yyyy', lblData.Text);
         editDateCampo.TagString := EmptyStr;
         editDateCampo.TagObject := TObject(lblData);
       end;
@@ -541,7 +542,7 @@ begin
 
       dao.Model.Cliente.ID   := StringToGUID( IfThen(lblCliente.TagFloat  = 0, GUIDToString(GUID_NULL), lblCliente.TagString) );  // Postar dados na classe caso ele tenha sido editado
       dao.Model.Tipo         := GetTipoPedido(lblTipo.TagString);
-      dao.Model.DataEmissao  := StrToDate(lblData.TagString, lblData.Text);
+      dao.Model.DataEmissao  := StrToDateLocal(lblData.TagString, lblData.Text);
       dao.Model.Contato      := IfThen(lblContato.TagFloat   = 0, EmptyStr, lblContato.Text);
       dao.Model.Observacao   := IfThen(lblObs.TagFloat       = 0, EmptyStr, lblObs.Text);
 

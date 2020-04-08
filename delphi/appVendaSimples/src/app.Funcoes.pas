@@ -42,7 +42,7 @@ uses
   function SomenteNumero(aStr : String) : String;
   function StrToIntegerLocal(aStr : String) : Integer;
   function StrToMoneyLocal(aStr : String) : Currency;
-  function StrToDate(aFormato, aStr : String) : TDateTime;
+  function StrToDateLocal(aFormato, aStr : String) : TDateTime;
   function StrIsGUID(const aStr: String): Boolean;
   function StrIsCPF(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
   function StrIsCNPJ(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
@@ -182,7 +182,7 @@ begin
   Result := StrToCurrDef(aStr, 0) / 100;
 end;
 
-function StrToDate(aFormato, aStr : String) : TDateTime;
+function StrToDateLocal(aFormato, aStr : String) : TDateTime;
 var
   aAno ,
   aMes ,

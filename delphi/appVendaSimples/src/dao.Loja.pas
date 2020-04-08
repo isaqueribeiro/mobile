@@ -16,9 +16,9 @@ type
       aDDL   : TScriptDDL;
       aModel : TLoja;
       aOperacao : TTipoOperacaoDao;
+      aEmpresasID : TStringList;
       constructor Create();
       destructor Destroy(); override;
-
 
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TLoja);
       procedure ClearValues;
@@ -27,13 +27,15 @@ type
     public
       property Model    : TLoja read aModel write aModel;
       property Operacao : TTipoOperacaoDao read aOperacao;
+      property EmpresasID : TStringList read aEmpresasID;
 
       procedure Load(const aBusca : String);
       procedure Limpar();
       procedure Insert();
       procedure Update();
 
-      function Find(const aID : TGUID; const aCpfCnpj : String; const IsLoadModel : Boolean) : Boolean;
+      function Find(const aID : TGUID; const aCpfCnpj : String; const IsLoadModel : Boolean) : Boolean; overload;
+      function Find(const aID : String; const IsLoadModel : Boolean) : Boolean; overload;
 
       class function GetInstance : TLojaDao;
   end;
@@ -62,51 +64,47 @@ begin
   aDDL      := TScriptDDL.GetInstance;
   aModel    := TLoja.Create;
   aOperacao := TTipoOperacaoDao.toBrowser;
+  aEmpresasID := TStringList.Create;
 end;
 
 destructor TLojaDao.Destroy;
 begin
   aModel.DisposeOf;
+  aEmpresasID.DisposeOf;
   inherited Destroy;
 end;
 
-function TLojaDao.Find(const aID: TGUID; const aCpfCnpj: String; const IsLoadModel: Boolean): Boolean;
+function TLojaDao.Find(const aID: String; const IsLoadModel: Boolean): Boolean;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aRetorno : Boolean;
 begin
   aRetorno := False;
-  aSQL := TStringList.Create;
+
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    e.* ');
-    aSQL.Add('from ' + aDDL.getTableNameLoja + ' e');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    if (aID <> GUID_NULL) then
-      aSQL.Add('where e.id_empresa = :id_empresa')
-    else
-    if (Trim(aCpfCnpj) <> EmptyStr) then
-      aSQL.Add('where e.nr_cnpj_cpf = :nr_cnpj_cpf');
-
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('  e.* ');
+      SQL.Add('from ' + aDDL.getTableNameLoja + ' e');
+      SQL.Add('where e.id_empresa = :id_empresa');
+      SQL.EndUpdate;
 
-      if (aID <> GUID_NULL) then
-        ParamByName('id_empresa').AsString := GUIDToString(aID)
-      else
-      if (Trim(aCpfCnpj) <> EmptyStr) then
-        ParamByName('nr_cnpj_cpf').AsString := Trim(aCpfCnpj);
+      ParamByName('id_empresa').AsString := IfThen(aID = EmptyStr, GUID_NULL.ToString, aID);
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
-        aRetorno := (qrySQL.RecordCount > 0);
+        aEmpresasID.Clear;
+
+        aRetorno := (RecordCount > 0);
         if aRetorno and IsLoadModel then
-          SetValues(qrySQL, aModel)
+          SetValues(aQry, aModel)
         else
         if IsLoadModel then
           ClearValues;
@@ -114,7 +112,62 @@ begin
       qrySQL.Close;
     end;
   finally
-    aSQL.DisposeOf;
+    aQry.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TLojaDao.Find(const aID: TGUID; const aCpfCnpj: String; const IsLoadModel: Boolean): Boolean;
+var
+  aQry : TFDQuery;
+  aRetorno : Boolean;
+begin
+  aRetorno := False;
+
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('  e.* ');
+      SQL.Add('from ' + aDDL.getTableNameLoja + ' e');
+
+      if (aID <> GUID_NULL) then
+        SQL.Add('where e.id_empresa = :id_empresa')
+      else
+      if (Trim(aCpfCnpj) <> EmptyStr) then
+        SQL.Add('where e.nr_cnpj_cpf = :nr_cnpj_cpf');
+
+      SQL.Add('order by');
+      SQL.Add('  e.id_empresa DESC');
+      SQL.EndUpdate;
+
+      if (aID <> GUID_NULL) then
+        ParamByName('id_empresa').AsString := GUIDToString(aID)
+      else
+      if (Trim(aCpfCnpj) <> EmptyStr) then
+        ParamByName('nr_cnpj_cpf').AsString := Trim(aCpfCnpj);
+
+      if OpenOrExecute then
+      begin
+        aEmpresasID.Clear;
+
+        aRetorno := (RecordCount > 0);
+        if aRetorno and IsLoadModel then
+          SetValues(aQry, aModel)
+        else
+        if IsLoadModel then
+          ClearValues;
+      end;
+      qrySQL.Close;
+    end;
+  finally
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -221,11 +274,13 @@ begin
       end;
 
       SQL.Add('order by');
-      SQL.Add('    e.nm_empresa ');
+      SQL.Add('  e.id_empresa DESC');
       SQL.EndUpdate;
 
       if OpenOrExecute then
       begin
+        aEmpresasID.Clear;
+
         if (RecordCount > 0) then
           while not Eof do
           begin
@@ -254,6 +309,8 @@ begin
     Nome     := FieldByName('nm_empresa').AsString;
     Fantasia := FieldByName('nm_fantasia').AsString;
     CpfCnpj  := FieldByName('nr_cpf_cnpj').AsString;
+
+    aEmpresasID.Add( FieldByName('id_empresa').AsString );
   end;
 end;
 

@@ -8,6 +8,7 @@ uses
   System.Generics.Collections,
   model.Usuario,
   dao.Usuario,
+  dao.Configuracao,
   interfaces.Usuario,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
@@ -110,7 +111,8 @@ begin
     dao.Load(EmptyStr);
 
     emp := TLojaDao.GetInstance();
-    emp.Load(EmptyStr);
+    if not emp.Find( TConfiguracaoDao.GetInstance().GetValue('empresa_padrao').Trim, True )  then
+      emp.Load(EmptyStr);
 
     if (Trim(emp.Model.CpfCnpj) = EmptyStr) then
     begin
@@ -125,20 +127,25 @@ begin
     labelTituloCadastro.Text      := 'MEU PERFIL';
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
 
+    // Exibindo valores dos campos
     lblDescricao.Text  := IfThen(Trim(Model.Nome)    = EmptyStr, 'Informe aqui seu nome completo', Model.Nome);
     lblCelular.Text    := IfThen(Trim(Model.Celular) = EmptyStr, 'Informe aqui o número do seu celular', Model.Celular);
     lblEmail.Text      := IfThen(Trim(Model.Email)   = EmptyStr, 'Informe aqui seu e-mail', Model.Email);
     lblSenha.TagString := EmptyStr; // Model.Senha;
 
-    lblCPFCnpj.Text     := IfThen(Trim(Model.Empresa.CpfCnpj) = EmptyStr, 'Informe aqui o número do CPF/CNPJ', Model.Empresa.CpfCnpj);
-    lblRazaoSocial.Text := IfThen(Trim(Model.Empresa.CpfCnpj) = EmptyStr, 'Informe aqui a razão social da empresa', Model.Empresa.Nome);
-    lblFantasia.Text    := IfThen(Trim(Model.Empresa.CpfCnpj) = EmptyStr, 'Informe aqui o nome fantasia da empresa', Model.Empresa.Fantasia);
+    lblCPFCnpj.Text     := IfThen(Trim(Model.Empresa.CpfCnpj)  = EmptyStr, 'Informe aqui o número do CPF/CNPJ', Model.Empresa.CpfCnpj);
+    lblRazaoSocial.Text := IfThen(Trim(Model.Empresa.Nome)     = EmptyStr, 'Informe aqui a razão social da empresa', Model.Empresa.Nome);
+    lblFantasia.Text    := IfThen(Trim(Model.Empresa.Fantasia) = EmptyStr, 'Informe aqui o nome fantasia da empresa', Model.Empresa.Fantasia);
 
+    // Informando se os campos têm ou não valores
     lblDescricao.TagFloat := IfThen(Trim(Model.Nome)    = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
-    lblCPFCnpj.TagFloat   := IfThen(Trim(Model.Cpf)     = EmptyStr, 0, 1);
     lblCelular.TagFloat   := IfThen(Trim(Model.Celular) = EmptyStr, 0, 1);
     lblEmail.TagFloat     := IfThen(Trim(Model.Email)   = EmptyStr, 0, 1);
     lblSenha.TagFloat     := IfThen(Trim(Model.Senha)   = EmptyStr, 0, 1);
+
+    lblCPFCnpj.TagFloat     := IfThen(Trim(Model.Empresa.CpfCnpj)  = EmptyStr, 0, 1);
+    lblRazaoSocial.TagFloat := IfThen(Trim(Model.Empresa.Nome)     = EmptyStr, 0, 1);
+    lblFantasia.TagFloat    := IfThen(Trim(Model.Empresa.Fantasia) = EmptyStr, 0, 1);
 
     lytExcluir.Visible := False;
   end;

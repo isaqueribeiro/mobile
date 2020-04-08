@@ -12,6 +12,7 @@ uses
   dao.Pedido,
   dao.Cliente,
   dao.Notificacao,
+  dao.Configuracao,
   interfaces.Usuario,
   interfaces.Cliente,
   interfaces.Pedido,
@@ -110,6 +111,7 @@ type
     lblExcluirNotificacao: TLabel;
     imgExcluirNotificacao: TImage;
     img_opcoes: TImage;
+    TmrNotificacao: TTimer;
     procedure DoFecharApp(Sender: TObject);
     procedure DoCloseApp(Sender: TObject);
     procedure DoSelecinarTab(Sender: TObject);
@@ -137,6 +139,7 @@ type
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
     procedure ListViewPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+    procedure TmrNotificacaoTimer(Sender: TObject);
   private
     { Private declarations }
     procedure DefinirIndices;
@@ -144,6 +147,7 @@ type
     procedure ExibirMenuNotificacao;
     procedure OcultarMenuNotificacao;
     procedure ContarNotificacoes;
+    procedure BaixarNotificacoes;
 
     procedure BuscarPedidos(aBusca : String; aPagina : Integer);
     procedure BuscarClientes(aBusca : String; aPagina : Integer);
@@ -334,6 +338,8 @@ begin
           emp.Insert()
         else
           emp.Update();
+
+        TConfiguracaoDao.GetInstance().SetValue('empresa_padrao', emp.Model.ID.ToString);
       end
       else
         ExibirMsgAlerta(aRetorno);
@@ -341,6 +347,90 @@ begin
   except
     On E : Exception do
       ExibirMsgErro('Erro ao tentar gravar alteração no perfil do usuário.');
+  end;
+end;
+
+procedure TFrmPrincipal.BaixarNotificacoes;
+var
+  aRetorno   ,
+  aUsuarioID : String;
+  aEmpresaID : TStringList;
+  aJson  ,
+  aNotificacaoWeb : TJSONObject;
+  aNotificacaoDao : TNotificacaoDao;
+  aLista : TJSONArray;
+  I ,
+  X ,
+  N : Integer;
+begin
+  N := 0;
+  try
+    TmrNotificacao.Enabled := False;
+    try
+
+      aUsuarioID := TUsuarioDao.GetInstance().Model.ID.ToString;
+      aEmpresaID := TLojaDao.GetInstance().EmpresasID;
+
+      for X := 0 to aEmpresaID.Count - 1 do
+      begin
+        aJson := DM.GetListarNotificacoes(aUsuarioID, aEmpresaID.Strings[X]);
+        if Assigned(aJson) then
+        begin
+          aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+          if (aRetorno.ToUpper = 'OK') then
+          begin
+            aLista := aJson.Get('notificacoes').JsonValue as TJSONArray;
+            aNotificacaoDao := TNotificacaoDao.GetInstance();
+
+            for I := 0 to aLista.Count - 1 do
+            begin
+              aNotificacaoWeb := aLista.Items[I] as TJSONObject;
+
+              with aNotificacaoDao do
+              begin
+                Model.ID       := StringToGUID(StrClearValueJson(HTMLDecode(aNotificacaoWeb.Get('id').JsonValue.ToString)));
+                Model.Codigo   := StrToCurr(StrClearValueJson(HTMLDecode(aNotificacaoWeb.Get('codigo').JsonValue.ToString)));
+
+                Model.Data     :=
+                  StrToDateLocal('dd/mm/yyyy', StrClearValueJson(HTMLDecode(aNotificacaoWeb.Get('data').JsonValue.ToString))) +
+                  StrToTime(StrClearValueJson(HTMLDecode(aNotificacaoWeb.Get('hora').JsonValue.ToString)));
+
+                Model.Titulo   := StrClearValueJson(HTMLDecode(aNotificacaoWeb.Get('titulo').JsonValue.ToString));
+                Model.Mensagem := StrClearValueJson(HTMLDecode(aNotificacaoWeb.Get('texto').JsonValue.ToString));
+                Model.Lida     := False;
+                Model.Destacar := (StrToInt(StrClearValueJson(HTMLDecode(aNotificacaoWeb.Get('destacar').JsonValue.ToString))) = 1);
+
+                if not Find(Model.Codigo, False) then
+                  Insert();
+              end;
+
+              Inc(N);
+            end;
+          end;
+        end;
+      end;
+
+      if (N > 0) then
+      begin
+        BuscarNotificacoes(EmptyStr, 0);
+        ImgSemNotificacao.Visible := (ListViewNotificacao.Items.Count = 0);
+        ContarNotificacoes;
+      end;
+
+    except
+      ;
+    end;
+  finally
+    if Assigned(aNotificacaoWeb) then
+      aNotificacaoWeb.DisposeOf;
+
+    if Assigned(aJson) then
+      aJson.DisposeOf;
+
+    if Assigned(aLista) then
+      aLista.DisposeOf;
+
+    TmrNotificacao.Enabled := False;
   end;
 end;
 
@@ -465,15 +555,23 @@ var
   msg   : TFrmMensagem;
   aUser : TUsuarioDao;
   aEmpr : TLojaDao;
+  aNoti : TNotificacaoDao;
 begin
+  TmrNotificacao.Enabled := False;
+
   msg := TFrmMensagem.GetInstance;
   msg.Close;
+
+  aNoti := TNotificacaoDao.GetInstance();
+  aNoti.Limpar();
 
   aUser := TUsuarioDao.GetInstance();
   aUser.Limpar();
 
   aEmpr := TLojaDao.GetInstance();
   aEmpr.Limpar();
+
+  TConfiguracaoDao.GetInstance().Delete('empresa_padrao');
 
   EfetuarLogin(True);
   Self.Close;
@@ -655,7 +753,8 @@ begin
   img_update.Visible   := False;
   img_opcoes.Visible   := False;
 
-  Application.MainForm := Self;
+  Application.MainForm   := Self;
+  TmrNotificacao.Enabled := True;
 end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
@@ -835,6 +934,11 @@ begin
         labelTabMais.FontColor := crAzul;
       end;
   end;
+end;
+
+procedure TFrmPrincipal.TmrNotificacaoTimer(Sender: TObject);
+begin
+  BaixarNotificacoes;
 end;
 
 end.

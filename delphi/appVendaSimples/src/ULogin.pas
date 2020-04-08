@@ -5,6 +5,7 @@ interface
 uses
   dao.Usuario,
   dao.Loja,
+  dao.Configuracao,
   Web.HttpApp,
   System.Json,
 
@@ -63,6 +64,7 @@ type
     procedure DefinirLink;
     function Autenticar : Boolean;
     function CriarConta : Boolean;
+    function RecuperarDadosEmpresa : Boolean;
   public
     { Public declarations }
     property Dao : TUsuarioDao read FDao write FDao;
@@ -185,6 +187,8 @@ begin
             aLoja.Model := aUser.Model.Empresa;
             aLoja.Insert();
           end;
+
+          TConfiguracaoDao.GetInstance().SetValue('empresa_padrao', aLoja.Model.ID.ToString);
         end;
       end;
     end
@@ -255,6 +259,8 @@ begin
   DM.ConectarDB;
   if Autenticar then
   begin
+    RecuperarDadosEmpresa;
+
     if Assigned(FrmInicial) then
       FrmInicial.Hide;
 
@@ -311,6 +317,67 @@ end;
 procedure TFrmLogin.FormShow(Sender: TObject);
 begin
   DefinirLink;
+end;
+
+function TFrmLogin.RecuperarDadosEmpresa: Boolean;
+var
+  I : Integer;
+  aID : TGUID;
+  aLoja  : TLojaDao;
+  aLista : TJSONArray;
+  aJson  ,
+  aEmpr  : TJSONObject;
+  aCnpj    ,
+  aRetorno : String;
+begin
+  try
+    aJson := DM.GetListarLojas;
+
+    if Assigned(aJson) then
+    begin
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+      Result   := (aRetorno.ToUpper = 'OK');
+
+      if Result then
+      begin
+        // Recuperar dados da empresa
+        aLoja  := TLojaDao.GetInstance();
+        aLista := aJson.Get('empresas').JsonValue as TJSONArray;
+
+        for I := 0 to aLista.Count - 1 do
+        begin
+          aEmpr := aLista.Items[I] as TJSONObject;
+          aID   := StringToGUID( StrClearValueJson(HTMLDecode(aEmpr.Get('id').JsonValue.ToString)) );
+          aCnpj := StrClearValueJson(HTMLDecode(aEmpr.Get('cpf_cnpj').JsonValue.ToString));
+
+          with aLoja.Model do
+          begin
+            ID       := StringToGUID(StrClearValueJson(HTMLDecode(aEmpr.Get('id').JsonValue.ToString)));
+            Codigo   := StrToCurr(StrClearValueJson(HTMLDecode(aEmpr.Get('codigo').JsonValue.ToString)));
+            Nome     := StrClearValueJson(HTMLDecode(aEmpr.Get('nome').JsonValue.ToString));
+            Fantasia := StrClearValueJson(HTMLDecode(aEmpr.Get('fantasia').JsonValue.ToString));
+            CpfCnpj  := StrClearValueJson(HTMLDecode(aEmpr.Get('cpf_cnpj').JsonValue.ToString));
+          end;
+
+          if aLoja.Find(aId, aCnpj, False) then
+            aLoja.Update()
+          else
+            aLoja.Insert();
+
+          if (TConfiguracaoDao.GetInstance().GetValue('empresa_padrao').Trim = EmptyStr) then
+            TConfiguracaoDao.GetInstance().SetValue('empresa_padrao', aLoja.Model.ID.ToString);
+        end;
+      end;
+    end
+    else
+      Result := False;
+  except
+    On E : Exception do
+    begin
+      ExibirMsgErro('Erro ao tentar recuperar dados da(s) empresa(s) do usuário.' + #13 + E.Message);
+      Result := False;
+    end;
+  end;
 end;
 
 end.

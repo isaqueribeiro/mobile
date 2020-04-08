@@ -33,6 +33,7 @@ type
       procedure Update();
       procedure Delete();
       procedure MarkRead();
+      procedure Limpar();
       procedure AddLista; overload;
       procedure AddLista(aNotificacao : TNotificacao); overload;
 
@@ -94,61 +95,63 @@ end;
 
 procedure TNotificacaoDao.Delete;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Delete from ' + aDDL.getTableNameNotificacao);
-    aSQL.Add('where id_notificacao = :id_notificacao ');
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Delete from ' + aDDL.getTableNameNotificacao);
+      SQL.Add('where id_notificacao = :id_notificacao ');
+      SQL.EndUpdate;
 
       ParamByName('id_notificacao').AsString := GUIDToString(aModel.ID);
-
       ExecSQL;
+
       aOperacao := TTipoOperacaoDao.toExcluido;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 function TNotificacaoDao.Find(const aCodigo: Currency; const IsLoadModel: Boolean): Boolean;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aRetorno : Boolean;
 begin
   aRetorno := False;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    c.* ');
-    aSQL.Add('from ' + aDDL.getTableNameNotificacao + ' c');
-    aSQL.Add('where c.cd_notificacao = ' + CurrToStr(aCodigo));
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    c.* ');
+      SQL.Add('from ' + aDDL.getTableNameNotificacao + ' c');
+      SQL.Add('where c.cd_notificacao = ' + CurrToStr(aCodigo));
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if aQry.OpenOrExecute then
       begin
-        aRetorno := (qrySQL.RecordCount > 0);
+        aRetorno := (aQry.RecordCount > 0);
         if aRetorno and IsLoadModel then
-          SetValues(qrySQL, aModel);
+          SetValues(aQry, aModel);
       end;
-      qrySQL.Close;
+      aQry.Close;
     end;
     aOperacao := TTipoOperacaoDao.toBrowser;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -156,27 +159,30 @@ end;
 function TNotificacaoDao.GetCount: Integer;
 var
   aRetorno : Integer;
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
   aRetorno := 0;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select ');
-    aSQL.Add('  count(*) as qt_notificacoes');
-    aSQL.Add('from ' + aDDL.getTableNameNotificacao);
-    aSQL.EndUpdate;
-    with DM, qrySQL do
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_notificacoes');
+      SQL.Add('from ' + aDDL.getTableNameNotificacao);
+      SQL.EndUpdate;
+
       OpenOrExecute;
 
       aRetorno := FieldByName('qt_notificacoes').AsInteger;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -184,29 +190,32 @@ end;
 function TNotificacaoDao.GetCountNotRead: Integer;
 var
   aRetorno : Integer;
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
   aRetorno := 0;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select ');
-    aSQL.Add('  count(*) as qt_notificacoes');
-    aSQL.Add('from ' + aDDL.getTableNameNotificacao);
-    aSQL.Add('where sn_lida = :sn_lida');
-    aSQL.EndUpdate;
-    with DM, qrySQL do
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
-      qrySQL.ParamByName('sn_lida').AsString := 'N';
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_notificacoes');
+      SQL.Add('from ' + aDDL.getTableNameNotificacao);
+      SQL.Add('where sn_lida = :sn_lida');
+      SQL.EndUpdate;
+
+      ParamByName('sn_lida').AsString := 'N';
       OpenOrExecute;
 
       aRetorno := FieldByName('qt_notificacoes').AsInteger;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -221,34 +230,35 @@ end;
 
 procedure TNotificacaoDao.Insert;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Insert Into ' + aDDL.getTableNameNotificacao + '(');
-    aSQL.Add('    id_notificacao  ');
-    aSQL.Add('  , cd_notificacao  ');
-    aSQL.Add('  , dt_notificacao  ');
-    aSQL.Add('  , ds_titulo       ');
-    aSQL.Add('  , ds_mensagem     ');
-    aSQL.Add('  , sn_lida         ');
-    aSQL.Add('  , sn_destacar     ');
-    aSQL.Add(') values (');
-    aSQL.Add('    :id_notificacao ');
-    aSQL.Add('  , :cd_notificacao ');
-    aSQL.Add('  , :dt_notificacao ');
-    aSQL.Add('  , :ds_titulo      ');
-    aSQL.Add('  , :ds_mensagem    ');
-    aSQL.Add('  , :sn_lida        ');
-    aSQL.Add('  , :sn_destacar    ');
-    aSQL.Add(')');
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Insert Into ' + aDDL.getTableNameNotificacao + '(');
+      SQL.Add('    id_notificacao  ');
+      SQL.Add('  , cd_notificacao  ');
+      SQL.Add('  , dt_notificacao  ');
+      SQL.Add('  , ds_titulo       ');
+      SQL.Add('  , ds_mensagem     ');
+      SQL.Add('  , sn_lida         ');
+      SQL.Add('  , sn_destacar     ');
+      SQL.Add(') values (');
+      SQL.Add('    :id_notificacao ');
+      SQL.Add('  , :cd_notificacao ');
+      SQL.Add('  , :dt_notificacao ');
+      SQL.Add('  , :ds_titulo      ');
+      SQL.Add('  , :ds_mensagem    ');
+      SQL.Add('  , :sn_lida        ');
+      SQL.Add('  , :sn_destacar    ');
+      SQL.Add(')');
+      SQL.EndUpdate;
 
       if (aModel.ID = GUID_NULL) then
         aModel.NewID;
@@ -268,83 +278,108 @@ begin
       aOperacao := TTipoOperacaoDao.toIncluido;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
+  end;
+end;
+
+procedure TNotificacaoDao.Limpar;
+var
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Delete from ' + aDDL.getTableNameNotificacao);
+      SQL.EndUpdate;
+
+      ExecSQL;
+      aOperacao := TTipoOperacaoDao.toExcluir;
+    end;
+  finally
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TNotificacaoDao.Load(const aBusca: String);
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aNotificacao : TNotificacao;
   aFiltro  : String;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
     aFiltro := AnsiUpperCase(Trim(aBusca));
 
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    c.* ');
-    aSQL.Add('from ' + aDDL.getTableNameNotificacao + ' c');
-
-    if (StrToCurrDef(aFiltro, 0) > 0) then
-      aSQL.Add('where c.cd_notificacao = ' + aFiltro)
-    else
-    if (Trim(aBusca) <> EmptyStr) then
+    with DM, aQry do
     begin
-      aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
-      aSQL.Add('where (c.ds_titulo like ' + QuotedStr(aFiltro) + ')');
-      aSQL.Add('   or (c.ds_mensagem like ' + QuotedStr(aFiltro) + ')');
-    end;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    c.* ');
+      SQL.Add('from ' + aDDL.getTableNameNotificacao + ' c');
 
-    aSQL.Add('order by');
-    aSQL.Add('    c.dt_notificacao DESC');
+      if (StrToCurrDef(aFiltro, 0) > 0) then
+        SQL.Add('where c.cd_notificacao = ' + aFiltro)
+      else
+      if (Trim(aBusca) <> EmptyStr) then
+      begin
+        aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
+        SQL.Add('where (c.ds_titulo like ' + QuotedStr(aFiltro) + ')');
+        SQL.Add('   or (c.ds_mensagem like ' + QuotedStr(aFiltro) + ')');
+      end;
 
-    aSQL.EndUpdate;
+      SQL.Add('order by');
+      SQL.Add('    c.dt_notificacao DESC');
 
-    with DM, qrySQL do
-    begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if aQry.OpenOrExecute then
       begin
         ClearLista;
-        if (qrySQL.RecordCount > 0) then
-          while not qrySQL.Eof do
+        if (aQry.RecordCount > 0) then
+          while not aQry.Eof do
           begin
             aNotificacao := TNotificacao.Create;
-            SetValues(qrySQL, aNotificacao);
+            SetValues(aQry, aNotificacao);
 
             AddLista(aNotificacao);
-            qrySQL.Next;
+            aQry.Next;
           end;
       end;
-      qrySQL.Close;
+      aQry.Close;
     end;
     aOperacao := TTipoOperacaoDao.toBrowser;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TNotificacaoDao.MarkRead;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Update ' + aDDL.getTableNameNotificacao + ' Set');
-    aSQL.Add('  sn_lida = :sn_lida  ');
-    aSQL.Add('where id_notificacao = :id_notificacao ');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNameNotificacao + ' Set');
+      SQL.Add('  sn_lida = :sn_lida  ');
+      SQL.Add('where id_notificacao = :id_notificacao ');
+      SQL.EndUpdate;
 
       ParamByName('id_notificacao').AsString := GUIDToString(aModel.ID);
       ParamByName('sn_lida').AsString        := IfThen(aModel.Lida, 'S', 'N');
@@ -353,7 +388,7 @@ begin
       aOperacao := TTipoOperacaoDao.toEditado;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
@@ -374,25 +409,26 @@ end;
 
 procedure TNotificacaoDao.Update;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Update ' + aDDL.getTableNameNotificacao + ' Set');
-    aSQL.Add('    cd_notificacao   = :cd_notificacao ');
-    aSQL.Add('  , dt_notificacao   = :dt_notificacao ');
-    aSQL.Add('  , ds_titulo        = :ds_titulo ');
-    aSQL.Add('  , ds_mensagem      = :ds_mensagem ');
-    aSQL.Add('  , sn_lida          = :sn_lida ');
-    aSQL.Add('  , sn_destacar      = :sn_destacar ');
-    aSQL.Add('where id_notificacao = :id_notificacao ');
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNameNotificacao + ' Set');
+      SQL.Add('    cd_notificacao   = :cd_notificacao ');
+      SQL.Add('  , dt_notificacao   = :dt_notificacao ');
+      SQL.Add('  , ds_titulo        = :ds_titulo ');
+      SQL.Add('  , ds_mensagem      = :ds_mensagem ');
+      SQL.Add('  , sn_lida          = :sn_lida ');
+      SQL.Add('  , sn_destacar      = :sn_destacar ');
+      SQL.Add('where id_notificacao = :id_notificacao ');
+      SQL.EndUpdate;
 
       ParamByName('id_notificacao').AsString   := GUIDToString(aModel.ID);
       ParamByName('cd_notificacao').AsCurrency := aModel.Codigo;
@@ -406,7 +442,7 @@ begin
       aOperacao := TTipoOperacaoDao.toEditado;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
