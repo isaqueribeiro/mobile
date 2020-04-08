@@ -95,7 +95,7 @@ end;
 
 procedure TCliente.SetNome(Value: String);
 begin
-  aNome := AnsiUpperCase(Trim(Value));
+  aNome := Value.Trim.ToUpper;
 end;
 
 procedure TCliente.SetTelefone(Value: String);

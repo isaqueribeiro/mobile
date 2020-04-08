@@ -15,7 +15,10 @@ uses
   dao.Pedido,
   dao.PedidoItem,
   dao.Cliente,
+  dao.Configuracao,
+  dao.Loja,
   interfaces.Cliente,
+  interfaces.Loja,
   interfaces.PedidoItem,
   interfaces.Pedido,
 
@@ -26,7 +29,7 @@ uses
   FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.DateTimeCtrls;
 
 type
-  TFrmPedido = class(TFrmPadraoCadastro, IObservadorCliente, IObservadorPedidoItem, IPedidoObservado)
+  TFrmPedido = class(TFrmPadraoCadastro, IObservadorLoja, IObservadorCliente, IObservadorPedidoItem, IPedidoObservado)
     imgDuplicar: TImage;
     lblDuplicar: TLabel;
     lytAbaPedido: TLayout;
@@ -34,22 +37,36 @@ type
     lblAbaDadoPedido: TLabel;
     recAbaItemPedido: TRectangle;
     lblAbaItemPedido: TLabel;
-    LayoutDadoPedido: TLayout;
     LayoutItemPedido: TLayout;
+    lineItem: TLine;
+    lytRodapePedido: TLayout;
+    recInserirItem: TRectangle;
+    lblInserirItem: TLabel;
+    lytTotalPedido: TLayout;
+    LabelTotalPedido: TLabel;
+    lblTotalPedido: TLabel;
+    ListViewItemPedido: TListView;
+    img_produto_sem_foto: TImage;
+    imgSemItemPedido: TImage;
+    lblSemProduto: TLabel;
+    img_item_menos: TImage;
+    img_item_mais: TImage;
+    lineRodapePedido: TLine;
+    img_item_excluir: TImage;
+    LayoutDadoPedido: TLayout;
     lytTipo: TLayout;
     lineTipo: TLine;
     LabelTipo: TLabel;
     imgTipo: TImage;
     lblTipo: TLabel;
+    LayoutCliente: TLayout;
+    recCliente: TRectangle;
     lytCliente: TLayout;
-    lineCliente: TLine;
     LabelCliente: TLabel;
     imgCliente: TImage;
     lblCliente: TLabel;
-    recCliente: TRectangle;
-    LayoutCliente: TLayout;
     iconCliente: TImage;
-    lineItem: TLine;
+    lineCliente: TLine;
     lytData: TLayout;
     lineData: TLine;
     LabelData: TLabel;
@@ -65,22 +82,17 @@ type
     LabelObs: TLabel;
     imgObs: TImage;
     lblObs: TLabel;
-    lytRodapePedido: TLayout;
-    recInserirItem: TRectangle;
-    lblInserirItem: TLabel;
-    lytTotalPedido: TLayout;
-    LabelTotalPedido: TLabel;
-    lblTotalPedido: TLabel;
-    ListViewItemPedido: TListView;
-    img_produto_sem_foto: TImage;
-    imgSemItemPedido: TImage;
-    lblSemProduto: TLabel;
-    img_item_menos: TImage;
-    img_item_mais: TImage;
-    lineRodapePedido: TLine;
-    img_item_excluir: TImage;
+    LayoutLoja: TLayout;
+    recLoja: TRectangle;
+    lytLoja: TLayout;
+    LabelLoja: TLabel;
+    imgLoja: TImage;
+    lblLoja: TLabel;
+    iconLoja: TImage;
+    lineLoja: TLine;
     procedure DoMudarAbaPedido(Sender: TObject);
     procedure DoBuscarCliente(Sender: TObject);
+    procedure DoBuscarLoja(Sender: TObject);
     procedure DoEditarCampo(Sender: TObject);
     procedure DoSalvarPedido(Sender: TObject);
     procedure DoExcluirPedido(Sender: TObject);
@@ -95,11 +107,13 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ListViewItemPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+    procedure imgLojaClick(Sender: TObject);
   strict private
     { Private declarations }
     aDao : TPedidoDao;
     FObservers : TList<IObservadorPedido>;
 
+    procedure AtualizarLoja;
     procedure AtualizarCliente;
     procedure AtualizarPedidoItem;
 
@@ -144,11 +158,14 @@ uses
   , UConstantes
   , UDM
   , UMensagem
+  , ULoja
   , UCliente
   , UPedidoItem;
 
 procedure NovoCadastroPedido(Observer : IObservadorPedido);
 var
+  aLojaID : String;
+  aLoja : TLojaDao;
   aForm : TFrmPedido;
 begin
   aForm := TFrmPedido.GetInstance;
@@ -163,9 +180,21 @@ begin
     Model.Tipo := TTipoPedido.tpOrcamento;
     Model.DataEmissao := Date;
 
+    aLojaID := TConfiguracaoDao.GetInstance().GetValue('empresa_padrao');
+    if (aLojaID.Trim <> EmptyStr) then
+    begin
+      aLoja := TLojaDao.GetInstance();
+      aLoja.Find(aLojaID, True);
+      Model.Loja := aLoja.Model;
+    end;
+
     labelTituloCadastro.Text      := 'NOVO PEDIDO';
     labelTituloCadastro.TagString := GUIDToString(GUID_NULL); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := 0;                       // Destinado a guardar o CODIGO numérico do registro
+
+    lblLoja.Text      := Model.Loja.Fantasia + ' - ' + Model.Loja.CpfCnpj;
+    lblLoja.TagString := GUIDToString(Model.Loja.ID);
+    lblLoja.TagFloat  := IfThen(Model.Loja.ID = GUID_NULL, 0, 1);
 
     lblCliente.Text      := 'Informe aqui o cliente do novo pedido';
     lblCliente.TagString := GUIDToString(GUID_NULL);
@@ -308,6 +337,17 @@ begin
   Dao.Model.Cliente    := daoCliente.Model;
 end;
 
+procedure TFrmPedido.AtualizarLoja;
+var
+  daoLoja : TLojaDao;
+begin
+  daoLoja := TLojaDao.GetInstance;
+  lblLoja.Text      := daoLoja.Model.Fantasia + ' - ' + daoLoja.Model.CpfCnpj;
+  lblLoja.TagString := GUIDToString(daoLOja.Model.ID);
+  lblLoja.TagFloat  := 1;
+  Dao.Model.Loja    := daoLoja.Model;
+end;
+
 procedure TFrmPedido.AtualizarPedidoItem;
 var
   daoItem : TPedidoItemDao;
@@ -366,6 +406,12 @@ begin
     SelecionarCliente(Self);
 end;
 
+procedure TFrmPedido.DoBuscarLoja(Sender: TObject);
+begin
+  if Dao.Model.Tipo = TTipoPedido.tpOrcamento then
+    SelecionarLoja(Self);
+end;
+
 procedure TFrmPedido.DoCarregarItens(Sender: TObject);
 begin
   try
@@ -408,7 +454,7 @@ begin
   layoutValorCampo.Visible := False;
 
   Case aTag of
-    2 : // Data
+    3 : // Data
       begin
         layoutDataCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelData.Text);
@@ -420,7 +466,7 @@ begin
         editDateCampo.TagObject := TObject(lblData);
       end;
 
-    3 : // Contato(s)
+    4 : // Contato(s)
       begin
         layoutMemoCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelContato.Text);
@@ -435,7 +481,7 @@ begin
         mmMemoCampo.TagObject    := TObject(lblContato);
       end;
 
-    4 : // Observações
+    5 : // Observações
       begin
         layoutMemoCampo.Visible     := True;
         labelTituloEditar.Text      := AnsiUpperCase(LabelObs.Text);
@@ -759,27 +805,45 @@ begin
   end;
 end;
 
+procedure TFrmPedido.imgLojaClick(Sender: TObject);
+var
+  daoLoja : TLojaDao;
+begin
+  if (lblLoja.TagFloat = 1) then
+  begin
+    daoLoja := TLojaDao.GetInstance();
+    daoLoja.Find(lblLoja.TagString, True);
+    ExibirCadastroLoja(Self, False);
+  end;
+end;
+
 procedure TFrmPedido.ListViewItemPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
   const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
 var
   aItem   : TListViewItem;
   daoItem : TPedidoItemDao;
-  aQuantidade : Boolean;
+  aImagem ,
+  aIcone  : String;
 begin
   if (TListView(Sender).Selected <> nil) then
   begin
+    aIcone  := EmptyStr;
+    aImagem := EmptyStr;
     daoItem := TPedidoItemDao.GetInstance;
     daoItem.Model := TPedidoItem(ListViewItemPedido.Items.Item[ItemIndex].TagObject);
 
     if ItemObject is TListItemImage then
     begin
+      // Recuperar o nome do objeto clicado
+      aImagem := TListItemImage(ItemObject).Name;
+
       // Foto do produto
-      if (TListItemImage(ItemObject).Name = 'Image4') then
+      if (aImagem = 'Image4') then
         EditarItemPedido(Dao.Model, Self, (dao.Model.Tipo = TTipoPedido.tpOrcamento))
       else
       begin
         // Excluir
-        if (TListItemImage(ItemObject).Name = 'Image8') then
+        if (aImagem = 'Image8') then
         begin
           if Dao.Model.Entregue then
             ExibirMsgAlerta('Produto não poderá ser excluído porque o pedido já foi entregue.')
@@ -788,16 +852,20 @@ begin
         end
         else
         // Ícone (-)
-        if (TListItemImage(ItemObject).Name = 'Image5') then
-          daoItem.DecrementarQuantidade
+        if (aImagem = 'Image5') then
+        begin
+          aIcone := 'icone_menos';
+          daoItem.DecrementarQuantidade;
+        end
         else
         // Ícone (+)
-        if (TListItemImage(ItemObject).Name = 'Image6') then
+        if (aImagem = 'Image6') then
+        begin
+          aIcone := 'icone_mais';
           daoItem.IncrementarQuantidade;
+        end;
 
-        aQuantidade := (TListItemImage(ItemObject).Name = 'Image5') or (TListItemImage(ItemObject).Name = 'Image6');
-
-        if aQuantidade then
+        if ((aIcone = 'icone_menos') or (aIcone = 'icone_mais')) then
         begin
           daoItem.Update();
 

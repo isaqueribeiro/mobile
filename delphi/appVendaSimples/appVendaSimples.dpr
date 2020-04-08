@@ -28,11 +28,14 @@ uses
   dao.Produto in 'src\dao.Produto.pas',
   dao.Pedido in 'src\dao.Pedido.pas',
   dao.PedidoItem in 'src\dao.PedidoItem.pas',
+  dao.Loja in 'src\dao.Loja.pas',
+  dao.Configuracao in 'src\dao.Configuracao.pas',
   interfaces.Usuario in 'src\interfaces.Usuario.pas',
   interfaces.Cliente in 'src\interfaces.Cliente.pas',
   interfaces.Produto in 'src\interfaces.Produto.pas',
   interfaces.Pedido in 'src\interfaces.Pedido.pas',
   interfaces.PedidoItem in 'src\interfaces.PedidoItem.pas',
+  interfaces.Loja in 'src\interfaces.Loja.pas',
   UProduto in 'src\UProduto.pas' {FrmProduto},
   UPadraoEditar in 'src\UPadraoEditar.pas' {FrmPadraoEditar},
   UPadraoCadastro in 'src\UPadraoCadastro.pas' {FrmPadraoCadastro},
@@ -41,8 +44,7 @@ uses
   UCompartilhar in 'src\UCompartilhar.pas' {FrmCompartilhar},
   UPedido in 'src\UPedido.pas' {FrmPedido},
   UPedidoItem in 'src\UPedidoItem.pas' {FrmPedidoItem},
-  dao.Loja in 'src\dao.Loja.pas',
-  dao.Configuracao in 'src\dao.Configuracao.pas';
+  ULoja in 'src\ULoja.pas' {FrmLoja};
 
 {$R *.res}
 

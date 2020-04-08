@@ -15,6 +15,7 @@ type
     strict private
       aDDL   : TScriptDDL;
       aModel : TLoja;
+      aLista : TLojas;
       aOperacao : TTipoOperacaoDao;
       aEmpresasID : TStringList;
       constructor Create();
@@ -22,10 +23,12 @@ type
 
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TLoja);
       procedure ClearValues;
+      procedure ClearLista;
 
       class var aInstance : TLojaDao;
     public
       property Model    : TLoja read aModel write aModel;
+      property Lista    : TLojas read aLista write aLista;
       property Operacao : TTipoOperacaoDao read aOperacao;
       property EmpresasID : TStringList read aEmpresasID;
 
@@ -33,9 +36,15 @@ type
       procedure Limpar();
       procedure Insert();
       procedure Update();
+      procedure Delete(); virtual; abstract;
+
+      procedure AddLista; overload;
+      procedure AddLista(aLoja : TLoja); overload;
 
       function Find(const aID : TGUID; const aCpfCnpj : String; const IsLoadModel : Boolean) : Boolean; overload;
       function Find(const aID : String; const IsLoadModel : Boolean) : Boolean; overload;
+      function GetCount() : Integer;
+      function PodeExcluir : Boolean;
 
       class function GetInstance : TLojaDao;
   end;
@@ -46,6 +55,39 @@ uses
   UDM;
 
 { TLojaDao }
+
+procedure TLojaDao.AddLista(aLoja: TLoja);
+var
+  I : Integer;
+begin
+  I := High(aLista) + 2;
+
+  if (I <= 0) then
+    I := 1;
+
+  SetLength(aLista, I);
+  aLista[I - 1] := aLOja;
+end;
+
+procedure TLojaDao.AddLista;
+var
+  I : Integer;
+  o : TLoja;
+begin
+  I := High(aLista) + 2;
+  o := TLoja.Create;
+
+  if (I <= 0) then
+    I := 1;
+
+  SetLength(aLista, I);
+  aLista[I - 1] := o;
+end;
+
+procedure TLojaDao.ClearLista;
+begin
+  SetLength(aLista, 0);
+end;
 
 procedure TLojaDao.ClearValues;
 begin
@@ -65,6 +107,7 @@ begin
   aModel    := TLoja.Create;
   aOperacao := TTipoOperacaoDao.toBrowser;
   aEmpresasID := TStringList.Create;
+  SetLength(aLista, 0);
 end;
 
 destructor TLojaDao.Destroy;
@@ -165,6 +208,36 @@ begin
           ClearValues;
       end;
       qrySQL.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TLojaDao.GetCount: Integer;
+var
+  aRetorno : Integer;
+  aQry : TFDQuery;
+begin
+  aRetorno := 0;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_lojas');
+      SQL.Add('from ' + aDDL.getTableNameLoja);
+      SQL.EndUpdate;
+
+      OpenOrExecute;
+      aRetorno := FieldByName('qt_lojas').AsInteger;
+      aQry.Close;
     end;
   finally
     aQry.DisposeOf;
@@ -279,6 +352,7 @@ begin
 
       if OpenOrExecute then
       begin
+        ClearLista;
         aEmpresasID.Clear;
 
         if (RecordCount > 0) then
@@ -288,6 +362,7 @@ begin
             SetValues(aQry, aLoja);
             Model := aLoja;
 
+            AddLista(aLoja);
             aQry.Next;
           end
         else
@@ -298,6 +373,40 @@ begin
     end;
   finally
     aQry.DisposeOf;
+  end;
+end;
+
+function TLojaDao.PodeExcluir: Boolean;
+var
+  aRetorno : Boolean;
+  aQry : TFDQuery;
+begin
+  aRetorno := True;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(id_loja) as qt_pedidos');
+      SQL.Add('from ' + aDDL.getTableNamePedido);
+      SQL.Add('where id_loja = :id_loja');
+      SQL.EndUpdate;
+
+      ParamByName('id_loja').AsString := GUIDToString(aModel.ID);
+      OpenOrExecute;
+
+      aRetorno := (FieldByName('qt_pedidos').AsInteger = 0);
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+
+    Result := aRetorno;
   end;
 end;
 

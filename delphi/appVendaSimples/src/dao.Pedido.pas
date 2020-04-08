@@ -84,31 +84,32 @@ end;
 
 procedure TPedidoDao.CalcularValorTotalPedidoTemp;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aValorTotal   ,
   aValorDesconto,
   aValorPedido  : Currency;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
     aValorTotal    := 0.0;
     aValorDesconto := 0.0;
     aValorPedido   := 0.0;
 
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    sum(i.vl_total)    as vl_total    ');
-    aSQL.Add('  , sum(i.vl_desconto) as vl_desconto ');
-    aSQL.Add('  , sum(i.vl_liquido)  as vl_liquido  ');
-    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp i ');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    sum(i.vl_total)    as vl_total    ');
+      SQL.Add('  , sum(i.vl_desconto) as vl_desconto ');
+      SQL.Add('  , sum(i.vl_liquido)  as vl_liquido  ');
+      SQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp i ');
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
         if not FieldByName('vl_total').IsNull then
         begin
@@ -124,14 +125,14 @@ begin
         end;
       end;
 
-      qrySQL.Close;
+      aQry.Close;
     end;
 
     aModel.ValorTotal    := aValorTotal;
     aModel.ValorDesconto := aValorDesconto;
     aModel.ValorPedido   := aValorPedido;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
@@ -151,19 +152,20 @@ end;
 
 procedure TPedidoDao.Delete;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Delete from ' + aDDL.getTableNamePedido);
-    aSQL.Add('where id_pedido = :id_pedido ');
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Delete from ' + aDDL.getTableNamePedido);
+      SQL.Add('where id_pedido = :id_pedido ');
+      SQL.EndUpdate;
 
       ParamByName('id_pedido').AsString := GUIDToString(aModel.ID);
 
@@ -171,45 +173,49 @@ begin
       aOperacao := TTipoOperacaoDao.toExcluido;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 function TPedidoDao.Find(const aCodigo: Currency;
   const IsLoadModel: Boolean): Boolean;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aRetorno : Boolean;
 begin
   aRetorno := False;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    p.* ');
-    aSQL.Add('  , c.cd_cliente  ');
-    aSQL.Add('  , c.nm_cliente  ');
-    aSQL.Add('  , c.nr_cpf_cnpj ');
-    aSQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
-    aSQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
-    aSQL.Add('where p.cd_pedido = ' + CurrToStr(aCodigo));
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('  , c.cd_cliente  ');
+      SQL.Add('  , c.nm_cliente  ');
+      SQL.Add('  , c.nr_cpf_cnpj ');
+      SQL.Add('  , l.nm_empresa  ');
+      SQL.Add('  , l.nm_fantasia ');
+      SQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
+      SQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
+      SQL.Add('  left join ' + aDDL.getTableNameLoja    + ' l on (l.id_empresa = p.id_loja)');
+      SQL.Add('where p.cd_pedido = ' + CurrToStr(aCodigo));
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
-        aRetorno := (qrySQL.RecordCount > 0);
+        aRetorno := (RecordCount > 0);
         if aRetorno and IsLoadModel then
-          SetValues(qrySQL, aModel);
+          SetValues(aQry, aModel);
       end;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -217,27 +223,30 @@ end;
 function TPedidoDao.GetCount: Integer;
 var
   aRetorno : Integer;
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
   aRetorno := 0;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select ');
-    aSQL.Add('  count(*) as qt_pedidos');
-    aSQL.Add('from ' + aDDL.getTableNamePedido);
-    aSQL.EndUpdate;
-    with DM, qrySQL do
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_pedidos');
+      SQL.Add('from ' + aDDL.getTableNamePedido);
+      SQL.EndUpdate;
+
       OpenOrExecute;
 
       aRetorno := FieldByName('qt_pedidos').AsInteger;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -252,119 +261,122 @@ end;
 
 procedure TPedidoDao.GravarItens;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Update ' + aDDL.getTableNamePedidoItem + '_temp Set');
-    aSQL.Add('  id_pedido = :id_pedido;');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    aSQL.Add('Delete ');
-    aSQL.Add('from   ' + aDDL.getTableNamePedidoItem);
-    aSQL.Add('where id_pedido = :id_pedido;');
-
-    aSQL.Add('Insert Into '   + aDDL.getTableNamePedidoItem + ' ');
-    aSQL.Add('Select * from ' + aDDL.getTableNamePedidoItem + '_temp;');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNamePedidoItem + '_temp Set');
+      SQL.Add('  id_pedido = :id_pedido;');
+
+      SQL.Add('Delete ');
+      SQL.Add('from   ' + aDDL.getTableNamePedidoItem);
+      SQL.Add('where id_pedido = :id_pedido;');
+
+      SQL.Add('Insert Into '   + aDDL.getTableNamePedidoItem + ' ');
+      SQL.Add('Select * from ' + aDDL.getTableNamePedidoItem + '_temp;');
+      SQL.EndUpdate;
 
       ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
-      qrySQL.ExecSQL;
+      ExecSQL;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TPedidoDao.InserirItensTemp;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Delete');
-    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp;');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    aSQL.Add('Insert Into '   + aDDL.getTableNamePedidoItem + '_temp ');
-    aSQL.Add('Select * from ' + aDDL.getTableNamePedidoItem + ' i');
-    aSQL.Add('where (i.id_pedido = :id_pedido)');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Delete');
+      SQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp;');
+
+      SQL.Add('Insert Into '   + aDDL.getTableNamePedidoItem + '_temp ');
+      SQL.Add('Select * from ' + aDDL.getTableNamePedidoItem + ' i');
+      SQL.Add('where (i.id_pedido = :id_pedido)');
+      SQL.EndUpdate;
 
       ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
-      qrySQL.ExecSQL;
+      ExecSQL;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TPedidoDao.Insert;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Insert Into ' + aDDL.getTableNamePedido + '(');
-    aSQL.Add('    id_pedido       ');
-    aSQL.Add('  , cd_pedido       ');
-    aSQL.Add('  , tp_pedido       ');
-    aSQL.Add('  , id_cliente      ');
-    aSQL.Add('  , dt_pedido       ');
-    aSQL.Add('  , vl_total        ');
-    aSQL.Add('  , vl_desconto     ');
-    aSQL.Add('  , vl_pedido       ');
-    aSQL.Add('  , ds_contato      ');
-    aSQL.Add('  , ds_observacao   ');
-    aSQL.Add('  , sn_ativo        ');
-    aSQL.Add('  , sn_entregue     ');
-    aSQL.Add('  , sn_sincronizado ');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , cd_referencia   ');
-
-    if (aModel.Loja.ID <> GUID_NULL) then
-      aSQL.Add('  , id_loja         ');
-
-    aSQL.Add(') values (');
-    aSQL.Add('    :id_pedido      ');
-    aSQL.Add('  , :cd_pedido      ');
-    aSQL.Add('  , :tp_pedido      ');
-    aSQL.Add('  , :id_cliente     ');
-    aSQL.Add('  , :dt_pedido      ');
-    aSQL.Add('  , :vl_total       ');
-    aSQL.Add('  , :vl_desconto    ');
-    aSQL.Add('  , :vl_pedido      ');
-    aSQL.Add('  , :ds_contato     ');
-    aSQL.Add('  , :ds_observacao  ');
-    aSQL.Add('  , :sn_ativo       ');
-    aSQL.Add('  , :sn_entregue    ');
-    aSQL.Add('  , :sn_sincronizado');
-
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , :cd_referencia  ');
-
-    if (aModel.Loja.ID <> GUID_NULL) then
-      aSQL.Add('  , :id_loja        ');
-
-    aSQL.Add(')');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Insert Into ' + aDDL.getTableNamePedido + '(');
+      SQL.Add('    id_pedido       ');
+      SQL.Add('  , cd_pedido       ');
+      SQL.Add('  , tp_pedido       ');
+      SQL.Add('  , id_cliente      ');
+      SQL.Add('  , dt_pedido       ');
+      SQL.Add('  , vl_total        ');
+      SQL.Add('  , vl_desconto     ');
+      SQL.Add('  , vl_pedido       ');
+      SQL.Add('  , ds_contato      ');
+      SQL.Add('  , ds_observacao   ');
+      SQL.Add('  , sn_ativo        ');
+      SQL.Add('  , sn_entregue     ');
+      SQL.Add('  , sn_sincronizado ');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , cd_referencia   ');
+
+      if (aModel.Loja.ID <> GUID_NULL) then
+        SQL.Add('  , id_loja         ');
+
+      SQL.Add(') values (');
+      SQL.Add('    :id_pedido      ');
+      SQL.Add('  , :cd_pedido      ');
+      SQL.Add('  , :tp_pedido      ');
+      SQL.Add('  , :id_cliente     ');
+      SQL.Add('  , :dt_pedido      ');
+      SQL.Add('  , :vl_total       ');
+      SQL.Add('  , :vl_desconto    ');
+      SQL.Add('  , :vl_pedido      ');
+      SQL.Add('  , :ds_contato     ');
+      SQL.Add('  , :ds_observacao  ');
+      SQL.Add('  , :sn_ativo       ');
+      SQL.Add('  , :sn_entregue    ');
+      SQL.Add('  , :sn_sincronizado');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , :cd_referencia  ');
+
+      if (aModel.Loja.ID <> GUID_NULL) then
+        SQL.Add('  , :id_loja        ');
+
+      SQL.Add(')');
+      SQL.EndUpdate;
 
       if (aModel.ID = GUID_NULL) then
         aModel.NewID;
@@ -397,65 +409,69 @@ begin
       aOperacao := TTipoOperacaoDao.toIncluido;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TPedidoDao.Load(const aBusca : String);
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aPedido : TPedido;
   aFiltro : String;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
     aFiltro := AnsiUpperCase(Trim(aBusca));
 
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    p.* ');
-    aSQL.Add('  , c.cd_cliente  ');
-    aSQL.Add('  , c.nm_cliente  ');
-    aSQL.Add('  , c.nr_cpf_cnpj ');
-    aSQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
-    aSQL.Add('  join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
-
-    if (StrToCurrDef(aFiltro, 0) > 0) then
-      aSQL.Add('where p.cd_pedido = ' + aFiltro)
-    else
-    if (Trim(aBusca) <> EmptyStr) then
+    with DM, aQry do
     begin
-      aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
-      aSQL.Add('where c.nm_cliente like ' + QuotedStr(aFiltro));
-    end;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('  , c.cd_cliente  ');
+      SQL.Add('  , c.nm_cliente  ');
+      SQL.Add('  , c.nr_cpf_cnpj ');
+      SQL.Add('  , l.nm_empresa  ');
+      SQL.Add('  , l.nm_fantasia ');
+      SQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
+      SQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
+      SQL.Add('  left join ' + aDDL.getTableNameLoja    + ' l on (l.id_empresa = p.id_loja)');
 
-    aSQL.Add('order by');
-    aSQL.Add('    p.cd_pedido DESC ');
+      if (StrToCurrDef(aFiltro, 0) > 0) then
+        SQL.Add('where p.cd_pedido = ' + aFiltro)
+      else
+      if (Trim(aBusca) <> EmptyStr) then
+      begin
+        aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
+        SQL.Add('where c.nm_cliente like ' + QuotedStr(aFiltro));
+      end;
 
-    aSQL.EndUpdate;
+      SQL.Add('order by');
+      SQL.Add('    p.cd_pedido DESC ');
 
-    with DM, qrySQL do
-    begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
         ClearLista;
-        if (qrySQL.RecordCount > 0) then
-          while not qrySQL.Eof do
+        if (RecordCount > 0) then
+          while not Eof do
           begin
             aPedido := TPedido.Create;
-            SetValues(qrySQL, aPedido);
+            SetValues(aQry, aPedido);
 
             AddLista(aPedido);
-            qrySQL.Next;
+            aQry.Next;
           end;
       end;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
@@ -466,33 +482,34 @@ end;
 
 procedure TPedidoDao.RecalcularValorTotalPedido;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aValorTotal   ,
   aValorDesconto,
   aValorPedido  : Currency;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
     aValorTotal    := 0.0;
     aValorDesconto := 0.0;
     aValorPedido   := 0.0;
 
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    sum(i.vl_total)    as vl_total    ');
-    aSQL.Add('  , sum(i.vl_desconto) as vl_desconto ');
-    aSQL.Add('  , sum(i.vl_liquido)  as vl_liquido  ');
-    aSQL.Add('from ' + aDDL.getTableNamePedidoItem + ' i ');
-    aSQL.Add('where (i.id_pedido = :id_pedido)');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    sum(i.vl_total)    as vl_total    ');
+      SQL.Add('  , sum(i.vl_desconto) as vl_desconto ');
+      SQL.Add('  , sum(i.vl_liquido)  as vl_liquido  ');
+      SQL.Add('from ' + aDDL.getTableNamePedidoItem + ' i ');
+      SQL.Add('where (i.id_pedido = :id_pedido)');
+      SQL.EndUpdate;
 
       ParamByName('id_pedido').AsString := GUIDToString(Model.ID);
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
         if not FieldByName('vl_total').IsNull then
         begin
@@ -508,7 +525,7 @@ begin
         end;
       end;
 
-      qrySQL.Close;
+      aQry.Close;
     end;
 
     aModel.ValorTotal    := aValorTotal;
@@ -518,7 +535,7 @@ begin
     if (aModel.ID <> GUID_NULL) then
       Self.Update();
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
@@ -554,42 +571,55 @@ begin
       Referencia := GUID_NULL;
 
     if (Trim(FieldByName('id_loja').AsString) <> EmptyStr) then
-      Loja.ID := StringToGUID(FieldByName('id_loja').AsString)
+    begin
+      Loja.ID := StringToGUID(FieldByName('id_loja').AsString);
+      Loja.Nome     := FieldByName('nm_empresa').AsString;
+      Loja.Fantasia := FieldByName('nm_fantasia').AsString;
+    end
     else
+    begin
       Loja.ID := GUID_NULL;
+      Loja.Nome     := EmptyStr;
+      Loja.Fantasia := EmptyStr;
+    end;
   end;
 end;
 
 procedure TPedidoDao.Update;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Update ' + aDDL.getTableNamePedido + ' Set');
-    aSQL.Add('    cd_pedido       = :cd_pedido      ');
-    aSQL.Add('  , tp_pedido       = :tp_pedido      ');
-    aSQL.Add('  , id_cliente      = :id_cliente     ');
-    aSQL.Add('  , dt_pedido       = :dt_pedido      ');
-    aSQL.Add('  , vl_total        = :vl_total       ');
-    aSQL.Add('  , vl_desconto     = :vl_desconto    ');
-    aSQL.Add('  , vl_pedido       = :vl_pedido      ');
-    aSQL.Add('  , ds_contato      = :ds_contato     ');
-    aSQL.Add('  , ds_observacao   = :ds_observacao  ');
-    aSQL.Add('  , sn_ativo        = :sn_ativo       ');
-    aSQL.Add('  , sn_entregue     = :sn_entregue    ');
-    aSQL.Add('  , sn_sincronizado = :sn_sincronizado');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , cd_referencia   = :cd_referencia  ');
-
-    aSQL.Add('where id_pedido = :id_pedido');
-    aSQL.EndUpdate;
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNamePedido + ' Set');
+      SQL.Add('    cd_pedido       = :cd_pedido      ');
+      SQL.Add('  , tp_pedido       = :tp_pedido      ');
+      SQL.Add('  , id_cliente      = :id_cliente     ');
+      SQL.Add('  , dt_pedido       = :dt_pedido      ');
+      SQL.Add('  , vl_total        = :vl_total       ');
+      SQL.Add('  , vl_desconto     = :vl_desconto    ');
+      SQL.Add('  , vl_pedido       = :vl_pedido      ');
+      SQL.Add('  , ds_contato      = :ds_contato     ');
+      SQL.Add('  , ds_observacao   = :ds_observacao  ');
+      SQL.Add('  , sn_ativo        = :sn_ativo       ');
+      SQL.Add('  , sn_entregue     = :sn_entregue    ');
+      SQL.Add('  , sn_sincronizado = :sn_sincronizado');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , cd_referencia   = :cd_referencia  ');
+
+      if (aModel.Loja.ID <> GUID_NULL) then
+        SQL.Add('  , id_loja         = :id_loja  ');
+
+      SQL.Add('where id_pedido = :id_pedido');
+      SQL.EndUpdate;
 
       ParamByName('id_pedido').AsString     := GUIDToString(Model.ID);
       ParamByName('cd_pedido').AsCurrency   := Model.Codigo;
@@ -609,11 +639,14 @@ begin
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
+      if (aModel.Loja.ID <> GUID_NULL) then
+        ParamByName('id_loja').AsString := GUIDToString(aModel.Loja.ID);
+
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toEditado;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 

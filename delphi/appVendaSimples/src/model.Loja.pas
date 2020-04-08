@@ -36,6 +36,8 @@ type
       function ToString : String; override;
   end;
 
+  TLOjas = Array of TLoja;
+
 implementation
 
 { TLoja }
