@@ -32,9 +32,11 @@ type
       procedure Delete();
       procedure AddLista; overload;
       procedure AddLista(aCliente : TCliente); overload;
+      procedure CarregarDadosToSynchrony;
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
+      function GetCountSincronizar() : Integer;
       function PodeExcluir : Boolean;
 
       class function GetInstance : TClienteDao;
@@ -73,6 +75,47 @@ begin
 
   SetLength(aLista, I);
   aLista[I - 1] := aCliente;
+end;
+
+procedure TClienteDao.CarregarDadosToSynchrony;
+var
+  aQry : TFDQuery;
+  aCliente : TCliente;
+  aFiltro  : String;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    c.* ');
+      SQL.Add('from ' + aDDL.getTableNameCliente + ' c');
+      SQL.Add('where (sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+      begin
+        ClearLista;
+        if (RecordCount > 0) then
+          while not Eof do
+          begin
+            aCliente := TCliente.Create;
+            SetValues(aQry, aCliente);
+
+            AddLista(aCliente);
+            Next;
+          end;
+      end;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
 end;
 
 procedure TClienteDao.ClearLista;
@@ -118,34 +161,35 @@ end;
 function TClienteDao.Find(const aCodigo: Currency;
   const IsLoadModel: Boolean): Boolean;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aRetorno : Boolean;
 begin
   aRetorno := False;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    c.* ');
-    aSQL.Add('from ' + aDDL.getTableNameCliente + ' c');
-    aSQL.Add('where c.cd_cliente = ' + CurrToStr(aCodigo));
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    c.* ');
+      SQL.Add('from ' + aDDL.getTableNameCliente + ' c');
+      SQL.Add('where c.cd_cliente = ' + CurrToStr(aCodigo));
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
-        aRetorno := (qrySQL.RecordCount > 0);
+        aRetorno := (RecordCount > 0);
         if aRetorno and IsLoadModel then
-          SetValues(qrySQL, aModel);
+          SetValues(aQry, aModel);
       end;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -153,27 +197,62 @@ end;
 function TClienteDao.GetCount: Integer;
 var
   aRetorno : Integer;
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
   aRetorno := 0;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select ');
-    aSQL.Add('  count(*) as qt_clientes');
-    aSQL.Add('from ' + aDDL.getTableNameCliente);
-    aSQL.EndUpdate;
-    with DM, qrySQL do
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_clientes');
+      SQL.Add('from ' + aDDL.getTableNameCliente);
+      SQL.EndUpdate;
+
       OpenOrExecute;
 
       aRetorno := FieldByName('qt_clientes').AsInteger;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TClienteDao.GetCountSincronizar: Integer;
+var
+  aRetorno : Integer;
+  aQry : TFDQuery;
+begin
+  aRetorno := 0;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_clientes');
+      SQL.Add('from ' + aDDL.getTableNameCliente);
+      SQL.Add('where (sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
+      SQL.EndUpdate;
+
+      OpenOrExecute;
+
+      aRetorno := FieldByName('qt_clientes').AsInteger;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -188,54 +267,55 @@ end;
 
 procedure TClienteDao.Insert;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Insert Into ' + aDDL.getTableNameCliente + '(');
-    aSQL.Add('    id_cliente       ');
-    aSQL.Add('  , cd_cliente       ');
-    aSQL.Add('  , nm_cliente       ');
-    aSQL.Add('  , tp_cliente       ');
-    aSQL.Add('  , nr_cpf_cnpj      ');
-    aSQL.Add('  , ds_contato       ');
-    aSQL.Add('  , nr_telefone      ');
-    aSQL.Add('  , nr_celular       ');
-    aSQL.Add('  , ds_email         ');
-    aSQL.Add('  , ds_endereco      ');
-    aSQL.Add('  , ds_observacao    ');
-    aSQL.Add('  , sn_ativo         ');
-    aSQL.Add('  , sn_sincronizado  ');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , cd_referencia    ');
-
-    aSQL.Add(') values (');
-    aSQL.Add('    :id_cliente      ');
-    aSQL.Add('  , :cd_cliente      ');
-    aSQL.Add('  , :nm_cliente      ');
-    aSQL.Add('  , :tp_cliente      ');
-    aSQL.Add('  , :nr_cpf_cnpj     ');
-    aSQL.Add('  , :ds_contato      ');
-    aSQL.Add('  , :nr_telefone     ');
-    aSQL.Add('  , :nr_celular      ');
-    aSQL.Add('  , :ds_email        ');
-    aSQL.Add('  , :ds_endereco     ');
-    aSQL.Add('  , :ds_observacao   ');
-    aSQL.Add('  , :sn_ativo        ');
-    aSQL.Add('  , :sn_sincronizado ');
-
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , :cd_referencia   ');
-
-    aSQL.Add(')');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Insert Into ' + aDDL.getTableNameCliente + '(');
+      SQL.Add('    id_cliente       ');
+      SQL.Add('  , cd_cliente       ');
+      SQL.Add('  , nm_cliente       ');
+      SQL.Add('  , tp_cliente       ');
+      SQL.Add('  , nr_cpf_cnpj      ');
+      SQL.Add('  , ds_contato       ');
+      SQL.Add('  , nr_telefone      ');
+      SQL.Add('  , nr_celular       ');
+      SQL.Add('  , ds_email         ');
+      SQL.Add('  , ds_endereco      ');
+      SQL.Add('  , ds_observacao    ');
+      SQL.Add('  , sn_ativo         ');
+      SQL.Add('  , sn_sincronizado  ');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , cd_referencia    ');
+
+      SQL.Add(') values (');
+      SQL.Add('    :id_cliente      ');
+      SQL.Add('  , :cd_cliente      ');
+      SQL.Add('  , :nm_cliente      ');
+      SQL.Add('  , :tp_cliente      ');
+      SQL.Add('  , :nr_cpf_cnpj     ');
+      SQL.Add('  , :ds_contato      ');
+      SQL.Add('  , :nr_telefone     ');
+      SQL.Add('  , :nr_celular      ');
+      SQL.Add('  , :ds_email        ');
+      SQL.Add('  , :ds_endereco     ');
+      SQL.Add('  , :ds_observacao   ');
+      SQL.Add('  , :sn_ativo        ');
+      SQL.Add('  , :sn_sincronizado ');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , :cd_referencia   ');
+
+      SQL.Add(')');
+      SQL.EndUpdate;
 
       if (aModel.ID = GUID_NULL) then
         aModel.NewID;
@@ -266,7 +346,7 @@ begin
       ParamByName('ds_observacao').AsString := aModel.Observacao;
 
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
-      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+      ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
@@ -275,64 +355,65 @@ begin
       aOperacao := TTipoOperacaoDao.toIncluido;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TClienteDao.Load(const aBusca: String);
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aCliente : TCliente;
   aFiltro  : String;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
     aFiltro := AnsiUpperCase(Trim(aBusca));
 
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    c.* ');
-    aSQL.Add('from ' + aDDL.getTableNameCliente + ' c');
-
-    if (StrToCurrDef(aFiltro, 0) > 0) then
-      aSQL.Add('where c.cd_cliente = ' + aFiltro)
-    else
-    if StrIsGUID(aBusca) then
-      aSQL.Add('where c.id_cliente = ' + QuotedStr(aFiltro))
-    else
-    if (Trim(aBusca) <> EmptyStr) then
+    with DM, aQry do
     begin
-      aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
-      aSQL.Add('where c.nm_cliente like ' + QuotedStr(aFiltro));
-    end;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    c.* ');
+      SQL.Add('from ' + aDDL.getTableNameCliente + ' c');
 
-    aSQL.Add('order by');
-    aSQL.Add('    c.nm_cliente ');
+      if (StrToCurrDef(aFiltro, 0) > 0) then
+        SQL.Add('where c.cd_cliente = ' + aFiltro)
+      else
+      if StrIsGUID(aBusca) then
+        SQL.Add('where c.id_cliente = ' + QuotedStr(aFiltro))
+      else
+      if (Trim(aBusca) <> EmptyStr) then
+      begin
+        aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
+        SQL.Add('where c.nm_cliente like ' + QuotedStr(aFiltro));
+      end;
 
-    aSQL.EndUpdate;
+      SQL.Add('order by');
+      SQL.Add('    c.nm_cliente ');
 
-    with DM, qrySQL do
-    begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
         ClearLista;
-        if (qrySQL.RecordCount > 0) then
-          while not qrySQL.Eof do
+        if (RecordCount > 0) then
+          while not Eof do
           begin
             aCliente := TCliente.Create;
-            SetValues(qrySQL, aCliente);
+            SetValues(aQry, aCliente);
 
             AddLista(aCliente);
-            qrySQL.Next;
+            Next;
           end;
       end;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
@@ -455,7 +536,7 @@ begin
       ParamByName('ds_observacao').AsString := aModel.Observacao;
 
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
-      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+      ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);

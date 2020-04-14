@@ -34,8 +34,9 @@ const
   FLAG_NAO = 'N';
 
   URL_ROOT    = 'http://localhost:51358';
-  URL_USUARIO = '/ws_usuario.asmx';
   URL_FUNCOES = '/ws_funcoes.asmx';
+  URL_USUARIO = '/ws_usuario.asmx';
+  URL_CLIENTE = '/ws_cliente.asmx';
 
 implementation
 

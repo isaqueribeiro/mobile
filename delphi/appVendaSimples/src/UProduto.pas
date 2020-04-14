@@ -105,7 +105,7 @@ type
     procedure DoBuscaProdutos(Sender: TObject);
     procedure DoEditarDescricao(Sender: TObject);
     procedure DoEditarValor(Sender: TObject);
-    procedure DoSalvarProdutos(Sender: TObject);
+    procedure DoSalvarProduto(Sender: TObject);
     procedure DoExcluirProduto(Sender : TObject);
     procedure DoTeclaBackSpace(Sender : TObject);
     procedure DoTeclaNumero(Sender : TObject);
@@ -125,7 +125,6 @@ type
     procedure ListViewProdutoItemClickEx(const Sender: TObject;
       ItemIndex: Integer; const LocalClickPos: TPointF;
       const ItemObject: TListItemDrawable);
-    procedure imageSalvarCadastroClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
     { Private declarations }
@@ -283,12 +282,6 @@ end;
 procedure TFrmProduto.imageAdicionarClick(Sender: TObject);
 begin
   NovoProduto;
-  inherited;
-end;
-
-procedure TFrmProduto.imageSalvarCadastroClick(Sender: TObject);
-begin
-  DoSalvarProdutos(Sender);
   inherited;
 end;
 
@@ -505,52 +498,63 @@ begin
   ExibirMsgConfirmacao('Excluir', 'Deseja excluir o produto selecionado?', ExcluirProduto);
 end;
 
-procedure TFrmProduto.DoSalvarProdutos(Sender: TObject);
+procedure TFrmProduto.DoSalvarProduto(Sender: TObject);
 var
   ins : Boolean;
   dao : TProdutoDao;
   aItem  : TListViewItem;
   aValor : String;
+  inf : Extended;
 begin
   try
-    dao := TProdutoDao.GetInstance;
-    dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
-    dao.Model.Codigo    := labelTituloCadastro.TagFloat;
-    dao.Model.Descricao := lblProdutoDescricao.Text;
+    inf :=
+      lblProdutoDescricao.TagFloat  +
+      lblProdutoValor.TagFloat;
 
-    aValor := Trim(lblProdutoValor.Text);
-    aValor := aValor.Replace('.', '', [rfReplaceAll]);
-    aValor := aValor.Replace(',', '', [rfReplaceAll]);
-
-    dao.Model.Valor := StrToCurrDef(aValor, 0) / 100;
-
-    if (imgProdutoFoto.TagFloat > 0) then
-    begin
-      dao.Model.Foto := TMemoryStream.Create;
-      dao.Model.Foto.Position := 0;
-      imgProdutoFoto.Bitmap.SaveToStream(dao.Model.Foto);
-    end;
-
-    ins := (dao.Model.ID = GUID_NULL);
-
-    if ins then
-      dao.Insert()
-    else
-      dao.Update();
-
-    if ins then
-    begin
-      AdicionarProdutoListView(dao.Model);
-      ListViewProduto.ItemIndex := (ListViewProduto.Items.Count - 1);
-    end
+    if (inf = 0) then
+      ExibirMsgAlerta('Sem dados informados!')
     else
     begin
-      aItem := TListViewItem(ListViewProduto.Items.Item[ListViewProduto.ItemIndex]);
-      aItem.TagObject := dao.Model;
-      FormatarItemProdutoListView(aItem);
-    end;
+      dao := TProdutoDao.GetInstance;
+      dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
+      dao.Model.Codigo    := labelTituloCadastro.TagFloat;
+      dao.Model.Descricao := lblProdutoDescricao.Text;
+      dao.Model.Sincronizado := False;
 
-    ChangeTabActionConsulta.ExecuteTarget(Sender);
+      aValor := Trim(lblProdutoValor.Text);
+      aValor := aValor.Replace('.', '', [rfReplaceAll]);
+      aValor := aValor.Replace(',', '', [rfReplaceAll]);
+
+      dao.Model.Valor := StrToCurrDef(aValor, 0) / 100;
+
+      if (imgProdutoFoto.TagFloat > 0) then
+      begin
+        dao.Model.Foto := TMemoryStream.Create;
+        dao.Model.Foto.Position := 0;
+        imgProdutoFoto.Bitmap.SaveToStream(dao.Model.Foto);
+      end;
+
+      ins := (dao.Model.ID = GUID_NULL);
+
+      if ins then
+        dao.Insert()
+      else
+        dao.Update();
+
+      if ins then
+      begin
+        AdicionarProdutoListView(dao.Model);
+        ListViewProduto.ItemIndex := (ListViewProduto.Items.Count - 1);
+      end
+      else
+      begin
+        aItem := TListViewItem(ListViewProduto.Items.Item[ListViewProduto.ItemIndex]);
+        aItem.TagObject := dao.Model;
+        FormatarItemProdutoListView(aItem);
+      end;
+
+      ChangeTabActionConsulta.ExecuteTarget(Sender);
+    end;
   except
     On E : Exception do
       ExibirMsgErro('Erro ao tentar salvar o produto.' + #13 + E.Message);
@@ -584,7 +588,10 @@ begin
   lblProdutoDescricao.Text := 'Informe aqui a descrição do novo produto';
   lblProdutoValor.Text     := '0,00';
   imgProdutoFoto.Bitmap    := img_foto_novo_produto.Bitmap;
-  imgProdutoFoto.TagFloat  := 0;
+
+  lblProdutoDescricao.TagFloat := 0;
+  lblProdutoValor.TagFloat     := 0;
+  imgProdutoFoto.TagFloat      := 0;
 
   lytProdutoExcluir.Visible := False;
   SelecionarProduto         := False;
@@ -647,6 +654,9 @@ begin
   lblProdutoDescricao.Text  := aProduto.Descricao;
   lblProdutoValor.TagString := ',0.00';
   lblProdutoValor.Text      := FormatFloat(lblProdutoValor.TagString, aProduto.Valor);
+
+  lblProdutoDescricao.TagFloat := IfThen(Trim(aProduto.Descricao) = EmptyStr, 0, 1); // Flags: 0 - Sem edição; 1 - Dado editado
+  lblProdutoValor.TagFloat     := IfThen(aProduto.Valor = 0.0, 0, 1);
 
   if (aProduto.Foto = nil) then
   begin

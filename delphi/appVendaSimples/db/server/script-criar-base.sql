@@ -239,6 +239,26 @@ ALTER TABLE dbo.tb_cliente_empresa ADD FOREIGN KEY (id_empresa)
     ON UPDATE CASCADE
 GO
 
+CREATE TABLE dbo.tb_cliente_usuario (
+    id_cliente	VARCHAR(38) NOT NULL
+  , id_usuario	VARCHAR(38) NOT NULL
+)
+GO
+
+ALTER TABLE dbo.tb_cliente_usuario ADD PRIMARY KEY (id_cliente, id_usuario)
+GO
+
+ALTER TABLE dbo.tb_cliente_usuario ADD FOREIGN KEY (id_cliente)
+	REFERENCES dbo.tb_cliente (id_cliente)     
+    ON DELETE CASCADE    
+    ON UPDATE CASCADE
+GO
+ALTER TABLE dbo.tb_cliente_usuario ADD FOREIGN KEY (id_usuario)
+	REFERENCES dbo.sys_usuario (id_usuario)     
+    ON DELETE CASCADE    
+    ON UPDATE CASCADE
+GO
+
 CREATE TABLE dbo.tb_pedido (
     id_pedido		VARCHAR(38) PRIMARY KEY 
   , cd_pedido		INT IDENTITY(1,1) NOT NULL UNIQUE

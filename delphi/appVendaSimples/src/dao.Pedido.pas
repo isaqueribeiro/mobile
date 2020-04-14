@@ -42,6 +42,7 @@ type
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
+      function GetCountSincronizar() : Integer;
       function PodeExcluir : Boolean;
 
       class function GetInstance : TPedidoDao;
@@ -239,6 +240,38 @@ begin
       SQL.Add('Select ');
       SQL.Add('  count(*) as qt_pedidos');
       SQL.Add('from ' + aDDL.getTableNamePedido);
+      SQL.EndUpdate;
+
+      OpenOrExecute;
+
+      aRetorno := FieldByName('qt_pedidos').AsInteger;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TPedidoDao.GetCountSincronizar: Integer;
+var
+  aRetorno : Integer;
+  aQry : TFDQuery;
+begin
+  aRetorno := 0;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_pedidos');
+      SQL.Add('from ' + aDDL.getTableNamePedido);
+      SQL.Add('where (sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
       SQL.EndUpdate;
 
       OpenOrExecute;

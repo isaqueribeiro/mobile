@@ -33,6 +33,7 @@ type
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
+      function GetCountSincronizar() : Integer;
       function PodeExcluir : Boolean;
 
       class function GetInstance : TProdutoDao;
@@ -148,27 +149,62 @@ end;
 function TProdutoDao.GetCount: Integer;
 var
   aRetorno : Integer;
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
   aRetorno := 0;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select ');
-    aSQL.Add('  count(*) as qt_produtos');
-    aSQL.Add('from ' + aDDL.getTableNameProduto);
-    aSQL.EndUpdate;
-    with DM, qrySQL do
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_produtos');
+      SQL.Add('from ' + aDDL.getTableNameProduto);
+      SQL.EndUpdate;
+
       OpenOrExecute;
 
       aRetorno := FieldByName('qt_produtos').AsInteger;
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TProdutoDao.GetCountSincronizar: Integer;
+var
+  aRetorno : Integer;
+  aQry : TFDQuery;
+begin
+  aRetorno := 0;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(*) as qt_produtos');
+      SQL.Add('from ' + aDDL.getTableNameProduto);
+      SQL.Add('where (sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
+      SQL.EndUpdate;
+
+      OpenOrExecute;
+
+      aRetorno := FieldByName('qt_produtos').AsInteger;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -238,7 +274,7 @@ begin
       ParamByName('ds_produto').AsString      := aModel.Descricao;
       ParamByName('vl_produto').AsCurrency    := aModel.Valor;
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
-      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+      ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);

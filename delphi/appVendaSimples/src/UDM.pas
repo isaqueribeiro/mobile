@@ -36,6 +36,7 @@ type
     qryPedido: TFDQuery;
     rscUsuario: TRESTClient;
     rscFuncoes: TRESTClient;
+    rscCliente: TRESTClient;
     procedure DataModuleCreate(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
@@ -43,6 +44,7 @@ type
     procedure SetArquivoDB(const aFileName : String);
     procedure ConfigurarUrlUsuario;
     procedure ConfigurarUrlFuncoes;
+    procedure ConfigurarUrlCliente;
   public
     { Public declarations }
     procedure ConectarDB;
@@ -58,6 +60,7 @@ type
     function GetEditarPerfil : TJSONObject;
     function GetListarLojas : TJSONObject;
     function GetListarNotificacoes(aUsuarioID, aEmpresaID : String) : TJSONObject;
+    function SetUploadClientes(aClientes : TJSONArray) : TJSONObject;
   end;
 
 var
@@ -187,6 +190,16 @@ begin
     aQuery.Free;
 
     Result := aRetorno;
+  end;
+end;
+
+procedure TDM.ConfigurarUrlCliente;
+begin
+  with rscCliente do
+  begin
+    BaseURL := URL_ROOT + URL_CLIENTE;
+    Accept  := 'application/json, text/plain; q=0.9, text/html;q=0.8,';
+    AcceptCharset := 'utf-8, *;q=0.8';
   end;
 end;
 
@@ -652,6 +665,65 @@ procedure TDM.SetArquivoDB(const aFileName : String);
 begin
   conn.Params.Values['DriverID'] := 'SQLite';
   conn.Params.Values['Database'] := aFileName;
+end;
+
+function TDM.SetUploadClientes(aClientes: TJSONArray): TJSONObject;
+var
+  aRetorno,
+  aBody   : TJSONObject;
+  aRequestCliente : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlCliente;
+
+    aUsr := TUsuarioDao.GetInstance;
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) );
+
+    aRetorno := nil;
+    aRequestCliente := TRESTRequest.Create(rscCliente);
+
+    with aRequestCliente do
+    begin
+      Client := rscCliente;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscCliente.Accept;
+      AcceptCharset      := rscCliente.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'UploadCliente';
+      Timeout  := 60000;
+
+      ClearBody;
+      Params.Clear;
+      AddParameter('usuario',  HTTPEncode(aUsr.Model.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa',  HTTPEncode(aUsr.Model.Empresa.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token',    HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('clientes', HTTPEncode(aClientes.ToJSON), TRESTRequestParameterKind.pkGETorPOST);
+
+//      aBody := TJSONObject.Create;
+//      aBody.AddPair('clientes', HTTPEncode(aClientes.ToJSON));
+//
+//      AddBody(aBody);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestCliente.DisposeOf;
+    Result := aRetorno;
+  end;
 end;
 
 procedure TDM.UpgradeDB;

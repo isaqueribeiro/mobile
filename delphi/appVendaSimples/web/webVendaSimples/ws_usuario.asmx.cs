@@ -12,6 +12,13 @@ using webVendaSimples.App_Code;
 
 namespace webVendaSimples
 {
+    /// <summary>
+    /// WebService para chamada de métodos para inserir e recuprar oados de usuários
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    // Para permitir que esse serviço da web seja chamado a partir do JavaScript, usando ASP.NET AJAX. 
+    [System.Web.Script.Services.ScriptService]
 
     class SimpleObject 
     {
@@ -92,11 +99,6 @@ namespace webVendaSimples
             GC.SuppressFinalize(this);
         }
     }
-
-    [WebService(Namespace = "http://tempuri.org/")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    // Para permitir que esse serviço da web seja chamado a partir do JavaScript, usando ASP.NET AJAX. 
-    [System.Web.Script.Services.ScriptService]
 
     public class ws_usuario : System.Web.Services.WebService
     {

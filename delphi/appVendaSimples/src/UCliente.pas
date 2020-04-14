@@ -433,8 +433,9 @@ begin
       ExibirMsgAlerta('Número de CPF/CNPJ inválido!')
     else
     begin
-      dao.Model.ID        := StringToGUID(labelTituloCadastro.TagString);
-      dao.Model.Codigo    := labelTituloCadastro.TagFloat;
+      dao.Model.ID     := StringToGUID(labelTituloCadastro.TagString);
+      dao.Model.Codigo := labelTituloCadastro.TagFloat;
+      dao.Model.Sincronizado := False;
 
       if StrIsCNPJ(lblCPF_CNPJ.Text) then
         dao.Model.Tipo := TTipoCliente.tcPessoaJuridica

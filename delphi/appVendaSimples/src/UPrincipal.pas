@@ -375,6 +375,8 @@ begin
 
       for X := 0 to aEmpresaID.Count - 1 do
       begin
+        Application.ProcessMessages;
+
         aJson := DM.GetListarNotificacoes(aUsuarioID, aEmpresaID.Strings[X]);
         if Assigned(aJson) then
         begin
@@ -419,6 +421,7 @@ begin
         ContarNotificacoes;
       end;
 
+      Application.ProcessMessages;
     except
       ;
     end;

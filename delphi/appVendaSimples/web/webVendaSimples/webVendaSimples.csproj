@@ -68,11 +68,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
+    <Content Include="ws_cliente.asmx" />
     <Content Include="ws_funcoes.asmx" />
     <Content Include="ws_usuario.asmx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\Funcoes.cs" />
+    <Compile Include="ws_cliente.asmx.cs">
+      <DependentUpon>ws_cliente.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ws_funcoes.asmx.cs">
       <DependentUpon>ws_funcoes.asmx</DependentUpon>
       <SubType>Component</SubType>
