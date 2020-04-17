@@ -389,3 +389,206 @@ BEGIN CATCH
   Set @retorno = 'Erro ao tentar listar notificações do usuário';
 END CATCH
 GO
+
+-- =================================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	16/04/2020
+-- Description	:	Processar upload de clientes
+-- =================================================
+CREATE or ALTER PROCEDURE dbo.spProcessarClientes(
+	@usuario	VARCHAR(38)
+  , @empresa	VARCHAR(38)
+  , @token		VARCHAR(42)
+  , @id			VARCHAR(38)  OUT
+  , @data		VARCHAR(10)  OUT
+  , @retorno	VARCHAR(250) OUT)
+AS
+DECLARE 
+  @id_cliente		VARCHAR(38),
+  @cd_cliente		INT,
+  @nm_cliente		VARCHAR(250),
+  @nr_cnpj_cpf		VARCHAR(25),
+  @nm_contato		VARCHAR(50),
+  @nr_telefone		VARCHAR(25),
+  @nr_celular		VARCHAR(25),
+  @ds_email			VARCHAR(150),
+  @ds_endereco		VARCHAR(500),
+  @ds_observacao	VARCHAR(500),
+  @sn_ativo			CHAR(1);
+BEGIN TRY
+  Declare cursor_clientes CURSOR FOR
+	Select
+	    x.id_cliente
+	  , x.nm_cliente
+	  , x.nr_cnpj_cpf
+	  , x.nm_contato
+	  , x.nr_telefone
+	  , x.nr_celular
+	  , x.ds_email
+	  , x.ds_endereco
+	  , x.ds_observacao
+	  , x.sn_ativo		
+	from dbo.tb_cliente_temp x
+	where (x.id_usuario = @usuario)
+	  and (x.id_empresa = @empresa);
+
+  Declare @id_usuario VARCHAR(38);
+  Declare @cd_usuario BIGINT;
+  Declare @id_empresa VARCHAR(38);
+  Declare @cd_empresa INT;
+
+  Set @id_usuario = '{00000000-0000-0000-0000-000000000000}';
+  Set @cd_usuario = 0;
+  Set @id_empresa = '{00000000-0000-0000-0000-000000000000}';
+  Set @cd_empresa = 0;
+
+  Set @id = dbo.ufnGetGuidID();
+  Set @data = convert(varchar(10), getdate(), 103);
+  Set @retorno = 'OK';
+
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+	Select
+	    @id_usuario = usr.id_usuario
+	  , @cd_usuario	= usr.cd_usuario
+	from dbo.sys_usuario usr
+	where (usr.id_usuario = @usuario);
+
+	Select
+	    @id_empresa = emp.id_empresa
+	  , @cd_empresa	= emp.cd_empresa
+	from dbo.sys_empresa emp
+	where (emp.id_empresa = @empresa);
+
+	If (ISNULL(@cd_usuario, 0) = 0)
+	  Set @retorno = 'Usuário não registrado';
+	Else
+	Begin   
+	  Open cursor_clientes; 
+	  Fetch cursor_clientes Into
+		  @id_cliente
+		, @nm_cliente
+		, @nr_cnpj_cpf
+		, @nm_contato
+		, @nr_telefone
+		, @nr_celular
+		, @ds_email
+		, @ds_endereco
+		, @ds_observacao
+		, @sn_ativo;
+      
+	  while (@@FETCH_STATUS <> -1) 
+	  Begin
+	    
+	    -- Cadastrar Cliente
+		if (not exists(
+		  Select
+		    c.id_cliente
+		  from dbo.tb_cliente c
+		  where c.id_cliente = @id_cliente
+		))
+		Begin
+		  Insert Into dbo.tb_cliente (
+			  id_cliente
+			, nm_cliente
+			, nr_cnpj_cpf
+			, nm_contato
+			, nr_telefone
+			, nr_celular
+			, ds_email
+			, ds_endereco
+			, ds_observacao
+			, sn_ativo
+		  ) values (
+			  @id_cliente --dbo.ufnGetGuidID()
+			, @nm_cliente
+			, @nr_cnpj_cpf
+			, @nm_contato
+			, @nr_telefone
+			, @nr_celular
+			, @ds_email
+			, @ds_endereco
+			, @ds_observacao
+			, Case when @sn_ativo = 'S' then 1 else 0 end
+		  );
+		End 
+	    Else 
+		Begin
+		  Update dbo.tb_cliente Set
+		      nm_cliente	= @nm_cliente
+		    , nr_cnpj_cpf	= @nr_cnpj_cpf
+		    , nm_contato	= @nm_contato
+		    , nr_telefone	= @nr_telefone
+		    , nr_celular	= @nr_celular
+		    , ds_email		= @ds_email
+		    , ds_endereco	= @ds_endereco
+		    , ds_observacao	= @ds_observacao
+		    , sn_ativo		= Case when @sn_ativo = 'S' then 1 else 0 end
+			, dt_ult_edicao = getdate()
+		  where (id_cliente = @id_cliente);
+		End
+	    
+	    -- Associar Cliente x Usuário
+		if (not exists(
+		  Select
+		    u.id_cliente
+		  from dbo.tb_cliente_usuario u
+		  where u.id_cliente = @id_cliente
+		    and u.id_usuario = @id_usuario
+		))	  
+	    Begin
+		  Insert Into dbo.tb_cliente_usuario (
+		      id_cliente
+			, id_usuario
+		  ) values (
+		      @id_cliente
+			, @id_usuario
+		  );
+		End
+	    
+	    -- Associar Cliente x Empresa, caso ela esteja cadastrada
+	    If (ISNULL(@cd_empresa, 0) > 0)
+		Begin
+		  if (not exists(
+			Select
+			  e.id_cliente
+			from dbo.tb_cliente_empresa e
+			where e.id_cliente = @id_cliente
+			  and e.id_empresa = @id_empresa
+		  ))	  
+		  Begin
+			Insert Into dbo.tb_cliente_empresa (
+				id_cliente
+			  , id_empresa
+			) values (
+				@id_cliente
+			  , @id_empresa
+			);
+		  End
+		End
+		
+		Fetch cursor_clientes Into
+		    @id_cliente
+		  , @nm_cliente
+		  , @nr_cnpj_cpf
+		  , @nm_contato
+		  , @nr_telefone
+		  , @nr_celular
+		  , @ds_email
+		  , @ds_endereco
+		  , @ds_observacao
+		  , @sn_ativo;
+	  End
+	  
+	  Close cursor_clientes;
+	  Deallocate cursor_clientes;  
+    End 
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar processar os clientes enviados';
+END CATCH
+GO

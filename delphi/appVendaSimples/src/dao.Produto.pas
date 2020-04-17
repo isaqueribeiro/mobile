@@ -89,59 +89,61 @@ end;
 
 procedure TProdutoDao.Delete;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Delete from ' + aDDL.getTableNameProduto);
-    aSQL.Add('where id_produto    = :id_produto      ');
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Delete from ' + aDDL.getTableNameProduto);
+      SQL.Add('where id_produto    = :id_produto      ');
+      SQL.EndUpdate;
 
       ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
 
       ExecSQL;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 function TProdutoDao.Find(const aCodigo: Currency; const IsLoadModel: Boolean): Boolean;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aRetorno : Boolean;
 begin
   aRetorno := False;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    p.* ');
-    aSQL.Add('from ' + aDDL.getTableNameProduto + ' p');
-    aSQL.Add('where p.cd_produto = ' + CurrToStr(aCodigo));
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('from ' + aDDL.getTableNameProduto + ' p');
+      SQL.Add('where p.cd_produto = ' + CurrToStr(aCodigo));
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
-        aRetorno := (qrySQL.RecordCount > 0);
+        aRetorno := (RecordCount > 0);
         if aRetorno and IsLoadModel then
-          SetValues(qrySQL, aModel);
+          SetValues(aQry, aModel);
       end;
       qrySQL.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
     Result := aRetorno;
   end;
 end;
@@ -219,48 +221,49 @@ end;
 
 procedure TProdutoDao.Insert;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Insert Into ' + aDDL.getTableNameProduto + '(');
-    aSQL.Add('    id_produto      ');
-    aSQL.Add('  , cd_produto      ');
-    aSQL.Add('  , br_produto      ');
-    aSQL.Add('  , ds_produto      ');
-    aSQL.Add('  , vl_produto      ');
-    aSQL.Add('  , sn_ativo        ');
-    aSQL.Add('  , sn_sincronizado ');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , cd_referencia   ');
-
-    if (aModel.Foto <> nil) then
-      aSQL.Add('  , ft_produto    ');
-
-    aSQL.Add(') values (');
-    aSQL.Add('    :id_produto     ');
-    aSQL.Add('  , :cd_produto     ');
-    aSQL.Add('  , :br_produto     ');
-    aSQL.Add('  , :ds_produto     ');
-    aSQL.Add('  , :vl_produto     ');
-    aSQL.Add('  , :sn_ativo       ');
-    aSQL.Add('  , :sn_sincronizado');
-
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , :cd_referencia  ');
-
-    if (aModel.Foto <> nil) then
-      aSQL.Add('  , :ft_produto   ');
-
-    aSQL.Add(')');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Insert Into ' + aDDL.getTableNameProduto + '(');
+      SQL.Add('    id_produto      ');
+      SQL.Add('  , cd_produto      ');
+      SQL.Add('  , br_produto      ');
+      SQL.Add('  , ds_produto      ');
+      SQL.Add('  , vl_produto      ');
+      SQL.Add('  , sn_ativo        ');
+      SQL.Add('  , sn_sincronizado ');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , cd_referencia   ');
+
+      if (aModel.Foto <> nil) then
+        SQL.Add('  , ft_produto    ');
+
+      SQL.Add(') values (');
+      SQL.Add('    :id_produto     ');
+      SQL.Add('  , :cd_produto     ');
+      SQL.Add('  , :br_produto     ');
+      SQL.Add('  , :ds_produto     ');
+      SQL.Add('  , :vl_produto     ');
+      SQL.Add('  , :sn_ativo       ');
+      SQL.Add('  , :sn_sincronizado');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , :cd_referencia  ');
+
+      if (aModel.Foto <> nil) then
+        SQL.Add('  , :ft_produto   ');
+
+      SQL.Add(')');
+      SQL.EndUpdate;
 
       if (aModel.ID = GUID_NULL) then
         aModel.NewID;
@@ -285,95 +288,98 @@ begin
       ExecSQL;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 procedure TProdutoDao.Load(const aBusca: String);
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
   aProduto : TProduto;
   aFiltro  : String;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
     aFiltro := AnsiUpperCase(Trim(aBusca));
 
-    aSQL.BeginUpdate;
-    aSQL.Add('Select');
-    aSQL.Add('    p.* ');
-    aSQL.Add('from ' + aDDL.getTableNameProduto + ' p');
-
-    if (StrToCurrDef(aFiltro, 0) > 0) then
-      aSQL.Add('where p.cd_produto = ' + aFiltro)
-    else
-    if StrIsGUID(aFiltro) then
-      aSQL.Add('where p.id_produto = ' + QuotedStr(aFiltro))
-    else
-    if (Trim(aBusca) <> EmptyStr) then
+    with DM, aQry do
     begin
-      aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
-      aSQL.Add('where p.ds_produto like ' + QuotedStr(aFiltro));
-    end;
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('from ' + aDDL.getTableNameProduto + ' p');
 
-    aSQL.Add('order by');
-    aSQL.Add('    p.ds_produto ');
+      if (StrToCurrDef(aFiltro, 0) > 0) then
+        SQL.Add('where p.cd_produto = ' + aFiltro)
+      else
+      if StrIsGUID(aFiltro) then
+        SQL.Add('where p.id_produto = ' + QuotedStr(aFiltro))
+      else
+      if (Trim(aBusca) <> EmptyStr) then
+      begin
+        aFiltro := '%' + StringReplace(aFiltro, ' ', '%', [rfReplaceAll]) + '%';
+        SQL.Add('where p.ds_produto like ' + QuotedStr(aFiltro));
+      end;
 
-    aSQL.EndUpdate;
+      SQL.Add('order by');
+      SQL.Add('    p.ds_produto ');
 
-    with DM, qrySQL do
-    begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.EndUpdate;
 
-      if qrySQL.OpenOrExecute then
+      if OpenOrExecute then
       begin
         ClearLista;
-        if (qrySQL.RecordCount > 0) then
-          while not qrySQL.Eof do
+        if (RecordCount > 0) then
+          while not Eof do
           begin
             aProduto := TProduto.Create;
-            SetValues(qrySQL, aProduto);
+            SetValues(aQry, aProduto);
 
             AddLista(aProduto);
-            qrySQL.Next;
+            Next;
           end;
       end;
-      qrySQL.Close;
+      Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 
 function TProdutoDao.PodeExcluir: Boolean;
 var
   aRetorno : Boolean;
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
   aRetorno := True;
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Select ');
-    aSQL.Add('  count(id_produto) as qt_produtos');
-    aSQL.Add('from ' + aDDL.getTableNamePedidoItem);
-    aSQL.Add('where id_produto = :id_produto');
-    aSQL.EndUpdate;
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Select ');
+      SQL.Add('  count(id_produto) as qt_produtos');
+      SQL.Add('from ' + aDDL.getTableNamePedidoItem);
+      SQL.Add('where id_produto = :id_produto');
+      SQL.EndUpdate;
+
       ParamByName('id_produto').AsString := GUIDToString(aModel.ID);
       OpenOrExecute;
 
       aRetorno := (FieldByName('qt_produtos').AsInteger = 0);
 
-      qrySQL.Close;
+      aQry.Close;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
 
     Result := aRetorno;
   end;
@@ -409,32 +415,33 @@ end;
 
 procedure TProdutoDao.Update;
 var
-  aSQL : TStringList;
+  aQry : TFDQuery;
 begin
-  aSQL := TStringList.Create;
+  aQry := TFDQuery.Create(DM);
   try
-    aSQL.BeginUpdate;
-    aSQL.Add('Update ' + aDDL.getTableNameProduto + ' Set');
-    aSQL.Add('    cd_produto      = :cd_produto ');
-    aSQL.Add('  , br_produto      = :br_produto ');
-    aSQL.Add('  , ds_produto      = :ds_produto ');
-    aSQL.Add('  , vl_produto      = :vl_produto ');
-    aSQL.Add('  , sn_ativo        = :sn_ativo   ');
-    aSQL.Add('  , sn_sincronizado = :sn_sincronizado ');
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
 
-    if (aModel.Referencia <> GUID_NULL) then
-      aSQL.Add('  , cd_referencia   = :cd_referencia   ');
-
-    if (aModel.Foto <> nil) then
-      aSQL.Add('  , ft_produto    = :ft_produto ');
-
-    aSQL.Add('where id_produto    = :id_produto      ');
-    aSQL.EndUpdate;
-
-    with DM, qrySQL do
+    with DM, aQry do
     begin
-      qrySQL.Close;
-      qrySQL.SQL.Text := aSQL.Text;
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNameProduto + ' Set');
+      SQL.Add('    cd_produto      = :cd_produto ');
+      SQL.Add('  , br_produto      = :br_produto ');
+      SQL.Add('  , ds_produto      = :ds_produto ');
+      SQL.Add('  , vl_produto      = :vl_produto ');
+      SQL.Add('  , sn_ativo        = :sn_ativo   ');
+      SQL.Add('  , sn_sincronizado = :sn_sincronizado ');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , cd_referencia   = :cd_referencia   ');
+
+      if (aModel.Foto <> nil) then
+        SQL.Add('  , ft_produto    = :ft_produto ');
+
+      SQL.Add('where id_produto    = :id_produto      ');
+      SQL.EndUpdate;
 
       ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
       ParamByName('cd_produto').AsCurrency    := aModel.Codigo;
@@ -453,7 +460,7 @@ begin
       ExecSQL;
     end;
   finally
-    aSQL.Free;
+    aQry.DisposeOf;
   end;
 end;
 

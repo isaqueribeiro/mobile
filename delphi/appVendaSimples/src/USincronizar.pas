@@ -64,6 +64,7 @@ type
     procedure Sincronizar;
 
     function UploadClientes : String;
+    function ProcessarClientes : String;
 
     class var aInstance : TFrmSincronizar;
   public
@@ -153,6 +154,25 @@ begin
   Sincronizar;
 end;
 
+function TFrmSincronizar.ProcessarClientes: String;
+var
+  aRetorno : String;
+  aCliente ,
+  aJson    : TJSONObject;
+  daoCliente : TClienteDao;
+begin
+  aRetorno := 'OK';
+  try
+    aJson := DM.GetProcessarClientes;
+    if Assigned(aJson) then
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+
+    SetProgressoBarra(recBarraClienteAzul, lblBarraCliente , recBarraClienteCinza.Width, 66.66, 'Processando...');
+  finally
+    Result := aRetorno;
+  end;
+end;
+
 procedure TFrmSincronizar.SetProgressoBarra(const aBarra: TRoundRect; const aTexto: TLabel;
   aMaximo: Single; aPercentual : Currency; aInforme: String);
 begin
@@ -169,7 +189,7 @@ procedure TFrmSincronizar.SetProgressoBarra(const aBarra: TRectangle; const aTex
   aMaximo: Single; aPercentual : Currency; aInforme: String);
 begin
   if Assigned(aBarra) then
-    aBarra.Width := Trunc((aMaximo * aPercentual) / 100);
+    aBarra.AnimateFloat('Width', Trunc((aMaximo * aPercentual) / 100), 0.2, TAnimationType.&In, TInterpolationType.Linear);
 
   if Assigned(aTexto) then
     aTexto.Text := aInforme.Trim;
@@ -183,19 +203,47 @@ var
   aRetorno : String;
 begin
   try
-    // Step 1: Cliente - 33 de 100 - Enviando lista de clientes
     imageCliente.Opacity := 1.0;
+
+    // CLIENTES ============================================================
+    // Step 1: 33 de 100 - Enviando lista de clientes
     aRetorno := UploadClientes;
-
-    if (aRetorno.ToUpper <> 'OK') then
-      ExibirMsgAlerta(aRetorno)
+    if (aRetorno.ToUpper = 'OK') then
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((1 / 9) * 100), 'SINCRONIZANDO...')
     else
-      ;
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
+
+    Sleep(250);
+
+    // Step 2: 66 de 100 - Processar lista enviada
+    aRetorno := ProcessarClientes;
+    if (aRetorno.ToUpper = 'OK') then
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((2 / 9) * 100), 'SINCRONIZANDO...')
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
+
+    Sleep(250);
 
 
+
+
+
+
+
+
+    SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 0, 'SINCRONIZAR');
   except
     On E : Exception do
+    begin
       ExibirMsgErro('Erro ao tentar sincronizar dados.' + #13 + E.Message);
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 0, 'SINCRONIZAR');
+    end;
   end;
 end;
 
@@ -262,7 +310,7 @@ begin
       aCliente.AddPair('cp', daoCliente.Lista[I].CpfCnpj);
       aCliente.AddPair('ct', daoCliente.Lista[I].Contato);
       aCliente.AddPair('fn', daoCliente.Lista[I].Telefone);
-      aCliente.AddPair('cl', daoCliente.Lista[I].Celular);
+      aCliente.AddPair('ce', daoCliente.Lista[I].Celular);
       aCliente.AddPair('em', daoCliente.Lista[I].Email);
       aCliente.AddPair('ed', daoCliente.Lista[I].Endereco);
       aCliente.AddPair('ob', daoCliente.Lista[I].Observacao);

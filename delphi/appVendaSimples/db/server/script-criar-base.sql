@@ -205,24 +205,57 @@ ALTER TABLE dbo.tb_produto_empresa ADD FOREIGN KEY (id_empresa)
     ON UPDATE CASCADE
 GO
 
-CREATE TABLE dbo.tb_cliente (
-    id_cliente		VARCHAR(38) PRIMARY KEY 
-  , cd_ciente		INT IDENTITY(1,1) NOT NULL UNIQUE
-  , nm_cliente		VARCHAR(250)
-  , nr_cnpj_cpf		VARCHAR(25)
-  , nr_telefone		VARCHAR(25)
-  , ds_email		VARCHAR(150)
-  , ds_endereco		VARCHAR(500)
-  , ds_observacao	VARCHAR(500)
-  , dt_ult_compra	DATETIME
-  , vl_ult_compra	NUMERIC(18,2)
-)
-GO
+IF OBJECT_ID (N'dbo.tb_cliente') IS NULL
+BEGIN
+	CREATE TABLE dbo.tb_cliente (
+		id_cliente		VARCHAR(38) PRIMARY KEY 
+	  , cd_ciente		INT IDENTITY(1,1) NOT NULL UNIQUE
+	  , nm_cliente		VARCHAR(250)
+	  , nr_cnpj_cpf		VARCHAR(25) NOT NULL
+	  , nm_contato		VARCHAR(50)
+	  , nr_telefone		VARCHAR(25)
+	  , nr_celular		VARCHAR(25)
+	  , ds_email		VARCHAR(150)
+	  , ds_endereco		VARCHAR(500)
+	  , ds_observacao	VARCHAR(500)
+	  , sn_ativo		SMALLINT DEFAULT 1 NOT NULL
+	  , dt_ult_compra	DATETIME
+	  , vl_ult_compra	NUMERIC(18,2)
+	  , dt_ult_edicao	DATETIME
+	);
 
-CREATE TABLE dbo.tb_cliente_empresa (
-    id_cliente		VARCHAR(38) NOT NULL
-  , id_empresa		VARCHAR(38) NOT NULL
-)
+	Execute dbo.spDocumentarCampo N'tb_cliente', N'id_cliente',		N'ID (GUID)';
+	Execute dbo.spDocumentarCampo N'tb_cliente', N'cd_ciente',		N'Código';
+	Execute dbo.spDocumentarCampo N'tb_cliente', N'nm_cliente',		N'Nome / Razão Social';
+	Execute dbo.spDocumentarCampo N'tb_cliente', N'nr_cnpj_cpf',	N'CPF / CNPJ';
+	Execute dbo.spDocumentarCampo N'tb_cliente', N'sn_ativo',		N'Ativo:
+	0 - Não
+	1 - Sim';
+
+	/*
+	ALTER TABLE dbo.tb_cliente
+	  ADD nm_contato VARCHAR(50);
+	GO
+
+	ALTER TABLE dbo.tb_cliente
+	  ADD nr_celular VARCHAR(25);
+	GO
+
+	ALTER TABLE dbo.tb_cliente
+	  ADD sn_ativo SMALLINT Default 1 NOT NULL;
+	GO
+
+	ALTER TABLE dbo.tb_cliente
+	  ADD dt_ult_edicao	DATETIME;
+	GO
+
+	CREATE TABLE dbo.tb_cliente_empresa (
+		id_cliente		VARCHAR(38) NOT NULL
+	  , id_empresa		VARCHAR(38) NOT NULL
+	)
+	GO
+	*/
+END
 GO
 
 ALTER TABLE dbo.tb_cliente_empresa ADD PRIMARY KEY (id_cliente, id_empresa)
@@ -306,4 +339,25 @@ ALTER TABLE dbo.tb_pedido_item ADD FOREIGN KEY (id_pedido)
 GO
 ALTER TABLE dbo.tb_pedido_item ADD FOREIGN KEY (id_produto)
 	REFERENCES dbo.tb_produto (id_produto)     
+GO
+
+
+CREATE TABLE dbo.tb_cliente_temp (
+    id_usuario		VARCHAR(38) NOT NULL
+  , id_empresa		VARCHAR(38) NOT NULL
+  , id_cliente		VARCHAR(38) NOT NULL
+  , cd_cliente		INT 
+  , nm_cliente		VARCHAR(250)
+  , nr_cnpj_cpf		VARCHAR(25)
+  , nm_contato		VARCHAR(50)
+  , nr_telefone		VARCHAR(25)
+  , nr_celular		VARCHAR(25)
+  , ds_email		VARCHAR(150)
+  , ds_endereco		VARCHAR(500)
+  , ds_observacao	VARCHAR(500)
+  , sn_ativo		CHAR(1)
+)
+GO
+
+ALTER TABLE dbo.tb_cliente_temp ADD PRIMARY KEY (id_usuario, id_empresa, id_cliente)
 GO

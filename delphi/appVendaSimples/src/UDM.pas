@@ -61,6 +61,7 @@ type
     function GetListarLojas : TJSONObject;
     function GetListarNotificacoes(aUsuarioID, aEmpresaID : String) : TJSONObject;
     function SetUploadClientes(aClientes : TJSONArray) : TJSONObject;
+    function GetProcessarClientes : TJSONObject;
   end;
 
 var
@@ -472,7 +473,7 @@ begin
           aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
 
           aJson    := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
-          aRetorno := StrClearValueJson( HTMLDecode(aJson.Get('hash3').JsonValue.ToString) );
+          aRetorno := StrClearValueJson( HTMLDecode(aJson.Get('hash3').JsonValue.ToString) ); // SHA1 retornado pelo servidor web.
         end;
     end;
   finally
@@ -573,6 +574,59 @@ begin
   end;
 end;
 
+function TDM.GetProcessarClientes: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestCliente : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlCliente;
+
+    aUsr := TUsuarioDao.GetInstance;
+    //aKey := AnsiUpperCase( '0x' + MD5(KEY_ENCRIPT + GetDateTimeServer.Data) );       // MD5
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) ); // SHA1
+
+    aRetorno := nil;
+    aRequestCliente := TRESTRequest.Create(rscCliente);
+
+    with aRequestCliente do
+    begin
+      Client := rscCliente;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscCliente.Accept;
+      AcceptCharset      := rscCliente.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'ProcessarClientes';
+      Timeout  := 60000;
+
+      ClearBody;
+      Params.Clear;
+      AddParameter('usuario', HTTPEncode(aUsr.Model.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa', HTTPEncode(aUsr.Model.Empresa.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token',   HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestCliente.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
 function TDM.GetValidarLogin: TJSONObject;
 var
   aRetorno : TJSONObject;
@@ -669,8 +723,8 @@ end;
 
 function TDM.SetUploadClientes(aClientes: TJSONArray): TJSONObject;
 var
-  aRetorno,
-  aBody   : TJSONObject;
+//  aBody    ,
+  aRetorno : TJSONObject;
   aRequestCliente : TRESTRequest;
   aKey : String;
   aStr : AnsiString;
@@ -693,7 +747,7 @@ begin
       AcceptCharset      := rscCliente.AcceptCharset;
       AutoCreateParams   := True;
       SynchronizedEvents := False;
-      Resource := 'UploadCliente';
+      Resource := 'UploadClientes';
       Timeout  := 60000;
 
       ClearBody;
@@ -702,11 +756,12 @@ begin
       AddParameter('empresa',  HTTPEncode(aUsr.Model.Empresa.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
       AddParameter('token',    HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
       AddParameter('clientes', HTTPEncode(aClientes.ToJSON), TRESTRequestParameterKind.pkGETorPOST);
-
+//
 //      aBody := TJSONObject.Create;
 //      aBody.AddPair('clientes', HTTPEncode(aClientes.ToJSON));
 //
 //      AddBody(aBody);
+//      aStr :=  aBody.ToString;
       Execute;
 
       if Assigned(Response) then
