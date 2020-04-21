@@ -9,7 +9,7 @@ uses
   System.StrUtils,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FireDAC.Comp.Client, FireDAC.Comp.DataSet, UDM;
+  FireDAC.Comp.Client, FireDAC.Comp.DataSet;
 
 type
   TConfiguracaoDao = class(TObject)
@@ -29,6 +29,9 @@ type
   end;
 
 implementation
+
+uses
+  UDM;
 
 { TConfiguracaoDao }
 

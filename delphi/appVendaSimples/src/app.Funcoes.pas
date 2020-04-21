@@ -28,6 +28,9 @@ uses
   IdHashMessageDigest,
   System.MaskUtils,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+
+  Soap.EncdDecd,
+  FMX.Graphics,
   FMX.Forms;
 
   procedure CriarForm(InstanceClass: TComponentClass; var Referencia;
@@ -47,6 +50,8 @@ uses
   function StrIsCPF(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
   function StrIsCNPJ(const Num: string; const PermitirVerdadeiroFalso : Boolean = FALSE): Boolean;
   function StrClearValueJson(const aValue : String) : String;
+
+  function Base64FromBitmap(aBitmap : TBitmap) : String;
 
 implementation
 
@@ -388,6 +393,30 @@ end;
 function StrClearValueJson(const aValue : String) : String;
 begin
   Result := StringReplace(StringReplace(StringReplace(aValue, '"', '', [rfReplaceAll]), '\/', '/', [rfReplaceAll]), '\r\n', #13, [rfReplaceAll]);
+end;
+
+function Base64FromBitmap(aBitmap : TBitmap) : String;
+var
+  aRestorno : String;
+  Input  : TBytesStream;
+  Output : TStringStream;
+begin
+  aRestorno := EmptyStr;
+  try
+    Input := TBytesStream.Create;
+    aBitmap.SaveToStream(Input);
+    Input.Position := 0;
+
+    Output := TStringStream.Create('', TEncoding.ASCII);
+    Soap.EncdDecd.EncodeStream(Input, Output);
+
+    aRestorno := Output.DataString;
+  finally
+    Input.DisposeOf;
+    Output.DisposeOf;
+
+    Result := aRestorno;
+  end;
 end;
 
 end.

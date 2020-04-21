@@ -28,8 +28,10 @@ type
       procedure Insert();
       procedure Update();
       procedure Delete();
+      procedure Limpar();
       procedure AddLista; overload;
       procedure AddLista(aProduto : TProduto); overload;
+      procedure CarregarDadosToSynchrony;
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
@@ -74,6 +76,47 @@ begin
   aLista[I - 1] := aProduto;
 end;
 
+procedure TProdutoDao.CarregarDadosToSynchrony;
+var
+  aQry : TFDQuery;
+  aProduto : TProduto;
+  aFiltro  : String;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('from ' + aDDL.getTableNameProduto + ' p');
+      SQL.Add('where (sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+      begin
+        ClearLista;
+        if (RecordCount > 0) then
+          while not Eof do
+          begin
+            aProduto := TProduto.Create;
+            SetValues(aQry, aProduto);
+
+            AddLista(aProduto);
+            Next;
+          end;
+      end;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
 procedure TProdutoDao.ClearLista;
 begin
   SetLength(aLista, 0);
@@ -101,10 +144,10 @@ begin
     begin
       SQL.BeginUpdate;
       SQL.Add('Delete from ' + aDDL.getTableNameProduto);
-      SQL.Add('where id_produto    = :id_produto      ');
+      SQL.Add('where id_produto = :id_produto      ');
       SQL.EndUpdate;
 
-      ParamByName('id_produto').AsString      := GUIDToString(aModel.ID);
+      ParamByName('id_produto').AsString := GUIDToString(aModel.ID);
 
       ExecSQL;
     end;
@@ -284,6 +327,29 @@ begin
 
       if (aModel.Foto <> nil) then
         ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
+
+      ExecSQL;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
+procedure TProdutoDao.Limpar;
+var
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Delete from ' + aDDL.getTableNameProduto);
+      SQL.EndUpdate;
 
       ExecSQL;
     end;

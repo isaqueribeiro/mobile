@@ -500,6 +500,7 @@ BEGIN TRY
 			, ds_email
 			, ds_endereco
 			, ds_observacao
+			, dt_ult_edicao
 			, sn_ativo
 		  ) values (
 			  @id_cliente --dbo.ufnGetGuidID()
@@ -511,6 +512,7 @@ BEGIN TRY
 			, @ds_email
 			, @ds_endereco
 			, @ds_observacao
+			, getdate()
 			, Case when @sn_ativo = 'S' then 1 else 0 end
 		  );
 		End 
@@ -590,5 +592,72 @@ END TRY
 
 BEGIN CATCH
   Set @retorno = 'Erro ao tentar processar os clientes enviados';
+END CATCH
+GO
+
+-- =================================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	17/04/2020
+-- Description	:	Listar Clientes do Usuário
+-- =================================================
+CREATE or ALTER PROCEDURE dbo.getListarClientes(
+	@usuario	VARCHAR(38)
+  , @empresa	VARCHAR(38)
+  , @data		VARCHAR(25)
+  , @token		VARCHAR(42)
+  , @atualizacao DATETIME OUT
+  , @retorno	 VARCHAR(250) OUT)
+AS
+DECLARE 
+  @data_atualizacao DATETIME;
+BEGIN TRY
+  Set @atualizacao = getdate();
+
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+    If (coalesce(trim(@data), '') <> '')
+	  Set @data_atualizacao = convert(DATETIME, @data, 103);
+
+	Set @retorno = 'OK';
+
+	Select
+	    c.id_cliente
+	  , trim(cast(c.cd_ciente as varchar(10))) as cd_cliente
+	  , isnull(c.nm_cliente, '')    as nm_cliente
+	  , isnull(c.nr_cnpj_cpf, '')   as nr_cnpj_cpf
+	  , isnull(c.nm_contato, '')    as nm_contato
+	  , isnull(c.nr_telefone, '')   as nr_telefone
+	  , isnull(c.nr_celular, '')    as nr_celular
+	  , isnull(c.ds_email, '')      as ds_email
+	  , isnull(c.ds_endereco, '')   as ds_endereco
+	  , isnull(c.ds_observacao, '') as ds_observacao
+	  , c.sn_ativo
+	from dbo.tb_cliente c
+	  inner join (
+	    Select distinct
+		  z.id_cliente
+		from (
+  		  Select
+			u.id_cliente
+		  from dbo.tb_cliente_usuario u
+		  where u.id_usuario = @usuario
+
+		  union
+
+		  Select 
+			e.id_cliente
+		  from dbo.tb_cliente_empresa e 
+		  where e.id_empresa = @empresa
+		) z
+	  ) a on (a.id_cliente = c.id_cliente)
+	where (c.sn_ativo = 1)
+	  and ((c.dt_ult_edicao > @data_atualizacao) or (@data_atualizacao is null));
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar listar clientes do usuário';
 END CATCH
 GO

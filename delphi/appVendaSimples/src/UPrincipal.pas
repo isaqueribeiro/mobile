@@ -11,6 +11,7 @@ uses
   dao.Loja,
   dao.Pedido,
   dao.Cliente,
+  dao.Produto,
   dao.Notificacao,
   dao.Configuracao,
   interfaces.Usuario,
@@ -561,6 +562,8 @@ var
   aUser : TUsuarioDao;
   aEmpr : TLojaDao;
   aNoti : TNotificacaoDao;
+  aCliente : TClienteDao;
+  aProduto : TProdutoDao;
 begin
   TmrNotificacao.Enabled := False;
 
@@ -576,7 +579,15 @@ begin
   aEmpr := TLojaDao.GetInstance();
   aEmpr.Limpar();
 
+  aCliente := TClienteDao.GetInstance();
+  aCliente.Limpar();
+
+  aProduto := TProdutoDao.GetInstance();
+  aProduto.Limpar();
+
   TConfiguracaoDao.GetInstance().Delete('empresa_padrao');
+  TConfiguracaoDao.GetInstance().Delete('dt-atualizacao-cliente');
+  TConfiguracaoDao.GetInstance().Delete('dt-atualizacao-produto');
 
   EfetuarLogin(True);
   Self.Close;

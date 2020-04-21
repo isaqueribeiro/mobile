@@ -34,6 +34,8 @@ type
       property Referencia   : TGUID read aReferencia write aReferencia;
 
       procedure NewID;
+      procedure  SetValorInteiro(Value : Integer);
+      function GetValorInteiro : Integer;
   end;
 
   TProdutos = Array of TProduto;
@@ -56,6 +58,11 @@ begin
   aReferencia   := GUID_NULL;
 end;
 
+function TProduto.GetValorInteiro: Integer;
+begin
+  Result := Trunc(aValor * 100.0);
+end;
+
 procedure TProduto.NewID;
 var
   aGuid : TGUID;
@@ -67,6 +74,11 @@ end;
 procedure TProduto.SetDescricao(Value: String);
 begin
   aDescricao := Trim(Value);
+end;
+
+procedure TProduto.SetValorInteiro(Value: Integer);
+begin
+  aValor := (Value / 100.0);
 end;
 
 end.

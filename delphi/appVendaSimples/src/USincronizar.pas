@@ -9,6 +9,7 @@ uses
   dao.Cliente,
   dao.Produto,
   dao.Pedido,
+  dao.Configuracao,
 
   System.StrUtils,
   System.JSON,
@@ -65,6 +66,11 @@ type
 
     function UploadClientes : String;
     function ProcessarClientes : String;
+    function DownloadClientes : String;
+
+    function UploadProdutos : String;
+    function ProcessarProdutos : String; virtual; abstract;
+    function DownloadProdutos : String; virtual; abstract;
 
     class var aInstance : TFrmSincronizar;
   public
@@ -98,6 +104,74 @@ begin
 end;
 
 { TFrmSincronizar }
+
+function TFrmSincronizar.DownloadClientes: String;
+var
+  aRetorno : String;
+  aLista   : TJSONArray;
+  aCliente ,
+  aJson    : TJSONObject;
+  daoCliente : TClienteDao;
+  I     ,
+  aTudo : Integer;
+  aParte: Currency;
+  aID   : TGUID;
+  aCnpj ,
+  aData : String;
+begin
+  aRetorno := 'OK';
+  try
+    aJson := DM.GetDownloadClientes;
+    if Assigned(aJson) then
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+
+    if aRetorno.Trim.Equals('OK') then
+    begin
+      aLista := aJson.Get('clientes').JsonValue as TJSONArray;
+      aTudo  := aLista.Count - 1;
+
+
+      for I := 0 to aLista.Count - 1 do
+      begin
+        daoCliente := TClienteDao.GetInstance();
+        aCliente   := aLista.Items[I] as TJSONObject;
+
+        aID   := StringToGUID( StrClearValueJson(HTMLDecode(aCliente.Get('id').JsonValue.ToString)) );
+        aCnpj := StrClearValueJson(HTMLDecode(aCliente.Get('cp').JsonValue.ToString));
+
+        with daoCliente.Model do
+        begin
+          ID       := StringToGUID(StrClearValueJson(HTMLDecode(aCliente.Get('id').JsonValue.ToString)));
+          Codigo   := StrToCurr(StrClearValueJson(HTMLDecode(aCliente.Get('cd').JsonValue.ToString)));
+          Nome     := StrClearValueJson(HTMLDecode(aCliente.Get('nm').JsonValue.ToString));
+          CpfCnpj  := StrClearValueJson(HTMLDecode(aCliente.Get('cp').JsonValue.ToString));
+          Contato  := StrClearValueJson(HTMLDecode(aCliente.Get('ct').JsonValue.ToString));
+          Telefone := StrClearValueJson(HTMLDecode(aCliente.Get('fn').JsonValue.ToString));
+          Celular  := StrClearValueJson(HTMLDecode(aCliente.Get('ce').JsonValue.ToString));
+          Email    := StrClearValueJson(HTMLDecode(aCliente.Get('em').JsonValue.ToString));
+          Endereco     := StrClearValueJson(HTMLDecode(aCliente.Get('ed').JsonValue.ToString));
+          Observacao   := StrClearValueJson(HTMLDecode(aCliente.Get('ob').JsonValue.ToString));
+          Ativo        := (StrClearValueJson(HTMLDecode(aCliente.Get('at').JsonValue.ToString)) = FLAG_SIM);
+          Sincronizado := True;
+        end;
+
+        if daoCliente.Find(aId, aCnpj, False) then
+          daoCliente.Update()
+        else
+          daoCliente.Insert();
+
+        aParte := (((I + 1) / aTudo) * 33.33) + 66.66;
+        SetProgressoBarra(recBarraClienteAzul, lblBarraCliente , recBarraClienteCinza.Width, aParte, 'Baixando clientes...');
+      end;
+
+      // Pegar a data/hora retornada removendo o milisegundo
+      aData := Copy(StrClearValueJson(HTMLDecode(aJson.Get('data').JsonValue.ToString)), 1, 19);
+      TConfiguracaoDao.GetInstance().SetValue('dt-atualizacao-cliente', aData);
+    end;
+  finally
+    Result := aRetorno;
+  end;
+end;
 
 procedure TFrmSincronizar.FormActivate(Sender: TObject);
 begin
@@ -203,13 +277,13 @@ var
   aRetorno : String;
 begin
   try
+    // CLIENTES ============================================================
     imageCliente.Opacity := 1.0;
 
-    // CLIENTES ============================================================
     // Step 1: 33 de 100 - Enviando lista de clientes
     aRetorno := UploadClientes;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((1 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((1 / 9) * 100), 'SINCRONIZANDO.')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -218,10 +292,67 @@ begin
 
     Sleep(250);
 
-    // Step 2: 66 de 100 - Processar lista enviada
+    // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarClientes;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((2 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((2 / 9) * 100), 'SINCRONIZANDO..')
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
+
+    Sleep(250);
+
+    // Step 3: 99 de 100 - Baixando lista enviada
+    aRetorno := DownloadClientes;
+    if (aRetorno.ToUpper = 'OK') then
+    begin
+      SetProgressoBarra(recBarraClienteAzul, lblBarraCliente, recBarraClienteCinza.Width, 100, 'Clientes sincronizados');
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((3 / 9) * 100), 'SINCRONIZANDO...');
+    end
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
+
+    Sleep(250);
+
+    // PRODUTOS ============================================================
+    imageProduto.Opacity := 1.0;
+
+    // Step 1: 33 de 100 - Enviando lista de produtos
+    aRetorno := UploadProdutos;
+    if (aRetorno.ToUpper = 'OK') then
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((4 / 9) * 100), 'SINCRONIZANDO.')
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
+
+    Sleep(250);
+
+    // Step 2: 66 de 100 - Processando lista enviada
+    aRetorno := ProcessarProdutos;
+    if (aRetorno.ToUpper = 'OK') then
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((5 / 9) * 100), 'SINCRONIZANDO..')
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
+
+    Sleep(250);
+
+    // Step 3: 99 de 100 - Baixando lista enviada
+    aRetorno := DownloadProdutos;
+    if (aRetorno.ToUpper = 'OK') then
+    begin
+      SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto, recBarraProdutoCinza.Width, 100, 'Produtos sincronizados');
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((6 / 9) * 100), 'SINCRONIZANDO...');
+    end
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -237,7 +368,7 @@ begin
 
 
 
-    SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 0, 'SINCRONIZAR');
+    SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 100, 'SINCRONIZADO');
   except
     On E : Exception do
     begin
@@ -331,6 +462,67 @@ begin
     end;
   finally
     aClientes.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TFrmSincronizar.UploadProdutos: String;
+var
+  aRetorno  : String;
+  aProdutos : TJSONArray;
+  aProduto,
+  aJson   : TJSONObject;
+  daoProduto : TProdutoDao;
+  aTudo,
+  I    : Integer;
+  aParte : Currency;
+  aFoto  : TBitmap;
+begin
+  aRetorno  := 'OK';
+  aProdutos := TJSONArray.Create;
+  try
+
+    daoProduto := TProdutoDao.GetInstance();
+    daoProduto.CarregarDadosToSynchrony;
+
+    aTudo := (High(daoProduto.Lista) + 1);
+
+    for I := Low(daoProduto.Lista) to High(daoProduto.Lista) do
+    begin
+      aProduto := TJSONObject.Create;
+
+      aProduto.AddPair('id', daoProduto.Lista[I].ID.ToString);
+      aProduto.AddPair('cd', CurrToStr(daoProduto.Lista[I].Codigo));
+      aProduto.AddPair('ds', daoProduto.Lista[I].Descricao);
+      aProduto.AddPair('br', daoProduto.Lista[I].CodigoEan);
+
+      if (daoProduto.Lista[I].Foto <> nil) then
+      begin
+        aFoto := TBitmap.Create;
+        aFoto.LoadFromStream(daoProduto.Lista[I].Foto);
+        aProduto.AddPair('ft', Base64FromBitmap(aFoto));
+      end
+      else
+        aProduto.AddPair('ft', EmptyStr);
+
+      aProduto.AddPair('vl', FormatFloat('0', daoProduto.Lista[I].GetValorInteiro)); // Remover o ponto flutuante da moeda
+      aProduto.AddPair('at', IfThen(daoProduto.Lista[I].Ativo, FLAG_SIM, FLAG_NAO));
+
+      aProdutos.Add(aProduto);
+
+      // Parte do todo que é de 33.33%
+      aParte := (((I + 1) / aTudo) * 33.33);
+      SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto , recBarraProdutoCinza.Width, aParte, 'Enviando produtos...');
+    end;
+
+    if (aTudo > 0) then
+    begin
+      aJson := DM.SetUploadProdutos(aProdutos);
+      if Assigned(aJson) then
+        aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+    end;
+  finally
+    aProdutos.DisposeOf;
     Result := aRetorno;
   end;
 end;
