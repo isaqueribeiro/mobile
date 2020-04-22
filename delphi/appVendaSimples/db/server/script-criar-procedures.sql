@@ -661,3 +661,204 @@ BEGIN CATCH
   Set @retorno = 'Erro ao tentar listar clientes do usuário';
 END CATCH
 GO
+
+-- =================================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	22/04/2020
+-- Description	:	Processar upload de Produtos
+-- =================================================
+CREATE or ALTER PROCEDURE dbo.spProcessarProdutos(
+	@usuario	VARCHAR(38)
+  , @empresa	VARCHAR(38)
+  , @token		VARCHAR(42)
+  , @id			VARCHAR(38)  OUT
+  , @data		DATETIME	 OUT
+  , @retorno	VARCHAR(250) OUT)
+AS
+DECLARE 
+  @id_produto		VARCHAR(38),
+  @cd_produto		INT,
+  @br_produto		VARCHAR(38),
+  @ds_produto		VARCHAR(200),
+  @ft_produto		VARCHAR(MAX),
+  @vl_produto		NUMERIC(18,2),
+  @sn_ativo			CHAR(1);
+BEGIN TRY
+  Declare cursor_produtos CURSOR FOR
+	Select
+	    x.id_produto
+	  , x.br_produto
+	  , x.ds_produto
+	  , x.ft_produto
+	  , x.vl_produto
+	  , x.sn_ativo
+	from dbo.tb_produto_temp x
+	where (x.id_usuario = @usuario)
+	  and (x.id_empresa = @empresa);
+
+  Declare @id_usuario VARCHAR(38);
+  Declare @cd_usuario BIGINT;
+  Declare @id_empresa VARCHAR(38);
+  Declare @cd_empresa INT;
+
+  Set @id_usuario = '{00000000-0000-0000-0000-000000000000}';
+  Set @cd_usuario = 0;
+  Set @id_empresa = '{00000000-0000-0000-0000-000000000000}';
+  Set @cd_empresa = 0;
+
+  Set @id = dbo.ufnGetGuidID();
+  Set @data = getdate();
+  Set @retorno = 'OK';
+
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+	Select
+	    @id_usuario = usr.id_usuario
+	  , @cd_usuario	= usr.cd_usuario
+	from dbo.sys_usuario usr
+	where (usr.id_usuario = @usuario);
+
+	Select
+	    @id_empresa = emp.id_empresa
+	  , @cd_empresa	= emp.cd_empresa
+	from dbo.sys_empresa emp
+	where (emp.id_empresa = @empresa);
+
+	If (ISNULL(@cd_usuario, 0) = 0)
+	  Set @retorno = 'Usuário não registrado';
+	Else
+	Begin   
+	  Open cursor_produtos; 
+	  Fetch cursor_produtos Into
+		  @id_produto
+		, @br_produto
+		, @ds_produto
+		, @ft_produto
+		, @vl_produto
+		, @sn_ativo;
+      
+	  while (@@FETCH_STATUS <> -1) 
+	  Begin
+	    
+	    -- Cadastrar Produto
+		if (not exists(
+		  Select
+		    p.id_produto
+		  from dbo.tb_produto p
+		  where p.id_produto = @id_produto
+		))
+		Begin
+		  Insert Into dbo.tb_produto (
+			  id_produto
+			, ds_produto
+		    , br_produto
+			, vl_produto
+			, dt_ult_edicao
+		  ) values (
+			  @id_produto
+			, @ds_produto
+			, @br_produto
+			, @vl_produto
+			, getdate()
+		  );
+		End 
+	    Else 
+		Begin
+		  Update dbo.tb_produto Set
+		      ds_produto	= @ds_produto
+			, br_produto	= @br_produto
+			, vl_produto	= @vl_produto
+			, dt_ult_edicao = getdate()
+		  where (id_produto = @id_produto);
+		End
+	    
+	    -- Associar Produto x Usuário
+		if (not exists(
+		  Select
+		    u.id_produto
+		  from dbo.tb_produto_usuario u
+		  where u.id_produto = @id_produto
+		    and u.id_usuario = @id_usuario
+		))	  
+	    Begin
+		  Insert Into dbo.tb_produto_usuario (
+		      id_produto
+			, id_usuario
+			, ft_produto
+			, vl_produto
+			, sn_ativo
+		  ) values (
+		      @id_produto
+			, @id_usuario
+			, @ft_produto
+			, @vl_produto
+			, Case when @sn_ativo = 'S' then 1 else 0 end
+		  );
+		End
+		Else
+		Begin
+		  Update dbo.tb_produto_usuario Set
+			  ft_produto = @ft_produto
+			, vl_produto = @vl_produto
+			, sn_ativo	 = Case when @sn_ativo = 'S' then 1 else 0 end
+		  where id_produto = @id_produto
+		    and id_usuario = @id_usuario;
+		End
+	    
+	    -- Associar Produto x Empresa, caso ela esteja cadastrada
+	    If (ISNULL(@cd_empresa, 0) > 0)
+		Begin
+		  if (not exists(
+			Select
+			  e.id_produto
+			from dbo.tb_produto_empresa e
+			where e.id_produto = @id_produto
+			  and e.id_empresa = @id_empresa
+		  ))	  
+		  Begin
+			Insert Into dbo.tb_produto_empresa (
+				id_produto
+			  , id_empresa
+			  , ft_produto
+			  , vl_produto
+			  , sn_ativo
+			) values (
+				@id_produto
+			  , @id_empresa
+			  , @ft_produto
+			  , @vl_produto
+			  , Case when @sn_ativo = 'S' then 1 else 0 end
+			);
+		  End
+		  Else
+		  Begin
+		    Update dbo.tb_produto_empresa Set
+			    ft_produto = @ft_produto
+			  , vl_produto = @vl_produto
+			  , sn_ativo   = Case when @sn_ativo = 'S' then 1 else 0 end
+			where id_produto = @id_produto
+			  and id_empresa = @id_empresa;
+		  End
+		End
+		
+		Fetch cursor_produtos Into
+			@id_produto
+		  , @br_produto
+		  , @ds_produto
+		  , @ft_produto
+		  , @vl_produto
+		  , @sn_ativo;
+	  End
+	  
+	  Close cursor_produtos;
+	  Deallocate cursor_produtos;  
+    End 
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar processar os produtos enviados';
+END CATCH
+GO

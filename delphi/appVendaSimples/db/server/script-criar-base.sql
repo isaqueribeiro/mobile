@@ -174,35 +174,79 @@ ALTER TABLE dbo.tb_notificacao ADD FOREIGN KEY (id_usuario)
     ON UPDATE CASCADE
 GO
 
-CREATE TABLE dbo.tb_produto (
-    id_produto		VARCHAR(38) PRIMARY KEY 
-  , cd_produto		INT IDENTITY(1,1) NOT NULL UNIQUE
-  , ds_produto		VARCHAR(200)
-  , vl_produto		NUMERIC(18,2)
-)
+IF OBJECT_ID (N'dbo.tb_produto') IS NULL
+BEGIN
+	CREATE TABLE dbo.tb_produto (
+		id_produto		VARCHAR(38) PRIMARY KEY 
+	  , cd_produto		INT IDENTITY(1,1) NOT NULL UNIQUE
+	  , ds_produto		VARCHAR(200)
+	  , vl_produto		NUMERIC(18,2)
+	  , br_produto		VARCHAR(38) 
+	  , dt_ult_edicao	DATETIME
+	)
+
+	Execute dbo.spDocumentarCampo N'tb_produto', N'id_produto',	N'ID';
+	Execute dbo.spDocumentarCampo N'tb_produto', N'id_produto',	N'Código';
+	Execute dbo.spDocumentarCampo N'tb_produto', N'id_produto',	N'Descrição';
+	Execute dbo.spDocumentarCampo N'tb_produto', N'id_produto',	N'Valor (R$)';
+	Execute dbo.spDocumentarCampo N'tb_produto', N'br_produto',	N'Código EAN';
+
+	-- ALTER TABLE dbo.tb_produto ADD br_produto VARCHAR(38);
+	-- ALTER TABLE dbo.tb_produto ADD dt_ult_edicao	DATETIME;
+END
 GO
 
-CREATE TABLE dbo.tb_produto_empresa (
-    id_produto		VARCHAR(38) NOT NULL
-  , id_empresa		VARCHAR(38) NOT NULL
-  , br_produto		VARCHAR(38) 
-  , ft_produto		VARCHAR(MAX)
-  , sn_ativo		SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_ativo = 0) or (sn_ativo = 1))
-)
+IF OBJECT_ID (N'dbo.tb_produto_empresa') IS NULL
+BEGIN
+	CREATE TABLE dbo.tb_produto_empresa (
+		id_produto		VARCHAR(38) NOT NULL
+	  , id_empresa		VARCHAR(38) NOT NULL
+	  , ft_produto		VARCHAR(MAX)
+	  , vl_produto		NUMERIC(18,2)
+	  , sn_ativo		SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_ativo = 0) or (sn_ativo = 1))
+	);
+
+	ALTER TABLE dbo.tb_produto_empresa ADD 
+	  vl_produto NUMERIC(18,2);
+  
+	ALTER TABLE dbo.tb_produto_empresa ADD PRIMARY KEY (id_produto, id_empresa);
+
+	ALTER TABLE dbo.tb_produto_empresa ADD FOREIGN KEY (id_produto)
+		REFERENCES dbo.tb_produto (id_produto)     
+		ON DELETE CASCADE    
+		ON UPDATE CASCADE;
+
+	ALTER TABLE dbo.tb_produto_empresa ADD FOREIGN KEY (id_empresa)
+		REFERENCES dbo.sys_empresa (id_empresa)     
+		ON DELETE CASCADE    
+		ON UPDATE CASCADE;
+
+	-- ALTER TABLE dbo.tb_produto_empresa REMOVE br_produto;
+END
 GO
 
-ALTER TABLE dbo.tb_produto_empresa ADD PRIMARY KEY (id_produto, id_empresa)
-GO
+IF OBJECT_ID (N'dbo.tb_produto_usuario') IS NULL
+BEGIN
+	CREATE TABLE dbo.tb_produto_usuario (
+		id_produto	VARCHAR(38) NOT NULL
+	  , id_usuario	VARCHAR(38) NOT NULL
+	  , ft_produto	VARCHAR(MAX)
+	  , vl_produto	NUMERIC(18,2)
+	  , sn_ativo	SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_ativo = 0) or (sn_ativo = 1))
+	);
 
-ALTER TABLE dbo.tb_produto_empresa ADD FOREIGN KEY (id_produto)
-	REFERENCES dbo.tb_produto (id_produto)     
-    ON DELETE CASCADE    
-    ON UPDATE CASCADE
-GO
-ALTER TABLE dbo.tb_produto_empresa ADD FOREIGN KEY (id_empresa)
-	REFERENCES dbo.sys_empresa (id_empresa)     
-    ON DELETE CASCADE    
-    ON UPDATE CASCADE
+	ALTER TABLE dbo.tb_produto_usuario ADD PRIMARY KEY (id_produto, id_usuario);
+
+	ALTER TABLE dbo.tb_produto_usuario ADD FOREIGN KEY (id_produto)
+		REFERENCES dbo.tb_produto (id_produto)     
+		ON DELETE CASCADE    
+		ON UPDATE CASCADE;
+
+	ALTER TABLE dbo.tb_produto_usuario ADD FOREIGN KEY (id_usuario)
+		REFERENCES dbo.sys_usuario (id_usuario)     
+		ON DELETE CASCADE    
+		ON UPDATE CASCADE;
+END
 GO
 
 IF OBJECT_ID (N'dbo.tb_cliente') IS NULL
@@ -248,13 +292,12 @@ BEGIN
 	ALTER TABLE dbo.tb_cliente
 	  ADD dt_ult_edicao	DATETIME;
 	GO
+	*/
 
 	CREATE TABLE dbo.tb_cliente_empresa (
 		id_cliente		VARCHAR(38) NOT NULL
 	  , id_empresa		VARCHAR(38) NOT NULL
-	)
-	GO
-	*/
+	);
 END
 GO
 
@@ -361,3 +404,25 @@ GO
 
 ALTER TABLE dbo.tb_cliente_temp ADD PRIMARY KEY (id_usuario, id_empresa, id_cliente)
 GO
+
+
+CREATE TABLE dbo.tb_produto_temp (
+    id_usuario		VARCHAR(38) NOT NULL
+  , id_empresa		VARCHAR(38) NOT NULL
+  , id_produto		VARCHAR(38) NOT NULL
+  , br_produto		VARCHAR(38)
+  , cd_produto		INT 
+  , ds_produto		VARCHAR(200)
+  , ft_produto		VARCHAR(MAX)
+  , vl_produto		NUMERIC(18,2)
+  , sn_ativo		CHAR(1)
+)
+GO
+
+ALTER TABLE dbo.tb_produto_temp ADD PRIMARY KEY (id_usuario, id_empresa, id_produto)
+GO
+
+
+
+
+

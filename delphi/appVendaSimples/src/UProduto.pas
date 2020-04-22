@@ -417,10 +417,16 @@ begin
   if (aObj <> nil) then
   begin
     if aObj is TLabel then
-      TLabel(aObj).Text := aStr
+    begin
+      TLabel(aObj).Text     := aStr;
+      TLabel(aObj).TagFloat := IfThen(aStr.Trim = EmptyStr, 0, 1);
+    end
     else
     if aObj is TEdit then
-      TEdit(aObj).Text := aStr;
+    begin
+      TEdit(aObj).Text     := aStr;
+      TEdit(aObj).TagFloat := IfThen(aStr.Trim = EmptyStr, 0, 1);
+    end;
   end;
 
   if (Trim(aStr) = EmptyStr) then

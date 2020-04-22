@@ -223,7 +223,7 @@ begin
   try
     if (Trim(aStr) <> EmptyStr) then
     begin
-      aGuid := StringToGUID(Trim(aStr));
+      aGuid  := StringToGUID(Trim(aStr));
       Result := True;
     end
     else

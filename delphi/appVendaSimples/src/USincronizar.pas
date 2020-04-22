@@ -69,7 +69,7 @@ type
     function DownloadClientes : String;
 
     function UploadProdutos : String;
-    function ProcessarProdutos : String; virtual; abstract;
+    function ProcessarProdutos : String;
     function DownloadProdutos : String; virtual; abstract;
 
     class var aInstance : TFrmSincronizar;
@@ -247,6 +247,25 @@ begin
   end;
 end;
 
+function TFrmSincronizar.ProcessarProdutos: String;
+var
+  aRetorno : String;
+  aProduto ,
+  aJson    : TJSONObject;
+  daoProduto : TProdutoDao;
+begin
+  aRetorno := 'OK';
+  try
+    aJson := DM.GetProcessarProdutos;
+    if Assigned(aJson) then
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+
+    SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto, recBarraProdutoCinza.Width, 66.66, 'Processando...');
+  finally
+    Result := aRetorno;
+  end;
+end;
+
 procedure TFrmSincronizar.SetProgressoBarra(const aBarra: TRoundRect; const aTexto: TLabel;
   aMaximo: Single; aPercentual : Currency; aInforme: String);
 begin
@@ -346,20 +365,20 @@ begin
 
     Sleep(250);
 
-    // Step 3: 99 de 100 - Baixando lista enviada
-    aRetorno := DownloadProdutos;
-    if (aRetorno.ToUpper = 'OK') then
-    begin
-      SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto, recBarraProdutoCinza.Width, 100, 'Produtos sincronizados');
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((6 / 9) * 100), 'SINCRONIZANDO...');
-    end
-    else
-    begin
-      ExibirMsgAlerta(aRetorno);
-      Exit;
-    end;
-
-    Sleep(250);
+//    // Step 3: 99 de 100 - Baixando lista enviada
+//    aRetorno := DownloadProdutos;
+//    if (aRetorno.ToUpper = 'OK') then
+//    begin
+//      SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto, recBarraProdutoCinza.Width, 100, 'Produtos sincronizados');
+//      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((6 / 9) * 100), 'SINCRONIZANDO...');
+//    end
+//    else
+//    begin
+//      ExibirMsgAlerta(aRetorno);
+//      Exit;
+//    end;
+//
+//    Sleep(250);
 
 
 
