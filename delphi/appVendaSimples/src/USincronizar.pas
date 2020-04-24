@@ -522,7 +522,9 @@ begin
         aProduto.AddPair('ft', Base64FromBitmap(aFoto));
       end
       else
-        aProduto.AddPair('ft', EmptyStr);
+//        aProduto.AddPair('ft', EmptyStr);
+        // TESTE
+        aProduto.AddPair('ft', Base64FromBitmap(imageProduto.Bitmap));
 
       aProduto.AddPair('vl', FormatFloat('0', daoProduto.Lista[I].GetValorInteiro)); // Remover o ponto flutuante da moeda
       aProduto.AddPair('at', IfThen(daoProduto.Lista[I].Ativo, FLAG_SIM, FLAG_NAO));
