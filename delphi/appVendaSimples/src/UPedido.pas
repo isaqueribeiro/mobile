@@ -295,7 +295,8 @@ begin
   if Assigned(aPedidoIten.Produto.Foto) then
   begin
     aBitmat := TBitmap.Create;
-    aBitmat.LoadFromStream(aPedidoIten.Produto.Foto);
+    //aBitmat.LoadFromStream(aPedidoIten.Produto.Foto);
+    aBitmat.Assign( aPedidoIten.Produto.Foto );
     aImage.OwnsBitmap  := True; // Para imagens que vêm da base de dados
     aImage.Bitmap      := aBitmat;
     aImage.ScalingMode := TImageScalingMode.Stretch;

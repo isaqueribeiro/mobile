@@ -11,7 +11,8 @@ uses
   System.Math,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet;
+  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
+  FMX.Graphics;
 
 type
   TPedidoItemDao = class(TObject)
@@ -305,8 +306,10 @@ begin
 
     if (not FieldByName('ft_produto').IsNull) then
     begin
-      Produto.Foto := TStream.Create;
-      Produto.Foto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
+//      Produto.Foto := TStream.Create;
+//      Produto.Foto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
+      Produto.Foto := TBitmap.Create;
+      Produto.Foto.LoadFromStream( CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead) );
     end
     else
       Produto.Foto := nil;

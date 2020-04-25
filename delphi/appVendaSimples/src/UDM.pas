@@ -70,6 +70,7 @@ type
 
     function SetUploadProdutos(aProdutos : TJSONArray) : TJSONObject;
     function GetProcessarProdutos : TJSONObject;
+    function GetDownloadProdutos : TJSONObject;
   end;
 
 var
@@ -442,6 +443,58 @@ begin
     end;
   finally
     aRequestCliente.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TDM.GetDownloadProdutos: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestProduto : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+  aConfig : TConfiguracaoDao;
+begin
+  try
+    ConfigurarUrlProduto;
+
+    aUsr := TUsuarioDao.GetInstance;
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) ); // SHA1
+    aConfig := TConfiguracaoDao.GetInstance();
+
+    aRetorno := nil;
+    aRequestProduto := TRESTRequest.Create(rscCliente);
+
+    with aRequestProduto do
+    begin
+      Client := rscProduto;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscCliente.Accept;
+      AcceptCharset      := rscProduto.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'DownloadProdutos';
+      Timeout  := 60000;
+
+      ClearBody;
+      Params.Clear;
+      AddParameter('usuario', HTTPEncode(aUsr.Model.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa', HTTPEncode(aUsr.Model.Empresa.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('data',    HTTPEncode(aConfig.GetValue('dt-atualizacao-produto')),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token',   HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          // Não remover '[' e ']' quando a devolução for JSON_ARRAY
+          aStr := Response.JSONValue.ToString;
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestProduto.DisposeOf;
     Result := aRetorno;
   end;
 end;

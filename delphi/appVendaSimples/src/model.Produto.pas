@@ -4,7 +4,8 @@ interface
 
 uses
   UConstantes,
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Graphics;
 
 type
   TProduto = class(TObject)
@@ -13,7 +14,8 @@ type
       aCodigo    : Currency;
       aCodigoEan ,
       aDescricao : String;
-      aFoto      : TStream;
+      //aFoto      : TStream;
+      aFoto      : TBitmap;
       aValor     : Currency;
       aAtivo        ,
       aSincronizado : Boolean;
@@ -27,7 +29,8 @@ type
       property Codigo       : Currency read aCodigo write aCodigo;
       property CodigoEan    : String read aCodigoEan write aCodigoEan;
       property Descricao    : String read aDescricao write SetDescricao;
-      property Foto         : TStream read aFoto write aFoto;
+      //property Foto         : TStream read aFoto write aFoto;
+      property Foto         : TBitmap read aFoto write aFoto;
       property Valor        : Currency read aValor write aValor;
       property Ativo        : Boolean read aAtivo write aAtivo;
       property Sincronizado : Boolean read aSincronizado write aSincronizado;

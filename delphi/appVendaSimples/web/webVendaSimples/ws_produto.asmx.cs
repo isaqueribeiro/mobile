@@ -271,11 +271,105 @@ namespace webVendaSimples
             Context.Response.End();
         }
 
+        // DOWNLOAD PRODUTOS (FORMATO JSON) ========================================================================
+        [WebMethod]
+        public void DownloadProdutos(String usuario, String empresa, String data, String token)
+        {
+            Conexao conn = Conexao.Instance;
+            RetornoProduto arr = new RetornoProduto();
 
+            usuario = HttpUtility.UrlDecode(usuario);
+            empresa = HttpUtility.UrlDecode(empresa);
+            data = HttpUtility.UrlDecode(data);
+            token = HttpUtility.UrlDecode(token);
 
+            if (token != Funcoes.EncriptarHashBytes(String.Concat("TheLordIsGod", DateTime.Today.ToString("dd/MM/yyyy"))).ToUpper())
+            {
+                Produto err = new Produto();
+                arr.retorno = Server.HtmlEncode("Token de segurança inválido!");
+                arr.produtos.Add(err);
 
+                //err = null;
+                GC.SuppressFinalize(err);
+            }
+            else
+            {
+                try
+                {
+                    conn.Conectar();
+                    SqlCommand cmd = new SqlCommand("", conn.Conn());
 
+                    String sql =
+                        "SET DATEFORMAT DMY " +
+                        "EXECUTE dbo.getListarProdutos @usuario, @empresa, @data, @token, @atualizacao OUT, @retorno OUT";
 
+                    cmd.Parameters.Add(new SqlParameter("@usuario", usuario));
+                    cmd.Parameters.Add(new SqlParameter("@empresa", empresa));
 
+                    if (data.Trim() != "")
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@data", data));
+                    }
+                    else
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@data", DBNull.Value));
+                    }
+
+                    cmd.Parameters.Add(new SqlParameter("@token", token));
+
+                    cmd.Parameters.Add(new SqlParameter("@atualizacao", arr.data + ".000")); // Inserir a informação de milisegundo
+                    cmd.Parameters["@atualizacao"].Direction = ParameterDirection.InputOutput;
+                    cmd.Parameters["@atualizacao"].DbType = DbType.DateTime;
+                    cmd.Parameters["@atualizacao"].Size = 25;
+
+                    cmd.Parameters.Add(new SqlParameter("@retorno", ""));
+                    cmd.Parameters["@retorno"].Direction = ParameterDirection.InputOutput;
+                    cmd.Parameters["@retorno"].Size = 250;
+
+                    cmd.CommandText = sql;
+                    SqlDataReader qry = cmd.ExecuteReader();
+
+                    arr.data = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", cmd.Parameters["@atualizacao"].Value));
+                    arr.retorno = Server.HtmlEncode(cmd.Parameters["@retorno"].Value.ToString());
+
+                    while (qry.Read())
+                    {
+                        Produto prod = new Produto();
+
+                        prod.id = Server.HtmlEncode(qry.GetString(0).ToString());  // ID
+                        prod.cd = Server.HtmlEncode(qry.GetString(1).ToString());  // Código
+                        prod.ds = Server.HtmlEncode(qry.GetString(2).ToString());  // Descrição
+                        prod.br = Server.HtmlEncode(qry.GetString(3).ToString());  // Código de Barras EAN
+                        prod.ft = Server.HtmlEncode(qry.GetString(4).ToString());  // Foto
+                        prod.vl = Server.HtmlEncode(qry.GetString(5).ToString());  // Valor
+                        prod.at = "S"; // Ativo
+
+                        arr.produtos.Add(prod);
+                    }
+
+                    arr.retorno = "OK";
+                    GC.SuppressFinalize(cmd);
+
+                    conn.Fechar();
+                }
+                catch (System.IndexOutOfRangeException e)
+                {
+                    Produto err = new Produto();
+                    arr.retorno = Server.HtmlEncode("ERRO - " + e.Message);
+                    arr.produtos.Add(err);
+
+                    //err = null;
+                    GC.SuppressFinalize(err);
+                }
+            }
+
+            // Serializar JSON
+            JavaScriptSerializer js = new JavaScriptSerializer();
+
+            Context.Response.Clear();
+            Context.Response.Write(js.Serialize(arr));
+            Context.Response.Flush();
+            Context.Response.End();
+        }
     }
 }

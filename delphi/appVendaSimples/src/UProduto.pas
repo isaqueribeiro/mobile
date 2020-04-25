@@ -220,7 +220,8 @@ begin
     end
     else
     begin
-      imgProdutoFoto.Bitmap.LoadFromStream(Model.Foto);
+      //imgProdutoFoto.Bitmap.LoadFromStream(Model.Foto);
+      imgProdutoFoto.Bitmap.Assign( Model.Foto );
       imgProdutoFoto.TagFloat := 1;
     end;
 
@@ -338,7 +339,7 @@ procedure TFrmProduto.AdicionarProdutoListView(aProduto: TProduto);
 var
   aItem   : TListViewItem;
   aImage  : TListItemImage;
-  aBitmat : TBitmap;
+//  aBitmat : TBitmap;
 begin
   aItem := ListViewProduto.Items.Add;
   aItem.TagObject := aProduto;
@@ -347,10 +348,13 @@ begin
   aImage := TListItemImage(aItem.Objects.FindDrawable('Image4'));
   if Assigned(aProduto.Foto) then
   begin
-    aBitmat := TBitmap.Create;
-    aBitmat.LoadFromStream(aProduto.Foto);
+//    aBitmat := TBitmap.Create;
+//    aBitmat.LoadFromStream(aProduto.Foto);
+//    aImage.OwnsBitmap  := True;
+//    aImage.Bitmap      := aBitmat;
+//    aImage.ScalingMode := TImageScalingMode.Stretch;
     aImage.OwnsBitmap  := True;
-    aImage.Bitmap      := aBitmat;
+    aImage.Bitmap.Assign( aProduto.Foto );
     aImage.ScalingMode := TImageScalingMode.Stretch;
   end
   else
@@ -535,9 +539,10 @@ begin
 
       if (imgProdutoFoto.TagFloat > 0) then
       begin
-        dao.Model.Foto := TMemoryStream.Create;
-        dao.Model.Foto.Position := 0;
-        imgProdutoFoto.Bitmap.SaveToStream(dao.Model.Foto);
+//        dao.Model.Foto := TMemoryStream.Create;
+//        dao.Model.Foto.Position := 0;
+//        imgProdutoFoto.Bitmap.SaveToStream(dao.Model.Foto);
+        dao.Model.Foto.Assign( imgProdutoFoto.Bitmap );
       end;
 
       ins := (dao.Model.ID = GUID_NULL);
@@ -671,7 +676,8 @@ begin
   end
   else
   begin
-    imgProdutoFoto.Bitmap.LoadFromStream(aProduto.Foto);
+    //imgProdutoFoto.Bitmap.LoadFromStream(aProduto.Foto);
+    imgProdutoFoto.Bitmap.Assign( aProduto.Foto );
     imgProdutoFoto.TagFloat := 1;
   end;
 

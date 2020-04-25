@@ -52,6 +52,7 @@ uses
   function StrClearValueJson(const aValue : String) : String;
 
   function Base64FromBitmap(aBitmap : TBitmap) : String;
+  function BitmapFromBase64(const aBase64 : String) : TBitmap;
 
 implementation
 
@@ -414,6 +415,29 @@ begin
   finally
     Input.DisposeOf;
     Output.DisposeOf;
+
+    Result := aRestorno;
+  end;
+end;
+
+function BitmapFromBase64(const aBase64 : String) : TBitmap;
+var
+  aRestorno : TBitmap;
+  aInput  : TStringStream;
+  aOutput : TBytesStream;
+begin
+  aRestorno := nil;
+  aInput    := TStringStream.Create(aBase64, TEncoding.ASCII);
+  aOutput   := TBytesStream.Create;
+  try
+    Soap.EncdDecd.DecodeStream(aInput, aOutput);
+    aOutput.Position := 0;
+
+    aRestorno := TBitmap.Create;
+    aRestorno.LoadFromStream(aOutput);
+  finally
+    aOutput.DisposeOf;
+    aInput.DisposeOf;
 
     Result := aRestorno;
   end;

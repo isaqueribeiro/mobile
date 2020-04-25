@@ -862,3 +862,72 @@ BEGIN CATCH
   Set @retorno = 'Erro ao tentar processar os produtos enviados';
 END CATCH
 GO
+
+-- =================================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	25/04/2020
+-- Description	:	Listar Produtos do Usuário
+-- =================================================
+CREATE or ALTER PROCEDURE dbo.getListarProdutos(
+	@usuario	VARCHAR(38)
+  , @empresa	VARCHAR(38)
+  , @data		VARCHAR(25)
+  , @token		VARCHAR(42)
+  , @atualizacao DATETIME OUT
+  , @retorno	 VARCHAR(250) OUT)
+AS
+DECLARE 
+  @data_atualizacao DATETIME;
+BEGIN TRY
+  Set @atualizacao = getdate();
+
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+    If (coalesce(trim(@data), '') <> '')
+	  Set @data_atualizacao = convert(DATETIME, @data, 103);
+	Else
+	  Set @data_atualizacao = NULL;
+
+	Set @retorno = 'OK';
+
+	Select
+	    p.id_produto
+	  , trim(cast(p.cd_produto as varchar(10))) as cd_produto
+	  , isnull(p.ds_produto, '')   as ds_produto
+	  , isnull(p.br_produto, '')   as br_produto
+	  , coalesce(e.ft_produto, u.ft_produto, '') as ft_produto
+	  , convert(varchar(20), convert(BIGINT, coalesce(e.vl_produto, u.vl_produto, p.vl_produto, 0) * 100)) as vl_produto
+	  , coalesce(e.sn_ativo, u.sn_ativo, 0) as sn_ativo
+	from dbo.tb_produto p
+	  inner join (
+	    Select distinct
+		  z.id_produto
+		from (
+  		  Select
+			u.id_produto
+		  from dbo.tb_produto_usuario u
+		  where u.id_usuario = @usuario
+
+		  union
+
+		  Select 
+			e.id_produto
+		  from dbo.tb_produto_empresa e 
+		  where e.id_empresa = @empresa
+		) z
+	  ) a on (a.id_produto = p.id_produto)
+
+	  left join dbo.tb_produto_usuario u on (u.id_produto = p.id_produto and u.id_usuario = @usuario)
+	  left join dbo.tb_produto_empresa e on (e.id_produto = p.id_produto and e.id_empresa = @empresa)
+
+	where (coalesce(e.sn_ativo, u.sn_ativo, 0) = 1)
+	  and ((p.dt_ult_edicao > @data_atualizacao) or (@data_atualizacao is null));
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar listar produtos do usuário';
+END CATCH
+GO

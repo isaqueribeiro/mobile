@@ -70,7 +70,7 @@ type
 
     function UploadProdutos : String;
     function ProcessarProdutos : String;
-    function DownloadProdutos : String; virtual; abstract;
+    function DownloadProdutos : String;
 
     class var aInstance : TFrmSincronizar;
   public
@@ -173,6 +173,84 @@ begin
   end;
 end;
 
+function TFrmSincronizar.DownloadProdutos: String;
+var
+  aRetorno : String;
+  aLista   : TJSONArray;
+  aProduto ,
+  aJson    : TJSONObject;
+  daoProduto : TProdutoDao;
+  I     ,
+  aTudo : Integer;
+  aParte: Currency;
+  aID   : TGUID;
+  aBarra,
+  aData : String;
+//  aFoto   : TBitmap;
+//  aStream : TStream;
+begin
+  aRetorno := 'OK';
+  try
+    aJson := DM.GetDownloadProdutos;
+    if Assigned(aJson) then
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+
+    if aRetorno.Trim.Equals('OK') then
+    begin
+      aLista := aJson.Get('produtos').JsonValue as TJSONArray;
+      aTudo  := aLista.Count - 1;
+
+
+      for I := 0 to aLista.Count - 1 do
+      begin
+        daoProduto := TProdutoDao.GetInstance();
+        aProduto   := aLista.Items[I] as TJSONObject;
+
+        aID    := StringToGUID( StrClearValueJson(HTMLDecode(aProduto.Get('id').JsonValue.ToString)) );
+        aBarra := StrClearValueJson(HTMLDecode(aProduto.Get('br').JsonValue.ToString));
+
+        with daoProduto.Model do
+        begin
+          ID        := StringToGUID(StrClearValueJson(HTMLDecode(aProduto.Get('id').JsonValue.ToString)));
+          Codigo    := StrToCurr(StrClearValueJson(HTMLDecode(aProduto.Get('cd').JsonValue.ToString)));
+          Descricao := StrClearValueJson(HTMLDecode(aProduto.Get('ds').JsonValue.ToString));
+          CodigoEan := StrClearValueJson(HTMLDecode(aProduto.Get('br').JsonValue.ToString));
+          Valor     := StrClearValueJson(HTMLDecode(aProduto.Get('vl').JsonValue.ToString)).ToDouble / 100.0;
+          Ativo        := (StrClearValueJson(HTMLDecode(aProduto.Get('at').JsonValue.ToString)) = FLAG_SIM);
+          Sincronizado := True;
+        end;
+
+        if (StrClearValueJson(HTMLDecode(aProduto.Get('ft').JsonValue.ToString)) = EmptyStr) then
+          daoProduto.Model.Foto := nil
+        else
+        begin
+//          aFoto   := BitmapFromBase64( StrClearValueJson(HTMLDecode(aProduto.Get('ft').JsonValue.ToString)) );
+//          aStream := TMemoryStream.Create;
+//          aStream.Position := 0;
+//          aFoto.SaveToStream(aStream);
+//          daoProduto.Model.Foto := aStream;
+          daoProduto.Model.Foto := TBitmap.Create;
+          daoProduto.Model.Foto.Assign( BitmapFromBase64( StrClearValueJson(HTMLDecode(aProduto.Get('ft').JsonValue.ToString)) ) );
+        end;
+
+        if daoProduto.Find(aId, aBarra, False) then
+          daoProduto.Update()
+        else
+          daoProduto.Insert();
+
+        aParte := (((I + 1) / aTudo) * 33.33) + 66.66;
+        SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto , recBarraProdutoCinza.Width, aParte, 'Baixando produtos...');
+      end;
+
+      // Pegar a data/hora retornada removendo o milisegundo
+      aData := Copy(StrClearValueJson(HTMLDecode(aJson.Get('data').JsonValue.ToString)), 1, 19);
+      TConfiguracaoDao.GetInstance().SetValue('dt-atualizacao-produto', aData);
+    end;
+  finally
+    Result := aRetorno;
+  end;
+end;
+
 procedure TFrmSincronizar.FormActivate(Sender: TObject);
 begin
   inherited;
@@ -225,6 +303,7 @@ end;
 
 procedure TFrmSincronizar.labelSincronizarClick(Sender: TObject);
 begin
+  TotalizarDados;
   Sincronizar;
 end;
 
@@ -297,12 +376,12 @@ var
 begin
   try
     // CLIENTES ============================================================
-    imageCliente.Opacity := 1.0;
+    imageCliente.AnimateFloat('Opacity', 1.0, 0.5, TAnimationType.&In, TInterpolationType.Linear);
 
     // Step 1: 33 de 100 - Enviando lista de clientes
     aRetorno := UploadClientes;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((1 / 9) * 100), 'SINCRONIZANDO.')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((1 / 9) * 100), 'SINCRONIZANDO...')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -314,7 +393,7 @@ begin
     // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarClientes;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((2 / 9) * 100), 'SINCRONIZANDO..')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((2 / 9) * 100), 'SINCRONIZANDO...')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -339,12 +418,12 @@ begin
     Sleep(250);
 
     // PRODUTOS ============================================================
-    imageProduto.Opacity := 1.0;
+    imageProduto.AnimateFloat('Opacity', 1.0, 0.5, TAnimationType.&In, TInterpolationType.Linear);
 
     // Step 1: 33 de 100 - Enviando lista de produtos
     aRetorno := UploadProdutos;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((4 / 9) * 100), 'SINCRONIZANDO.')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((4 / 9) * 100), 'SINCRONIZANDO...')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -356,7 +435,7 @@ begin
     // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarProdutos;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((5 / 9) * 100), 'SINCRONIZANDO..')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((5 / 9) * 100), 'SINCRONIZANDO...')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -365,20 +444,23 @@ begin
 
     Sleep(250);
 
-//    // Step 3: 99 de 100 - Baixando lista enviada
-//    aRetorno := DownloadProdutos;
-//    if (aRetorno.ToUpper = 'OK') then
-//    begin
-//      SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto, recBarraProdutoCinza.Width, 100, 'Produtos sincronizados');
-//      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((6 / 9) * 100), 'SINCRONIZANDO...');
-//    end
-//    else
-//    begin
-//      ExibirMsgAlerta(aRetorno);
-//      Exit;
-//    end;
-//
-//    Sleep(250);
+    // Step 3: 99 de 100 - Baixando lista enviada
+    aRetorno := DownloadProdutos;
+    if (aRetorno.ToUpper = 'OK') then
+    begin
+      SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto, recBarraProdutoCinza.Width, 100, 'Produtos sincronizados');
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((6 / 9) * 100), 'SINCRONIZANDO...');
+    end
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
+
+    Sleep(250);
+
+    // PEDIDOS ============================================================
+    imagePedido.AnimateFloat('Opacity', 1.0, 0.5, TAnimationType.&In, TInterpolationType.Linear);
 
 
 
@@ -387,7 +469,7 @@ begin
 
 
 
-    SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 100, 'SINCRONIZADO');
+    //SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 100, 'SINCRONIZADO');
   except
     On E : Exception do
     begin
@@ -495,7 +577,7 @@ var
   aTudo,
   I    : Integer;
   aParte : Currency;
-  aFoto  : TBitmap;
+//  aFoto  : TBitmap;
 begin
   aRetorno  := 'OK';
   aProdutos := TJSONArray.Create;
@@ -517,14 +599,13 @@ begin
 
       if (daoProduto.Lista[I].Foto <> nil) then
       begin
-        aFoto := TBitmap.Create;
-        aFoto.LoadFromStream(daoProduto.Lista[I].Foto);
-        aProduto.AddPair('ft', Base64FromBitmap(aFoto));
+//        aFoto := TBitmap.Create;
+//        aFoto.LoadFromStream(daoProduto.Lista[I].Foto);
+//        aProduto.AddPair('ft', Base64FromBitmap(aFoto));
+        aProduto.AddPair('ft', Base64FromBitmap(daoProduto.Lista[I].Foto));
       end
       else
-//        aProduto.AddPair('ft', EmptyStr);
-        // TESTE
-        aProduto.AddPair('ft', Base64FromBitmap(imageProduto.Bitmap));
+        aProduto.AddPair('ft', EmptyStr);
 
       aProduto.AddPair('vl', FormatFloat('0', daoProduto.Lista[I].GetValorInteiro)); // Remover o ponto flutuante da moeda
       aProduto.AddPair('at', IfThen(daoProduto.Lista[I].Ativo, FLAG_SIM, FLAG_NAO));

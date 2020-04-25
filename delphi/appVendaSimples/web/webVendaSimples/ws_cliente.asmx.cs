@@ -270,7 +270,6 @@ namespace webVendaSimples
             Context.Response.End();
         }
 
-
         // DOWNLOAD CLIENTES (FORMATO JSON) ========================================================================
         [WebMethod]
         public void DownloadClientes(String usuario, String empresa, String data, String token)

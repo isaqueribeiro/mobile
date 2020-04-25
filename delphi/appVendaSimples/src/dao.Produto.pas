@@ -8,7 +8,8 @@ uses
   model.Produto,
 
   System.StrUtils, System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet;
+  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
+  FMX.Graphics;
 
 type
   TProdutoDao = class(TObject)
@@ -33,7 +34,8 @@ type
       procedure AddLista(aProduto : TProduto); overload;
       procedure CarregarDadosToSynchrony;
 
-      function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
+      function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean; overload;
+      function Find(const aID : TGUID; const aCodigoEAN : String; const IsLoadModel : Boolean) : Boolean; overload;
       function GetCount() : Integer;
       function GetCountSincronizar() : Integer;
       function PodeExcluir : Boolean;
@@ -153,6 +155,45 @@ begin
     end;
   finally
     aQry.DisposeOf;
+  end;
+end;
+
+function TProdutoDao.Find(const aID: TGUID; const aCodigoEAN : String; const IsLoadModel: Boolean): Boolean;
+var
+  aQry : TFDQuery;
+  aRetorno : Boolean;
+begin
+  aRetorno := False;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('from ' + aDDL.getTableNameProduto + ' p');
+      SQL.Add('where (p.id_produto = ' + QuotedStr(aID.ToString) + ')');
+
+      if (aCodigoEAN.Trim <> EmptyStr) then
+        SQL.Add('  or (p.br_produto = ' + QuotedStr(aCodigoEAN.Trim) + ')');
+
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+      begin
+        aRetorno := (RecordCount > 0);
+        if aRetorno and IsLoadModel then
+          SetValues(aQry, aModel);
+      end;
+      qrySQL.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+    Result := aRetorno;
   end;
 end;
 
@@ -325,8 +366,10 @@ begin
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
+//      if (aModel.Foto <> nil) then
+//        ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
       if (aModel.Foto <> nil) then
-        ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
+        ParamByName('ft_produto').Assign(aModel.Foto);
 
       ExecSQL;
     end;
@@ -452,6 +495,8 @@ begin
 end;
 
 procedure TProdutoDao.SetValues(const aDataSet: TFDQuery; const aObject: TProduto);
+var
+  aFoto : TStream;
 begin
   with aDataSet, aObject do
   begin
@@ -471,8 +516,11 @@ begin
 
     if (not FieldByName('ft_produto').IsNull) then
     begin
-      Foto := TStream.Create;
-      Foto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
+//      Foto := TStream.Create; // TMemoryStream.Create;
+//      Foto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
+      aFoto := CreateBlobStream(FieldByName('ft_produto'), TBlobStreamMode.bmRead);
+      Foto  := TBitmap.Create;
+      Foto.LoadFromStream(aFoto);
     end
     else
       Foto := nil;
@@ -520,8 +568,10 @@ begin
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
 
+//      if (aModel.Foto <> nil) then
+//        ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
       if (aModel.Foto <> nil) then
-        ParamByName('ft_produto').LoadFromStream(aModel.Foto, TFieldType.ftBlob);
+        ParamByName('ft_produto').Assign(aModel.Foto);
 
       ExecSQL;
     end;
