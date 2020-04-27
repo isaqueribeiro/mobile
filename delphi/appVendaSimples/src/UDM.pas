@@ -39,6 +39,7 @@ type
     rscFuncoes: TRESTClient;
     rscCliente: TRESTClient;
     rscProduto: TRESTClient;
+    rscPedido: TRESTClient;
     procedure DataModuleCreate(Sender: TObject);
     procedure connAfterConnect(Sender: TObject);
   private
@@ -48,6 +49,7 @@ type
     procedure ConfigurarUrlFuncoes;
     procedure ConfigurarUrlCliente;
     procedure ConfigurarUrlProduto;
+    procedure ConfigurarUrlPedido;
   public
     { Public declarations }
     procedure ConectarDB;
@@ -71,6 +73,9 @@ type
     function SetUploadProdutos(aProdutos : TJSONArray) : TJSONObject;
     function GetProcessarProdutos : TJSONObject;
     function GetDownloadProdutos : TJSONObject;
+
+    function SetUploadPedidos(aPedidos, aItens : TJSONArray) : TJSONObject;
+    function GetProcessarPedidos : TJSONObject;
   end;
 
 var
@@ -218,6 +223,16 @@ begin
   with rscFuncoes do
   begin
     BaseURL := URL_ROOT + URL_FUNCOES;
+    Accept  := 'application/json, text/plain; q=0.9, text/html;q=0.8,';
+    AcceptCharset := 'utf-8, *;q=0.8';
+  end;
+end;
+
+procedure TDM.ConfigurarUrlPedido;
+begin
+  with rscPedido do
+  begin
+    BaseURL := URL_ROOT + URL_PEDIDO;
     Accept  := 'application/json, text/plain; q=0.9, text/html;q=0.8,';
     AcceptCharset := 'utf-8, *;q=0.8';
   end;
@@ -464,13 +479,13 @@ begin
     aConfig := TConfiguracaoDao.GetInstance();
 
     aRetorno := nil;
-    aRequestProduto := TRESTRequest.Create(rscCliente);
+    aRequestProduto := TRESTRequest.Create(rscProduto);
 
     with aRequestProduto do
     begin
       Client := rscProduto;
       Method := TRESTRequestMethod.rmPOST;
-      Accept := rscCliente.Accept;
+      Accept := rscProduto.Accept;
       AcceptCharset      := rscProduto.AcceptCharset;
       AutoCreateParams   := True;
       SynchronizedEvents := False;
@@ -750,6 +765,58 @@ begin
   end;
 end;
 
+function TDM.GetProcessarPedidos: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestPedido : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlPedido;
+
+    aUsr := TUsuarioDao.GetInstance;
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) ); // SHA1
+
+    aRetorno := nil;
+    aRequestPedido := TRESTRequest.Create(rscProduto);
+
+    with aRequestPedido do
+    begin
+      Client := rscPedido;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscPedido.Accept;
+      AcceptCharset      := rscPedido.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'ProcessarPedidos';
+      Timeout  := 60000;
+
+      ClearBody;
+      Params.Clear;
+      AddParameter('usuario', HTTPEncode(aUsr.Model.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa', HTTPEncode(aUsr.Model.Empresa.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token',   HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestPedido.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
 function TDM.GetProcessarProdutos: TJSONObject;
 var
   aRetorno : TJSONObject;
@@ -765,13 +832,13 @@ begin
     aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) ); // SHA1
 
     aRetorno := nil;
-    aRequestProduto := TRESTRequest.Create(rscCliente);
+    aRequestProduto := TRESTRequest.Create(rscProduto);
 
     with aRequestProduto do
     begin
       Client := rscProduto;
       Method := TRESTRequestMethod.rmPOST;
-      Accept := rscCliente.Accept;
+      Accept := rscProduto.Accept;
       AcceptCharset      := rscProduto.AcceptCharset;
       AutoCreateParams   := True;
       SynchronizedEvents := False;
@@ -956,6 +1023,60 @@ begin
   end;
 end;
 
+function TDM.SetUploadPedidos(aPedidos, aItens: TJSONArray): TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestPedido : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+begin
+  try
+    ConfigurarUrlPedido;
+
+    aUsr := TUsuarioDao.GetInstance;
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) );
+
+    aRetorno := nil;
+    aRequestPedido := TRESTRequest.Create(rscPedido);
+
+    with aRequestPedido do
+    begin
+      Client := rscPedido;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscPedido.Accept;
+      AcceptCharset      := rscPedido.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'UploadPedidos';
+      Timeout  := 60000;
+
+      ClearBody;
+      Params.Clear;
+      AddParameter('usuario',  HTTPEncode(aUsr.Model.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa',  HTTPEncode(aUsr.Model.Empresa.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token',    HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('pedidos',  HTTPEncode(aPedidos.ToJSON), TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('itens',    HTTPEncode(aItens.ToJSON), TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          aStr := Response.JSONValue.ToString;
+
+          aStr := StringReplace(aStr, '[', '', [rfReplaceAll]);
+          aStr := StringReplace(aStr, ']', '', [rfReplaceAll]);
+
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestPedido.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
 function TDM.SetUploadProdutos(aProdutos: TJSONArray): TJSONObject;
 var
   aRetorno : TJSONObject;
@@ -971,13 +1092,13 @@ begin
     aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) );
 
     aRetorno := nil;
-    aRequestProduto := TRESTRequest.Create(rscCliente);
+    aRequestProduto := TRESTRequest.Create(rscProduto);
 
     with aRequestProduto do
     begin
       Client := rscProduto;
       Method := TRESTRequestMethod.rmPOST;
-      Accept := rscCliente.Accept;
+      Accept := rscProduto.Accept;
       AcceptCharset      := rscProduto.AcceptCharset;
       AutoCreateParams   := True;
       SynchronizedEvents := False;

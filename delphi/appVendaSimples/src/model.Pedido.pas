@@ -49,6 +49,9 @@ type
       procedure NewID;
 
       function ToString : String; override;
+      function GetValorTotalInteiro : Int64;
+      function GetValorDescontoInteiro : Int64;
+      function GetValorPedidoInteiro : Int64;
   end;
 
   TPedidos = Array of TPedido;
@@ -87,6 +90,21 @@ end;
 function TPedido.GetSincronizado : Boolean;
 begin
   Result := (aTipo = tpPedido);
+end;
+
+function TPedido.GetValorDescontoInteiro: Int64;
+begin
+  Result := Trunc(aValorDesconto * 100);
+end;
+
+function TPedido.GetValorPedidoInteiro: Int64;
+begin
+  Result := Trunc(aValorPedido * 100);
+end;
+
+function TPedido.GetValorTotalInteiro: Int64;
+begin
+  Result := Trunc(aValorTotal * 100);
 end;
 
 procedure TPedido.NewID;

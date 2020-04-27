@@ -38,6 +38,7 @@ const
   URL_USUARIO = '/ws_usuario.asmx';
   URL_CLIENTE = '/ws_cliente.asmx';
   URL_PRODUTO = '/ws_produto.asmx';
+  URL_PEDIDO  = '/ws_pedido.asmx';
 
 implementation
 

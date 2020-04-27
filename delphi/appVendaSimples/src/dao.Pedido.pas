@@ -39,6 +39,7 @@ type
       procedure GravarItens();
       procedure CalcularValorTotalPedidoTemp();
       procedure RecalcularValorTotalPedido();
+      procedure CarregarDadosToSynchrony;
 
       function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
       function GetCount() : Integer;
@@ -132,6 +133,56 @@ begin
     aModel.ValorTotal    := aValorTotal;
     aModel.ValorDesconto := aValorDesconto;
     aModel.ValorPedido   := aValorPedido;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
+procedure TPedidoDao.CarregarDadosToSynchrony;
+var
+  aQry : TFDQuery;
+  aPedido : TPedido;
+  aFiltro  : String;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('  , c.cd_cliente  ');
+      SQL.Add('  , c.nm_cliente  ');
+      SQL.Add('  , c.nr_cpf_cnpj ');
+      SQL.Add('  , l.nm_empresa  ');
+      SQL.Add('  , l.nm_fantasia ');
+      SQL.Add('  , l.nr_cpf_cnpj as nr_cpf_cnpj_loja ');
+      SQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
+      SQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
+      SQL.Add('  left join ' + aDDL.getTableNameLoja    + ' l on (l.id_empresa = p.id_loja)');
+      SQL.Add('where (p.sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
+      SQL.Add('  and (p.vl_total <> 0)');
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+      begin
+        ClearLista;
+        if (RecordCount > 0) then
+          while not Eof do
+          begin
+            aPedido := TPedido.Create;
+            SetValues(aQry, aPedido);
+
+            AddLista(aPedido);
+            Next;
+          end;
+      end;
+      aQry.Close;
+    end;
   finally
     aQry.DisposeOf;
   end;
@@ -272,6 +323,7 @@ begin
       SQL.Add('  count(*) as qt_pedidos');
       SQL.Add('from ' + aDDL.getTableNamePedido);
       SQL.Add('where (sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
+      SQL.Add('  and (vl_total <> 0)');
       SQL.EndUpdate;
 
       OpenOrExecute;

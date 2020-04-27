@@ -40,6 +40,7 @@ type
       procedure AddLista(aPedidoItem : TPedidoItem); overload;
       procedure IncrementarQuantidade();
       procedure DecrementarQuantidade();
+      procedure CarregarDadosToSynchrony;
 
       class function GetInstance : TPedidoItemDao;
   end;
@@ -77,6 +78,54 @@ begin
 
   SetLength(aLista, I);
   aLista[I - 1] := o;
+end;
+
+procedure TPedidoItemDao.CarregarDadosToSynchrony;
+var
+  aQry : TFDQuery;
+  aPedidoItem : TPedidoItem;
+  aFiltro  : String;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    i.* ');
+      SQL.Add('  , p.cd_produto  ');
+      SQL.Add('  , p.br_produto  ');
+      SQL.Add('  , p.ds_produto  ');
+      SQL.Add('  , p.ft_produto ');
+      SQL.Add('  , p.vl_produto ');
+      SQL.Add('from ' + aDDL.getTableNamePedido + ' x');
+      SQL.Add('  join ' + aDDL.getTableNamePedidoItem + ' i on (i.id_pedido = x.id_pedido)');
+      SQL.Add('  join ' + aDDL.getTableNameProduto + ' p on (p.id_produto = i.id_produto)');
+      SQL.Add('where (x.sn_sincronizado = ' + QuotedStr(FLAG_NAO) +')');
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+      begin
+        ClearLista;
+        if (RecordCount > 0) then
+          while not Eof do
+          begin
+            aPedidoItem := TPedidoItem.Create;
+            SetValues(aQry, aPedidoItem);
+
+            AddLista(aPedidoItem);
+            Next;
+          end;
+      end;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
 end;
 
 procedure TPedidoItemDao.ClearLista;

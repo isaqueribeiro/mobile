@@ -9,6 +9,7 @@ uses
   dao.Cliente,
   dao.Produto,
   dao.Pedido,
+  dao.PedidoItem,
   dao.Configuracao,
 
   System.StrUtils,
@@ -71,6 +72,10 @@ type
     function UploadProdutos : String;
     function ProcessarProdutos : String;
     function DownloadProdutos : String;
+
+    function UploadPedidos : String;
+    function ProcessarPedidos : String;
+    function DownloadPedidos : String; virtual; abstract;
 
     class var aInstance : TFrmSincronizar;
   public
@@ -326,6 +331,25 @@ begin
   end;
 end;
 
+function TFrmSincronizar.ProcessarPedidos: String;
+var
+  aRetorno: String;
+  aPedido ,
+  aJson   : TJSONObject;
+  daoPedido : TPedidoDao;
+begin
+  aRetorno := 'OK';
+  try
+    aJson := DM.GetProcessarPedidos;
+    if Assigned(aJson) then
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+
+    SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido, recBarraPedidoCinza.Width, 66.66, 'Processando...');
+  finally
+    Result := aRetorno;
+  end;
+end;
+
 function TFrmSincronizar.ProcessarProdutos: String;
 var
   aRetorno : String;
@@ -389,6 +413,7 @@ begin
     end;
 
     Sleep(250);
+    // Step 1: (FIM)
 
     // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarClientes;
@@ -401,6 +426,7 @@ begin
     end;
 
     Sleep(250);
+    // Step 2: (FIM)
 
     // Step 3: 99 de 100 - Baixando lista enviada
     aRetorno := DownloadClientes;
@@ -416,6 +442,7 @@ begin
     end;
 
     Sleep(250);
+    // Step 3: (FIM)
 
     // PRODUTOS ============================================================
     imageProduto.AnimateFloat('Opacity', 1.0, 0.5, TAnimationType.&In, TInterpolationType.Linear);
@@ -431,6 +458,7 @@ begin
     end;
 
     Sleep(250);
+    // Step 1: (FIM)
 
     // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarProdutos;
@@ -443,6 +471,7 @@ begin
     end;
 
     Sleep(250);
+    // Step 2: (FIM)
 
     // Step 3: 99 de 100 - Baixando lista enviada
     aRetorno := DownloadProdutos;
@@ -458,18 +487,54 @@ begin
     end;
 
     Sleep(250);
+    // Step 3: (FIM)
 
     // PEDIDOS ============================================================
     imagePedido.AnimateFloat('Opacity', 1.0, 0.5, TAnimationType.&In, TInterpolationType.Linear);
 
+    // Step 1: 33 de 100 - Enviando lista de pedidos
+    aRetorno := UploadPedidos;
+    if (aRetorno.ToUpper = 'OK') then
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((7 / 9) * 100), 'SINCRONIZANDO...')
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
 
+    Sleep(250);
+    // Step 1: (FIM)
 
+    // Step 2: 66 de 100 - Processando lista enviada
+    aRetorno := ProcessarPedidos;
+    if (aRetorno.ToUpper = 'OK') then
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((8 / 9) * 100), 'SINCRONIZANDO...')
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
 
+    Sleep(250);
+    // Step 2: (FIM)
 
+    // Step 3: 99 de 100 - Baixando lista enviada
+    aRetorno := DownloadPedidos;
+    if (aRetorno.ToUpper = 'OK') then
+    begin
+      SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido, recBarraPedidoCinza.Width, 100, 'Produtos sincronizados');
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((9 / 9) * 100), 'SINCRONIZANDO...');
+    end
+    else
+    begin
+      ExibirMsgAlerta(aRetorno);
+      Exit;
+    end;
 
+    Sleep(250);
+    // Step 3: (FIM)
 
-
-    //SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 100, 'SINCRONIZADO');
+    SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 100, 'SINCRONIZADO');
   except
     On E : Exception do
     begin
@@ -563,6 +628,97 @@ begin
     end;
   finally
     aClientes.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TFrmSincronizar.UploadPedidos: String;
+var
+  aRetorno  : String;
+  aPedidos  ,
+  aItens    : TJSONArray;
+  aPedido   ,
+  aItem     ,
+  aJson     : TJSONObject;
+  daoPedido : TPedidoDao;
+  daoItem   : TPedidoItemDao;
+  aTudo,
+  X, I   : Integer;
+  aParte : Currency;
+begin
+  aRetorno := 'OK';
+  aPedidos := TJSONArray.Create;
+  aItens   := TJSONArray.Create;
+  try
+
+    daoPedido := TPedidoDao.GetInstance();
+    daoPedido.CarregarDadosToSynchrony;
+
+    daoItem := TPedidoItemDao.GetInstance();
+    daoItem.CarregarDadosToSynchrony;
+
+    aTudo := (High(daoPedido.Lista) + 1) + (High(daoItem.Lista) + 1);
+
+    X := Low(daoPedido.Lista);
+    for I := Low(daoPedido.Lista) to High(daoPedido.Lista) do
+    begin
+      aPedido := TJSONObject.Create;
+
+      aPedido.AddPair('id', daoPedido.Lista[I].ID.ToString);
+      aPedido.AddPair('cd', CurrToStr(daoPedido.Lista[I].Codigo));
+      aPedido.AddPair('tp', IntToStr(Ord(daoPedido.Lista[I].Tipo)));
+      aPedido.AddPair('lj', daoPedido.Lista[I].Loja.ID.ToString);
+      aPedido.AddPair('cl', daoPedido.Lista[I].Cliente.ID.ToString);
+      aPedido.AddPair('ct', daoPedido.Lista[I].Contato);
+      aPedido.AddPair('dt', FormatDateTime('dd/mm/yyyy', daoPedido.Lista[I].DataEmissao));
+      aPedido.AddPair('vt', FormatFloat('0', daoPedido.Lista[I].GetValorTotalInteiro));    // Remover o ponto flutuante da moeda
+      aPedido.AddPair('vd', FormatFloat('0', daoPedido.Lista[I].GetValorDescontoInteiro)); // Remover o ponto flutuante da moeda
+      aPedido.AddPair('vp', FormatFloat('0', daoPedido.Lista[I].GetValorPedidoInteiro));   // Remover o ponto flutuante da moeda
+      aPedido.AddPair('ob', daoPedido.Lista[I].Observacao);
+      aPedido.AddPair('et', IfThen(daoPedido.Lista[I].Entregue, FLAG_SIM, FLAG_NAO));
+      aPedido.AddPair('at', IfThen(daoPedido.Lista[I].Ativo, FLAG_SIM, FLAG_NAO));
+
+      aPedidos.Add(aPedido);
+
+      // Parte do todo que é de 33.33%
+      Inc(X);
+      aParte := ((X / aTudo) * 33.33);
+      SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido , recBarraPedidoCinza.Width, aParte, 'Enviando pedidos...');
+    end;
+
+    for I := Low(daoItem.Lista) to High(daoItem.Lista) do
+    begin
+      aItem := TJSONObject.Create;
+
+      aItem.AddPair('id', daoItem.Lista[I].ID.ToString);
+      aItem.AddPair('cd', CurrToStr(daoItem.Lista[I].Codigo));
+      aItem.AddPair('pe', daoItem.Lista[I].PedidoID.ToString);
+      aItem.AddPair('pd', daoItem.Lista[I].ProdutoID.ToString);
+      aItem.AddPair('qt', FormatFloat('0', daoItem.Lista[I].GetQuantidadeInteiro));           // Remover o ponto flutuante
+      aItem.AddPair('vu', FormatFloat('0', daoItem.Lista[I].GetValorUnitarioInteiro));        // Remover o ponto flutuante da moeda
+      aItem.AddPair('vt', FormatFloat('0', daoItem.Lista[I].GetValorTotalInteiro));           // Remover o ponto flutuante da moeda
+      aItem.AddPair('vd', FormatFloat('0', daoItem.Lista[I].GetValorTotalDescontoInteiro));   // Remover o ponto flutuante da moeda
+      aItem.AddPair('vl', FormatFloat('0', daoItem.Lista[I].GetValorLiquidoInteiro));         // Remover o ponto flutuante da moeda
+      aItem.AddPair('ob', daoItem.Lista[I].Observacao);
+
+      aItens.Add(aItem);
+
+      // Parte do todo que é de 33.33%
+      Inc(X);
+      aParte := ((X / aTudo) * 33.33);
+      SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido , recBarraPedidoCinza.Width, aParte, 'Enviando pedidos...');
+    end;
+
+    if (aTudo > 0) then
+    begin
+      aJson := DM.SetUploadPedidos(aPedidos, aItens);
+      if Assigned(aJson) then
+        aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+    end;
+  finally
+    aPedidos.DisposeOf;
+    aItens.DisposeOf;
+
     Result := aRetorno;
   end;
 end;

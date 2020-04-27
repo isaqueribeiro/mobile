@@ -50,6 +50,11 @@ type
       procedure NewID;
 
       function ToString : String; override;
+      function GetQuantidadeInteiro : Int64;
+      function GetValorUnitarioInteiro : Int64;
+      function GetValorTotalInteiro : Int64;
+      function GetValorTotalDescontoInteiro : Int64;
+      function GetValorLiquidoInteiro : Int64;
   end;
 
   TPedidoItens = Array of TPedidoItem;
@@ -90,6 +95,31 @@ end;
 function TPedidoItem.GetProdutoID: TGUID;
 begin
   Result := aProduto.ID;
+end;
+
+function TPedidoItem.GetQuantidadeInteiro: Int64;
+begin
+  Result := Trunc(aQuantidade * 100);
+end;
+
+function TPedidoItem.GetValorLiquidoInteiro: Int64;
+begin
+  Result := Trunc(ValorLiquido * 100);
+end;
+
+function TPedidoItem.GetValorTotalInteiro: Int64;
+begin
+  Result := Trunc(ValorTotal * 100);
+end;
+
+function TPedidoItem.GetValorTotalDescontoInteiro: Int64;
+begin
+  Result := Trunc(ValorTotalDesconto * 100);
+end;
+
+function TPedidoItem.GetValorUnitarioInteiro: Int64;
+begin
+  Result := Trunc(aValorUnitario * 100);
 end;
 
 procedure TPedidoItem.NewID;

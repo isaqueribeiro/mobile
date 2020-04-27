@@ -335,53 +335,79 @@ ALTER TABLE dbo.tb_cliente_usuario ADD FOREIGN KEY (id_usuario)
     ON UPDATE CASCADE
 GO
 
-CREATE TABLE dbo.tb_pedido (
-    id_pedido		VARCHAR(38) PRIMARY KEY 
-  , cd_pedido		INT IDENTITY(1,1) NOT NULL UNIQUE
-  , id_empresa		VARCHAR(38) NOT NULL
-  , id_cliente		VARCHAR(38) NOT NULL
-  , tp_pedido		SMALLINT DEFAULT 0 NOT NULL
-  , dt_pedido		DATETIME
-  , ds_contato		VARCHAR(150)
-  , ds_observacao	VARCHAR(500)
-  , vl_total_bruto		NUMERIC(18,2)
-  , vl_total_desconto	NUMERIC(18,2)
-  , vl_total_pedido		NUMERIC(18,2)
-  , sn_entregue			SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_entregue = 0) or (sn_entregue = 1))
-  , id_usuario		VARCHAR(38) NOT NULL
-)
+IF OBJECT_ID (N'dbo.tb_pedido') IS NULL
+BEGIN
+	CREATE TABLE dbo.tb_pedido (
+		id_pedido			VARCHAR(38) PRIMARY KEY 
+	  , cd_pedido			INT IDENTITY(1,1) NOT NULL UNIQUE
+	  , id_empresa			VARCHAR(38) NOT NULL
+	  , id_cliente			VARCHAR(38) NOT NULL
+	  , tp_pedido			SMALLINT DEFAULT 0 NOT NULL
+	  , dt_pedido			DATETIME
+	  , ds_contato			VARCHAR(150)
+	  , ds_observacao		VARCHAR(500)
+	  , vl_total_bruto		NUMERIC(18,2)
+	  , vl_total_desconto	NUMERIC(18,2)
+	  , vl_total_pedido		NUMERIC(18,2)
+	  , sn_entregue			SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_entregue = 0) or (sn_entregue = 1))
+	  , id_usuario			VARCHAR(38) NOT NULL
+	  , cd_pedido_app		INT
+	);
+
+	ALTER TABLE dbo.tb_pedido
+	  ADD cd_pedido_app	INT;
+
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'id_pedido',		N'ID (GUID)';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'cd_pedido',		N'Código';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'id_empresa',		N'Empresa';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'id_cliente',		N'Cliente';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'tp_pedido',		N'Tipo:
+	0 - Orçamento
+	1 - Venda';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'dt_pedido',			N'Data Emissão';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'ds_contato',			N'Contato';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'ds_observacao',		N'Observações';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'vl_total_bruto',		N'Valor Total (R$)';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'vl_total_desconto',	N'Descontos (R$)';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'vl_total_pedido',		N'Valor Pedido (R$)';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'sn_entregue',			N'Ativo:
+	0 - Não
+	1 - Sim';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'cd_pedido_app',		N'Código do Pedido no aplicativo';
+
+	ALTER TABLE dbo.tb_pedido ADD FOREIGN KEY (id_empresa)
+		REFERENCES dbo.sys_empresa (id_empresa);
+
+	ALTER TABLE dbo.tb_pedido ADD FOREIGN KEY (id_cliente)
+		REFERENCES dbo.tb_cliente (id_cliente);
+
+	ALTER TABLE dbo.tb_pedido ADD FOREIGN KEY (id_usuario)
+		REFERENCES dbo.sys_usuario (id_usuario);
+END
 GO
 
-ALTER TABLE dbo.tb_pedido ADD FOREIGN KEY (id_empresa)
-	REFERENCES dbo.sys_empresa (id_empresa)     
-GO
-ALTER TABLE dbo.tb_pedido ADD FOREIGN KEY (id_cliente)
-	REFERENCES dbo.tb_cliente (id_cliente)     
-GO
-ALTER TABLE dbo.tb_pedido ADD FOREIGN KEY (id_usuario)
-	REFERENCES dbo.sys_usuario (id_usuario)     
-GO
+IF OBJECT_ID (N'dbo.tb_pedido_item') IS NULL
+BEGIN
+	CREATE TABLE dbo.tb_pedido_item (
+		id_item				VARCHAR(38) PRIMARY KEY 
+	  , cd_item				INT NOT NULL 
+	  , id_pedido			VARCHAR(38) NOT NULL
+	  , id_produto			VARCHAR(38) NOT NULL
+	  , qt_produto			NUMERIC(18,3) DEFAULT 1 NOT NULL
+	  , vl_produto			NUMERIC(18,3) DEFAULT 0.0 NOT NULL
+	  , vl_total_bruto		NUMERIC(18,2) DEFAULT 0.0 NOT NULL
+	  , vl_total_desconto	NUMERIC(18,2) DEFAULT 0.0 NOT NULL
+	  , vl_total_produto	NUMERIC(18,2) DEFAULT 0.0 NOT NULL
+	);
 
-CREATE TABLE dbo.tb_pedido_item (
-    id_item				VARCHAR(38) PRIMARY KEY 
-  , cd_item				INT NOT NULL 
-  , id_pedido			VARCHAR(38) NOT NULL
-  , id_produto			VARCHAR(38) NOT NULL
-  , qt_produto			NUMERIC(18,3) DEFAULT 1 NOT NULL
-  , vl_produto			NUMERIC(18,3) DEFAULT 0.0 NOT NULL
-  , vl_total_bruto		NUMERIC(18,2) DEFAULT 0.0 NOT NULL
-  , vl_total_desconto	NUMERIC(18,2) DEFAULT 0.0 NOT NULL
-  , vl_total_produto	NUMERIC(18,2) DEFAULT 0.0 NOT NULL
-)
-GO
+	ALTER TABLE dbo.tb_pedido_item ADD FOREIGN KEY (id_pedido)
+		REFERENCES dbo.tb_pedido (id_pedido)     
+		ON DELETE CASCADE    
+		ON UPDATE CASCADE;
 
-ALTER TABLE dbo.tb_pedido_item ADD FOREIGN KEY (id_pedido)
-	REFERENCES dbo.tb_pedido (id_pedido)     
-    ON DELETE CASCADE    
-    ON UPDATE CASCADE
-GO
-ALTER TABLE dbo.tb_pedido_item ADD FOREIGN KEY (id_produto)
-	REFERENCES dbo.tb_produto (id_produto)     
+	ALTER TABLE dbo.tb_pedido_item ADD FOREIGN KEY (id_produto)
+		REFERENCES dbo.tb_produto (id_produto);
+END
 GO
 
 
@@ -422,7 +448,40 @@ GO
 ALTER TABLE dbo.tb_produto_temp ADD PRIMARY KEY (id_usuario, id_empresa, id_produto)
 GO
 
+CREATE TABLE dbo.tb_pedido_temp (
+	  id_usuario		VARCHAR(38) NOT NULL
+	, id_empresa		VARCHAR(38) NOT NULL
+	, id_pedido			VARCHAR(38) NOT NULL
+	, cd_pedido			INT 
+	, id_loja			VARCHAR(38) NOT NULL
+	, id_cliente		VARCHAR(38) NOT NULL
+	, tp_pedido			SMALLINT DEFAULT 0 NOT NULL
+	, dt_pedido			DATETIME
+	, ds_contato		VARCHAR(150)
+	, ds_observacao		VARCHAR(500)
+	, vl_total_bruto	NUMERIC(18,2)
+	, vl_total_desconto	NUMERIC(18,2)
+	, vl_total_pedido	NUMERIC(18,2)
+	, sn_entregue		CHAR(1)
+)
+GO
 
+ALTER TABLE dbo.tb_pedido_temp ADD PRIMARY KEY (id_usuario, id_empresa, id_pedido)
+GO
 
+CREATE TABLE dbo.tb_pedido_item_temp (
+	  id_usuario		VARCHAR(38) NOT NULL
+	, id_empresa		VARCHAR(38) NOT NULL
+	, id_item			VARCHAR(38) NOT NULL
+	, cd_item			INT NOT NULL 
+	, id_pedido			VARCHAR(38) NOT NULL
+	, id_produto		VARCHAR(38) NOT NULL
+	, qt_produto		NUMERIC(18,3) DEFAULT 1 NOT NULL
+	, vl_produto		NUMERIC(18,3) DEFAULT 0.0 NOT NULL
+	, vl_total_bruto	NUMERIC(18,2) DEFAULT 0.0 NOT NULL
+	, vl_total_desconto	NUMERIC(18,2) DEFAULT 0.0 NOT NULL
+	, vl_total_produto	NUMERIC(18,2) DEFAULT 0.0 NOT NULL
+);
 
-
+ALTER TABLE dbo.tb_pedido_item_temp ADD PRIMARY KEY (id_usuario, id_empresa, id_item)
+GO
