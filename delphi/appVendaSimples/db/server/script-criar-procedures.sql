@@ -1152,3 +1152,81 @@ BEGIN CATCH
   Set @retorno = 'Erro ao tentar processar os pedidos enviados';
 END CATCH
 GO
+
+-- =================================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	29/04/2020
+-- Description	:	Marcar Pedido com Entregue
+-- =================================================
+CREATE or ALTER PROCEDURE dbo.setPedidoEntregue(
+	@pedido		VARCHAR(38)
+  , @empresa	VARCHAR(38)
+  , @token		VARCHAR(42)
+  , @id			VARCHAR(38)  OUT
+  , @data		DATETIME	 OUT
+  , @retorno	VARCHAR(250) OUT)
+AS
+DECLARE 
+  @id_pedido			VARCHAR(38),
+  @cd_pedido			INT,
+  @id_loja				VARCHAR(38),
+  @id_cliente			VARCHAR(38),
+  @dt_pedido			DATETIME,
+  @ds_contato			VARCHAR(150),
+  @ds_observacao		VARCHAR(500),
+  @vl_total_bruto		NUMERIC(18,2),
+  @vl_total_desconto	NUMERIC(18,2),
+  @vl_total_pedido		NUMERIC(18,2),
+  @sn_entregue			CHAR(1);
+BEGIN TRY
+  Declare @id_empresa	VARCHAR(38);
+  Declare @cd_empresa	INT;
+
+  Set @id_empresa = '{00000000-0000-0000-0000-000000000000}';
+  Set @cd_empresa = 0;
+
+  Set @id = dbo.ufnGetGuidID();
+  Set @data = getdate();
+  Set @retorno = 'OK';
+
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+	Select
+	    @id_empresa = emp.id_empresa
+	  , @cd_empresa	= emp.cd_empresa
+	from dbo.sys_empresa emp
+	where (emp.id_empresa = @empresa);
+
+	If (ISNULL(@cd_empresa, 0) = 0)
+	  Set @retorno = 'Loja/Empresa não registrada';
+	Else
+	Begin   
+	  if (not exists(
+	    Select
+		  p.nr_pedido
+		from dbo.tb_pedido p
+		where p.id_pedido  = @pedido
+		  and p.id_empresa = @empresa
+	  ))
+	    Set @retorno = 'Pedido não localizado';
+	  Else
+	  Begin
+	    -- Macar pedido como entregue
+		Update dbo.tb_pedido Set
+		    sn_entregue   = 1
+		  , dt_ult_edicao = getdate()
+		where (id_pedido  = @pedido)
+		  and (id_empresa = @empresa);
+
+		-- Gerar Push Notification para o usuário
+	  End
+    End 
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar marcar pedido como entregue';
+END CATCH
+GO

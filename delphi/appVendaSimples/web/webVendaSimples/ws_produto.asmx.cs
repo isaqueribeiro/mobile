@@ -365,6 +365,7 @@ namespace webVendaSimples
 
             // Serializar JSON
             JavaScriptSerializer js = new JavaScriptSerializer();
+            js.MaxJsonLength = Int32.MaxValue;
 
             Context.Response.Clear();
             Context.Response.Write(js.Serialize(arr));

@@ -42,7 +42,7 @@ type
       procedure DecrementarQuantidade();
       procedure CarregarDadosToSynchrony;
 
-      function Find(const aPedidoID, aItemID : TGUID; const IsLoadModel : Boolean) : Boolean; virtual; abstract;
+      function Find(const aPedidoID, aItemID : TGUID; const IsLoadModel : Boolean) : Boolean;
 
       class function GetInstance : TPedidoItemDao;
   end;
@@ -208,6 +208,51 @@ begin
     end;
   finally
     aQry.DisposeOf;
+  end;
+end;
+
+function TPedidoItemDao.Find(const aPedidoID, aItemID: TGUID; const IsLoadModel: Boolean): Boolean;
+var
+  aQry : TFDQuery;
+  aRetorno : Boolean;
+begin
+  aRetorno := False;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    i.* ');
+      SQL.Add('  , p.cd_produto  ');
+      SQL.Add('  , p.br_produto  ');
+      SQL.Add('  , p.ds_produto  ');
+      SQL.Add('  , p.ft_produto ');
+      SQL.Add('  , p.vl_produto ');
+      SQL.Add('from ' + aDDL.getTableNamePedidoItem + '_temp i ');
+      SQL.Add('  join ' + aDDL.getTableNameProduto + ' p on (p.id_produto = i.id_produto)');
+      SQL.Add('where (i.id_pedido = :id_pedido) ');
+      SQL.Add('  and (i.id_item   = :id_item) ');
+      SQL.EndUpdate;
+
+      ParamByName('id_pedido').AsString := aPedidoID.ToString;
+      ParamByName('id_item').AsString   := aItemID.ToString;
+
+      if OpenOrExecute then
+      begin
+        aRetorno := (RecordCount > 0);
+        if aRetorno and IsLoadModel then
+          SetValues(aQry, aModel);
+      end;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+    Result := aRetorno;
   end;
 end;
 

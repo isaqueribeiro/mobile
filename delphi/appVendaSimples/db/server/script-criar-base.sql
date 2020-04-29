@@ -19,7 +19,6 @@ BEGIN
 END;
 GO
 
-
 CREATE OR ALTER PROCEDURE dbo.spDocumentarCampo
 	@source_table	nvarchar (386)
   , @source_field	nvarchar (386)

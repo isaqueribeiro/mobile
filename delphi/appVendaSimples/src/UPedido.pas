@@ -243,7 +243,7 @@ begin
     if (Model.Tipo = TTipoPedido.tpOrcamento) then
       labelTituloCadastro.Text := 'EDITAR PEDIDO'
     else
-      labelTituloCadastro.Text := 'PEDIDO #' + FormatFloat('00000', Model.Codigo);
+      labelTituloCadastro.Text := 'PEDIDO #' + IfThen(Model.Numero.Trim = EmptyStr, FormatFloat('00000', Model.Codigo), Model.Numero);
 
     labelTituloCadastro.TagString := GUIDToString(Model.ID); // Destinado a guardar o ID guid do registro
     labelTituloCadastro.TagFloat  := Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
@@ -404,6 +404,7 @@ procedure TFrmPedido.ControleEdicao(const aEditar: Boolean);
 begin
   imageSalvarCadastro.Visible := aEditar;
   imageSalvarEdicao.Visible   := aEditar;
+  recInserirItem.Visible      := aEditar;
 end;
 
 procedure TFrmPedido.DoBuscarCliente(Sender: TObject);
@@ -648,6 +649,7 @@ begin
       dao.Model.DataEmissao := Date;
 
       // Guarda referências do novo pedido
+      labelTituloCadastro.Text      := 'NOVO PEDIDO';
       labelTituloCadastro.TagString := GUIDToString(dao.Model.ID); // Destinado a guardar o ID guid do registro
       labelTituloCadastro.TagFloat  := dao.Model.Codigo;           // Destinado a guardar o CODIGO numérico do registro
       lblTipo.Text      := GetDescricaoTipoPedidoStr(dao.Model.Tipo);
@@ -831,7 +833,7 @@ var
   aImagem ,
   aIcone  : String;
 begin
-  if (TListView(Sender).Selected <> nil) then
+  if (TListView(Sender).Selected <> nil) and (Dao.Model.Tipo = TTipoPedido.tpOrcamento) then
   begin
     aIcone  := EmptyStr;
     aImagem := EmptyStr;

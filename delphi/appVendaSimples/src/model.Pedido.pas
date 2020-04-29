@@ -120,7 +120,7 @@ end;
 
 function TPedido.ToString: String;
 begin
-  if aTipo = tpPedido then
+  if (aTipo = TTipoPedido.tpPedido) then
   begin
     if (aNumero.Trim = EmptyStr) then
       Result := 'Pedido #' + FormatFloat('00000', aCodigo)

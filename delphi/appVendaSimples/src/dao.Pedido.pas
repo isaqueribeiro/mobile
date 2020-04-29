@@ -33,7 +33,7 @@ type
       procedure Insert();
       procedure Update();
       procedure Delete();
-      procedure Sincronizado(); virtual; abstract;
+      procedure Sincronizado();
       procedure AddLista; overload;
       procedure AddLista(aPedido : TPedido); overload;
       procedure InserirItensTemp();
@@ -257,8 +257,8 @@ begin
       SQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
       SQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
       SQL.Add('  left join ' + aDDL.getTableNameLoja    + ' l on (l.id_empresa = p.id_loja)');
-      SQL.Add('where (p.id_pedido = :id_pedido)');
-      SQL.Add('  or ((p.id_loja = ' + QuotedStr(aLojaID) + ') and (p.nr_pedido = :nr_pedido) and (coalesce(p.nr_pedido, '''') <> ''''))');
+      SQL.Add('where (p.id_pedido = ' + QuotedStr(aID.ToString) + ')');
+      SQL.Add('  or ((p.id_loja = '   + QuotedStr(aLojaID) + ') and (p.nr_pedido = ' + QuotedStr(aNumero) + ') and (coalesce(p.nr_pedido, '''') <> ''''))');
       SQL.EndUpdate;
 
       if OpenOrExecute then
@@ -531,8 +531,8 @@ begin
       ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
 
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
-      ParamByName('sn_entregue').AsString     := FLAG_NAO;
-      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+      ParamByName('sn_entregue').AsString     := IfThen(aModel.Entregue, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
@@ -723,6 +723,53 @@ begin
   end;
 end;
 
+procedure TPedidoDao.Sincronizado;
+var
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Update ' + aDDL.getTableNamePedido + ' Set');
+      SQL.Add('    nr_pedido       = :nr_pedido      ');
+      SQL.Add('  , tp_pedido       = :tp_pedido      ');
+      SQL.Add('  , ds_observacao   = :ds_observacao  ');
+      SQL.Add('  , sn_ativo        = :sn_ativo       ');
+      SQL.Add('  , sn_entregue     = :sn_entregue    ');
+      SQL.Add('  , sn_sincronizado = :sn_sincronizado');
+
+      if (aModel.Referencia <> GUID_NULL) then
+        SQL.Add('  , cd_referencia   = :cd_referencia  ');
+
+      SQL.Add('where id_pedido = :id_pedido');
+      SQL.EndUpdate;
+
+      ParamByName('id_pedido').AsString     := GUIDToString(Model.ID);
+      ParamByName('nr_pedido').AsString     := Model.Numero;
+      ParamByName('tp_pedido').AsString     := GetTipoPedidoStr(Model.Tipo);
+      ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
+
+      ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_entregue').AsString     := IfThen(aModel.Entregue, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
+
+      if (aModel.Referencia <> GUID_NULL) then
+        ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);
+
+      ExecSQL;
+      aOperacao := TTipoOperacaoDao.toEditado;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
 procedure TPedidoDao.Update;
 var
   aQry : TFDQuery;
@@ -773,8 +820,8 @@ begin
       ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
 
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
-      ParamByName('sn_entregue').AsString     := FLAG_NAO;
-      ParamByName('sn_sincronizado').AsString := FLAG_NAO;
+      ParamByName('sn_entregue').AsString     := IfThen(aModel.Entregue, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
       if (aModel.Referencia <> GUID_NULL) then
         ParamByName('cd_referencia').AsString := GUIDToString(aModel.Referencia);

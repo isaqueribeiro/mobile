@@ -64,6 +64,7 @@ namespace webVendaSimples
             public String et = "N";  // Entregue
             public String at = "N";  // Ativo
             public String nr = "";   // Número
+            public String lc = "";   // CPF/CNPJ da Loja
             public List<Item> itens = new List<Item>();
         }
 
@@ -451,20 +452,29 @@ namespace webVendaSimples
                         "SET DATEFORMAT DMY " +
                         "Select " +
                         "    p.id_pedido  " +
-                        "  , coalesce(nullif(p.cd_pedido_app, 0), p.cd_pedido) as cd_pedido " +
+                        "  , Convert(varchar(20), coalesce(nullif(p.cd_pedido_app, 0), p.cd_pedido)) as cd_pedido " +
                         "  , p.id_empresa " +
                         "  , p.id_cliente " +
-                        "  , p.tp_pedido  " +
-                        "  , p.dt_pedido  " +
+                        "  , Convert(varchar(1), p.tp_pedido) as tp_pedido " +
+                        "  , convert(varchar(10), p.dt_pedido, 103) as dt_pedido " +
                         "  , p.ds_contato " +
                         "  , p.ds_observacao      " +
-                        "  , p.vl_total_bruto     " +
-                        "  , p.vl_total_desconto  " +
-                        "  , p.vl_total_pedido    " +
+                        //"  , p.vl_total_bruto     " +
+                        //"  , p.vl_total_desconto  " +
+                        //"  , p.vl_total_pedido    " +
+                        "  , convert(varchar(20), convert(BIGINT, coalesce(p.vl_total_bruto,    0) * 100)) as vl_total_bruto " +
+                        "  , convert(varchar(20), convert(BIGINT, coalesce(p.vl_total_desconto, 0) * 100)) as vl_total_desconto " +
+                        "  , convert(varchar(20), convert(BIGINT, coalesce(p.vl_total_pedido,   0) * 100)) as vl_total_pedido " +
                         "  , Case when p.sn_entregue = 1 then 'S' else 'N' end as sn_entregue " +
-                        "  , Convert(varchar(20), p.nr_pedido) as nr_pedido " +
-                        "  , getdate() as dt_hoje " +
+                        //"  , Convert(varchar(20), p.nr_pedido) as nr_pedido " +
+                        "  , Case when isnull(trim(a.nr_cnpj_cpf), '') = '' " +
+                        "      then format(p.nr_pedido, '###00000')         " +
+                        "      else concat(format(p.nr_pedido, '###00000'), right(trim(a.nr_cnpj_cpf), 3)) " +
+                        "    end as nr_pedido " +
+                        "  , concat(convert(varchar(10), getdate(), 103), ' ', convert(varchar(10), getdate(), 108)) as dt_hoje " +
+                        "  , isnull(a.nr_cnpj_cpf, '') as nr_cnpj_cpf " +
                         "from dbo.tb_pedido p " +
+                        "  left join dbo.sys_empresa a on (a.id_empresa = p.id_empresa) " +
                         "where  (p.id_usuario = @usuario) " +
                         "  and ((p.dt_ult_edicao > @data) or (@data is null)) " +
                         "  and ((p.id_empresa in ( " +
@@ -502,18 +512,23 @@ namespace webVendaSimples
                         ped.lj = Server.HtmlEncode(qry.GetString(2).ToString());  // Empresa
                         ped.cl = Server.HtmlEncode(qry.GetString(3).ToString());  // Cliente
                         ped.tp = Server.HtmlEncode(qry.GetString(4).ToString());  // Tipo
-                        ped.dt = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", qry.GetString(5).ToString()));  // Data de Emissão
+                        //ped.dt = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", qry.GetString(5) ));  // Data de Emissão
+                        ped.dt = Server.HtmlEncode(qry.GetString(5).ToString());  // Data de Emissão
                         ped.ct = Server.HtmlEncode(qry.GetString(6).ToString());  // Contato
                         ped.ob = Server.HtmlEncode(qry.GetString(7).ToString());  // Observação
-                        ped.vt = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry.GetString(8).ToString()) * 100));  // Valor Total
-                        ped.vd = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry.GetString(9).ToString()) * 100));  // Valor Desconto
-                        ped.vp = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry.GetString(10).ToString()) * 100));  // Valor Pedido
+                        //ped.vt = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry.GetString(8).ToString()) * 100));   // Valor Total
+                        //ped.vd = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry.GetString(9).ToString()) * 100));   // Valor Desconto
+                        //ped.vp = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry.GetString(10).ToString()) * 100));  // Valor Pedido
+                        ped.vt = Server.HtmlEncode(qry.GetString(8).ToString());   // Valor Total
+                        ped.vd = Server.HtmlEncode(qry.GetString(9).ToString());   // Valor Desconto
+                        ped.vp = Server.HtmlEncode(qry.GetString(10).ToString());  // Valor Pedido
                         ped.et = Server.HtmlEncode(qry.GetString(11).ToString());  // Entregue? (S/N)
                         ped.nr = Server.HtmlEncode(qry.GetString(12).ToString());  // Número
                         ped.at = "S";
+                        ped.lc = Server.HtmlEncode(qry.GetString(14).ToString());  // CPF/CNPJ da Loja
 
                         ped.itens = new List<Item>();
-                        arr.data  = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", qry.GetString(13).ToString()));  // Data atual do servidor SQL Server
+                        arr.data  = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", qry.GetString(13) ));  // Data atual do servidor SQL Server
 
                         // Carregar itens do Pedido
                         SqlCommand cmd_item = new SqlCommand("", conn.Conn());
@@ -522,14 +537,19 @@ namespace webVendaSimples
                             "SET DATEFORMAT DMY " +
                             "Select             " +
                             "    i.id_item      " +
-                            "  , i.cd_item      " +
+                            "  , Convert(varchar(20), i.cd_item) as cd_item " +
                             "  , i.id_pedido    " +
                             "  , i.id_produto   " +
-                            "  , i.qt_produto   " +
-                            "  , i.vl_produto   " +
-                            "  , i.vl_total_bruto       " +
-                            "  , i.vl_total_desconto    " +
-                            "  , i.vl_total_produto     " +
+                            //"  , i.qt_produto   " +
+                            //"  , i.vl_produto   " +
+                            //"  , i.vl_total_bruto       " +
+                            //"  , i.vl_total_desconto    " +
+                            //"  , i.vl_total_produto     " +
+                            "  , convert(varchar(20), convert(BIGINT, coalesce(i.qt_produto, 0) * 100)) as qt_produto " +
+                            "  , convert(varchar(20), convert(BIGINT, coalesce(i.vl_produto, 0) * 100)) as vl_produto " +
+                            "  , convert(varchar(20), convert(BIGINT, coalesce(i.vl_total_bruto,    0) * 100)) as vl_total_bruto " +
+                            "  , convert(varchar(20), convert(BIGINT, coalesce(i.vl_total_desconto, 0) * 100)) as vl_total_desconto " +
+                            "  , convert(varchar(20), convert(BIGINT, coalesce(i.vl_total_produto,  0) * 100)) as vl_total_produto " +
                             "from dbo.tb_pedido_item i  " +
                             "where (i.id_pedido = @pedido) ";
 
@@ -544,11 +564,16 @@ namespace webVendaSimples
                             itm.cd = Server.HtmlEncode(qry_item.GetString(1).ToString());  // Código
                             itm.pe = Server.HtmlEncode(qry_item.GetString(2).ToString());  // Pedido
                             itm.pd = Server.HtmlEncode(qry_item.GetString(3).ToString());  // Produto
-                            itm.qt = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(4).ToString()) * 100));  // Quantidade
-                            itm.vu = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(5).ToString()) * 100));  // Valor Unitário
-                            itm.vt = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(6).ToString()) * 100));  // Valor Total
-                            itm.vd = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(7).ToString()) * 100));  // Valor Total Desconto
-                            itm.vl = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(8).ToString()) * 100));  // Valor Total Líquido
+                            //itm.qt = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(4).ToString()) * 100));  // Quantidade
+                            //itm.vu = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(5).ToString()) * 100));  // Valor Unitário
+                            //itm.vt = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(6).ToString()) * 100));  // Valor Total
+                            //itm.vd = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(7).ToString()) * 100));  // Valor Total Desconto
+                            //itm.vl = Server.HtmlEncode(String.Format("{0:0}", Decimal.Parse(qry_item.GetString(8).ToString()) * 100));  // Valor Total Líquido
+                            itm.qt = Server.HtmlEncode(qry_item.GetString(4).ToString());  // Quantidade
+                            itm.vu = Server.HtmlEncode(qry_item.GetString(5).ToString());  // Valor Unitário
+                            itm.vt = Server.HtmlEncode(qry_item.GetString(6).ToString());  // Valor Total
+                            itm.vd = Server.HtmlEncode(qry_item.GetString(7).ToString());  // Valor Total Desconto
+                            itm.vl = Server.HtmlEncode(qry_item.GetString(8).ToString());  // Valor Total Líquido
                             itm.ob = "";   // Observações
 
                             ped.itens.Add(itm);
@@ -577,6 +602,7 @@ namespace webVendaSimples
 
             // Serializar JSON
             JavaScriptSerializer js = new JavaScriptSerializer();
+            js.MaxJsonLength = Int32.MaxValue;
 
             Context.Response.Clear();
             Context.Response.Write(js.Serialize(arr));
@@ -584,7 +610,87 @@ namespace webVendaSimples
             Context.Response.End();
         }
 
+        // PEDIDO ENTREGUE (FORMATO JSON) =========================================================================
+        [WebMethod]
+        public void PedidoEntregue(String pedido, String empresa, String token)
+        {
+            pedido = HttpUtility.UrlDecode(pedido);
+            empresa = HttpUtility.UrlDecode(empresa);
+            token = HttpUtility.UrlDecode(token);
 
+            List<Retorno> arr = new List<Retorno>();
+
+            try
+            {
+                if (token != Funcoes.EncriptarHashBytes(String.Concat("TheLordIsGod", DateTime.Today.ToString("dd/MM/yyyy"))).ToUpper())
+                {
+                    Retorno err = new Retorno();
+                    err.retorno = Server.HtmlEncode("Token de segurança inválido!");
+                    arr.Add(err);
+
+                    //err = null;
+                    GC.SuppressFinalize(err);
+                } 
+                else
+                {
+                    Conexao conn = Conexao.Instance;
+                    conn.Conectar();
+                    SqlCommand cmd = new SqlCommand("", conn.Conn());
+
+                    String sql =
+                        "SET DATEFORMAT DMY " +
+                        "EXECUTE dbo.setPedidoEntregue @usuario, @empresa, @token, @id OUT, @data OUT, @retorno OUT";
+
+                    cmd.Parameters.Add(new SqlParameter("@pedido", pedido));
+                    cmd.Parameters.Add(new SqlParameter("@empresa", empresa));
+                    cmd.Parameters.Add(new SqlParameter("@token", token));
+
+                    cmd.Parameters.Add(new SqlParameter("@id", ""));
+                    cmd.Parameters["@id"].Direction = ParameterDirection.InputOutput;
+                    cmd.Parameters["@id"].Size = 38;
+
+                    cmd.Parameters.Add(new SqlParameter("@data", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + ".000")); // Inserir a informação de milisegundo
+                    cmd.Parameters["@data"].Direction = ParameterDirection.InputOutput;
+                    cmd.Parameters["@data"].DbType = DbType.DateTime;
+
+                    cmd.Parameters.Add(new SqlParameter("@retorno", ""));
+                    cmd.Parameters["@retorno"].Direction = ParameterDirection.InputOutput;
+                    cmd.Parameters["@retorno"].Size = 250;
+
+                    cmd.CommandText = sql;
+                    SqlDataReader qry = cmd.ExecuteReader();
+
+                    Retorno ret = new Retorno();
+
+                    ret.data    = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", cmd.Parameters["@data"].Value));
+                    ret.retorno = Server.HtmlEncode(cmd.Parameters["@retorno"].Value.ToString());
+
+                    qry.Close();
+
+                    arr.Add(ret);
+                    GC.SuppressFinalize(cmd);
+                    conn.Fechar();
+                }
+            }
+            catch (System.IndexOutOfRangeException e)
+            {
+                Retorno err = new Retorno();
+
+                err.retorno = Server.HtmlEncode("ERRO - " + e.Message);
+                arr.Add(err);
+
+                //err = null;
+                GC.SuppressFinalize(err);
+            }
+
+            // Serializar JSON
+            JavaScriptSerializer js = new JavaScriptSerializer();
+
+            Context.Response.Clear();
+            Context.Response.Write(js.Serialize(arr));
+            Context.Response.Flush();
+            Context.Response.End();
+        }
 
 
 

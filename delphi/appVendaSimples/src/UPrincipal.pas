@@ -899,6 +899,9 @@ begin
   begin
     dao := TPedidoDao.GetInstance;
     dao.Model := TPedido(ListViewPedido.Items.Item[ItemIndex].TagObject);
+    dao.Find(dao.Model.Codigo, True); // Atualizar objeto com dados da base
+
+    ListViewPedido.Items.Item[ItemIndex].TagObject := dao.Model; // Devolver objeto atualizado
     ExibirCadastroPedido(Self);
   end;
 end;
@@ -937,18 +940,21 @@ begin
         imageTabPedido.Opacity   := 1;
         labelTabPedido.FontColor := crAzul;
       end;
+
     idxTabCliente :
       begin
         DoBuscaClientes(nil);
         imageTabCliente.Opacity   := 1;
         labelTabCliente.FontColor := crAzul;
       end;
+
     idxTabNotificacao :
       begin
         DoBuscaNotificacoes(nil);
         imageTabNotificacao.Opacity   := 1;
         labelTabNotificacao.FontColor := crAzul;
       end;
+
     idxTabMais :
       begin
         imageTabMais.Opacity   := 1;

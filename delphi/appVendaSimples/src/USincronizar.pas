@@ -192,8 +192,9 @@ var
   aTudo : Integer;
   aParte: Currency;
   aID   : TGUID;
-  aNumero,
-  aData  : String;
+  aNumero ,
+  aCpfCnpj,
+  aData   : String;
 begin
   aRetorno := 'OK';
   try
@@ -206,7 +207,6 @@ begin
       aListaPed := aJson.Get('pedidos').JsonValue as TJSONArray;
       aTudo     := aListaPed.Count - 1;
 
-
       for I := 0 to aListaPed.Count - 1 do
       begin
         // Tratar Pedido
@@ -214,31 +214,44 @@ begin
         daoPedido := TPedidoDao.GetInstance();
         aPedido   := aListaPed.Items[I] as TJSONObject;
 
-        aID     := StringToGUID( StrClearValueJson(HTMLDecode(aPedido.Get('id').JsonValue.ToString)) );
-        aNumero := StrClearValueJson(HTMLDecode(aPedido.Get('nr').JsonValue.ToString));
+        aID      := StringToGUID( StrClearValueJson(HTMLDecode(aPedido.Get('id').JsonValue.ToString)) );
+        aNumero  := StrClearValueJson(HTMLDecode(aPedido.Get('nr').JsonValue.ToString));
+        aCpfCnpj := StrClearValueJson(HTMLDecode(aPedido.Get('lc').JsonValue.ToString));
 
         with daoPedido.Model do
         begin
-          ID         := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('id').JsonValue.ToString)));
-          Codigo     := StrToCurr(StrClearValueJson(HTMLDecode(aPedido.Get('cd').JsonValue.ToString)));
-          Numero     := StrClearValueJson(HTMLDecode(aPedido.Get('nr').JsonValue.ToString));
-          Tipo       := TTipoPedido.tpPedido;
-          Loja.ID    := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('lj').JsonValue.ToString)));
-          Cliente.ID := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('cl').JsonValue.ToString)));
-          Entregue   := (StrClearValueJson(HTMLDecode(aPedido.Get('et').JsonValue.ToString)) = FLAG_SIM);
-        end;
+          ID           := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('id').JsonValue.ToString)));
+          Codigo       := StrToCurr(StrClearValueJson(HTMLDecode(aPedido.Get('cd').JsonValue.ToString)));
+          Numero       := aNumero;
+          Tipo         := TTipoPedido.tpPedido; // Com este tipo, o pedido é marcado com sincronizado.
+          DataEmissao  := StrToDate(StrClearValueJson(HTMLDecode(aPedido.Get('dt').JsonValue.ToString)));
+          Loja.ID      := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('lj').JsonValue.ToString)));
+          Loja.CpfCnpj := aCpfCnpj;
+          Cliente.ID   := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('cl').JsonValue.ToString)));
 
-        if daoPedido.Find(aId, daoPedido.Model.Loja.ID.ToString, aNumero, False) then
-          daoPedido.Sincronizado()
-        else
-          daoPedido.Insert();
+          ValorTotal    := StrClearValueJson(HTMLDecode(aPedido.Get('vt').JsonValue.ToString)).ToDouble / 100.0;
+          ValorDesconto := StrClearValueJson(HTMLDecode(aPedido.Get('vd').JsonValue.ToString)).ToDouble / 100.0;
+          ValorPedido   := StrClearValueJson(HTMLDecode(aPedido.Get('vp').JsonValue.ToString)).ToDouble / 100.0;
+
+          Contato    := StrClearValueJson(HTMLDecode(aPedido.Get('ct').JsonValue.ToString));
+          Entregue   := (StrClearValueJson(HTMLDecode(aPedido.Get('et').JsonValue.ToString)) = FLAG_SIM);
+          Observacao := StrClearValueJson(HTMLDecode(aPedido.Get('ob').JsonValue.ToString));
+          Ativo      := (StrClearValueJson(HTMLDecode(aPedido.Get('at').JsonValue.ToString)) = FLAG_SIM);
+
+          if daoPedido.Find(aId, Loja.ID.ToString, aNumero, False) then
+            daoPedido.Sincronizado()
+          else
+            daoPedido.Insert();
+        end;
 
         // Tratar Itens do Pedido
 
-        aListaItens := aPedido.Get('itens').JsonValue as TJSONArray;
+        daoPedidoItem := TPedidoItemDao.GetInstance();
+        daoPedidoItem.DeleteAllTemp;
+
+        aListaItens   := aPedido.Get('itens').JsonValue as TJSONArray;
         for X := 0 to aListaItens.Count - 1 do
         begin
-          daoPedidoItem := TPedidoItemDao.GetInstance();
           aItem := aListaItens.Items[X] as TJSONObject;
 
           with daoPedidoItem.Model do
@@ -247,7 +260,7 @@ begin
             Codigo := StrToInt(StrClearValueJson(HTMLDecode(aItem.Get('cd').JsonValue.ToString)));
             Pedido.ID  := StringToGUID(StrClearValueJson(HTMLDecode(aItem.Get('pe').JsonValue.ToString)));
             Produto.ID := StringToGUID(StrClearValueJson(HTMLDecode(aItem.Get('pd').JsonValue.ToString)));
-            Quantidade := StrClearValueJson(HTMLDecode(aItem.Get('qt').JsonValue.ToString)).ToDouble / 100.0;
+            Quantidade    := StrClearValueJson(HTMLDecode(aItem.Get('qt').JsonValue.ToString)).ToDouble / 100.0;
             ValorUnitario := StrClearValueJson(HTMLDecode(aItem.Get('vu').JsonValue.ToString)).ToDouble / 100.0;
             ValorTotal    := StrClearValueJson(HTMLDecode(aItem.Get('vt').JsonValue.ToString)).ToDouble / 100.0;
             ValorTotalDesconto := StrClearValueJson(HTMLDecode(aItem.Get('vd').JsonValue.ToString)).ToDouble / 100.0;
@@ -263,6 +276,7 @@ begin
         // (Fim) ... Tratar Itens do Pedido
 
         daoPedido.GravarItens();
+        daoPedidoItem.DeleteAllTemp;
 
         aParte := (((I + 1) / aTudo) * 33.33) + 66.66;
         SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido, recBarraPedidoCinza.Width, aParte, 'Atualizando pedidos...');
@@ -504,7 +518,7 @@ begin
     // Step 1: 33 de 100 - Enviando lista de clientes
     aRetorno := UploadClientes;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((1 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((1 / 9) * 100), 'SINCRONIZAR')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -517,7 +531,7 @@ begin
     // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarClientes;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((2 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((2 / 9) * 100), 'SINCRONIZAR')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -532,7 +546,7 @@ begin
     if (aRetorno.ToUpper = 'OK') then
     begin
       SetProgressoBarra(recBarraClienteAzul, lblBarraCliente, recBarraClienteCinza.Width, 100, 'Clientes sincronizados');
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((3 / 9) * 100), 'SINCRONIZANDO...');
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((3 / 9) * 100), 'SINCRONIZAR');
     end
     else
     begin
@@ -549,7 +563,7 @@ begin
     // Step 1: 33 de 100 - Enviando lista de produtos
     aRetorno := UploadProdutos;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((4 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((4 / 9) * 100), 'SINCRONIZAR')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -562,7 +576,7 @@ begin
     // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarProdutos;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((5 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((5 / 9) * 100), 'SINCRONIZAR')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -577,7 +591,7 @@ begin
     if (aRetorno.ToUpper = 'OK') then
     begin
       SetProgressoBarra(recBarraProdutoAzul, lblBarraProduto, recBarraProdutoCinza.Width, 100, 'Produtos sincronizados');
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((6 / 9) * 100), 'SINCRONIZANDO...');
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((6 / 9) * 100), 'SINCRONIZAR');
     end
     else
     begin
@@ -594,7 +608,7 @@ begin
     // Step 1: 33 de 100 - Enviando lista de pedidos
     aRetorno := UploadPedidos;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((7 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((7 / 9) * 100), 'SINCRONIZAR')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -607,7 +621,7 @@ begin
     // Step 2: 66 de 100 - Processando lista enviada
     aRetorno := ProcessarPedidos;
     if (aRetorno.ToUpper = 'OK') then
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((8 / 9) * 100), 'SINCRONIZANDO...')
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((8 / 9) * 100), 'SINCRONIZAR')
     else
     begin
       ExibirMsgAlerta(aRetorno);
@@ -621,8 +635,8 @@ begin
     aRetorno := DownloadPedidos;
     if (aRetorno.ToUpper = 'OK') then
     begin
-      SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido, recBarraPedidoCinza.Width, 100, 'Produtos sincronizados');
-      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((9 / 9) * 100), 'SINCRONIZANDO...');
+      SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido, recBarraPedidoCinza.Width, 100, 'Pedidos sincronizados');
+      SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, ((9 / 9) * 100), 'SINCRONIZAR');
     end
     else
     begin
@@ -633,7 +647,9 @@ begin
     Sleep(250);
     // Step 3: (FIM)
 
-    SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 100, 'SINCRONIZADO');
+    SetProgressoBarra(recSincronizar, labelSincronizar, rectangleSincronizar.Width, 100, 'SINCRONIZAR');
+
+    ExibirMsgSucesso('Sincronia de dados realizada com sucesso');
   except
     On E : Exception do
     begin
