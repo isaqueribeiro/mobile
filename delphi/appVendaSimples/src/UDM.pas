@@ -76,6 +76,7 @@ type
 
     function SetUploadPedidos(aPedidos, aItens : TJSONArray) : TJSONObject;
     function GetProcessarPedidos : TJSONObject;
+    function GetDownloadPedidos : TJSONObject;
   end;
 
 var
@@ -458,6 +459,58 @@ begin
     end;
   finally
     aRequestCliente.DisposeOf;
+    Result := aRetorno;
+  end;
+end;
+
+function TDM.GetDownloadPedidos: TJSONObject;
+var
+  aRetorno : TJSONObject;
+  aRequestPedido : TRESTRequest;
+  aKey : String;
+  aStr : AnsiString;
+  aUsr : TUsuarioDao;
+  aConfig : TConfiguracaoDao;
+begin
+  try
+    ConfigurarUrlPedido;
+
+    aUsr := TUsuarioDao.GetInstance;
+    aKey := AnsiUpperCase( GetEncriptString(KEY_ENCRIPT + GetDateTimeServer.Data) ); // SHA1
+    aConfig := TConfiguracaoDao.GetInstance();
+
+    aRetorno := nil;
+    aRequestPedido := TRESTRequest.Create(rscProduto);
+
+    with aRequestPedido do
+    begin
+      Client := rscPedido;
+      Method := TRESTRequestMethod.rmPOST;
+      Accept := rscPedido.Accept;
+      AcceptCharset      := rscPedido.AcceptCharset;
+      AutoCreateParams   := True;
+      SynchronizedEvents := False;
+      Resource := 'DownloadPedidos';
+      Timeout  := 60000;
+
+      ClearBody;
+      Params.Clear;
+      AddParameter('usuario', HTTPEncode(aUsr.Model.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('empresa', HTTPEncode(aUsr.Model.Empresa.ID.ToString),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('data',    HTTPEncode(aConfig.GetValue('dt-atualizacao-Pedido')),  TRESTRequestParameterKind.pkGETorPOST);
+      AddParameter('token',   HTTPEncode(aKey) , TRESTRequestParameterKind.pkGETorPOST);
+      Execute;
+
+      if Assigned(Response) then
+        if (Pos('retorno', Response.Content) > 0) then
+        begin
+          // Não remover '[' e ']' quando a devolução for JSON_ARRAY
+          aStr := Response.JSONValue.ToString;
+          aRetorno := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(aStr), 0) as TJSONObject;
+        end;
+    end;
+  finally
+    aRequestPedido.DisposeOf;
     Result := aRetorno;
   end;
 end;

@@ -161,6 +161,7 @@ begin
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_PEDIDO + ' (');
     aSQL.Add('      id_pedido       VARCHAR (38) NOT NULL PRIMARY KEY');
     aSQL.Add('    , cd_pedido       BIGINT  (10) UNIQUE ON CONFLICT ROLLBACK');
+    aSQL.Add('    , nr_pedido       VARCHAR (20)');
     aSQL.Add('    , tp_pedido       CHAR(1) DEFAULT (' + QuotedStr('O') + ') NOT NULL'); // O - Orçamento, P - Pedido
     aSQL.Add('    , id_cliente      VARCHAR (38) NOT NULL');
     aSQL.Add('    , ds_contato      VARCHAR (100)');

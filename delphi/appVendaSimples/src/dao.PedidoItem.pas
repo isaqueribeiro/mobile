@@ -42,6 +42,8 @@ type
       procedure DecrementarQuantidade();
       procedure CarregarDadosToSynchrony;
 
+      function Find(const aPedidoID, aItemID : TGUID; const IsLoadModel : Boolean) : Boolean; virtual; abstract;
+
       class function GetInstance : TPedidoItemDao;
   end;
 
@@ -259,7 +261,7 @@ begin
         aModel.NewID;
 
       if (aModel.Codigo = 0) then
-        aModel.Codigo := Round( GetNewID(aDDL.getTableNamePedidoItem, 'cd_item', EmptyStr) );
+        aModel.Codigo := Round( GetNewID(aDDL.getTableNamePedidoItem + '_temp', 'cd_item', 'id_pedido = ' + QuotedStr(Model.PedidoID.ToString)) );
 
       ParamByName('id_item').AsString       := GUIDToString(Model.ID);
       ParamByName('cd_item').AsInteger      := Model.Codigo;

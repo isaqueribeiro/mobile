@@ -32,7 +32,7 @@ namespace webVendaSimples.App_Code
         public void Conectar()
         {
             // "Persist Security Info=False;User ID=*****;Password=*****;Initial Catalog=AdventureWorks;Server=MySqlServer" 
-            strConexao = "Persist Security Info=False;User Id=" + usuario + ";Password=" + senha + ";Initial Catalog=" + banco  + ";Server=" + servidor;
+            strConexao = "Persist Security Info=False;User Id=" + usuario + ";Password=" + senha + ";Initial Catalog=" + banco  + ";Server=" + servidor + ";MultipleActiveResultSets=true;";
             conn = new SqlConnection(strConexao);
             conn.Open();
         }

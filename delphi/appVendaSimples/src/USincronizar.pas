@@ -75,7 +75,7 @@ type
 
     function UploadPedidos : String;
     function ProcessarPedidos : String;
-    function DownloadPedidos : String; virtual; abstract;
+    function DownloadPedidos : String;
 
     class var aInstance : TFrmSincronizar;
   public
@@ -172,6 +172,105 @@ begin
       // Pegar a data/hora retornada removendo o milisegundo
       aData := Copy(StrClearValueJson(HTMLDecode(aJson.Get('data').JsonValue.ToString)), 1, 19);
       TConfiguracaoDao.GetInstance().SetValue('dt-atualizacao-cliente', aData);
+    end;
+  finally
+    Result := aRetorno;
+  end;
+end;
+
+function TFrmSincronizar.DownloadPedidos: String;
+var
+  aRetorno   : String;
+  aListaPed  ,
+  aListaItens: TJSONArray;
+  aPedido    ,
+  aItem      ,
+  aJson      : TJSONObject;
+  daoPedido  : TPedidoDao;
+  daoPedidoItem : TPedidoItemDao;
+  I, X  ,
+  aTudo : Integer;
+  aParte: Currency;
+  aID   : TGUID;
+  aNumero,
+  aData  : String;
+begin
+  aRetorno := 'OK';
+  try
+    aJson := DM.GetDownloadPedidos;
+    if Assigned(aJson) then
+      aRetorno := StrClearValueJson(HTMLDecode(aJson.Get('retorno').JsonValue.ToString));
+
+    if aRetorno.Trim.Equals('OK') then
+    begin
+      aListaPed := aJson.Get('pedidos').JsonValue as TJSONArray;
+      aTudo     := aListaPed.Count - 1;
+
+
+      for I := 0 to aListaPed.Count - 1 do
+      begin
+        // Tratar Pedido
+
+        daoPedido := TPedidoDao.GetInstance();
+        aPedido   := aListaPed.Items[I] as TJSONObject;
+
+        aID     := StringToGUID( StrClearValueJson(HTMLDecode(aPedido.Get('id').JsonValue.ToString)) );
+        aNumero := StrClearValueJson(HTMLDecode(aPedido.Get('nr').JsonValue.ToString));
+
+        with daoPedido.Model do
+        begin
+          ID         := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('id').JsonValue.ToString)));
+          Codigo     := StrToCurr(StrClearValueJson(HTMLDecode(aPedido.Get('cd').JsonValue.ToString)));
+          Numero     := StrClearValueJson(HTMLDecode(aPedido.Get('nr').JsonValue.ToString));
+          Tipo       := TTipoPedido.tpPedido;
+          Loja.ID    := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('lj').JsonValue.ToString)));
+          Cliente.ID := StringToGUID(StrClearValueJson(HTMLDecode(aPedido.Get('cl').JsonValue.ToString)));
+          Entregue   := (StrClearValueJson(HTMLDecode(aPedido.Get('et').JsonValue.ToString)) = FLAG_SIM);
+        end;
+
+        if daoPedido.Find(aId, daoPedido.Model.Loja.ID.ToString, aNumero, False) then
+          daoPedido.Sincronizado()
+        else
+          daoPedido.Insert();
+
+        // Tratar Itens do Pedido
+
+        aListaItens := aPedido.Get('itens').JsonValue as TJSONArray;
+        for X := 0 to aListaItens.Count - 1 do
+        begin
+          daoPedidoItem := TPedidoItemDao.GetInstance();
+          aItem := aListaItens.Items[X] as TJSONObject;
+
+          with daoPedidoItem.Model do
+          begin
+            ID     := StringToGUID(StrClearValueJson(HTMLDecode(aItem.Get('id').JsonValue.ToString)));
+            Codigo := StrToInt(StrClearValueJson(HTMLDecode(aItem.Get('cd').JsonValue.ToString)));
+            Pedido.ID  := StringToGUID(StrClearValueJson(HTMLDecode(aItem.Get('pe').JsonValue.ToString)));
+            Produto.ID := StringToGUID(StrClearValueJson(HTMLDecode(aItem.Get('pd').JsonValue.ToString)));
+            Quantidade := StrClearValueJson(HTMLDecode(aItem.Get('qt').JsonValue.ToString)).ToDouble / 100.0;
+            ValorUnitario := StrClearValueJson(HTMLDecode(aItem.Get('vu').JsonValue.ToString)).ToDouble / 100.0;
+            ValorTotal    := StrClearValueJson(HTMLDecode(aItem.Get('vt').JsonValue.ToString)).ToDouble / 100.0;
+            ValorTotalDesconto := StrClearValueJson(HTMLDecode(aItem.Get('vd').JsonValue.ToString)).ToDouble / 100.0;
+            ValorLiquido       := StrClearValueJson(HTMLDecode(aItem.Get('vl').JsonValue.ToString)).ToDouble / 100.0;
+
+            if daoPedidoItem.Find(PedidoID, ID, False) then
+              daoPedidoItem.Update()
+            else
+              daoPedidoItem.Insert();
+          end;
+        end;
+
+        // (Fim) ... Tratar Itens do Pedido
+
+        daoPedido.GravarItens();
+
+        aParte := (((I + 1) / aTudo) * 33.33) + 66.66;
+        SetProgressoBarra(recBarraPedidoAzul, lblBarraPedido, recBarraPedidoCinza.Width, aParte, 'Atualizando pedidos...');
+      end;
+
+      // Pegar a data/hora retornada removendo o milisegundo
+      aData := Copy(StrClearValueJson(HTMLDecode(aJson.Get('data').JsonValue.ToString)), 1, 19);
+      TConfiguracaoDao.GetInstance().SetValue('dt-atualizacao-pedido', aData);
     end;
   finally
     Result := aRetorno;
@@ -677,6 +776,7 @@ begin
       aPedido.AddPair('ob', daoPedido.Lista[I].Observacao);
       aPedido.AddPair('et', IfThen(daoPedido.Lista[I].Entregue, FLAG_SIM, FLAG_NAO));
       aPedido.AddPair('at', IfThen(daoPedido.Lista[I].Ativo, FLAG_SIM, FLAG_NAO));
+      aPedido.AddPair('at', EmptyStr);
 
       aPedidos.Add(aPedido);
 

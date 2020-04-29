@@ -33,6 +33,7 @@ type
       procedure Insert();
       procedure Update();
       procedure Delete();
+      procedure Sincronizado(); virtual; abstract;
       procedure AddLista; overload;
       procedure AddLista(aPedido : TPedido); overload;
       procedure InserirItensTemp();
@@ -41,7 +42,8 @@ type
       procedure RecalcularValorTotalPedido();
       procedure CarregarDadosToSynchrony;
 
-      function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean;
+      function Find(const aCodigo : Currency; const IsLoadModel : Boolean) : Boolean; overload;
+      function Find(const aID : TGUID; const aLojaID, aNumero : String; const IsLoadModel : Boolean) : Boolean; overload;
       function GetCount() : Integer;
       function GetCountSincronizar() : Integer;
       function PodeExcluir : Boolean;
@@ -226,6 +228,50 @@ begin
     end;
   finally
     aQry.DisposeOf;
+  end;
+end;
+
+function TPedidoDao.Find(const aID: TGUID; const aLojaID, aNumero: String; const IsLoadModel: Boolean): Boolean;
+var
+  aQry : TFDQuery;
+  aRetorno : Boolean;
+begin
+  aRetorno := False;
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Add('Select');
+      SQL.Add('    p.* ');
+      SQL.Add('  , c.cd_cliente  ');
+      SQL.Add('  , c.nm_cliente  ');
+      SQL.Add('  , c.nr_cpf_cnpj ');
+      SQL.Add('  , l.nm_empresa  ');
+      SQL.Add('  , l.nm_fantasia ');
+      SQL.Add('  , l.nr_cpf_cnpj as nr_cpf_cnpj_loja ');
+      SQL.Add('from ' + aDDL.getTableNamePedido + ' p ');
+      SQL.Add('  left join ' + aDDL.getTableNameCliente + ' c on (c.id_cliente = p.id_cliente)');
+      SQL.Add('  left join ' + aDDL.getTableNameLoja    + ' l on (l.id_empresa = p.id_loja)');
+      SQL.Add('where (p.id_pedido = :id_pedido)');
+      SQL.Add('  or ((p.id_loja = ' + QuotedStr(aLojaID) + ') and (p.nr_pedido = :nr_pedido) and (coalesce(p.nr_pedido, '''') <> ''''))');
+      SQL.EndUpdate;
+
+      if OpenOrExecute then
+      begin
+        aRetorno := (RecordCount > 0);
+        if aRetorno and IsLoadModel then
+          SetValues(aQry, aModel);
+      end;
+      aQry.Close;
+    end;
+  finally
+    aQry.DisposeOf;
+    Result := aRetorno;
   end;
 end;
 
@@ -422,6 +468,7 @@ begin
       SQL.Add('Insert Into ' + aDDL.getTableNamePedido + '(');
       SQL.Add('    id_pedido       ');
       SQL.Add('  , cd_pedido       ');
+      SQL.Add('  , nr_pedido       ');
       SQL.Add('  , tp_pedido       ');
       SQL.Add('  , id_cliente      ');
       SQL.Add('  , dt_pedido       ');
@@ -443,6 +490,7 @@ begin
       SQL.Add(') values (');
       SQL.Add('    :id_pedido      ');
       SQL.Add('  , :cd_pedido      ');
+      SQL.Add('  , :nr_pedido      ');
       SQL.Add('  , :tp_pedido      ');
       SQL.Add('  , :id_cliente     ');
       SQL.Add('  , :dt_pedido      ');
@@ -472,6 +520,7 @@ begin
 
       ParamByName('id_pedido').AsString     := GUIDToString(Model.ID);
       ParamByName('cd_pedido').AsCurrency   := Model.Codigo;
+      ParamByName('nr_pedido').AsString     := Model.Numero;
       ParamByName('tp_pedido').AsString     := GetTipoPedidoStr(Model.Tipo);
       ParamByName('id_cliente').AsString    := GUIDToString(Model.Cliente.ID);
       ParamByName('dt_pedido').AsDateTime   := Model.DataEmissao;
@@ -633,6 +682,7 @@ begin
   begin
     ID     := StringToGUID(FieldByName('id_pedido').AsString);
     Codigo := FieldByName('cd_pedido').AsCurrency;
+    Numero := FieldByName('nr_pedido').AsString;
     Tipo   := IfThen(AnsiUpperCase(FieldByName('tp_pedido').AsString) = 'P', tpPedido, tpOrcamento);
     DataEmissao := FieldByName('dt_pedido').AsDateTime;
 
@@ -688,6 +738,7 @@ begin
       SQL.BeginUpdate;
       SQL.Add('Update ' + aDDL.getTableNamePedido + ' Set');
       SQL.Add('    cd_pedido       = :cd_pedido      ');
+      SQL.Add('  , nr_pedido       = :nr_pedido      ');
       SQL.Add('  , tp_pedido       = :tp_pedido      ');
       SQL.Add('  , id_cliente      = :id_cliente     ');
       SQL.Add('  , dt_pedido       = :dt_pedido      ');
@@ -711,6 +762,7 @@ begin
 
       ParamByName('id_pedido').AsString     := GUIDToString(Model.ID);
       ParamByName('cd_pedido').AsCurrency   := Model.Codigo;
+      ParamByName('nr_pedido').AsString     := Model.Numero;
       ParamByName('tp_pedido').AsString     := GetTipoPedidoStr(Model.Tipo);
       ParamByName('id_cliente').AsString    := GUIDToString(Model.Cliente.ID);
       ParamByName('dt_pedido').AsDateTime   := Model.DataEmissao;

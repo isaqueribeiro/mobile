@@ -256,6 +256,8 @@ BEGIN TRY
 		  );
 
 		  Set @cd_empresa = SCOPE_IDENTITY();
+
+		  Insert Into dbo.sys_empresa_sequencia (id_empresa) values (@id_empresa);
 		End
 		Else
 		Begin
@@ -929,5 +931,224 @@ END TRY
 
 BEGIN CATCH
   Set @retorno = 'Erro ao tentar listar produtos do usuário';
+END CATCH
+GO
+
+-- =================================================
+-- Author		:	Isaque M. Ribeiro
+-- Create date	:	28/04/2020
+-- Description	:	Processar upload de Pedidos
+-- =================================================
+CREATE or ALTER PROCEDURE dbo.spProcessarPedidos(
+	@usuario	VARCHAR(38)
+  , @empresa	VARCHAR(38)
+  , @token		VARCHAR(42)
+  , @id			VARCHAR(38)  OUT
+  , @data		DATETIME	 OUT
+  , @retorno	VARCHAR(250) OUT)
+AS
+DECLARE 
+  @id_pedido			VARCHAR(38),
+  @cd_pedido			INT,
+  @id_loja				VARCHAR(38),
+  @id_cliente			VARCHAR(38),
+  @dt_pedido			DATETIME,
+  @ds_contato			VARCHAR(150),
+  @ds_observacao		VARCHAR(500),
+  @vl_total_bruto		NUMERIC(18,2),
+  @vl_total_desconto	NUMERIC(18,2),
+  @vl_total_pedido		NUMERIC(18,2),
+  @sn_entregue			CHAR(1);
+BEGIN TRY
+  Declare cursor_pedidos CURSOR FOR
+	Select
+		x.id_pedido
+	  , x.cd_pedido
+	  , x.id_loja
+	  , x.id_cliente
+	  , x.dt_pedido
+	  , x.ds_contato
+	  , x.ds_observacao
+	  , x.vl_total_bruto
+	  , x.vl_total_desconto
+	  , x.vl_total_pedido
+	  , x.sn_entregue
+	from dbo.tb_pedido_temp x
+	where (x.id_usuario = @usuario)
+	  and (x.id_empresa = @empresa);
+
+  Declare @id_usuario	VARCHAR(38);
+  Declare @cd_usuario	BIGINT;
+  Declare @id_empresa	VARCHAR(38);
+  Declare @cd_empresa	INT;
+  Declare @nr_pedido	BIGINT;
+
+  Set @id_usuario = '{00000000-0000-0000-0000-000000000000}';
+  Set @cd_usuario = 0;
+  Set @id_empresa = '{00000000-0000-0000-0000-000000000000}';
+  Set @cd_empresa = 0;
+
+  Set @id = dbo.ufnGetGuidID();
+  Set @data = getdate();
+  Set @retorno = 'OK';
+
+  if (@token != UPPER(sys.fn_sqlvarbasetostr(HASHBYTES('SHA1', concat('TheLordIsGod', convert(varchar(10), getdate(), 103))))))
+    Set @retorno = 'Token Inválido';
+  Else
+  Begin
+	Select
+	    @id_usuario = usr.id_usuario
+	  , @cd_usuario	= usr.cd_usuario
+	from dbo.sys_usuario usr
+	where (usr.id_usuario = @usuario);
+
+	Select
+	    @id_empresa = emp.id_empresa
+	  , @cd_empresa	= emp.cd_empresa
+	from dbo.sys_empresa emp
+	where (emp.id_empresa = @empresa);
+
+	If (ISNULL(@cd_usuario, 0) = 0)
+	  Set @retorno = 'Usuário não registrado';
+	Else
+	If (ISNULL(@cd_empresa, 0) = 0)
+	  Set @retorno = 'Loja/Empresa não registrada';
+	Else
+	Begin   
+	  Open cursor_pedidos; 
+	  Fetch cursor_pedidos Into
+		  @id_pedido
+		, @cd_pedido
+		, @id_loja	
+		, @id_cliente
+		, @dt_pedido
+		, @ds_contato
+		, @ds_observacao
+		, @vl_total_bruto
+		, @vl_total_desconto
+		, @vl_total_pedido
+		, @sn_entregue;
+      
+	  while (@@FETCH_STATUS <> -1) 
+	  Begin
+	    
+	    -- Tratar Pedido
+		if (not exists(
+		  Select
+		    p.id_pedido
+		  from dbo.tb_pedido p
+		  where p.id_pedido  = @id_pedido
+		    and p.id_usuario = @id_usuario
+		))
+		Begin
+		  Select
+		    @nr_pedido = isnull(nr_pedido, 0) + 1
+		  from dbo.sys_empresa_sequencia (UPDLOCK)
+		  where (id_empresa = @id_loja);
+
+		  Update dbo.sys_empresa_sequencia Set
+		    nr_pedido = @nr_pedido
+		  where (id_empresa = @id_loja);
+		  
+		  Insert Into dbo.tb_pedido (
+			  id_pedido
+			, id_empresa
+			, id_cliente
+			, tp_pedido
+			, dt_pedido
+			, ds_contato
+			, ds_observacao
+			, vl_total_bruto
+			, vl_total_desconto
+			, vl_total_pedido
+			, sn_entregue
+			, id_usuario
+			, cd_pedido_app
+			, nr_pedido
+			, dt_ult_edicao
+		  ) values (
+		      @id_pedido
+			, @id_loja
+			, @id_cliente
+			, 1 -- 1. Pedido
+			, @dt_pedido
+			, @ds_contato
+			, @ds_observacao
+			, @vl_total_bruto
+			, @vl_total_desconto
+			, @vl_total_pedido
+			, Case when @sn_entregue = 'S' then 1 else 0 end
+			, @id_usuario
+			, @cd_pedido
+			, @nr_pedido
+			, getdate()
+		  );
+		End 
+	    Else 
+		Begin
+		  Update dbo.tb_pedido Set
+		      id_cliente	= @id_cliente
+			, tp_pedido		= 1 -- 1. Pedido
+			, dt_pedido		= @dt_pedido
+			, ds_contato	= @ds_contato
+			, ds_observacao	= @ds_observacao
+			, vl_total_bruto    = @vl_total_bruto
+			, vl_total_desconto = @vl_total_desconto
+			, vl_total_pedido   = @vl_total_pedido
+			, dt_ult_edicao		= getdate()
+		  where (id_pedido = @id_pedido);
+		End
+	    
+		-- Tratar Itens do Pedido
+		Delete from dbo.tb_pedido_item
+		where id_pedido = @id_pedido;
+
+		Insert Into dbo.tb_pedido_item (
+			id_item
+		  , cd_item
+		  , id_pedido
+		  , id_produto
+		  , qt_produto
+		  , vl_produto
+		  , vl_total_bruto
+		  , vl_total_desconto
+		  , vl_total_produto
+		) Select 
+			  z.id_item
+			, z.cd_item
+			, z.id_pedido
+			, z.id_produto
+			, z.qt_produto
+			, z.vl_produto
+			, z.vl_total_bruto
+			, z.vl_total_desconto
+			, z.vl_total_produto
+	      from dbo.tb_pedido_item_temp z
+		  where (z.id_usuario = @usuario)
+		    and (z.id_empresa = @empresa)
+		    and (z.id_pedido  = @id_pedido);
+		
+		Fetch cursor_pedidos Into
+			@id_pedido
+		  , @cd_pedido
+		  , @id_loja	
+		  , @id_cliente
+		  , @dt_pedido
+		  , @ds_contato
+		  , @ds_observacao
+		  , @vl_total_bruto
+		  , @vl_total_desconto
+		  , @vl_total_pedido
+		  , @sn_entregue;
+	  End
+	  
+	  Close cursor_pedidos;
+	  Deallocate cursor_pedidos;  
+    End 
+  End
+END TRY
+
+BEGIN CATCH
+  Set @retorno = 'Erro ao tentar processar os pedidos enviados';
 END CATCH
 GO

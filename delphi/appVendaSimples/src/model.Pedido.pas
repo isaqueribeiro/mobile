@@ -13,6 +13,7 @@ type
     private
       aID      : TGUID;
       aCodigo  : Currency;
+      aNumero  : String;
       aTipo    : TTipoPedido;
       aCliente : TCliente;
       aContato : String;
@@ -32,6 +33,7 @@ type
 
       property ID      : TGUID read aID write aID;
       property Codigo  : Currency read aCodigo write aCodigo;
+      property Numero  : String read aNumero write aNumero;
       property Tipo    : TTipoPedido read aTipo write aTipo;
       property Cliente : TCliente read aCliente write aCliente;
       property Contato : String read aContato write aContato;
@@ -65,6 +67,7 @@ begin
   inherited Create;
   aId      := GUID_NULL;
   aCodigo  := 0;
+  aNumero  := EmptyStr;
   aTipo    := tpOrcamento;
   aContato := EmptyStr;
   aDataEmissao   := Date;
@@ -118,7 +121,12 @@ end;
 function TPedido.ToString: String;
 begin
   if aTipo = tpPedido then
-    Result := 'Pedido #' + FormatFloat('00000', aCodigo)
+  begin
+    if (aNumero.Trim = EmptyStr) then
+      Result := 'Pedido #' + FormatFloat('00000', aCodigo)
+    else
+      Result := 'Pedido #' + aNumero.Trim;
+  end
   else
     Result := 'Orçamento #' + FormatFloat('00000', aCodigo);
 end;

@@ -99,12 +99,22 @@ GO
 IF OBJECT_ID (N'dbo.sys_empresa') IS NULL
 BEGIN
 	CREATE TABLE dbo.sys_empresa (
-		id_empresa	VARCHAR(38) PRIMARY KEY 
+		id_empresa	VARCHAR(38) NOT NULL PRIMARY KEY 
 	  , cd_empresa	INT IDENTITY(1,1) NOT NULL UNIQUE
 	  , nm_empresa	VARCHAR(250)
 	  , nm_fantasia	VARCHAR(150)
 	  , nr_cnpj_cpf	VARCHAR(25) UNIQUE
-	)
+	);
+
+	CREATE TABLE dbo.sys_empresa_sequencia (
+	    id_empresa	VARCHAR(38) NOT NULL PRIMARY KEY
+	  , nr_pedido	BIGINT NOT NULL DEFAULT 0
+	);
+
+	ALTER TABLE dbo.sys_empresa_sequencia ADD FOREIGN KEY (id_empresa)
+		REFERENCES dbo.sys_empresa (id_empresa)     
+		ON DELETE CASCADE    
+		ON UPDATE CASCADE;
 END
 GO
 
@@ -352,10 +362,18 @@ BEGIN
 	  , sn_entregue			SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_entregue = 0) or (sn_entregue = 1))
 	  , id_usuario			VARCHAR(38) NOT NULL
 	  , cd_pedido_app		INT
+	  , nr_pedido			BIGINT
+	  , dt_ult_edicao		DATETIME
 	);
 
 	ALTER TABLE dbo.tb_pedido
 	  ADD cd_pedido_app	INT;
+
+	ALTER TABLE dbo.tb_pedido
+	  ADD nr_pedido	BIGINT;
+
+	ALTER TABLE dbo.tb_pedido
+	  ADD dt_ult_edicao	DATETIME;
 
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'id_pedido',		N'ID (GUID)';
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'cd_pedido',		N'Código';
@@ -374,6 +392,7 @@ BEGIN
 	0 - Não
 	1 - Sim';
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'cd_pedido_app',		N'Código do Pedido no aplicativo';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'nr_pedido',			N'Número do Pedido na Empresa';
 
 	ALTER TABLE dbo.tb_pedido ADD FOREIGN KEY (id_empresa)
 		REFERENCES dbo.sys_empresa (id_empresa);
