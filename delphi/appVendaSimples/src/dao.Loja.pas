@@ -13,6 +13,8 @@ uses
 type
   TLojaDao = class(TObject)
     strict private
+      class var aInstance : TLojaDao;
+    private
       aDDL   : TScriptDDL;
       aModel : TLoja;
       aLista : TLojas;
@@ -24,8 +26,6 @@ type
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TLoja);
       procedure ClearValues;
       procedure ClearLista;
-
-      class var aInstance : TLojaDao;
     public
       property Model    : TLoja read aModel write aModel;
       property Lista    : TLojas read aLista write aLista;

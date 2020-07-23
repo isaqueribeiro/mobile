@@ -14,11 +14,11 @@ uses
 type
   TConfiguracaoDao = class(TObject)
     strict private
+      class var aInstance : TConfiguracaoDao;
+    private
       aDDL   : TScriptDDL;
       aOperacao : TTipoOperacaoDao;
       constructor Create();
-
-      class var aInstance : TConfiguracaoDao;
     public
       procedure Delete(const aKey : String);
 

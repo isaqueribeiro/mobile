@@ -446,6 +446,9 @@ procedure TFrmPedido.DoEditarCampo(Sender: TObject);
 var
   aTag : Integer;
 begin
+  if (dao.Model.Tipo = TTipoPedido.tpPedido) then
+    Exit;
+
   // Propriedade TAG é usada para armazenar as sequencia dos campos no formulário
   if (Sender is TLabel) then
     aTag := TLabel(Sender).Tag

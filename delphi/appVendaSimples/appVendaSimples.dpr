@@ -45,7 +45,8 @@ uses
   UPedido in 'src\UPedido.pas' {FrmPedido},
   UPedidoItem in 'src\UPedidoItem.pas' {FrmPedidoItem},
   ULoja in 'src\ULoja.pas' {FrmLoja},
-  USincronizar in 'src\USincronizar.pas' {FrmSincronizar};
+  USincronizar in 'src\USincronizar.pas' {FrmSincronizar},
+  u99Permissions in 'src\u99Permissions.pas';
 
 {$R *.res}
 

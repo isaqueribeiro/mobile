@@ -13,10 +13,11 @@ uses
 type
   TVersaoDao = class(TObject)
     strict private
+      class var aInstance : TVersaoDao;
+    private
       aDDL   : TScriptDDL;
       aModel : TVersao;
       constructor Create();
-      class var aInstance : TVersaoDao;
     public
       property Model : TVersao read aModel write aModel;
 

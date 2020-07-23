@@ -14,6 +14,8 @@ uses
 type
   TUsuarioDao = class(TObject)
     strict private
+      class var aInstance : TUsuarioDao;
+    private
       aDDL   : TScriptDDL;
       aModel : TUsuario;
       aOperacao : TTipoOperacaoDao;
@@ -21,8 +23,6 @@ type
 
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TUsuario);
       procedure ClearValues;
-
-      class var aInstance : TUsuarioDao;
     public
       property Model    : TUsuario read aModel write aModel;
       property Operacao : TTipoOperacaoDao read aOperacao;

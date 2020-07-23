@@ -69,6 +69,7 @@ type
     aDao : TClienteDao;
     aSelecionarCliente : Boolean;
     FObservers : TList<IObservadorCliente>;
+    FEditar : Boolean;
     procedure FormatarValorCampo(var aStr : String);
     procedure ExcluirCliente(Sender: TObject);
     procedure BuscarClientes(aBusca : String; aPagina : Integer);
@@ -81,6 +82,7 @@ type
     { Public declarations }
     property Dao : TClienteDao read aDao;
     property SelecionarCliente : Boolean read aSelecionarCliente write aSelecionarCliente;
+    property Editar : Boolean read FEditar write FEditar;
 
     procedure TeclaBackSpace; override;
     procedure TeclaNumero(const aValue : String); override;
@@ -116,6 +118,7 @@ var
 begin
   aForm := TFrmCliente.GetInstance;
   aForm.AdicionarObservador(Observer);
+  aForm.Editar := True;
 
   with aForm do
   begin
@@ -156,6 +159,7 @@ var
 begin
   aForm := TFrmCliente.GetInstance;
   aForm.AdicionarObservador(Observer);
+  aForm.Editar := aEditar;
 
   with aForm, dao do
   begin
@@ -201,6 +205,7 @@ var
 begin
   aForm := TFrmCliente.GetInstance;
   aForm.AdicionarObservador(Observer);
+  aForm.Editar := True;
 
   with aForm, dao do
   begin
@@ -290,6 +295,9 @@ procedure TFrmCliente.DoEditarCampo(Sender: TObject);
 var
   aTag : Integer;
 begin
+  if not FEditar then
+    Exit;
+
   // Propriedade TAG é usada para armazenar as sequencia dos campos no formulário
   if (Sender is TLabel) then
     aTag := TLabel(Sender).Tag
@@ -559,6 +567,7 @@ begin
   inherited;
   aSelecionarCliente := False;
   FObservers := TList<IObservadorCliente>.Create;
+  FEditar := False;
 
   img_sinc.Visible     := False;
   img_nao_sinc.Visible := False;

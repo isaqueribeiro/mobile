@@ -17,6 +17,8 @@ uses
 type
   TPedidoItemDao = class(TObject)
     strict private
+      class var aInstance : TPedidoItemDao;
+    private
       aDDL   : TScriptDDL;
       aModel : TPedidoItem;
       aLista : TPedidoItens;
@@ -24,8 +26,6 @@ type
       constructor Create();
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TPedidoItem);
       procedure ClearLista;
-
-      class var aInstance : TPedidoItemDao;
     public
       property Model : TPedidoItem  read aModel write aModel;
       property Lista : TPedidoItens read aLista write aLista;

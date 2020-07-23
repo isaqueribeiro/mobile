@@ -529,6 +529,7 @@
             <Form>FrmSincronizar</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="src\u99Permissions.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -586,9 +587,21 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="bin\Android\Debug\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
+                    <Platform Name="Android">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
                     <Platform Name="Android">
                         <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>venda_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -614,18 +627,6 @@
                 </DeployFile>
                 <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
                     <Platform Name="iOSDevice64">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>venda_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="bin\Android\Debug\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
-                    <Platform Name="Android">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="db\venda_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="iOSDevice32">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>venda_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>

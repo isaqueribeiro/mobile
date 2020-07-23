@@ -70,6 +70,7 @@ type
     aDao : TLojaDao;
     aSelecionarLoja : Boolean;
     FObservers : TList<IObservadorLoja>;
+    FEditar : Boolean;
     procedure FormatarValorCampo(var aStr : String);
     procedure ExcluirLoja(Sender: TObject);
     procedure BuscarLojas(aBusca : String; aPagina : Integer);
@@ -82,6 +83,7 @@ type
     { Public declarations }
     property Dao : TLojaDao read aDao;
     property SelecionarLoja : Boolean read aSelecionarLoja write aSelecionarLoja;
+    property Editar : Boolean read FEditar write FEditar;
 
     procedure TeclaBackSpace; override;
     procedure TeclaNumero(const aValue : String); override;
@@ -156,6 +158,7 @@ var
 begin
   aForm := TFrmLoja.GetInstance;
   aForm.AdicionarObservador(Observer);
+  aForm.Editar := aEditar;
 
   with aForm, dao do
   begin
@@ -197,6 +200,7 @@ var
 begin
   aForm := TFrmLoja.GetInstance;
   aForm.AdicionarObservador(Observer);
+  aForm.Editar := False;
 
   with aForm, dao do
   begin
@@ -286,6 +290,9 @@ procedure TFrmLoja.DoEditarCampo(Sender: TObject);
 var
   aTag : Integer;
 begin
+  if not FEditar then
+    Exit;
+
   // Propriedade TAG é usada para armazenar as sequencia dos campos no formulário
   if (Sender is TLabel) then
     aTag := TLabel(Sender).Tag
@@ -554,6 +561,8 @@ begin
   lytTelefone.Visible := False;
   lytEmail.Visible    := False;
   lytObs.Visible      := False;
+
+  FEditar := True;
 end;
 
 procedure TFrmLoja.FormShow(Sender: TObject);

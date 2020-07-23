@@ -14,13 +14,14 @@ uses
 type
   TProdutoDao = class(TObject)
     strict private
+      class var aInstance : TProdutoDao;
+    private
       aDDL   : TScriptDDL;
       aModel : TProduto;
       aLista : TProdutos;
       constructor Create();
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TProduto);
       procedure ClearLista;
-      class var aInstance : TProdutoDao;
     public
       property Model : TProduto read aModel write aModel;
       property Lista : TProdutos read aLista write aLista;

@@ -38,6 +38,7 @@ type
   public
     { Public declarations }
     property Confirmado : Boolean read aConfirmado;
+
     class function GetInstance : TFrmMensagem;
   end;
 

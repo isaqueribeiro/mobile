@@ -15,6 +15,8 @@ uses
 type
   TNotificacaoDao = class(TObject)
     strict private
+      class var aInstance : TNotificacaoDao;
+    private
       aDDL   : TScriptDDL;
       aModel : TNotificacao;
       aLista : TNotificacoes;
@@ -22,7 +24,6 @@ type
       constructor Create();
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TNotificacao);
       procedure ClearLista;
-      class var aInstance : TNotificacaoDao;
     public
       property Model : TNotificacao read aModel write aModel;
       property Lista : TNotificacoes read aLista write aLista;

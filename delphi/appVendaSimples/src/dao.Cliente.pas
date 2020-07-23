@@ -13,6 +13,8 @@ uses
 type
   TClienteDao = class(TObject)
     strict private
+      class var aInstance : TClienteDao;
+    private
       aDDL   : TScriptDDL;
       aModel : TCliente;
       aLista : TClientes;
@@ -20,7 +22,6 @@ type
       constructor Create();
       procedure SetValues(const aDataSet : TFDQuery; const aObject : TCliente);
       procedure ClearLista;
-      class var aInstance : TClienteDao;
     public
       property Model : TCliente read aModel write aModel;
       property Lista : TClientes read aLista write aLista;

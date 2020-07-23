@@ -7,6 +7,7 @@ uses
   System.Math,
   System.Generics.Collections,
 
+  u99Permissions,
   model.Produto,
   dao.Produto,
   interfaces.Produto,
@@ -109,6 +110,7 @@ type
     procedure DoExcluirProduto(Sender : TObject);
     procedure DoTeclaBackSpace(Sender : TObject);
     procedure DoTeclaNumero(Sender : TObject);
+    procedure DoTakePhotoFinishTaking(Image: TBitmap);
 
     procedure ListViewProdutoUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure FormCreate(Sender: TObject);
@@ -120,17 +122,17 @@ type
     procedure lblCancelarImagemClick(Sender: TObject);
     procedure lblCapturarImagemCameraClick(Sender: TObject);
     procedure lblCapturarImagemBibliotecaClick(Sender: TObject);
-    procedure actTakePhotoFromLibraryDidFinishTaking(Image: TBitmap);
-    procedure actTakePhotoFromCameraDidFinishTaking(Image: TBitmap);
     procedure ListViewProdutoItemClickEx(const Sender: TObject;
       ItemIndex: Integer; const LocalClickPos: TPointF;
       const ItemObject: TListItemDrawable);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
   strict private
     { Private declarations }
     aDao : TProdutoDao;
     aSelecionarProduto : Boolean;
     FObservers : TList<IObservadorProduto>;
+    FPermissao : T99Permissions;
     procedure FormatarItemProdutoListView(aItem  : TListViewItem);
     procedure AdicionarProdutoListView(aProduto : TProduto);
 
@@ -140,6 +142,7 @@ type
     procedure BuscarProdutos(aBusca : String; aPagina : Integer);
     procedure EditarProduto(const aItemIndex : Integer);
     procedure ExcluirProduto(Sender: TObject);
+    procedure ErroPermissao(Sender : TObject);
 
     function DevolverValorEditado : Boolean;
 
@@ -309,24 +312,14 @@ end;
 
 procedure TFrmProduto.lblCapturarImagemBibliotecaClick(Sender: TObject);
 begin
-  actTakePhotoFromLibrary.ExecuteTarget(Sender);
   OcultarPainelOpacity;
+  FPermissao.PhotoLibrary(actTakePhotoFromLibrary, ErroPermissao);
 end;
 
 procedure TFrmProduto.lblCapturarImagemCameraClick(Sender: TObject);
 begin
-  actTakePhotoFromCamera.ExecuteTarget(Sender);
   OcultarPainelOpacity;
-end;
-
-procedure TFrmProduto.actTakePhotoFromCameraDidFinishTaking(Image: TBitmap);
-begin
-  imgProdutoFoto.Bitmap := Image;
-end;
-
-procedure TFrmProduto.actTakePhotoFromLibraryDidFinishTaking(Image: TBitmap);
-begin
-  imgProdutoFoto.Bitmap := Image;
+  FPermissao.Camera(actTakePhotoFromCamera, ErroPermissao);
 end;
 
 procedure TFrmProduto.AdicionarObservador(Observer: IObservadorProduto);
@@ -572,6 +565,11 @@ begin
   end;
 end;
 
+procedure TFrmProduto.DoTakePhotoFinishTaking(Image: TBitmap);
+begin
+  imgProdutoFoto.Bitmap := Image;
+end;
+
 procedure TFrmProduto.DoTeclaBackSpace(Sender: TObject);
 begin
   TeclaBackSpace;
@@ -685,6 +683,15 @@ begin
   SelecionarProduto         := False;
 end;
 
+procedure TFrmProduto.ErroPermissao(Sender: TObject);
+var
+  msg : TFrmMensagem;
+begin
+  msg := TFrmMensagem.GetInstance;
+  msg.Close;
+  ExibirMsgErro('Você não possui permissão de acesso para este recurso.');
+end;
+
 procedure TFrmProduto.ExcluirProduto(Sender: TObject);
 var
   aItemIndex : Integer;
@@ -763,9 +770,16 @@ begin
   inherited;
   aSelecionarProduto := False;
 //  FObservers := TList<IObservadorProduto>.Create;
+  FPermissao := T99Permissions.Create;
 
   img_produto_sem_foto.Visible  := False;
   img_foto_novo_produto.Visible := False;
+end;
+
+procedure TFrmProduto.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  FPermissao.DisposeOf;
 end;
 
 procedure TFrmProduto.FormShow(Sender: TObject);
