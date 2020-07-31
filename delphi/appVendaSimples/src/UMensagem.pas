@@ -32,9 +32,10 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
+    class var aInstance : TFrmMensagem;
+  private
     { Private declarations }
     aConfirmado : Boolean;
-    class var aInstance : TFrmMensagem;
   public
     { Public declarations }
     property Confirmado : Boolean read aConfirmado;
