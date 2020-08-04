@@ -234,6 +234,7 @@ begin
           ValorPedido   := StrClearValueJson(HTMLDecode(aPedido.Get('vp').JsonValue.ToString)).ToDouble / 100.0;
 
           Contato    := StrClearValueJson(HTMLDecode(aPedido.Get('ct').JsonValue.ToString));
+          Faturado   := (StrClearValueJson(HTMLDecode(aPedido.Get('ft').JsonValue.ToString)) = FLAG_SIM);
           Entregue   := (StrClearValueJson(HTMLDecode(aPedido.Get('et').JsonValue.ToString)) = FLAG_SIM);
           Observacao := StrClearValueJson(HTMLDecode(aPedido.Get('ob').JsonValue.ToString));
           Ativo      := (StrClearValueJson(HTMLDecode(aPedido.Get('at').JsonValue.ToString)) = FLAG_SIM);

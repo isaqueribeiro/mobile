@@ -34,6 +34,7 @@ type
       procedure Insert();
       procedure Update();
       procedure Delete();
+      procedure Limpar();
       procedure Sincronizado();
       procedure AddLista; overload;
       procedure AddLista(aPedido : TPedido); overload;
@@ -479,6 +480,7 @@ begin
       SQL.Add('  , ds_contato      ');
       SQL.Add('  , ds_observacao   ');
       SQL.Add('  , sn_ativo        ');
+      SQL.Add('  , sn_faturado     ');
       SQL.Add('  , sn_entregue     ');
       SQL.Add('  , sn_sincronizado ');
 
@@ -501,6 +503,7 @@ begin
       SQL.Add('  , :ds_contato     ');
       SQL.Add('  , :ds_observacao  ');
       SQL.Add('  , :sn_ativo       ');
+      SQL.Add('  , :sn_faturado    ');
       SQL.Add('  , :sn_entregue    ');
       SQL.Add('  , :sn_sincronizado');
 
@@ -532,6 +535,7 @@ begin
       ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
 
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_faturado').AsString     := IfThen(aModel.Faturado, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_entregue').AsString     := IfThen(aModel.Entregue, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
@@ -543,6 +547,38 @@ begin
 
       ExecSQL;
       aOperacao := TTipoOperacaoDao.toIncluido;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
+procedure TPedidoDao.Limpar;
+var
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(DM);
+  try
+    aQry.Connection  := DM.conn;
+    aQry.Transaction := DM.trans;
+    aQry.UpdateTransaction := DM.trans;
+
+    with DM, aQry do
+    begin
+      SQL.BeginUpdate;
+      SQL.Clear;
+      SQL.Add('Delete from ' + aDDL.getTableNamePedidoItem);
+      SQL.EndUpdate;
+
+      ExecSQL;
+
+      SQL.BeginUpdate;
+      SQL.Clear;
+      SQL.Add('Delete from ' + aDDL.getTableNamePedido);
+      SQL.EndUpdate;
+
+      ExecSQL;
+      aOperacao := TTipoOperacaoDao.toExcluir;
     end;
   finally
     aQry.DisposeOf;
@@ -701,6 +737,7 @@ begin
     ValorDesconto   := FieldByName('vl_desconto').AsCurrency;
     ValorPedido     := FieldByName('vl_pedido').AsCurrency;
     Ativo           := (AnsiUpperCase(FieldByName('sn_ativo').AsString) = 'S');
+    Faturado        := (AnsiUpperCase(FieldByName('sn_faturado').AsString) = 'S');
     Entregue        := (AnsiUpperCase(FieldByName('sn_entregue').AsString) = 'S');
 
     if (Trim(FieldByName('cd_referencia').AsString) <> EmptyStr) then
@@ -742,6 +779,7 @@ begin
       SQL.Add('  , tp_pedido       = :tp_pedido      ');
       SQL.Add('  , ds_observacao   = :ds_observacao  ');
       SQL.Add('  , sn_ativo        = :sn_ativo       ');
+      SQL.Add('  , sn_faturado     = :sn_faturado    ');
       SQL.Add('  , sn_entregue     = :sn_entregue    ');
       SQL.Add('  , sn_sincronizado = :sn_sincronizado');
 
@@ -757,6 +795,7 @@ begin
       ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
 
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_faturado').AsString     := IfThen(aModel.Faturado, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_entregue').AsString     := IfThen(aModel.Entregue, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 
@@ -796,6 +835,7 @@ begin
       SQL.Add('  , ds_contato      = :ds_contato     ');
       SQL.Add('  , ds_observacao   = :ds_observacao  ');
       SQL.Add('  , sn_ativo        = :sn_ativo       ');
+      SQL.Add('  , sn_faturado     = :sn_faturado    ');
       SQL.Add('  , sn_entregue     = :sn_entregue    ');
       SQL.Add('  , sn_sincronizado = :sn_sincronizado');
 
@@ -821,6 +861,7 @@ begin
       ParamByName('ds_observacao').AsString := Trim(Model.Observacao);
 
       ParamByName('sn_ativo').AsString        := IfThen(aModel.Ativo, FLAG_SIM, FLAG_NAO);
+      ParamByName('sn_faturado').AsString     := IfThen(aModel.Faturado, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_entregue').AsString     := IfThen(aModel.Entregue, FLAG_SIM, FLAG_NAO);
       ParamByName('sn_sincronizado').AsString := IfThen(aModel.Sincronizado, FLAG_SIM, FLAG_NAO);
 

@@ -358,13 +358,14 @@ BEGIN
 	  , vl_total_bruto		NUMERIC(18,2)
 	  , vl_total_desconto	NUMERIC(18,2)
 	  , vl_total_pedido		NUMERIC(18,2)
+	  , sn_faturado			SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_faturado = 0) or (sn_faturado = 1))
 	  , sn_entregue			SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_entregue = 0) or (sn_entregue = 1))
 	  , id_usuario			VARCHAR(38) NOT NULL
 	  , cd_pedido_app		INT
 	  , nr_pedido			BIGINT
 	  , dt_ult_edicao		DATETIME
 	);
-
+	/*
 	ALTER TABLE dbo.tb_pedido
 	  ADD cd_pedido_app	INT;
 
@@ -374,6 +375,9 @@ BEGIN
 	ALTER TABLE dbo.tb_pedido
 	  ADD dt_ult_edicao	DATETIME;
 
+	ALTER TABLE dbo.tb_pedido
+	  ADD sn_faturado SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_faturado = 0) or (sn_faturado = 1));
+	*/
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'id_pedido',		N'ID (GUID)';
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'cd_pedido',		N'Código';
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'id_empresa',		N'Empresa';
@@ -387,7 +391,10 @@ BEGIN
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'vl_total_bruto',		N'Valor Total (R$)';
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'vl_total_desconto',	N'Descontos (R$)';
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'vl_total_pedido',		N'Valor Pedido (R$)';
-	Execute dbo.spDocumentarCampo N'tb_pedido', N'sn_entregue',			N'Ativo:
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'sn_faturado',			N'Faturado:
+	0 - Não
+	1 - Sim';
+	Execute dbo.spDocumentarCampo N'tb_pedido', N'sn_entregue',			N'Entregue ao cliente:
 	0 - Não
 	1 - Sim';
 	Execute dbo.spDocumentarCampo N'tb_pedido', N'cd_pedido_app',		N'Código do Pedido no aplicativo';

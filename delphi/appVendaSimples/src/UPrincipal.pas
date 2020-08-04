@@ -23,6 +23,11 @@ uses
   System.JSON,
   Web.HTTPApp,
 
+  {$IFDEF ANDROID}
+  FMX.VirtualKeyBoard,
+  FMX.Platform,
+  {$ENDIF}
+
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.Objects, FMX.Controls.Presentation, FMX.StdCtrls, FMX.Edit, FMX.ListView.Types,
@@ -85,7 +90,7 @@ type
     layoutMaisOpcoesL3: TLayout;
     imageSair: TImage;
     labelSair: TLabel;
-    img_entregue: TImage;
+    img_faturado: TImage;
     img_sinc: TImage;
     img_nao_sinc: TImage;
     img_lida: TImage;
@@ -113,6 +118,7 @@ type
     imgExcluirNotificacao: TImage;
     img_opcoes: TImage;
     TmrNotificacao: TTimer;
+    img_entregue: TImage;
     procedure DoFecharApp(Sender: TObject);
     procedure DoCloseApp(Sender: TObject);
     procedure DoSelecinarTab(Sender: TObject);
@@ -142,6 +148,7 @@ type
     procedure ListViewPedidoItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
     procedure TmrNotificacaoTimer(Sender: TObject);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
   private
     { Private declarations }
     procedure DefinirIndices;
@@ -562,6 +569,7 @@ var
   aUser : TUsuarioDao;
   aEmpr : TLojaDao;
   aNoti : TNotificacaoDao;
+  aPedido  : TPedidoDao;
   aCliente : TClienteDao;
   aProduto : TProdutoDao;
 begin
@@ -569,6 +577,9 @@ begin
 
   msg := TFrmMensagem.GetInstance;
   msg.Close;
+
+  aPedido := TPedidoDao.GetInstance();
+  aPedido.Limpar();
 
   aNoti := TNotificacaoDao.GetInstance();
   aNoti.Limpar();
@@ -588,6 +599,7 @@ begin
   TConfiguracaoDao.GetInstance().Delete('empresa_padrao');
   TConfiguracaoDao.GetInstance().Delete('dt-atualizacao-cliente');
   TConfiguracaoDao.GetInstance().Delete('dt-atualizacao-produto');
+  TConfiguracaoDao.GetInstance().Delete('dt-atualizacao-pedido');
 
   EfetuarLogin(True);
   Self.Close;
@@ -751,6 +763,10 @@ begin
     if aPedido.Entregue then
       aImage.Bitmap := img_entregue.Bitmap
     else
+    // Faturado
+    if aPedido.Faturado then
+      aImage.Bitmap := img_faturado.Bitmap
+    else
       aImage.Visible := False;
 
     // Sincronizado
@@ -767,6 +783,7 @@ begin
   DefinirIndices;
 
   img_entregue.Visible := False;
+  img_faturado.Visible := False;
   img_sinc.Visible     := False;
   img_nao_sinc.Visible := False;
   img_lida.Visible     := False;
@@ -776,6 +793,40 @@ begin
 
   Application.MainForm   := Self;
   TmrNotificacao.Enabled := True;
+end;
+
+procedure TFrmPrincipal.FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
+{$IFDEF ANDROID}
+var
+  FService : IFMXVirtualKeyBoardService;
+{$ENDIF}
+begin
+  {$IFDEF ANDROID}
+  if (Key = vkHardwareBack) then
+  begin
+    TPlatformServices.Current.SupportsPlatformService(IFMXVirtualKeyBoardService, IInterface(FService));
+
+    if (FService <> nil) and (TVirtualKeyboardState.Visible in FService.VirtualKeyboardState) then
+    begin
+      // Botão BACK pressionado e teclado virtual visível
+      // { apenas fecha o teclado }
+    end
+    else
+    begin
+      if (not TabPedido.Visible) then
+        Key := 0;
+
+      if (TabCliente.Visible) then
+        SelecionarTab( idxTabPedido )
+      else
+      if (TabNotificacao.Visible) then
+        SelecionarTab( idxTabCliente )
+      else
+      if (TabMais.Visible) then
+        SelecionarTab( idxTabNotificacao );
+    end;
+  end;
+  {$ENDIF}
 end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);

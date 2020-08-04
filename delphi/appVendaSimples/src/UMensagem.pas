@@ -8,6 +8,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Ani;
 
 type
+  TCallbackProcedure = procedure(Sender: TObject) of Object;
   TFrmMensagem = class(TForm)
     StyleBookApp: TStyleBook;
     RectangleFundo: TRectangle;
@@ -36,6 +37,7 @@ type
   private
     { Private declarations }
     aConfirmado : Boolean;
+    MyCallBack  : TCallbackProcedure;
   public
     { Public declarations }
     property Confirmado : Boolean read aConfirmado;
@@ -46,7 +48,7 @@ type
   procedure ExibirMsgErro(aMensagem : String);
   procedure ExibirMsgAlerta(aMensagem : String);
   procedure ExibirMsgSucesso(aMensagem : String);
-  procedure ExibirMsgConfirmacao(aTitulo, aMensagem : String; aEvento : TNotifyEvent);
+  procedure ExibirMsgConfirmacao(aTitulo, aMensagem : String; aCallBack : TCallbackProcedure);
 
 implementation
 
@@ -138,7 +140,7 @@ begin
   end;
 end;
 
-procedure ExibirMsgConfirmacao(aTitulo, aMensagem : String; aEvento : TNotifyEvent);
+procedure ExibirMsgConfirmacao(aTitulo, aMensagem : String; aCallBack : TCallbackProcedure);
 var
   aForm : TFrmMensagem;
 begin
@@ -158,7 +160,10 @@ begin
       RectangleOK.Visible     := True;
       RectangleFechar.Visible := True;
 
-      LabelOK.OnClick  := aEvento;
+      MyCallBack := aCallBack;
+
+      LabelOK.OnClick     := DoOK;
+      LabelFechar.OnClick := DoFechar;
 
       RectangleOK.Align     := TAlignLayout.Left;
       RectangleFechar.Align := TAlignLayout.Right;
@@ -180,6 +185,10 @@ procedure TFrmMensagem.DoOK(Sender: TObject);
 begin
   RectangleMensagem.Visible := False;
   aConfirmado := True;
+
+  if Assigned(MyCallBack) then
+    MyCallBack(Self);
+
   Self.Close;
 end;
 
@@ -192,6 +201,8 @@ procedure TFrmMensagem.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   RectangleOK.Visible     := False;
   RectangleFechar.Visible := False;
+
+  MyCallBack := nil;
 end;
 
 procedure TFrmMensagem.FormCreate(Sender: TObject);

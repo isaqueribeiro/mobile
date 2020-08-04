@@ -171,6 +171,7 @@ begin
     aSQL.Add('    , vl_desconto     NUMERIC (15,2) DEFAULT (0)');
     aSQL.Add('    , vl_pedido       NUMERIC (15,2) DEFAULT (0)'); //  (vl_pedido = vl_total -  vl_desconto)
     aSQL.Add('    , sn_ativo        CHAR(1) DEFAULT (' + QuotedStr(FLAG_SIM) + ') NOT NULL');
+    aSQL.Add('    , sn_faturado     CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL'); // Pedido Faturado na Loja ?
     aSQL.Add('    , sn_entregue     CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL'); // Pedido Entregue ao Cliente ?
     aSQL.Add('    , sn_sincronizado CHAR(1) DEFAULT (' + QuotedStr(FLAG_NAO) + ') NOT NULL');
     aSQL.Add('    , cd_referencia   VARCHAR (38)'); // Referência do Pedido no Servidor Web (ID)

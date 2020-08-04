@@ -61,6 +61,7 @@ namespace webVendaSimples
             public String vd = "0";  // Valor Desconto
             public String vp = "0";  // Valor Pedido
             public String ob = "";   // Observações
+            public String ft = "N";  // Faturado
             public String et = "N";  // Entregue
             public String at = "N";  // Ativo
             public String nr = "";   // Número
@@ -465,6 +466,7 @@ namespace webVendaSimples
                         "  , convert(varchar(20), convert(BIGINT, coalesce(p.vl_total_bruto,    0) * 100)) as vl_total_bruto " +
                         "  , convert(varchar(20), convert(BIGINT, coalesce(p.vl_total_desconto, 0) * 100)) as vl_total_desconto " +
                         "  , convert(varchar(20), convert(BIGINT, coalesce(p.vl_total_pedido,   0) * 100)) as vl_total_pedido " +
+                        "  , Case when p.sn_faturado = 1 then 'S' else 'N' end as sn_faturado " +
                         "  , Case when p.sn_entregue = 1 then 'S' else 'N' end as sn_entregue " +
                         //"  , Convert(varchar(20), p.nr_pedido) as nr_pedido " +
                         "  , Case when isnull(trim(a.nr_cnpj_cpf), '') = '' " +
@@ -522,13 +524,14 @@ namespace webVendaSimples
                         ped.vt = Server.HtmlEncode(qry.GetString(8).ToString());   // Valor Total
                         ped.vd = Server.HtmlEncode(qry.GetString(9).ToString());   // Valor Desconto
                         ped.vp = Server.HtmlEncode(qry.GetString(10).ToString());  // Valor Pedido
-                        ped.et = Server.HtmlEncode(qry.GetString(11).ToString());  // Entregue? (S/N)
-                        ped.nr = Server.HtmlEncode(qry.GetString(12).ToString());  // Número
+                        ped.ft = Server.HtmlEncode(qry.GetString(11).ToString());  // Faturado? (S/N)
+                        ped.et = Server.HtmlEncode(qry.GetString(12).ToString());  // Entregue? (S/N)
+                        ped.nr = Server.HtmlEncode(qry.GetString(13).ToString());  // Número
                         ped.at = "S";
-                        ped.lc = Server.HtmlEncode(qry.GetString(14).ToString());  // CPF/CNPJ da Loja
+                        ped.lc = Server.HtmlEncode(qry.GetString(15).ToString());  // CPF/CNPJ da Loja
 
                         ped.itens = new List<Item>();
-                        arr.data  = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", qry.GetString(13) ));  // Data atual do servidor SQL Server
+                        arr.data  = Server.HtmlEncode(String.Format("{0:dd/MM/yyyy HH:mm:ss}", qry.GetString(14) ));  // Data atual do servidor SQL Server
 
                         // Carregar itens do Pedido
                         SqlCommand cmd_item = new SqlCommand("", conn.Conn());

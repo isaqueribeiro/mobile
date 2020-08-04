@@ -179,6 +179,8 @@ begin
     Model.ID   := GUID_NULL;
     Model.Tipo := TTipoPedido.tpOrcamento;
     Model.DataEmissao := Date;
+    Model.Faturado    := False;
+    Model.Entregue    := False;
 
     aLojaID := TConfiguracaoDao.GetInstance().GetValue('empresa_padrao');
     if (aLojaID.Trim <> EmptyStr) then

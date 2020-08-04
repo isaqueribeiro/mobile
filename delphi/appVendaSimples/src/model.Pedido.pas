@@ -22,6 +22,7 @@ type
       aValorDesconto,
       aValorPedido  : Currency;
       aAtivo        ,
+      aFaturado     ,
       aEntregue     : Boolean;
       aObservacao   : String;
       aReferencia   : TGUID;
@@ -42,6 +43,7 @@ type
       property ValorDesconto : Currency read aValorDesconto write aValorDesconto;
       property ValorPedido   : Currency read aValorPedido write aValorPedido;
       property Ativo         : Boolean read aAtivo write aAtivo;
+      property Faturado      : Boolean read aFaturado write aFaturado;
       property Entregue      : Boolean read aEntregue write aEntregue;
       property Sincronizado  : Boolean read GetSincronizado;
       property Observacao    : String read aObservacao write aObservacao;
@@ -75,6 +77,7 @@ begin
   aValorDesconto := 0.0;
   aValorPedido   := 0.0;
   aAtivo         := True;
+  aFaturado      := False;
   aEntregue      := False;
   aObservacao    := EmptyStr;
   aReferencia    := GUID_NULL;
