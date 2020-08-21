@@ -1,0 +1,13 @@
+object FrmInicio: TFrmInicio
+  Left = 0
+  Top = 0
+  Caption = 'Financeiro Simples'
+  ClientHeight = 720
+  ClientWidth = 361
+  Position = ScreenCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnClose = FormClose
+  DesignerMasterStyle = 3
+end

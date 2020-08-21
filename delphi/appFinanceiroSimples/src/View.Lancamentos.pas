@@ -1,0 +1,153 @@
+unit View.Lancamentos;
+
+interface
+
+uses
+  Classe.ObjetoItemListView,
+  View.LancamentoEdicao,
+
+  System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Layouts, FMX.Controls.Presentation,
+  FMX.StdCtrls, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
+
+type
+  TFrmLancamentos = class(TForm)
+    LayoutTool: TLayout;
+    ImageFechar: TImage;
+    LayoutResumo: TLayout;
+    RectangleResumo: TRectangle;
+    ImageAdicionar: TImage;
+    LayoutReceita: TLayout;
+    lblValorReceitas: TLabel;
+    LabelReceita: TLabel;
+    LayoutDespesa: TLayout;
+    lblValorDespesas: TLabel;
+    LabelDespesa: TLabel;
+    LayoutSaldo: TLayout;
+    lblValorSaldo: TLabel;
+    LabelSaldo: TLabel;
+    LayoutMes: TLayout;
+    ImageVoltarMes: TImage;
+    ImageProximoMes: TImage;
+    RectangleMes: TRectangle;
+    LabelMes: TLabel;
+    ImgSemImage: TImage;
+    ListViewLancamentos: TListView;
+    LabelTitulo: TLabel;
+    procedure ImageFecharClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure ImageAdicionarClick(Sender: TObject);
+    procedure ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+  strict private
+    class var _instance : TFrmLancamentos;
+  private
+    { Private declarations }
+    FEdicao : TFrmLancamentoEdicao;
+    procedure addItemLancamento(const aObjeto : TObjetoItemListView);
+    procedure formatItemLancamento(const aItem: TListViewItem);
+  public
+    { Public declarations }
+    class function GetInstance() : TFrmLancamentos;
+    class function Instanciado : Boolean;
+  end;
+
+//var
+//  FrmLancamentos: TFrmLancamentos;
+//
+implementation
+
+{$R *.fmx}
+
+uses
+    DataModule.Recursos;
+
+procedure TFrmLancamentos.addItemLancamento(const aObjeto: TObjetoItemListView);
+var
+  aItem : TListViewItem;
+begin
+  aItem := ListViewLancamentos.Items.Add;
+  aItem.TagString := aObjeto.ID.ToString;
+  aItem.TagObject := aObjeto;
+
+  formatItemLancamento(aItem);
+end;
+
+procedure TFrmLancamentos.formatItemLancamento(const aItem: TListViewItem);
+var
+  aObjeto : TObjetoItemListView;
+  aTexto  : TListItemText;
+  aImage  : TListItemImage;
+begin
+  if (aItem <> nil) then
+  begin
+    aObjeto := TObjetoItemListView(aItem.TagObject);
+    if (aObjeto <> nil) then
+    begin
+      // Descrição
+      aTexto := TListItemText(aItem.Objects.FindDrawable('TextDescricao'));
+      aTexto.Text  := aObjeto.Descricao;
+      aTexto.Width := Self.Width - (38 + 89 + 6);
+
+      // Valor
+      aTexto := TListItemText(aItem.Objects.FindDrawable('TextValor'));
+      aTexto.Text := aObjeto.Valor;
+
+      // Categoria
+      aTexto := TListItemText(aItem.Objects.FindDrawable('TextCategoria'));
+      aTexto.Text  := IfThen(aObjeto.Categoria.Trim.IsEmpty, '. . . ', aObjeto.Categoria);
+      aTexto.Width := Self.Width - (38 + 89 + 6);
+
+      // Data do Movimento
+      aTexto := TListItemText(aItem.Objects.FindDrawable('TextData'));
+      aTexto.Text := aObjeto.DataMovimento;
+
+      // Ícone
+      aImage := TListItemImage(aItem.Objects.FindDrawable('ImageCategoria'));
+      aImage.Opacity := 0.5;
+      if aObjeto.Categoria.Trim.IsEmpty then
+        aImage.Bitmap := ImgSemImage.Bitmap
+      else
+      begin
+        aImage.Bitmap := nil;
+      end;
+
+      aItem.Height := 60;
+    end;
+  end;
+end;
+
+procedure TFrmLancamentos.FormCreate(Sender: TObject);
+begin
+  ImgSemImage.Visible := False;
+end;
+
+class function TFrmLancamentos.GetInstance: TFrmLancamentos;
+begin
+  if not Assigned(_instance) then
+    Application.CreateForm(TFrmLancamentos, _instance);
+
+  Result := _instance;
+end;
+
+procedure TFrmLancamentos.ImageAdicionarClick(Sender: TObject);
+begin
+  FEdicao := TFrmLancamentoEdicao.GetInstance();
+  FEdicao.Show;
+end;
+
+procedure TFrmLancamentos.ImageFecharClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
+class function TFrmLancamentos.Instanciado: Boolean;
+begin
+  Result := Assigned(_instance);
+end;
+
+procedure TFrmLancamentos.ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+begin
+  formatItemLancamento(AItem);
+end;
+
+end.
