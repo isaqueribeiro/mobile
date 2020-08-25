@@ -9,17 +9,19 @@ type
   TObjetoItemListView = class
   private
     FID: TGUID;
+    FCodigo: Integer;
     FDescricao: String;
     FCategoria: String;
     FValor: String;
     FDataMovimento: String;
-    FCodigo: Integer;
+    FImage : String;
     procedure SetCategoria(const Value: String);
     procedure SetDataMovimento(const Value: String);
     procedure SetDescricao(const Value: String);
     procedure SetID(const Value: TGUID);
     procedure SetValor(const Value: String);
     procedure SetCodigo(const Value: Integer);
+    procedure SetImage(const Value: String);
   public
     constructor Create;
 
@@ -29,7 +31,10 @@ type
     property Categoria : String read FCategoria write SetCategoria;
     property Valor : String read FValor write SetValor;
     property DataMovimento : String read FDataMovimento write SetDataMovimento;
+    property Image : String read FImage write SetImage;
   end;
+
+  TListaObjetos = Array of TObjetoItemListView;
 
 implementation
 
@@ -68,6 +73,11 @@ end;
 procedure TObjetoItemListView.SetID(const Value: TGUID);
 begin
   FID := Value;
+end;
+
+procedure TObjetoItemListView.SetImage(const Value: String);
+begin
+  FImage := Value.Trim();
 end;
 
 procedure TObjetoItemListView.SetValor(const Value: String);

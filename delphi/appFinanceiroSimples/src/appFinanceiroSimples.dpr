@@ -14,7 +14,9 @@ uses
   View.LancamentoEdicao in 'View.LancamentoEdicao.pas' {FrmLancamentoEdicao},
   View.Categorias in 'View.Categorias.pas' {FrmCategorias},
   View.CategoriaEdicao in 'View.CategoriaEdicao.pas' {FrmCategoriaEdicao},
-  DataModule.Conexao in 'DataModule\DataModule.Conexao.pas' {DMConexao: TDataModule};
+  DataModule.Conexao in 'DataModule\DataModule.Conexao.pas' {DMConexao: TDataModule},
+  Model.Categoria in 'Models\Model.Categoria.pas',
+  Controller.Categoria in 'Controllers\Controller.Categoria.pas';
 
 {$R *.res}
 

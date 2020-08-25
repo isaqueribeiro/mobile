@@ -37,8 +37,10 @@ begin
     aSQL.Clear;
     aSQL.BeginUpdate;
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_CATEGORIA + ' (');
-    aSQL.Add('    cd_categoria INTEGER NOT NULL AUTOINCREMENT PRIMARY KEY');
+    aSQL.Add('    cd_categoria INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
     aSQL.Add('  , ds_categoria VARCHAR (50)');
+    aSQL.Add('  , ic_categoria BLOB');
+    aSQL.Add('  , ix_categoria INTEGER');
     aSQL.Add(');');
     aSQL.EndUpdate;
   finally

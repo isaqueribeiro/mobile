@@ -5,6 +5,7 @@ interface
 uses
   Classe.ObjetoItemListView,
   View.CategoriaEdicao,
+  Controller.Categoria,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Controls.Presentation, FMX.StdCtrls,
@@ -31,8 +32,11 @@ type
   private
     { Private declarations }
     FEdicao : TFrmCategoriaEdicao;
+    FCategogiaController : TCategoriaController;
     procedure addItemCategoria(const aObjeto : TObjetoItemListView);
     procedure formatItemCategoria(const aItem: TListViewItem);
+
+    procedure CarregarCategorias;
   public
     { Public declarations }
     class function GetInstance() : TFrmCategorias;
@@ -59,6 +63,11 @@ begin
   aItem.TagObject := aObjeto;
 
   formatItemCategoria(aItem);
+end;
+
+procedure TFrmCategorias.CarregarCategorias;
+begin
+  // FCategogiaController
 end;
 
 procedure TFrmCategorias.formatItemCategoria(const aItem: TListViewItem);
@@ -100,7 +109,10 @@ end;
 
 procedure TFrmCategorias.FormCreate(Sender: TObject);
 begin
-  ImgSemImage.Visible := False;
+  ImgSemImage.Visible  := False;
+  FCategogiaController := TCategoriaController.GetInstance();
+
+  CarregarCategorias;
 end;
 
 class function TFrmCategorias.GetInstance: TFrmCategorias;
