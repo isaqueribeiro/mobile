@@ -16,27 +16,36 @@ File_13=TSourceModule,'d:\myapps\delphitokyo\studio\19.0\source\data\Data.DB.pas
 
 [Modules]
 Module0=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas
-Module1=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\FontesMoney-Aula11\Fontes\UnitCategoriasCad.pas
-Module2=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas
-Module3=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas
-Module4=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Classes\Classe.ObjetoItemListView.pas
-Module5=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Models\Model.Categoria.pas
-Module6=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas
-Module7=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.pas
-Module8=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj
-Module9=default.htm
-Module10=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.pas
-Module11=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.pas
-Module12=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Lancamentos.pas
-Module13=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.LancamentoEdicao.pas
-Module14=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.pas
+Module1=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj
+Module2=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.pas
+Module3=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\FontesMoney-Aula11\Fontes\UnitCategoriasCad.pas
+Module4=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.pas
+Module5=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas
+Module6=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas
+Module7=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Classes\Classe.ObjetoItemListView.pas
+Module8=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Models\Model.Categoria.pas
+Module9=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas
+Module10=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.pas
+Module11=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Lancamentos.pas
+Module12=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.LancamentoEdicao.pas
+Module13=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.pas
+Module14=default.htm
 Count=15
 EditWindowCount=1
 
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas]
 ModuleType=TSourceModule
 
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj]
+ModuleType=TBaseProject
+
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.pas]
+ModuleType=TSourceModule
+
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\FontesMoney-Aula11\Fontes\UnitCategoriasCad.pas]
+ModuleType=TSourceModule
+
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.pas]
 ModuleType=TSourceModule
 
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas]
@@ -57,18 +66,6 @@ ModuleType=TSourceModule
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj]
-ModuleType=TBaseProject
-
-[default.htm]
-ModuleType=TURLModule
-
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.pas]
-ModuleType=TSourceModule
-
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.pas]
-ModuleType=TSourceModule
-
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Lancamentos.pas]
 ModuleType=TSourceModule
 
@@ -77,6 +74,9 @@ ModuleType=TSourceModule
 
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.pas]
 ModuleType=TSourceModule
+
+[default.htm]
+ModuleType=TURLModule
 
 [EditWindow0]
 ViewCount=15
@@ -119,8 +119,8 @@ RightPanelSize=2000
 RightPanelClients=DockSite2,DockSite4
 RightPanelData=00000800010100000000201300000000000001D00700000000000001000000004412000009000000446F636B536974653201000000000022000009000000446F636B5369746534FFFFFFFF
 BottomPanelSize=0
-BottomPanelClients=MessageView,DockSite1
-BottomPanelData=000008000102020000000F0000004D65737361676556696577466F726D09000000446F636B5369746531DE4400000000000002E5050000000000000100000000DE4400000F0000004D65737361676556696577466F726DFFFFFFFF
+BottomPanelClients=DockSite1,MessageView
+BottomPanelData=0000080001020200000009000000446F636B53697465310F0000004D65737361676556696577466F726D1534000000000000022606000000000000FFFFFFFF
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
 BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779F1D00000000000002F206000000000000FFFFFFFF
@@ -300,11 +300,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1029
+Height=1154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1029
+ClientHeight=1154
 TBDockHeight=212
 LRDockWidth=13604
 Dockable=1
@@ -386,14 +386,14 @@ Visible=0
 Docked=1
 State=0
 Left=0
-Top=28
-Width=9917
-Height=1298
+Top=0
+Width=2771
+Height=1423
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=9917
-ClientHeight=1298
-TBDockHeight=1298
+ClientWidth=2771
+ClientHeight=1423
+TBDockHeight=1423
 LRDockWidth=2771
 Dockable=1
 StayOnTop=0
@@ -425,14 +425,14 @@ Docked=0
 State=0
 Left=0
 Top=0
-Width=1786
-Height=6115
+Width=1948
+Height=4279
 MaxLeft=-5
 MaxTop=-10
-ClientWidth=1724
-ClientHeight=5750
-TBDockHeight=6115
-LRDockWidth=1786
+ClientWidth=1885
+ClientHeight=3913
+TBDockHeight=4279
+LRDockWidth=1948
 Dockable=1
 StayOnTop=0
 
@@ -458,8 +458,8 @@ SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Caption,Action
-ExpandedItems=Border=0,BorderIcons=0,Fill=0
+SelectedItem=Action,
+ExpandedItems=Border=0,BorderIcons=0,Fill=0,FormFactor=0,"LiveBindings Designer=0",Padding=0
 
 [frmDesignPreview]
 PercentageSizes=1
@@ -470,11 +470,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=6433
+Height=6154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=6433
+ClientHeight=6154
 TBDockHeight=5962
 LRDockWidth=2510
 Dockable=1
@@ -486,8 +486,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1528
-Top=249
+Left=0
+Top=0
 Width=276
 Height=365
 MaxLeft=-1
@@ -511,11 +511,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1029
+Height=1154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1029
+ClientHeight=1154
 TBDockHeight=413
 LRDockWidth=4953
 Dockable=1
@@ -530,11 +530,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1029
+Height=1154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1029
+ClientHeight=1154
 TBDockHeight=212
 LRDockWidth=7406
 Dockable=1
@@ -553,11 +553,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1029
+Height=1154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1029
+ClientHeight=1154
 TBDockHeight=1538
 LRDockWidth=3484
 Dockable=1
@@ -572,11 +572,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1029
+Height=1154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1029
+ClientHeight=1154
 TBDockHeight=2067
 LRDockWidth=3484
 Dockable=1
@@ -610,11 +610,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=971
+Height=1212
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=971
+ClientHeight=1212
 TBDockHeight=2317
 LRDockWidth=2823
 Dockable=1
@@ -675,11 +675,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=6433
+Height=6154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=6433
+ClientHeight=6154
 TBDockHeight=4885
 LRDockWidth=7151
 Dockable=1
@@ -691,8 +691,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=380
-Top=817
+Left=0
+Top=0
 Width=2854
 Height=3212
 MaxLeft=-1
@@ -710,8 +710,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-8
-Top=-120
+Left=-39
+Top=-235
 Width=1849
 Height=3144
 MaxLeft=-1
@@ -770,11 +770,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1029
+Height=1154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1029
+ClientHeight=1154
 TBDockHeight=1548
 LRDockWidth=8740
 Dockable=1
@@ -815,11 +815,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=6433
+Height=6154
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=6433
+ClientHeight=6154
 TBDockHeight=4885
 LRDockWidth=5307
 Dockable=1
@@ -879,15 +879,15 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=952
-Top=28
+Left=8
+Top=8
 Width=3823
-Height=1298
+Height=1423
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1298
-TBDockHeight=1298
+ClientHeight=1423
+TBDockHeight=1423
 LRDockWidth=3823
 Dockable=1
 StayOnTop=0
