@@ -445,6 +445,18 @@
         </DCCReference>
         <DCCReference Include="Models\Model.Categoria.pas"/>
         <DCCReference Include="Controllers\Controller.Categoria.pas"/>
+        <RcItem Include="Assets\categoria-billet-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>cat_boleto</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-null-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>cat_nulo</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-several-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>cat_diversos</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -471,6 +483,12 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="Assets\categoria-null-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\db\financa_simples.db" Configuration="Debug" Class="File">
                     <Platform Name="iOSDevice64">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
@@ -556,9 +574,21 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Assets\categoria-billet-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\bin\Win32\Debug\appFinanceiroSimples.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>appFinanceiroSimples.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-several-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

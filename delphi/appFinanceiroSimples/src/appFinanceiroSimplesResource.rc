@@ -1,0 +1,3 @@
+cat_boleto RCDATA "Assets\\categoria-billet-64x64.png"
+cat_nulo RCDATA "Assets\\categoria-null-64x64.png"
+cat_diversos RCDATA "Assets\\categoria-several-64x64.png"
