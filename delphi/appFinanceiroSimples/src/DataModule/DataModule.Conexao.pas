@@ -21,6 +21,7 @@ type
   public
     { Public declarations }
     class function GetInstance() : TDMConexao;
+    class function GetLastInsertRowID : Integer;
   end;
 
 //var
@@ -66,6 +67,33 @@ begin
     _instance := TDMConexao.Create(Application);
 
   Result := _instance;
+end;
+
+class function TDMConexao.GetLastInsertRowID: Integer;
+var
+  aQry : TFDQuery;
+begin
+  Result := 0;
+
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    with aQry, SQL do
+    begin
+      BeginUpdate;
+      Clear;
+
+      Add('SELECT last_insert_rowid() as ID');
+
+      EndUpdate;
+      Open;
+
+      Result := FieldByName('ID').AsInteger;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
 end;
 
 end.

@@ -142,6 +142,8 @@ begin
 
   addItemCategoria( o );
 
+  FCategogiaController.New;
+
   FEdicao := TFrmCategoriaEdicao.GetInstance();
   FEdicao.Show;
 end;

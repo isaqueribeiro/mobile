@@ -445,17 +445,110 @@
         </DCCReference>
         <DCCReference Include="Models\Model.Categoria.pas"/>
         <DCCReference Include="Controllers\Controller.Categoria.pas"/>
+        <DCCReference Include="Services\Services.Utils.pas"/>
         <RcItem Include="Assets\categoria-billet-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>cat_boleto</ResourceId>
+            <ResourceId>categoria_3</ResourceId>
         </RcItem>
         <RcItem Include="Assets\categoria-null-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>cat_nulo</ResourceId>
+            <ResourceId>categoria_1</ResourceId>
         </RcItem>
         <RcItem Include="Assets\categoria-several-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>cat_diversos</ResourceId>
+            <ResourceId>categoria_2</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-airplane-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_12</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-baby-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_4</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-baby-more-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_5</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-baby-utils-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_6</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-bike-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_11</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-bus-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_10</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-car-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_8</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-fuel-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_13</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-health-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_19</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-health-hospital-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_20</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-health-medical-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_21</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-health-utils-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_22</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-home-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_16</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-input-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_17</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-lunch-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_23</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-mobile-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_14</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-money-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_24</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-money-card-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_25</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-motorcycle-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_9</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-output-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_18</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-shopping-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_15</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-toy-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_7</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-travel-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_26</ResourceId>
         </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -496,6 +589,125 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>financa_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-bus-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-health-hospital-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-mobile-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-fuel-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-billet-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
+                        <RemoteName>financa_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="Android64">
+                        <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>financa_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Debug" Class="File">
+                    <Platform Name="Android64">
+                        <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>financa_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-airplane-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
+                    <Platform Name="Android">
+                        <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>financa_simples.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-baby-more-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-money-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-money-card-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-output-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-travel-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-input-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-baby-utils-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-several-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\db\financa_simples.db" Configuration="Debug" Class="File">
                     <Platform Name="Android">
                         <RemoteDir>.\assets\internal\</RemoteDir>
@@ -503,10 +715,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="iOSSimulator">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>financa_simples.db</RemoteName>
+                <DeployFile LocalName="Assets\categoria-health-utils-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -521,36 +732,33 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="..\db\financa_simples.db" Configuration="Debug" Class="File">
-                    <Platform Name="iOSDevice32">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>financa_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="Android64">
-                        <RemoteDir>.\assets\internal\</RemoteDir>
-                        <RemoteName>financa_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Debug" Class="File">
-                    <Platform Name="Android64">
-                        <RemoteDir>.\assets\internal\</RemoteDir>
-                        <RemoteName>financa_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Debug" Class="File">
                     <Platform Name="iOSSimulator">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>financa_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Assets\categoria-car-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-health-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-health-medical-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="Android">
-                        <RemoteDir>.\assets\internal\</RemoteDir>
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>financa_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -561,20 +769,37 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
-                    <Platform Name="iOSDevice32">
-                        <RemoteDir>StartUp\Documents\</RemoteDir>
-                        <RemoteName>financa_simples.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\db\financa_simples.db" Configuration="Release" Class="File">
                     <Platform Name="iOSDevice64">
                         <RemoteDir>StartUp\Documents\</RemoteDir>
                         <RemoteName>financa_simples.db</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-billet-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-bike-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-lunch-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-home-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-shopping-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-toy-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -586,7 +811,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-several-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-baby-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-motorcycle-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

@@ -53,6 +53,26 @@ type
     Image14: TImage;
     Image15: TImage;
     Image16: TImage;
+    ListBoxItem17: TListBoxItem;
+    ListBoxItem18: TListBoxItem;
+    ListBoxItem19: TListBoxItem;
+    ListBoxItem20: TListBoxItem;
+    ListBoxItem21: TListBoxItem;
+    ListBoxItem22: TListBoxItem;
+    ListBoxItem23: TListBoxItem;
+    ListBoxItem24: TListBoxItem;
+    ListBoxItem25: TListBoxItem;
+    ListBoxItem26: TListBoxItem;
+    Image17: TImage;
+    Image18: TImage;
+    Image19: TImage;
+    Image20: TImage;
+    Image21: TImage;
+    Image22: TImage;
+    Image23: TImage;
+    Image24: TImage;
+    Image25: TImage;
+    Image26: TImage;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -62,6 +82,7 @@ type
     class var _instance : TFrmCategoriaEdicao;
   private
     { Private declarations }
+    procedure CarregarImagens;
   public
     { Public declarations }
     class function GetInstance() : TFrmCategoriaEdicao;
@@ -75,9 +96,22 @@ implementation
 {$R *.fmx}
 
 uses
-  DataModule.Recursos;
+  DataModule.Recursos, Services.Utils;
 
 { TFrmCategoriaEdicao }
+
+procedure TFrmCategoriaEdicao.CarregarImagens;
+var
+  I : Integer;
+  aImage : TComponent;
+begin
+  for I := 1 to ListBoxIcone.Count do
+  begin
+    aImage := Self.FindComponent('Image' + I.ToString);
+    if Assigned(aImage) then
+      TServicesUtils.ResourceImage('categoria_' + I.ToString, TImage(aImage));
+  end;
+end;
 
 procedure TFrmCategoriaEdicao.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -88,6 +122,7 @@ end;
 procedure TFrmCategoriaEdicao.FormCreate(Sender: TObject);
 begin
   ListBoxIcone.Columns := Trunc(LabelIcone.Width / 80);
+  CarregarImagens;
 end;
 
 procedure TFrmCategoriaEdicao.FormResize(Sender: TObject);
