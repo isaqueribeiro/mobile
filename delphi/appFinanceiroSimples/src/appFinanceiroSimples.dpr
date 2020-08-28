@@ -19,7 +19,8 @@ uses
   DataModule.Conexao in 'DataModule\DataModule.Conexao.pas' {DMConexao: TDataModule},
   Model.Categoria in 'Models\Model.Categoria.pas',
   Controller.Categoria in 'Controllers\Controller.Categoria.pas',
-  Services.Utils in 'Services\Services.Utils.pas';
+  Services.Utils in 'Services\Services.Utils.pas',
+  Services.SmartPoint in 'Services\Services.SmartPoint.pas';
 
 {$R *.res}
 

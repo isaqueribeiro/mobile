@@ -24,6 +24,7 @@ type
     procedure SetImage(const Value: String);
   public
     constructor Create;
+    destructor Destroy; override;
 
     property ID : TGUID read FID write SetID;
     property Codigo : Integer read FCodigo write SetCodigo;
@@ -48,6 +49,11 @@ begin
   FCategoria := EmptyStr;
   FValor     := FormatFloat(', 0.00', 0);
   FDataMovimento := FormatDateTime('dd/mm', Date);
+end;
+
+destructor TObjetoItemListView.Destroy;
+begin
+  inherited;
 end;
 
 procedure TObjetoItemListView.SetCategoria(const Value: String);

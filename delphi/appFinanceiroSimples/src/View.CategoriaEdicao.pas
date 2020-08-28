@@ -3,9 +3,11 @@ unit View.CategoriaEdicao;
 interface
 
 uses
+  Controller.Categoria,
+
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Controls.Presentation, FMX.StdCtrls,
-  FMX.Layouts, FMX.Edit, FMX.ListBox;
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Controls.Presentation,
+  FMX.StdCtrls, FMX.Layouts, FMX.Edit, FMX.ListBox;
 
 type
   TFrmCategoriaEdicao = class(TForm)
@@ -73,19 +75,30 @@ type
     Image24: TImage;
     Image25: TImage;
     Image26: TImage;
+    ListBoxItem27: TListBoxItem;
+    ListBoxItem28: TListBoxItem;
+    Image27: TImage;
+    Image28: TImage;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure ImageFecharClick(Sender: TObject);
     procedure SelecionarIcone(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ImageSalvarClick(Sender: TObject);
   strict private
     class var _instance : TFrmCategoriaEdicao;
   private
     { Private declarations }
+    FError : String;
+    FController : TCategoriaController;
     procedure CarregarImagens;
+    procedure CarregarRegistro;
   public
     { Public declarations }
     class function GetInstance() : TFrmCategoriaEdicao;
+
+    property Error : String read FError;
   end;
 
 //var
@@ -113,6 +126,24 @@ begin
   end;
 end;
 
+procedure TFrmCategoriaEdicao.CarregarRegistro;
+var
+  aParente : TComponent;
+begin
+  with FController do
+  begin
+    Find(Attributes.Codigo, FError, True);
+
+    edtDescricao.Text      := Attributes.Descricao;
+    ListBoxIcone.ItemIndex := Attributes.Indice;
+
+    aParente := Self.FindComponent('ListBoxItem' + (ListBoxIcone.ItemIndex + 1).ToString);
+
+    if Assigned(aParente) then
+      ImgSelecao.Parent := TListBoxItem( aParente );
+  end;
+end;
+
 procedure TFrmCategoriaEdicao.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action    := TCloseAction.caFree;
@@ -123,11 +154,24 @@ procedure TFrmCategoriaEdicao.FormCreate(Sender: TObject);
 begin
   ListBoxIcone.Columns := Trunc(LabelIcone.Width / 80);
   CarregarImagens;
+
+  FError := EmptyStr;
+  FController := TCategoriaController.GetInstance();
 end;
 
 procedure TFrmCategoriaEdicao.FormResize(Sender: TObject);
 begin
   ListBoxIcone.Columns := Trunc(LabelIcone.Width / 80);
+end;
+
+procedure TFrmCategoriaEdicao.FormShow(Sender: TObject);
+begin
+  CarregarRegistro;
+
+  if (FController.Attributes.Codigo = 0) then
+    LabelTitulo.Text := 'Nova Categoria'
+  else
+    LabelTitulo.Text := 'Editar Categoria';
 end;
 
 class function TFrmCategoriaEdicao.GetInstance: TFrmCategoriaEdicao;
@@ -143,6 +187,24 @@ begin
   Self.Close;
 end;
 
+procedure TFrmCategoriaEdicao.ImageSalvarClick(Sender: TObject);
+var
+  aExecutado : Boolean;
+begin
+  with FController do
+    Attributes.Descricao := edtDescricao.Text;
+
+  if (FController.Attributes.Codigo = 0) then
+    aExecutado := FController.Insert(FError)
+  else
+    aExecutado := FController.Update(FError);
+
+  if (not FError.IsEmpty) then
+    ShowMessage(FError)
+  else
+    ;
+end;
+
 procedure TFrmCategoriaEdicao.SelecionarIcone(Sender: TObject);
 begin
   if Sender is TImage then
@@ -151,7 +213,8 @@ begin
     ImgSelecao.Parent := TImage(Sender).Parent;
     ImgSelecao.AnimateFloatWait('Opacity', 0.3, 0.2, TAnimationType.&In, TInterpolationType.Circular);
 
-    ShowMessage( TListBoxItem(ImgSelecao.Parent).Index.ToString );
+    FController.Attributes.Indice := TListBoxItem(TImage(Sender).Parent).Index;
+    FController.Attributes.Icone  := TImage(Sender).Bitmap;
   end;
 end;
 

@@ -27,12 +27,15 @@ type
     procedure FormCreate(Sender: TObject);
     procedure ListViewCategoriasUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure ImageAdicionarClick(Sender: TObject);
+    procedure ListViewCategoriasItemClick(const Sender: TObject; const AItem: TListViewItem);
   strict private
     class var _instance : TFrmCategorias;
   private
     { Private declarations }
     FEdicao : TFrmCategoriaEdicao;
     FCategogiaController : TCategoriaController;
+    procedure LimparListView;
+
     procedure addItemCategoria(const aObjeto : TObjetoItemListView);
     procedure formatItemCategoria(const aItem: TListViewItem);
 
@@ -50,7 +53,8 @@ implementation
 {$R *.fmx}
 
 uses
-    DataModule.Recursos;
+    DataModule.Recursos
+  , Services.Utils;
 
 { TFrmCategorias }
 
@@ -66,8 +70,30 @@ begin
 end;
 
 procedure TFrmCategorias.CarregarCategorias;
+var
+  aError : String;
+  I : Integer;
+  o : TObjetoItemListView;
 begin
-  // FCategogiaController
+  FCategogiaController.Load(aError);
+
+  if not aError.IsEmpty then
+    ShowMessage(aError)
+  else
+  begin
+    LimparListView;
+
+    for I in FCategogiaController.Lista.Keys do
+    begin
+      o := TObjetoItemListView.Create;
+
+      o.Codigo    := FCategogiaController.Lista[I].Codigo;
+      o.Descricao := FCategogiaController.Lista[I].Descricao;
+      o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Lista[I].Icone );
+
+      addItemCategoria(o);
+    end;
+  end;
 end;
 
 procedure TFrmCategorias.formatItemCategoria(const aItem: TListViewItem);
@@ -83,17 +109,24 @@ begin
     begin
       // Categoria
       aTexto := TListItemText(aItem.Objects.FindDrawable('TextCategoria'));
-      aTexto.Text  := IfThen(aObjeto.Categoria.Trim.IsEmpty, '. . . ', aObjeto.Categoria);
+      aTexto.Text  := IfThen(aObjeto.Descricao.Trim.IsEmpty, '. . . ', aObjeto.Descricao);
       aTexto.Width := Self.Width - (44 + 6);
 
        // Ícone
       aImage := TListItemImage(aItem.Objects.FindDrawable('ImageCategoria'));
-      aImage.Opacity := 0.5;
-      if aObjeto.Categoria.Trim.IsEmpty then
-        aImage.Bitmap := ImgSemImage.Bitmap
+
+      if aObjeto.Image.IsEmpty then
+      begin
+        aImage.Bitmap := ImgSemImage.Bitmap;
+        aImage.ScalingMode := TImageScalingMode.Original;
+      end
       else
       begin
-        aImage.Bitmap := nil;
+        // Criar uma imagem a partir de uma base de 64 bits
+        aImage.Bitmap := TBitmap.Create;
+        aImage.Bitmap.Assign( TServicesUtils.BitmapFromBase64(aObjeto.Image) );
+        aImage.OwnsBitmap  := True;
+        aImage.ScalingMode := TImageScalingMode.Stretch;
       end;
 
       aItem.Height := 60;
@@ -103,6 +136,12 @@ end;
 
 procedure TFrmCategorias.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+// ESTE BLOCO DE CÓDIGO ESTÁ CAUSANDO VIOLAÇÃO DE MEMÓRIA
+//  if Assigned(FCategogiaController) then
+//    FCategogiaController.DisposeOf;
+//
+  LimparListView;
+
   Action    := TCloseAction.caFree;
   _instance := nil;
 end;
@@ -124,24 +163,7 @@ begin
 end;
 
 procedure TFrmCategorias.ImageAdicionarClick(Sender: TObject);
-var
-  o : TObjetoItemListView;
 begin
-  o := TObjetoItemListView.Create;
-  o.Descricao := 'Transporte';
-
-  addItemCategoria( o );
-
-  o := TObjetoItemListView.Create;
-  o.Descricao := 'Lazer';
-
-  addItemCategoria( o );
-
-  o := TObjetoItemListView.Create;
-  o.Descricao := 'Viagem';
-
-  addItemCategoria( o );
-
   FCategogiaController.New;
 
   FEdicao := TFrmCategoriaEdicao.GetInstance();
@@ -151,6 +173,32 @@ end;
 procedure TFrmCategorias.ImageFecharClick(Sender: TObject);
 begin
   Self.Close;
+end;
+
+procedure TFrmCategorias.LimparListView;
+var
+  I : Integer;
+begin
+  // Limpar objesto de lista para evitar MemoryLeak
+  for I := 0 to ListViewCategorias.Items.Count - 1 do
+    if Assigned(ListViewCategorias.Items.Item[I].TagObject) then
+      ListViewCategorias.Items.Item[I].TagObject.DisposeOf;
+
+  ListViewCategorias.Items.Clear;
+end;
+
+procedure TFrmCategorias.ListViewCategoriasItemClick(const Sender: TObject; const AItem: TListViewItem);
+begin
+  if (ListViewCategorias.Selected <> nil) then
+    if Assigned(AItem.TagObject) then
+    begin
+      FCategogiaController
+        .Attributes
+        .Codigo := TObjetoItemListView(AItem.TagObject).Codigo;
+
+      FEdicao := TFrmCategoriaEdicao.GetInstance();
+      FEdicao.Show;
+    end;
 end;
 
 procedure TFrmCategorias.ListViewCategoriasUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

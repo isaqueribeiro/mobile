@@ -1,24 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2020/06/22 19:44:27.000.754,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.fmx</Transaction>
-    <Transaction>2020/06/22 19:44:27.000.754,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.pas</Transaction>
-    <Transaction>2020/06/22 19:44:47.000.206,C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj</Transaction>
-    <Transaction>2020/06/29 20:10:14.000.798,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.fmx</Transaction>
-    <Transaction>2020/07/13 20:04:50.000.424,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.fmx</Transaction>
-    <Transaction>2020/07/15 20:01:14.000.170,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.dfm=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.dfm</Transaction>
-    <Transaction>2020/07/27 21:28:04.000.386,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Lancamentos.fmx</Transaction>
-    <Transaction>2020/08/06 13:43:36.000.046,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.LancamentoEdicao.fmx</Transaction>
-    <Transaction>2020/08/10 20:12:33.000.583,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx</Transaction>
-    <Transaction>2020/08/10 20:37:43.000.670,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx</Transaction>
-    <Transaction>2020/08/17 20:31:58.000.443,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.dfm=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.dfm</Transaction>
-    <Transaction>2020/08/26 21:31:27.920,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-bus-64x64.png</Transaction>
-    <Transaction>2020/08/26 21:31:28.196,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-home-64x64.png</Transaction>
-    <Transaction>2020/08/26 21:31:28.352,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-money-64x64.png</Transaction>
-    <Transaction>2020/08/26 21:31:28.396,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-money-card-64x64.png</Transaction>
-    <Transaction>2020/08/26 21:31:28.468,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-motorcycle-64x64.png</Transaction>
-    <Transaction>2020/08/26 21:31:28.540,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-output-64x64.png</Transaction>
-    <Transaction>2020/08/26 21:31:28.656,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-toy-64x64.png</Transaction>
+    <Transaction>2020/06/22 19:44:27.000.754,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.fmx=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Unit1.fmx</Transaction>
+    <Transaction>2020/06/22 19:44:47.000.206,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj=C:\Users\Isaque\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2020/06/29 20:10:14.000.798,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx</Transaction>
+    <Transaction>2020/07/13 20:04:50.000.424,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx</Transaction>
+    <Transaction>2020/07/15 20:01:14.000.170,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.dfm=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.dfm</Transaction>
+    <Transaction>2020/07/27 21:28:04.000.386,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Lancamentos.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx</Transaction>
+    <Transaction>2020/08/06 13:43:36.000.046,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.LancamentoEdicao.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx</Transaction>
+    <Transaction>2020/08/10 20:12:33.000.583,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.fmx</Transaction>
+    <Transaction>2020/08/10 20:37:43.000.670,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.fmx</Transaction>
+    <Transaction>2020/08/17 20:31:58.000.443,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.dfm=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.dfm</Transaction>
+    <Transaction>2020/08/27 23:49:56.741,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-111-more-64x64.png</Transaction>
+    <Transaction>2020/08/27 23:49:56.861,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-444-man-64x64.png</Transaction>
+    <Transaction>2020/08/27 23:49:57.275,=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Assets\categoria-motobike-64x64.png</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5"/>

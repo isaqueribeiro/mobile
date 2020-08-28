@@ -73,6 +73,8 @@ implementation
 
 uses
     DataModule.Recursos
+  , DataModule.Conexao
+  , Classes.ScriptDDL
   , View.Lancamentos
   , View.Categorias;
 
@@ -154,7 +156,16 @@ end;
 procedure TFrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   aLancamentos : TFrmLancamentos;
+  I : Integer;
 begin
+  TScriptDDL.getInstance().DisposeOf;
+  TDMConexao.getInstance().DisposeOf;
+
+  // Limpar objesto de lista para evitar MemoryLeak
+  for I := 0 to ListViewLancamentos.Items.Count - 1 do
+    if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
+      ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
+
   if TFrmLancamentos.Instanciado then
   begin
     aLancamentos := TFrmLancamentos.GetInstance();
@@ -174,6 +185,9 @@ begin
   RectangleMenu.Width   := 0;
   AnimationMenu.StartValue   := 0;
   AnimationMenu.StopValue    := (Self.Width * 80) / 100;
+//
+//  // Notificar, caso haja vazamento de memória
+//  ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TFrmPrincipal.ImageAdicionarClick(Sender: TObject);

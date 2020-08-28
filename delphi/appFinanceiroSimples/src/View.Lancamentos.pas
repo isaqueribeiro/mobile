@@ -38,6 +38,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure ImageAdicionarClick(Sender: TObject);
     procedure ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
     class var _instance : TFrmLancamentos;
   private
@@ -114,6 +115,16 @@ begin
       aItem.Height := 60;
     end;
   end;
+end;
+
+procedure TFrmLancamentos.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  I : Integer;
+begin
+  // Limpar objesto de lista para evitar MemoryLeak
+  for I := 0 to ListViewLancamentos.Items.Count - 1 do
+    if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
+      ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
 end;
 
 procedure TFrmLancamentos.FormCreate(Sender: TObject);

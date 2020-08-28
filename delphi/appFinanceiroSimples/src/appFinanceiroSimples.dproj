@@ -446,109 +446,118 @@
         <DCCReference Include="Models\Model.Categoria.pas"/>
         <DCCReference Include="Controllers\Controller.Categoria.pas"/>
         <DCCReference Include="Services\Services.Utils.pas"/>
-        <RcItem Include="Assets\categoria-billet-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_3</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-null-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_1</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-several-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_2</ResourceId>
-        </RcItem>
+        <DCCReference Include="Services\Services.SmartPoint.pas"/>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_12</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-baby-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_4</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-baby-more-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_5</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-baby-utils-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_6</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-bike-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>
         </RcItem>
+        <RcItem Include="Assets\categoria-bike-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_12</ResourceId>
+        </RcItem>
         <RcItem Include="Assets\categoria-bus-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_10</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-car-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_8</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-fuel-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_13</ResourceId>
         </RcItem>
-        <RcItem Include="Assets\categoria-health-64x64.png">
+        <RcItem Include="Assets\categoria-car-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_19</ResourceId>
+            <ResourceId>categoria_14</ResourceId>
         </RcItem>
-        <RcItem Include="Assets\categoria-health-hospital-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_20</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-health-medical-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_21</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-health-utils-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_22</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-home-64x64.png">
+        <RcItem Include="Assets\categoria-fuel-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_16</ResourceId>
         </RcItem>
-        <RcItem Include="Assets\categoria-input-64x64.png">
+        <RcItem Include="Assets\categoria-health-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_17</ResourceId>
         </RcItem>
+        <RcItem Include="Assets\categoria-health-hospital-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_19</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-health-medical-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_20</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-home-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_21</ResourceId>
+        </RcItem>
         <RcItem Include="Assets\categoria-lunch-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_23</ResourceId>
+            <ResourceId>categoria_22</ResourceId>
         </RcItem>
         <RcItem Include="Assets\categoria-mobile-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_14</ResourceId>
+            <ResourceId>categoria_23</ResourceId>
         </RcItem>
         <RcItem Include="Assets\categoria-money-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_24</ResourceId>
         </RcItem>
-        <RcItem Include="Assets\categoria-money-card-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_25</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-motorcycle-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_9</ResourceId>
-        </RcItem>
-        <RcItem Include="Assets\categoria-output-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_18</ResourceId>
-        </RcItem>
         <RcItem Include="Assets\categoria-shopping-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_15</ResourceId>
+            <ResourceId>categoria_26</ResourceId>
         </RcItem>
         <RcItem Include="Assets\categoria-toy-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_7</ResourceId>
+            <ResourceId>categoria_27</ResourceId>
         </RcItem>
         <RcItem Include="Assets\categoria-travel-64x64.png">
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_26</ResourceId>
+            <ResourceId>categoria_28</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-000-null-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_1</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-111-more-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_2</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-222-boleto-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_3</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-333-woman-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_4</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-444-man-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_5</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-555-baby-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_6</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-666-baby-carrinho-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_7</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-777-baby-chupeta-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_8</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-888-input-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_9</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-999-output-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_10</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-card-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_15</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-health-arboart-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_18</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-motobike-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_25</ResourceId>
         </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -576,7 +585,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Assets\categoria-null-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-bus-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -596,12 +605,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-bus-64x64.png" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Assets\categoria-health-hospital-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -614,13 +617,25 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Assets\categoria-222-boleto-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Assets\categoria-fuel-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-billet-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-motobike-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-money-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -660,25 +675,19 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-baby-more-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-000-null-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-money-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-666-baby-carrinho-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-money-card-64x64.png" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Assets\categoria-output-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-111-more-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -690,19 +699,25 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-input-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-health-arboart-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-baby-utils-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-999-output-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-several-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-777-baby-chupeta-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-888-input-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -715,7 +730,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-health-utils-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-555-baby-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -805,19 +820,25 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Assets\categoria-333-woman-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\bin\Win32\Debug\appFinanceiroSimples.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>appFinanceiroSimples.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-baby-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-444-man-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-motorcycle-64x64.png" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="Assets\categoria-card-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

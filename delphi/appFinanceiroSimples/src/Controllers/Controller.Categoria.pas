@@ -3,7 +3,10 @@ unit Controller.Categoria;
 interface
 
 uses
-  Model.Categoria;
+    Model.Categoria
+  , System.Generics.Collections
+  , FireDAC.Comp.Client
+  , Data.DB;
 
 type
   TCategoriaController = class
@@ -11,7 +14,8 @@ type
     class var _instance : TCategoriaCOntroller;
   private
     FModel : TCategoriaModel;
-    FLista : TListaCategoria;
+    FLista : TDictionary<integer, TCategoriaModel>;
+    procedure SetAtributes(const aDataSet : TDataSet; aModel : TCategoriaModel);
   protected
     constructor Create;
     destructor Destroy; override;
@@ -19,16 +23,16 @@ type
     class function GetInstance : TCategoriaCOntroller;
 
     property Attributes : TCategoriaModel read  FModel;
-    property Lista : TListaCategoria read FLista;
+    property Lista : TDictionary<integer, TCategoriaModel> read FLista;
 
     procedure New;
-    procedure Load(var aErro : String); virtual; abstract;
+    procedure Load(var aErro : String);
 
     function Insert(var aErro : String) : Boolean;
     function Update(var aErro : String) : Boolean;
     function Delete(var aErro : String) : Boolean;
     function Find(aCodigo : Integer; var aErro : String;
-      const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; virtual; abstract;
+      const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean;
   end;
 
 implementation
@@ -39,13 +43,12 @@ uses
     DataModule.Conexao
   , Classes.ScriptDDL
   , System.SysUtils
-  , FireDAC.Comp.Client
-  , Data.DB;
+  , FMX.Graphics;
 
 constructor TCategoriaCOntroller.Create;
 begin
   FModel := TCategoriaModel.New;
-  SetLength(FLista, 0);
+  FLista := TDictionary<integer, TCategoriaModel>.Create;
 
   TDMConexao
     .GetInstance()
@@ -62,13 +65,11 @@ begin
   if FModel.Codigo < 1 then
   begin
     aErro := 'Informe o código da categoria';
-    Abort;
+    Exit;
   end;
 
   // Verificar se existe lançamentos para a categoria
   // ???
-
-
 
   aQry := TFDQuery.Create(nil);
   try
@@ -99,13 +100,69 @@ begin
 end;
 
 destructor TCategoriaCOntroller.Destroy;
+var
+  aObj : TCategoriaModel;
 begin
-  FModel.DisposeOf;
+  if Assigned(FModel) then
+    FModel.DisposeOf;
 
-  while (High(FLista) > -1) do
-    FLista[0].DisposeOf;
+  if Assigned(FLista) then
+  begin
+    for aObj in FLista.Values do
+    begin
+      FLista.Remove(aObj.Codigo);
+      aObj.DisposeOf;
+    end;
+
+    FLista.Clear;
+    FLista.TrimExcess;
+    FLista.DisposeOf;
+  end;
 
   inherited;
+end;
+
+function TCategoriaController.Find(aCodigo: Integer; var aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
+var
+  aQry : TFDQuery;
+begin
+  Result := False;
+
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    try
+      with aQry, SQL do
+      begin
+        BeginUpdate;
+        Clear;
+        Add('Select ');
+        Add('    cd_categoria  ');
+        Add('  , ds_categoria  ');
+        Add('  , ic_categoria  ');
+        Add('  , ix_categoria  ');
+        Add('from ' + TScriptDDL.getInstance().getTableNameCategoria);
+        Add('where (cd_categoria = :cd_categoria)');
+        EndUpdate;
+
+        ParamByName('cd_categoria').Value := aCodigo;
+
+        Open;
+
+        Result := not IsEmpty;
+
+        if Result and RETURN_ATTRIBUTES then
+          SetAtributes(aQry, FModel);
+      end;
+    except
+      On E : Exception do
+        aErro := 'Erro ao tentar localizar a categoria: ' + E.Message;
+    end;
+  finally
+    aQry.Close;
+    aQry.DisposeOf;
+  end;
 end;
 
 class function TCategoriaCOntroller.GetInstance: TCategoriaCOntroller;
@@ -125,8 +182,9 @@ begin
   if FModel.Descricao.IsEmpty then
   begin
     aErro := 'Informe a descrição da categoria';
-    Abort;
+    Exit;
   end;
+
 
   aQry := TFDQuery.Create(nil);
   try
@@ -149,8 +207,8 @@ begin
         EndUpdate;
 
         ParamByName('ds_categoria').Value := FModel.Descricao;
+        ParamByName('ic_categoria').Assign( FModel.Icone );
         ParamByName('ix_categoria').Value := FModel.Indice;
-        ParamByName('ds_categoria').Assign( FModel.Icone );
 
         ExecSQL;
 
@@ -167,6 +225,57 @@ begin
   end;
 end;
 
+procedure TCategoriaController.Load(var aErro: String);
+var
+  aModel : TCategoriaModel;
+  aQry : TFDQuery;
+begin
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    try
+      with aQry, SQL do
+      begin
+        BeginUpdate;
+        Clear;
+        Add('Select ');
+        Add('    cd_categoria  ');
+        Add('  , ds_categoria  ');
+        Add('  , ic_categoria  ');
+        Add('  , ix_categoria  ');
+        Add('from ' + TScriptDDL.getInstance().getTableNameCategoria);
+        Add('order by');
+        Add('    ds_categoria');
+        EndUpdate;
+
+        Open;
+
+        Lista.Clear;
+
+        while not Eof do
+        begin
+          aModel := TCategoriaModel.Create;
+
+          SetAtributes(aQry, aModel);
+          Lista.AddOrSetValue(aModel.Codigo, aModel);
+
+          Next;
+        end;
+
+        // Limitar o tamanho da lista à quantidade de objetos encontrados
+        Lista.TrimExcess;
+      end;
+    except
+      On E : Exception do
+        aErro := 'Erro ao tentar localizar a categoria: ' + E.Message;
+    end;
+  finally
+    aQry.Close;
+    aQry.DisposeOf;
+  end;
+end;
+
 procedure TCategoriaController.New;
 begin
   with FModel do
@@ -175,6 +284,24 @@ begin
     Descricao := EmptyStr;
     Indice    := 0;
     Icone     := nil;
+  end;
+end;
+
+procedure TCategoriaController.SetAtributes(const aDataSet: TDataSet; aModel: TCategoriaModel);
+begin
+  with aDataSet, aModel do
+  begin
+    Codigo    := FieldByName('cd_categoria').AsInteger;
+    Descricao := FieldByName('ds_categoria').AsString;
+    Indice    := FieldByName('ix_categoria').AsInteger;
+
+    if (Trim(FieldByName('ic_categoria').AsString) <> EmptyStr) then
+    begin
+      Icone := TBitmap.Create;
+      Icone.LoadFromStream( CreateBlobStream(FieldByName('ic_categoria'), TBlobStreamMode.bmRead) );
+    end
+    else
+      Icone := nil;
   end;
 end;
 
@@ -187,13 +314,13 @@ begin
   if FModel.Codigo < 1 then
   begin
     aErro := 'Informe o código da categoria';
-    Abort;
+    Exit;
   end;
 
   if FModel.Descricao.IsEmpty then
   begin
     aErro := 'Informe a descrição da categoria';
-    Abort;
+    Exit;
   end;
 
   aQry := TFDQuery.Create(nil);
@@ -215,7 +342,7 @@ begin
         ParamByName('cd_categoria').Value := FModel.Codigo;
         ParamByName('ds_categoria').Value := FModel.Descricao;
         ParamByName('ix_categoria').Value := FModel.Indice;
-        ParamByName('ds_categoria').Assign( FModel.Icone );
+        ParamByName('ic_categoria').Assign( FModel.Icone );
 
         ExecSQL;
 

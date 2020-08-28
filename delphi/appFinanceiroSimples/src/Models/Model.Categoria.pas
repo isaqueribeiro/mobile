@@ -44,9 +44,7 @@ end;
 
 destructor TCategoriaModel.Destroy;
 begin
-  if Assigned(FIcone) then
-    FIcone.DisposeOf;
-
+  FIcone.DisposeOf;
   inherited;
 end;
 

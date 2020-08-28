@@ -10,4 +10,9 @@ object DMConexao: TDMConexao
     Left = 136
     Top = 120
   end
+  object Qry: TFDQuery
+    Connection = Conn
+    Left = 136
+    Top = 168
+  end
 end
