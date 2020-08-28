@@ -3,36 +3,39 @@ unit Controller.Categoria;
 interface
 
 uses
-    Model.Categoria
+    Services.ComplexTypes
+  , Model.Categoria
   , System.Generics.Collections
   , FireDAC.Comp.Client
   , Data.DB;
 
 type
   TCategoriaController = class
-  strict private
-    class var _instance : TCategoriaCOntroller;
-  private
-    FModel : TCategoriaModel;
-    FLista : TDictionary<integer, TCategoriaModel>;
-    procedure SetAtributes(const aDataSet : TDataSet; aModel : TCategoriaModel);
-  protected
-    constructor Create;
-    destructor Destroy; override;
-  public
-    class function GetInstance : TCategoriaCOntroller;
+    strict private
+      class var _instance : TCategoriaCOntroller;
+    private
+      FOperacao : TTipoOperacaoController;
+      FModel : TCategoriaModel;
+      FLista : TDictionary<integer, TCategoriaModel>;
+      procedure SetAtributes(const aDataSet : TDataSet; aModel : TCategoriaModel);
+    protected
+      constructor Create;
+      destructor Destroy; override;
+    public
+      class function GetInstance : TCategoriaCOntroller;
 
-    property Attributes : TCategoriaModel read  FModel;
-    property Lista : TDictionary<integer, TCategoriaModel> read FLista;
+      property Operacao : TTipoOperacaoController read FOperacao;
+      property Attributes : TCategoriaModel read  FModel;
+      property Lista : TDictionary<integer, TCategoriaModel> read FLista;
 
-    procedure New;
-    procedure Load(var aErro : String);
+      procedure New;
+      procedure Load(var aErro : String);
 
-    function Insert(var aErro : String) : Boolean;
-    function Update(var aErro : String) : Boolean;
-    function Delete(var aErro : String) : Boolean;
-    function Find(aCodigo : Integer; var aErro : String;
-      const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean;
+      function Insert(var aErro : String) : Boolean;
+      function Update(var aErro : String) : Boolean;
+      function Delete(var aErro : String) : Boolean;
+      function Find(aCodigo : Integer; var aErro : String;
+        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean;
   end;
 
 implementation
@@ -47,6 +50,7 @@ uses
 
 constructor TCategoriaCOntroller.Create;
 begin
+  FOperacao := TTipoOperacaoController.operControllerBrowser;
   FModel := TCategoriaModel.New;
   FLista := TDictionary<integer, TCategoriaModel>.Create;
 
@@ -71,6 +75,8 @@ begin
   // Verificar se existe lançamentos para a categoria
   // ???
 
+  FOperacao := TTipoOperacaoController.operControllerDelete;
+
   aQry := TFDQuery.Create(nil);
   try
     aQry.Connection := TDMConexao.GetInstance().Conn;
@@ -89,6 +95,12 @@ begin
         ExecSQL;
 
         Result := True;
+
+        if FLista.ContainsKey(FModel.Codigo) then
+        begin
+          FLista.Remove(FModel.Codigo);
+          FLista.TrimExcess;
+        end;
       end;
     except
       On E : Exception do
@@ -127,6 +139,8 @@ var
   aQry : TFDQuery;
 begin
   Result := False;
+
+  FOperacao := TTipoOperacaoController.operControllerBrowser;
 
   aQry := TFDQuery.Create(nil);
   try
@@ -185,6 +199,7 @@ begin
     Exit;
   end;
 
+  FOperacao := TTipoOperacaoController.operControllerInsert;
 
   aQry := TFDQuery.Create(nil);
   try
@@ -230,6 +245,8 @@ var
   aModel : TCategoriaModel;
   aQry : TFDQuery;
 begin
+  FOperacao := TTipoOperacaoController.operControllerBrowser;
+
   aQry := TFDQuery.Create(nil);
   try
     aQry.Connection := TDMConexao.GetInstance().Conn;
@@ -295,6 +312,7 @@ begin
     Descricao := FieldByName('ds_categoria').AsString;
     Indice    := FieldByName('ix_categoria').AsInteger;
 
+    // #0#0#0#0'IEND®B`‚'
     if (Trim(FieldByName('ic_categoria').AsString) <> EmptyStr) then
     begin
       Icone := TBitmap.Create;
@@ -322,6 +340,8 @@ begin
     aErro := 'Informe a descrição da categoria';
     Exit;
   end;
+
+  FOperacao := TTipoOperacaoController.operControllerUpdate;
 
   aQry := TFDQuery.Create(nil);
   try

@@ -25,22 +25,28 @@ uses
 class function TServicesUtils.Base64FromBitmap(aBitmap: TBitmap): String;
 var
   aRestorno : String;
-  Input  : TBytesStream;
-  Output : TStringStream;
+  aInput  : TBytesStream;
+  aOutput : TStringStream;
 begin
   aRestorno := EmptyStr;
   try
-    Input := TBytesStream.Create;
-    aBitmap.SaveToStream(Input);
-    Input.Position := 0;
+    if Assigned(aBitmap) then
+    begin
+      aInput := TBytesStream.Create;
+      aBitmap.SaveToStream(aInput);
+      aInput.Position := 0;
 
-    Output := TStringStream.Create('', TEncoding.ASCII);
-    Soap.EncdDecd.EncodeStream(Input, Output);
+      aOutput := TStringStream.Create('', TEncoding.ASCII);
+      Soap.EncdDecd.EncodeStream(aInput, aOutput);
 
-    aRestorno := Output.DataString;
+      aRestorno := aOutput.DataString;
+    end;
   finally
-    Input.DisposeOf;
-    Output.DisposeOf;
+    if Assigned(aInput) then
+      aInput.DisposeOf;
+
+    if Assigned(aOutput) then
+      aOutput.DisposeOf;
 
     Result := aRestorno;
   end;
@@ -56,14 +62,20 @@ begin
   aInput    := TStringStream.Create(aBase64, TEncoding.ASCII);
   aOutput   := TBytesStream.Create;
   try
-    Soap.EncdDecd.DecodeStream(aInput, aOutput);
-    aOutput.Position := 0;
+    if not aBase64.Trim.IsEmpty then
+    begin
+      Soap.EncdDecd.DecodeStream(aInput, aOutput);
+      aOutput.Position := 0;
 
-    aRestorno := TBitmap.Create;
-    aRestorno.LoadFromStream(aOutput);
+      aRestorno := TBitmap.Create;
+      aRestorno.LoadFromStream(aOutput);
+    end;
   finally
-    aOutput.DisposeOf;
-    aInput.DisposeOf;
+    if Assigned(aOutput) then
+      aOutput.DisposeOf;
+
+    if Assigned(aInput) then
+      aInput.DisposeOf;
 
     Result := aRestorno;
   end;

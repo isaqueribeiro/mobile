@@ -6,13 +6,16 @@ uses
   Classe.ObjetoItemListView,
   View.CategoriaEdicao,
   Controller.Categoria,
+  Views.Interfaces.Observers,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Controls.Presentation, FMX.StdCtrls,
-  FMX.Layouts, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
+  FMX.Layouts, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView,
+  Services.ComplexTypes
+;
 
 type
-  TFrmCategorias = class(TForm)
+  TFrmCategorias = class(TForm, IObserverCategoriaEdicao)
     LayoutTool: TLayout;
     LabelTitulo: TLabel;
     ImageFechar: TImage;
@@ -35,6 +38,7 @@ type
     FEdicao : TFrmCategoriaEdicao;
     FCategogiaController : TCategoriaController;
     procedure LimparListView;
+    procedure AtualizarCategoria;
 
     procedure addItemCategoria(const aObjeto : TObjetoItemListView);
     procedure formatItemCategoria(const aItem: TListViewItem);
@@ -69,6 +73,60 @@ begin
   formatItemCategoria(aItem);
 end;
 
+procedure TFrmCategorias.AtualizarCategoria;
+var
+  o : TObjetoItemListView;
+  aItem      : TListViewItem;
+  aItemIndex : Integer;
+begin
+  if FCategogiaController.Operacao = TTipoOperacaoController.operControllerInsert then
+  begin
+    o := TObjetoItemListView.Create;
+
+    o.Codigo    := FCategogiaController.Attributes.Codigo;
+    o.Descricao := FCategogiaController.Attributes.Descricao;
+    o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Attributes.Icone );
+
+    addItemCategoria(o);
+    ListViewCategorias.ItemIndex := (ListViewCategorias.Items.Count - 1);
+  end
+  else
+  if FCategogiaController.Operacao = TTipoOperacaoController.operControllerUpdate then
+  begin
+    aItem := TListViewItem(ListViewCategorias.Items.Item[ListViewCategorias.ItemIndex]);
+
+    if Assigned(aItem.TagObject) then
+      o := TObjetoItemListView(aItem.TagObject)
+    else
+      o := TObjetoItemListView.Create;
+
+    o.Codigo    := FCategogiaController.Attributes.Codigo;
+    o.Descricao := FCategogiaController.Attributes.Descricao;
+    o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Attributes.Icone );
+
+    aItem.TagObject := o;
+    formatItemCategoria( aItem );
+  end
+  else
+  if FCategogiaController.Operacao = TTipoOperacaoController.operControllerDelete then
+  begin
+    aItemIndex := ListViewCategorias.ItemIndex;
+    aItem      := TListViewItem(ListViewCategorias.Items.Item[aItemIndex]);
+
+    if Assigned(aItem.TagObject) then
+      aItem.TagObject.DisposeOf;
+
+    ListViewCategorias.Items.Delete(aItemIndex);
+  end;
+
+  if (ListViewCategorias.Items.Count < 2) then
+    lblQuantidadeCategorias.Text := ListViewCategorias.Items.Count.ToString + ' Categoria'
+  else
+    lblQuantidadeCategorias.Text := ListViewCategorias.Items.Count.ToString + ' Categorias';
+//
+//  ImgSemPedido.Visible := (ListViewCategorias.Items.Count = 0);
+end;
+
 procedure TFrmCategorias.CarregarCategorias;
 var
   aError : String;
@@ -94,6 +152,11 @@ begin
       addItemCategoria(o);
     end;
   end;
+
+  if (ListViewCategorias.Items.Count < 2) then
+    lblQuantidadeCategorias.Text := ListViewCategorias.Items.Count.ToString + ' Categoria'
+  else
+    lblQuantidadeCategorias.Text := ListViewCategorias.Items.Count.ToString + ' Categorias';
 end;
 
 procedure TFrmCategorias.formatItemCategoria(const aItem: TListViewItem);
@@ -166,7 +229,7 @@ procedure TFrmCategorias.ImageAdicionarClick(Sender: TObject);
 begin
   FCategogiaController.New;
 
-  FEdicao := TFrmCategoriaEdicao.GetInstance();
+  FEdicao := TFrmCategoriaEdicao.GetInstance(Self);
   FEdicao.Show;
 end;
 
@@ -196,7 +259,7 @@ begin
         .Attributes
         .Codigo := TObjetoItemListView(AItem.TagObject).Codigo;
 
-      FEdicao := TFrmCategoriaEdicao.GetInstance();
+      FEdicao := TFrmCategoriaEdicao.GetInstance(Self);
       FEdicao.Show;
     end;
 end;

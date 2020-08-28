@@ -447,6 +447,8 @@
         <DCCReference Include="Controllers\Controller.Categoria.pas"/>
         <DCCReference Include="Services\Services.Utils.pas"/>
         <DCCReference Include="Services\Services.SmartPoint.pas"/>
+        <DCCReference Include="Views\Interfaces\Views.Interfaces.Observers.pas"/>
+        <DCCReference Include="Services\Services.ComplexTypes.pas"/>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>

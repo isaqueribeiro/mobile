@@ -4,13 +4,15 @@ interface
 
 uses
   Controller.Categoria,
+  Views.Interfaces.Observers,
+  System.Generics.Collections,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Controls.Presentation,
   FMX.StdCtrls, FMX.Layouts, FMX.Edit, FMX.ListBox;
 
 type
-  TFrmCategoriaEdicao = class(TForm)
+  TFrmCategoriaEdicao = class(TForm, ISubjectCategoriaEdicao)
     LayoutTool: TLayout;
     LabelTitulo: TLabel;
     ImageFechar: TImage;
@@ -90,13 +92,19 @@ type
     class var _instance : TFrmCategoriaEdicao;
   private
     { Private declarations }
+    FObservers : TList<IObserverCategoriaEdicao>;
     FError : String;
     FController : TCategoriaController;
     procedure CarregarImagens;
     procedure CarregarRegistro;
+
+    procedure AdicionarObservador(Observer : IObserverCategoriaEdicao);
+    procedure RemoverObservador(Observer   : IObserverCategoriaEdicao);
+    procedure RemoverTodosObservadores;
+    procedure Notificar;
   public
     { Public declarations }
-    class function GetInstance() : TFrmCategoriaEdicao;
+    class function GetInstance(Observer : IObserverCategoriaEdicao) : TFrmCategoriaEdicao;
 
     property Error : String read FError;
   end;
@@ -112,6 +120,12 @@ uses
   DataModule.Recursos, Services.Utils;
 
 { TFrmCategoriaEdicao }
+
+procedure TFrmCategoriaEdicao.AdicionarObservador(Observer: IObserverCategoriaEdicao);
+begin
+  if (FObservers.IndexOf(Observer) = -1) then
+    FObservers.Add(Observer);
+end;
 
 procedure TFrmCategoriaEdicao.CarregarImagens;
 var
@@ -146,6 +160,9 @@ end;
 
 procedure TFrmCategoriaEdicao.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  RemoverTodosObservadores;
+  FObservers.DisposeOf;
+
   Action    := TCloseAction.caFree;
   _instance := nil;
 end;
@@ -157,6 +174,7 @@ begin
 
   FError := EmptyStr;
   FController := TCategoriaController.GetInstance();
+  FObservers  := TList<IObserverCategoriaEdicao>.Create;
 end;
 
 procedure TFrmCategoriaEdicao.FormResize(Sender: TObject);
@@ -174,11 +192,15 @@ begin
     LabelTitulo.Text := 'Editar Categoria';
 end;
 
-class function TFrmCategoriaEdicao.GetInstance: TFrmCategoriaEdicao;
+class function TFrmCategoriaEdicao.GetInstance(Observer : IObserverCategoriaEdicao): TFrmCategoriaEdicao;
 begin
   if not Assigned(_instance) then
     Application.CreateForm(TFrmCategoriaEdicao, _instance);
 
+  if not Assigned(_instance.FObservers) then
+    _instance.FObservers  := TList<IObserverCategoriaEdicao>.Create;
+
+  _instance.AdicionarObservador(Observer);
   Result := _instance;
 end;
 
@@ -192,7 +214,13 @@ var
   aExecutado : Boolean;
 begin
   with FController do
+  begin
     Attributes.Descricao := edtDescricao.Text;
+
+    // Garantir que uma imagem seja salva na base
+    if (Attributes.Indice = 0) then
+      SelecionarIcone(Image1);
+  end;
 
   if (FController.Attributes.Codigo = 0) then
     aExecutado := FController.Insert(FError)
@@ -202,7 +230,33 @@ begin
   if (not FError.IsEmpty) then
     ShowMessage(FError)
   else
-    ;
+  begin
+    Notificar;
+    Close;
+  end;
+end;
+
+procedure TFrmCategoriaEdicao.Notificar;
+var
+  Observer : IObserverCategoriaEdicao;
+begin
+  for Observer in FObservers do
+     Observer.AtualizarCategoria;
+end;
+
+procedure TFrmCategoriaEdicao.RemoverObservador(Observer: IObserverCategoriaEdicao);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TFrmCategoriaEdicao.RemoverTodosObservadores;
+var
+  I : Integer;
+begin
+  for I := 0 to (FObservers.Count - 1) do
+    FObservers.Delete(I);
+
+  FObservers.TrimExcess;
 end;
 
 procedure TFrmCategoriaEdicao.SelecionarIcone(Sender: TObject);
@@ -211,7 +265,7 @@ begin
   begin
     ImgSelecao.AnimateFloatWait('Opacity', 0, 0.2, TAnimationType.Out, TInterpolationType.Circular);
     ImgSelecao.Parent := TImage(Sender).Parent;
-    ImgSelecao.AnimateFloatWait('Opacity', 0.3, 0.2, TAnimationType.&In, TInterpolationType.Circular);
+    ImgSelecao.AnimateFloatWait('Opacity', 0.2, 0.2, TAnimationType.&In, TInterpolationType.Circular);
 
     FController.Attributes.Indice := TListBoxItem(TImage(Sender).Parent).Index;
     FController.Attributes.Icone  := TImage(Sender).Bitmap;

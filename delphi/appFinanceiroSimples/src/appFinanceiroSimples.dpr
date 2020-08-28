@@ -20,7 +20,9 @@ uses
   Model.Categoria in 'Models\Model.Categoria.pas',
   Controller.Categoria in 'Controllers\Controller.Categoria.pas',
   Services.Utils in 'Services\Services.Utils.pas',
-  Services.SmartPoint in 'Services\Services.SmartPoint.pas';
+  Services.SmartPoint in 'Services\Services.SmartPoint.pas',
+  Views.Interfaces.Observers in 'Views\Interfaces\Views.Interfaces.Observers.pas',
+  Services.ComplexTypes in 'Services\Services.ComplexTypes.pas';
 
 {$R *.res}
 
