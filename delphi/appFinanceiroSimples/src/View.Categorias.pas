@@ -175,7 +175,7 @@ begin
       aTexto.Text  := IfThen(aObjeto.Descricao.Trim.IsEmpty, '. . . ', aObjeto.Descricao);
       aTexto.Width := Self.Width - (44 + 6);
 
-       // Ícone
+      // Ícone
       aImage := TListItemImage(aItem.Objects.FindDrawable('ImageCategoria'));
 
       if aObjeto.Image.IsEmpty then

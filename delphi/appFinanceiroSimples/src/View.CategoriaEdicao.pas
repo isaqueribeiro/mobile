@@ -81,6 +81,9 @@ type
     ListBoxItem28: TListBoxItem;
     Image27: TImage;
     Image28: TImage;
+    LayoutBototes: TLayout;
+    RectangleBotoes: TRectangle;
+    ImageExcluir: TImage;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -88,6 +91,7 @@ type
     procedure SelecionarIcone(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ImageSalvarClick(Sender: TObject);
+    procedure ImageExcluirClick(Sender: TObject);
   strict private
     class var _instance : TFrmCategoriaEdicao;
   private
@@ -142,6 +146,7 @@ end;
 
 procedure TFrmCategoriaEdicao.CarregarRegistro;
 var
+  aItem : TListBoxItem;
   aParente : TComponent;
 begin
   with FController do
@@ -151,10 +156,10 @@ begin
     edtDescricao.Text      := Attributes.Descricao;
     ListBoxIcone.ItemIndex := Attributes.Indice;
 
-    aParente := Self.FindComponent('ListBoxItem' + (ListBoxIcone.ItemIndex + 1).ToString);
+    aItem := ListBoxIcone.ItemByIndex( ListBoxIcone.ItemIndex );
 
-    if Assigned(aParente) then
-      ImgSelecao.Parent := TListBoxItem( aParente );
+    if Assigned(aItem) then
+      ImgSelecao.Parent := aItem;
   end;
 end;
 
@@ -190,6 +195,8 @@ begin
     LabelTitulo.Text := 'Nova Categoria'
   else
     LabelTitulo.Text := 'Editar Categoria';
+
+  LayoutBototes.Visible := (FController.Attributes.Codigo > 0);
 end;
 
 class function TFrmCategoriaEdicao.GetInstance(Observer : IObserverCategoriaEdicao): TFrmCategoriaEdicao;
@@ -202,6 +209,19 @@ begin
 
   _instance.AdicionarObservador(Observer);
   Result := _instance;
+end;
+
+procedure TFrmCategoriaEdicao.ImageExcluirClick(Sender: TObject);
+begin
+  FController.Delete(FError);
+
+  if (not FError.IsEmpty) then
+    ShowMessage(FError)
+  else
+  begin
+    Notificar;
+    Close;
+  end;
 end;
 
 procedure TFrmCategoriaEdicao.ImageFecharClick(Sender: TObject);

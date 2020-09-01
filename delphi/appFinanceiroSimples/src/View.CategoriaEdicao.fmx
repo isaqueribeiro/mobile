@@ -47,27 +47,27 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           PNG = {
             89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
             DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-            027649444154785EED9AD16A1341148667966D936C1435E45544A8AD8A22152F
-            BCF41DBCD160109F4144511FC50B692B7863544C0BBE4840A526DDC4DD19F3EB
-            6C69BBC93ABB3BD2E1783E589233E422FFB7B37B6687150CC3300CC3300CC338
-            67F0E4CED9EDA737DBA6F412693E9DF2E1C5AD8B52CA97D36072A9319A68D1E9
-            0E854C7B6BF77786E627DEE05CC0E0D5E64610076F644B9E31437F4844ACA4BA
-            72B9B7B56B46BC20309F4E581A1E84A229857C662A6F7026A0307CC6D7D19A6F
-            F7042702ACC2CF997623D9562DA7B3AE2EB5FF8C6D78D050D1E7F5C7AFF74DE9
-            05B5049409AF0FF40FADF503537A43650165C3AB50DDF6AD03804A6DB04AF8F5
-            87DBEFCD9057941640293C2825805A78602D8062786025806A78F0570194C383
-            4201D4C383A5024A854F749C06FA6EA21ADE855F99E9B468F5B9504099F0BE13
-            8BB10A45B42752DDDFE86D0DCCF0213901BF373366F21D85F04789F57816AAD6
-            8D9312724B61ECE4500B0F9AB2BD3A4F97DB8F383603B087F733FAFEAD29DA5E
-            3DB2BA0297C3CAE4DCF9A3F7845CD0FD5154D819A8714C00CC743AE28B29C911
-            A6D1DEC98E909B016992DE434F37251970139C37ECBE290FC909B8DADF196241
-            434502AEFB24D5C3451D002C5F083D9FAF0592FF742194514A02B5A570067509
-            562D8FB204EB9E4F5582B5004051422901809A84D2020025099504002A122A0B
-            006525E8557D9DD4FB0138A338B3086786960249D86B30A537D49A0119B63361
-            D1F3F869536B0664D8CE04BC2F340E0E9429BDC089006025E142F7E3E6A3B763
-            5379813301A048821662AA173C8F9F364E050048C0DD5E2BFD09D73C0E7C4F95
-            BAE6E3FB01FF146CB2E23025C3300CC3300CC330BE20C42F88A2CDC6DE2BB26B
-            0000000049454E44AE426082}
+            027849444154785EED9ADF6AD44014876742DADD4D14B5DA4711A1B62A8AB478
+            E1A5EFE08D2E2EE2338828EAA378216D056F5C15D7820FD2827FD366D764C6FD
+            E96C699BDD9849463A1CCF0761F70C7BB1BF2F939CC910C1300CC3300CC3308C
+            73FA0F6F9EDC78743D36A59748F3E994B74FD7CE4B299F0D83DD0BAD9D448B85
+            C581907977E9CEE6C0FCC41B9C0BE83F5F5D09D2E0A5ECC81366E80F99489554
+            972E76D73F9A112F08CCA713668607A1684B211F9BCA1B9C09280D3FE1F3F692
+            6FF70427022A851F333C17CB58759CCEBAA634FE3355C383968A3E2C3F78F1DD
+            945ED048804D78BDA77F68ADEF9AD21B6A0BB00DAF4275C3B70E006AB5C13AE1
+            97EF6DBC31435E612D8052786025805A78505900C5F0A09200AAE1C15F05500E
+            0F4A05500F0F660AB00A9FE9340FF4AD4CB5BC0B3F37D279D9EA73AA009BF0BE
+            938A448522DA12B9EEAD74D7FB66789F8280DF9B1923F99A42F883A43A1985AA
+            73EDA884C252183B39D4C283B68CE7C7E90AFB11876600F6F07E465FBFB445EC
+            D523AB2B7039CCED9E3A7DF09E5008FA6D272AED0CD438240066CE2E884FA624
+            4798475B473B426106E4597E1B3DDD9464C04D70DCB07BA6DCA720E0726F7380
+            050D1509B8EEB35C0FA67500307B21F464BC16C8FED385D0042B09D496C213A8
+            4BA8D4F2284BA8DCF3A94AA82C0050946025005093602D005092504B00A022A1
+            B600602B41CFEBABA4DE0FC019C599453833341348C25E8329BDA1D10C985075
+            264C7B1E3F6E1ACD8009556702DE174A823D654A2F70220054927066F1DDEAFD
+            5789A9BCC099005026410B31D4539EC78F1BA7020024E06EAF957E8F6B1E07BE
+            E74A5DF1F1FD807F0A365971989261188661188661185F10E217859BCDC67EC0
+            262C0000000049454E44AE426082}
           FileName = 'C:\Users\Isaque\OneDrive\Imagens\Apps\Financeiro\back.png'
         end>
       Align = Left
@@ -88,46 +88,46 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           PNG = {
             89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
             DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-            04DA49444154785EEDD94B6C1B451807F0F966D6761A93A2060904374E953854
-            4808A9691E3491C08FA01604B4D0A28A03524082261C2A8E8113AA108DE354A0
-            DE28456D131E45458D5D906893D8490E2055152A8823128F825A1E8D1DDBBB3B
-            C37ECBD8721B3BC9AED7F6DADADF653D9F1DC9FFCF33DEF184783C1E8FC7E369
-            4BDF9E78C4B7F0CEF03639AC08E4B5ED2C4F8677721D3E031F3C207471A153D5
-            F63F7CE4EB8C7CBAA42D1B909A08F50860098591BB6589702E2E070BDA937736
-            81CA6BDB484DAD0D8F2885DDD900FBF2CABB8F0765C9D4560D30C3EB6BC31701
-            D0416CC2C5B226B44D0330BC2A58B25AF8226C42575913DAE23B203D19DD55A0
-            24D141C85659DA9020E49B5B39750F93E39665273C323EF907FD946D6FE91960
-            377C518E6478CBCE80F963915E4D01DBE111D3E0E7969C01185E51D40480BF4B
-            962CD374F28F0F78B8E51A301F37C21367C2EF1C4D2EB7D46D702116EE73323C
-            8E5B6606607846B55927C3A3966880F9C91BE189C3E191EB97C0E563A17E5680
-            443DC22357CF80543CD44F737416B6C05DB264D97AE151D506A4A7422122E055
-            E325BFEA428C0F8C26FF944F35442A3E6C84E7750D8F2A3660311E1D312EC701
-            8882635D90ABA453E9EB7BF9FC2D1CD7DBDC4474C0A78A0BF50E8FEEFC0E0023
-            FC78364B3E2886470CC80EB2A2255247F7D85E879B9536C2FB1B141E9566C0A5
-            F1C7147F77708A52F28A2CADC1B94815583632F8DADC8A2C390AC31346662990
-            DB0E2DACB0121E990DC0DFC65D7EDF49A0E419B3BA0E21F4F93CCD0D3BDD8474
-            3C3A6C5CA61B191EC1E27B4F74131F9C036003B2B6A16AE76B76A526A37B55C8
-            CC7440D02F4B96D9098F2867CA792BE151B5F3353B9A191E51C648AF7C6C49A5
-            F335AB969B1C1E51634D5F918F2DC3266C0DB04FF11F10B2B469CBC7A37B579B
-            1C1E51E0CA3E22B45FE4D83AA0E17CEEBE33272C34C10CCF6B0BAFE6C58D5AC3
-            23F32E909A086D37D6C225E3DE7FBF59B54170F149FE66F6C0E0DB739A2C55E4
-            4878C2AFFB391932C25F9325DB4AFB80A558788746E8FC46C7CAEBE11A9F29FC
-            BD7AB05A13D2F1C85305929DAE29BCE0D7892043C6D6BCE6F0A8B413EC194B5E
-            05A6477284FC2B4B965185EE0BDCD3790A3755B254E2C6F0E8B6AD70DFEB1797
-            149D0F8B55617B930300CF7774074F9637C1ADE151C51F43CBC6AE6C95643EAF
-            E50D0B4EBE28A8DAFB7E3F7B344FB2E36E0C8F2A36002DC6C24F6773301D0C82
-            E55B9C93EA191E553D11DA35963CE7EF10877224CB65A9E1EA1D1EAD7B243630
-            963CEBE75B0E6732C6DB6830337CBEBEE151D525506E211619650C629B7AB103
-            744DFD9D11DF50CF1BB33FC852DDAC3B038AFAC71293C61C784B0EEBAA91E191
-            950F15D2B1C851CAE0881C3BAED1E1D1A66680247AC7126FEA42C4E4D851185E
-            6B7078646759C3523C7ACAF8CB83725CB362F8DD0D0E8FACCC802291BB917949
-            E8E28C1CD7A499E191ED2F76DCEA06B6757E040C5E9025CB9A1D1ED9990126FC
-            C597FF2B7B48087156962C71437854F3ADFDFFE3F48E8F2965FB6569436E098F
-            1CD9DB586902863796CD60EFE1AF7E94A5A6B2BD04CAE17228DCCCBDC8059F91
-            A58A8420BFB9293C72640614995F8CDD9DA781C273B25482E105D186DC141E39
-            DA008487A30FE5EF3DAD003C2B4BAE0D8F1C5902E54646BE53AF05FE38C075F1
-            E14A46A842F0EFF32E0D5F773F4D8603F2A1C7E3F1783C1EB721E43F8F0B9389
-            AFBB88640000000049454E44AE426082}
+            04DC49444154785EEDD95F685B551C07F0F33BE726E9D2766315147DF369E0C3
+            104458D73FAE05CD9FCAA6A89B6E327C10AAA06B7D183E569F64886B9A0E656F
+            CEC9B6D63F93C99A4CC1AD6DD2F661C218B2898F827FA66CFE699326B9F79EE3
+            FDC59390AD49DB7B7393DC84FB79B939BFB490EF2FE7E49E9C1097CBE572B95C
+            2DE9EAC9C73CF3EF0D6D97C3B2405E5BCED2447017D7E10BF0C043421717FDAA
+            76E0D1A3DFA6E4D3452DD980C478A05B008B298C6C9325C2B9B8D29ED39EBEB7
+            09545E5B4662726D784429EC49FBD8D7D7DE7FB25D96F25AAA01F9F0FADAF005
+            0074009B70A9A4092DD3000CAF0A16AF14BE009BD059D28496F80C484E8477E7
+            2889B511B25596362408F96E39A3EE6572DCB4AC8447C63BFFB097B21D4D3D03
+            AC862FC890146FDA1930773CD4A32960393C621AFCDC943300C32B8A1A03F076
+            CA92699A4EFEF1000F365D03E6A24678624FF85D23F1A5A6BA0DCE4782BD7686
+            C771D3CC000CCFA836636778D4140DC8BFF34678627378E4F82570E578A08FE5
+            20568BF0C8D13320110DF4D10C9D812DD0214BA6AD171E556C4072321020025E
+            37FEE4575D88B1FE91F89FF2A9BA4844878CF0BCA6E151D9062C44C3C3C6E504
+            005170AC0B729DF895DEDE572F2CE3B8D666C7C3FD1E555CAC757874EF670018
+            E1C75229F251213C62407692152D9638B6D7F23ADCACA411DE5BA7F0A838032E
+            8F3DA178BBDA272925AFC9D21A9C8B448EA543036FCCAEC892AD303C61648602
+            B9EBD0C20C33E151BE01F8DDB8D3EB3905943C97AFAE43087D2E4B3343763721
+            190D0F1997A97A8647B0F0C1535DC403E70158BFAC6DA8D2F99A558989F03E15
+            52D36DD0EE9525D3AC84479433E58299F0A8D2F99A158D0C8F2863A4473E36A5
+            DCF99A594B0D0E8FA8B1A6AFC9C7A66113B6FAD8E7F803842C6DDAD289F0BED5
+            06874714B8B29F08ED1739360F68309B79E0EC49134DC887E7D58557B3E276B5
+            E151FE2E90180FEC30D6C265E3DEFF60BE6A81E0E2B3EC9DF4C181776735592A
+            CB96F084DFF272326884BF214B9615F7018B91E04E8DD0B98D8E95D7C3353E9D
+            FB7BF550A52624A3A16772243D555578C16F1141068DAD79D5E1517127D83D1A
+            BF0E4C0F6508F957964CA30ADDEFBBCF7F1A3755B254E4C4F0E8AEAD70EF9B97
+            16159D0F895561799303002FB675B59F2A6D8253C3A3B25F86968C5DD92A497D
+            59CD0B169C7C9553B50FBD5EF67896A4C79C181E956D005A88049F4DADC25447
+            0798BEC5D9A996E151C513A1DDA3F1F3BE2DE230FE78204B7557EBF068DD23B1
+            FED1F8392FF71F5959315E469DE5C3676B1B1E555C02A5E623A111C620B2A93F
+            B681AEA9BF33E219EC7E6BE6A62CD5CCBA33A0A06F343661CC8177E4B0A6EA19
+            1E9979532119091DA30C8ECAB1EDEA1D1E6D6A0648A26734F6B62E44448E6D85
+            E1B53A87475696352C46C3A78DFF3C24C7552B84DF53E7F0C8CC0C281099DBA9
+            57842ECECA71551A191E59FE60C7ADAE6FBBFF1360F0922C99D6E8F0C8CA0CC8
+            C36F7CD9BFD2878510E764C91427844755DFDAFF3F4E6FFB945276409636E494
+            F0C896BD8D9926607863D90CF41CF9E647596A28CB4BA0142E87DC9DCCCB5CF0
+            69592A4B08F29B93C2235B664041FE83B1CB7F0628BC204B45185E106DD049E1
+            91AD0D407838FA48F6FE330AC0F3B2E4D8F0C89625506A78F87BF586EF8F835C
+            171F2FAF085508FE43D6A1E16BEEA789A04F3E74B95C2E97CBE53484FC07329C
+            9385611DF42F0000000049454E44AE426082}
           FileName = 
             'C:\Users\Isaque\OneDrive\Imagens\Apps\Financeiro\button-save-v3-' +
             '64x64.png'
@@ -196,7 +196,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
     Margins.Right = 10.000000000000000000
     Margins.Bottom = 10.000000000000000000
     Size.Width = 339.000000000000000000
-    Size.Height = 608.000000000000000000
+    Size.Height = 482.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
     object LabelIcone: TLabel
@@ -215,7 +215,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
     object ListBoxIcone: TListBox
       Align = Client
       Size.Width = 339.000000000000000000
-      Size.Height = 579.000000000000000000
+      Size.Height = 453.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = 'transparentlistboxstyle'
       TabOrder = 1
@@ -224,11 +224,11 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       DefaultItemStyles.ItemStyle = ''
       DefaultItemStyles.GroupHeaderStyle = ''
       DefaultItemStyles.GroupFooterStyle = ''
-      Viewport.Width = 339.000000000000000000
-      Viewport.Height = 579.000000000000000000
+      Viewport.Width = 323.000000000000000000
+      Viewport.Height = 453.000000000000000000
       object ListBoxItem1: TListBoxItem
         Selectable = False
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
@@ -241,24 +241,24 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
               PNG = {
                 89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
                 DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
-                021E49444154785EED9BB18B13411487DFBC64F7387B1BB14D7B581D49C42BBC
-                26676F2B58EA25221636A221480A3B15AD44D0BFC0C68B2122C271DE09568AA0
-                27729DDD75E721D96CE639B3FC50CE6867937DEF6B7EF3DE56F3CDEECC36E3E8
-                1FEC3C6C2DC9945785A4468E16D19E2B58E880C87D16CE47CDF6E82BDA479811
-                F0E6C1B9152774273CA8A335F76419495A9511895C6F5C1D7E40BBE08880ED7B
-                AD5B13CEBB29A58C56D91887C55DAF5F193C46FD5B409CBC63EEA12C2DF16D48
-                5277B1D9D9781AEB42407CED73C95E9778E5FF20FF31A1CAA995CE8B2FC584E3
-                37AF67F291EA6222723B8EDCCEDDD61255F87DD15744F814265EF8040BF32A7A
-                AA48534A1616E44C382AC339AF15F1359ED79F9CFF8173744CD1C6F7774C0052
-                2D2600A9161380548B0940AAC50420D56202906A310148B59800A45A4C00522D
-                2600A9161380548B0940AAC50420D56202906A310148B59800A45A4C00522D26
-                00A9161380548B0940AAC50420D56202906A61279461AC0E211A0701B2875A1D
-                61F1F798B9BA895A1513CABC24BCC5CBEDE76F73997E425F0D894F5E362F6D7C
-                63E7482ACEDD405F075936F555B91987C529D0EC0C9F850DE1511CAB204DBBA7
-                D787EFE2F0D73138DE3FBCEC499EA02C25F1D6A817E9373A833E5AB397A7B7EF
-                AF5D983AD7AF129D44AB1488D0AE637FADD11E0ED02A981110F9D83D9F7E3F7E
-                B8166C9D157235F2329FD7E7D91D88C86ED8E746F5FDE557AED7F37804887E02
-                9A339BED6A00CFB60000000049454E44AE426082}
+                021D49444154785EED9BBF8B135110C767263F1E676F23B6690FAB23897885D7
+                E4EC6D054BBD44C4C24634044961A7A29508FA17D87831444410BD13AC14414F
+                E43ABBEBCE43363F76DCB77C51CE6867939DF934DF37B3D5FBBCDDF7B6794CFF
+                60FB7E6B5967B2A6A435625A427BA110A57D22FEAC321D35DBA3AF681F624EC0
+                9B7B675659E956F6A08ED6C29324A4A1A22352BDDAB83CFC8076CE21015B775A
+                37C632E9060A8256D148B2C5DDA85F1A3C44FD5B409C3C8BF4501696F8365403
+                9F6F76361FC73A17105FFB89262F0BBCF27F30FD31A1D289D5CEB32FF984E337
+                6F67F291F25245F5661CF1F6EDD63295E47DDE3744F6294C94E498A8C81A7AA6
+                08812A21E8A9ECA8CCCE79AB685A9345FDC9F91F30D311431BDFDF710148B3B8
+                00A4595C00D22C2E0069161780348B0B409AC50520CDE2029066710148B3B800
+                A4595C00D22C2E0069161780348B0B409AC50520CDE2029066710148B3B800A4
+                595C00D22C2E0069161780348B0B409A4558698CB1399428C904E82E6A73648B
+                BF2B22E557A84D31A624D58ABC9695F6D3B7539D7D42DF0CD5B4FABC7961F39B
+                30939698AFA16F832499A565BD1E87F929D0EC0C9F641BC28338364108DD931B
+                C37771F8EB184CF60E2EA6A48F501692786B3455ED373A833E5AF397A7B7EEAE
+                9F9B31F7CB44C7D12A04AAB4C3925E69B48703B472E604443E76CF56BF1F3D58
+                CF6C9D56E21AA5BA98D7E785F7557527DBE746F5BD9517DCEBA57804887E0239
+                759AEF33C03E980000000049454E44AE426082}
               FileName = 
                 'C:\Users\Isaque\OneDrive\Imagens\Apps\Financeiro\fundo-selecao-i' +
                 'cone-64x64.png'
@@ -270,7 +270,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 10.000000000000000000
           Margins.Right = 10.000000000000000000
           Margins.Bottom = 10.000000000000000000
-          Size.Width = 64.000000000000000000
+          Size.Width = 60.000000000000000000
           Size.Height = 60.000000000000000000
           Size.PlatformDefault = False
           WrapMode = Stretch
@@ -284,7 +284,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -292,8 +292,8 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem2: TListBoxItem
         Selectable = False
-        Position.X = 84.000000000000000000
-        Size.Width = 84.000000000000000000
+        Position.X = 80.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 1
@@ -306,7 +306,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -314,8 +314,8 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem3: TListBoxItem
         Selectable = False
-        Position.X = 168.000000000000000000
-        Size.Width = 84.000000000000000000
+        Position.X = 160.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
@@ -328,7 +328,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -336,8 +336,8 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem4: TListBoxItem
         Selectable = False
-        Position.X = 252.000000000000000000
-        Size.Width = 84.000000000000000000
+        Position.X = 240.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 3
@@ -350,7 +350,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -359,7 +359,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       object ListBoxItem5: TListBoxItem
         Selectable = False
         Position.Y = 80.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 4
@@ -372,7 +372,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -380,9 +380,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem6: TListBoxItem
         Selectable = False
-        Position.X = 84.000000000000000000
+        Position.X = 80.000000000000000000
         Position.Y = 80.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 5
@@ -395,7 +395,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -403,9 +403,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem7: TListBoxItem
         Selectable = False
-        Position.X = 168.000000000000000000
+        Position.X = 160.000000000000000000
         Position.Y = 80.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 6
@@ -418,7 +418,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -426,9 +426,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem8: TListBoxItem
         Selectable = False
-        Position.X = 252.000000000000000000
+        Position.X = 240.000000000000000000
         Position.Y = 80.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 7
@@ -441,7 +441,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -450,7 +450,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       object ListBoxItem9: TListBoxItem
         Selectable = False
         Position.Y = 160.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 8
@@ -463,7 +463,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -471,9 +471,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem10: TListBoxItem
         Selectable = False
-        Position.X = 84.000000000000000000
+        Position.X = 80.000000000000000000
         Position.Y = 160.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 9
@@ -486,7 +486,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -494,9 +494,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem11: TListBoxItem
         Selectable = False
-        Position.X = 168.000000000000000000
+        Position.X = 160.000000000000000000
         Position.Y = 160.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 10
@@ -509,7 +509,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -517,9 +517,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem12: TListBoxItem
         Selectable = False
-        Position.X = 252.000000000000000000
+        Position.X = 240.000000000000000000
         Position.Y = 160.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 11
@@ -532,7 +532,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -541,7 +541,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       object ListBoxItem13: TListBoxItem
         Selectable = False
         Position.Y = 240.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 12
@@ -554,7 +554,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -562,9 +562,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem14: TListBoxItem
         Selectable = False
-        Position.X = 84.000000000000000000
+        Position.X = 80.000000000000000000
         Position.Y = 240.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 13
@@ -577,7 +577,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -585,9 +585,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem15: TListBoxItem
         Selectable = False
-        Position.X = 168.000000000000000000
+        Position.X = 160.000000000000000000
         Position.Y = 240.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 14
@@ -600,7 +600,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -608,9 +608,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem16: TListBoxItem
         Selectable = False
-        Position.X = 252.000000000000000000
+        Position.X = 240.000000000000000000
         Position.Y = 240.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 15
@@ -623,7 +623,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -632,7 +632,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       object ListBoxItem17: TListBoxItem
         Selectable = False
         Position.Y = 320.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 16
@@ -645,7 +645,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -653,9 +653,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem18: TListBoxItem
         Selectable = False
-        Position.X = 84.000000000000000000
+        Position.X = 80.000000000000000000
         Position.Y = 320.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 17
@@ -668,7 +668,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -676,9 +676,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem19: TListBoxItem
         Selectable = False
-        Position.X = 168.000000000000000000
+        Position.X = 160.000000000000000000
         Position.Y = 320.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 18
@@ -691,7 +691,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -699,9 +699,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem20: TListBoxItem
         Selectable = False
-        Position.X = 252.000000000000000000
+        Position.X = 240.000000000000000000
         Position.Y = 320.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 19
@@ -714,7 +714,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -723,7 +723,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       object ListBoxItem21: TListBoxItem
         Selectable = False
         Position.Y = 400.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 20
@@ -736,7 +736,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -744,9 +744,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem22: TListBoxItem
         Selectable = False
-        Position.X = 84.000000000000000000
+        Position.X = 80.000000000000000000
         Position.Y = 400.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 21
@@ -759,7 +759,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -767,9 +767,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem23: TListBoxItem
         Selectable = False
-        Position.X = 168.000000000000000000
+        Position.X = 160.000000000000000000
         Position.Y = 400.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 22
@@ -782,7 +782,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -790,9 +790,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem24: TListBoxItem
         Selectable = False
-        Position.X = 252.000000000000000000
+        Position.X = 240.000000000000000000
         Position.Y = 400.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 23
@@ -805,7 +805,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -814,7 +814,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       object ListBoxItem25: TListBoxItem
         Selectable = False
         Position.Y = 480.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 24
@@ -827,7 +827,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -835,9 +835,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem26: TListBoxItem
         Selectable = False
-        Position.X = 84.000000000000000000
+        Position.X = 80.000000000000000000
         Position.Y = 480.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 25
@@ -850,7 +850,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -858,9 +858,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem27: TListBoxItem
         Selectable = False
-        Position.X = 168.000000000000000000
+        Position.X = 160.000000000000000000
         Position.Y = 480.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 26
@@ -873,7 +873,7 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
@@ -881,9 +881,9 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
       end
       object ListBoxItem28: TListBoxItem
         Selectable = False
-        Position.X = 252.000000000000000000
+        Position.X = 240.000000000000000000
         Position.Y = 480.000000000000000000
-        Size.Width = 84.000000000000000000
+        Size.Width = 80.000000000000000000
         Size.Height = 80.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 27
@@ -896,12 +896,81 @@ object FrmCategoriaEdicao: TFrmCategoriaEdicao
           Margins.Top = 16.000000000000000000
           Margins.Right = 16.000000000000000000
           Margins.Bottom = 16.000000000000000000
-          Size.Width = 52.000000000000000000
+          Size.Width = 48.000000000000000000
           Size.Height = 48.000000000000000000
           Size.PlatformDefault = False
           OnClick = SelecionarIcone
         end
       end
+    end
+  end
+  object LayoutBototes: TLayout
+    Align = Bottom
+    Margins.Top = 6.000000000000000000
+    Position.Y = 631.000000000000000000
+    Size.Width = 359.000000000000000000
+    Size.Height = 120.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object RectangleBotoes: TRectangle
+      Align = Contents
+      Corners = [TopLeft, TopRight]
+      Fill.Color = xFF37353A
+      Size.Width = 359.000000000000000000
+      Size.Height = 120.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      XRadius = 30.000000000000000000
+      YRadius = 30.000000000000000000
+    end
+    object ImageExcluir: TImage
+      MultiResBitmap.Height = 64
+      MultiResBitmap.Width = 64
+      MultiResBitmap = <
+        item
+          Width = 64
+          Height = 64
+          PNG = {
+            89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
+            DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+            032149444154785EED9BCF6B134114C7E7C7E64785FED08B20A267F5E0C54329
+            AD2842091EF4EE5FE04D4B28FE0B4A09D59B7F81773D482888624BE9C18B07F5
+            AC88E045AB059B1FBB33E6AD2F90A4B39BCC66A66E32F381F0E64D27DB79DFF9
+            B1C96C1EF178DC86A23D16F69E54E60E4589A1AB648635C5E2BDFA6F74AD635D
+            80DDDAEA2911F07546E51D4AD939AC4E454AF14548FA8C85D1C65275EB07565B
+            C1AA006F366F5EE001D90A08398B555A84847C8D42B27A6DEDE527AC328E3501
+            60E4A362F03E6BF05D4004DE0A2FDB9A09A9EB711C60DA8F1B3C00D7806BA16B
+            1C6B02C09AC7628C88E476BB212E35C2C2C9B417B481B6F8B698C16B99C4CA12
+            80DD5E32F60BDD1808ECEA7AFD23BAA9BCDDA85C2C94D9077463A810F336EE0E
+            566680EA561705A56F581C8AAAEDB0DB6756469A013B8F6ECDB68B94A33B9459
+            1ACDB5B9F88C6E4C2162E70F241F6904C77D3F5068C968F9C18B037413491560
+            FB716599705AEB8CC9958004D6F60B1B84241484F0772492D595FBF51DAC3E42
+            A20071F04CBC0A6850C4AA892494618B0876234984E451ED8CFCA4070FC431C4
+            B3588D7206C09A97271AFB9336ED9380E540FF9417547B823240D8F0A6257800
+            6249DAC4A726C8AC28052889EF4D19CA06BA130FC40231A1DB875280A5EADEA1
+            E4B23A0D22400C100BC484557DA47E0ED8AD2DCE34D9E912BA13098C7C52F01E
+            CF88DF057AA0AF376FCF6339975C5F7B0EDF42E53F6F385A0274825F2807ED9F
+            E8E6123853E888B08FEE50FCE700B4CEE20540EB2C5E00B4C6E89EFEAA4E777B
+            31DD2E2BC60588DAF22E9CFEC20BCA587D04D3EDB2625E809E13DDB49360D3ED
+            B2E2F700B4CEE20540EB2C5E00B4CEE20540EB2C5E00B4CEE20540EB2C5E00B4
+            CEE20540EB2C5E00B4C6E061F30C16FBCA83986E9715E38FC6E0E0B27B76C70B
+            F429E37425FEC300A6DB75D17D34E69F0DA275162D01209D058BB945B78F5A02
+            C0AFB5219D05DDDC017DD3FD45B9F612805C1E2CE68E2C7DD316001299208D05
+            DDDC007D82BEA13B32DA0240EE0E2432E549846E725596BC226D0100C8E28244
+            A648C887FF734F80FF0D7D80BE64CD2CD3FD9194925112224D73DC09961ECF54
+            42C85F5412AEABE922D34B0000000049454E44AE426082}
+          FileName = 
+            'C:\Users\Isaque\OneDrive\Imagens\Apps\Financeiro\button-trash-64' +
+            'x64.png'
+        end>
+      Align = Center
+      Margins.Top = 20.000000000000000000
+      Margins.Bottom = 20.000000000000000000
+      Size.Width = 60.000000000000000000
+      Size.Height = 80.000000000000000000
+      Size.PlatformDefault = False
+      WrapMode = Center
+      OnClick = ImageExcluirClick
     end
   end
 end

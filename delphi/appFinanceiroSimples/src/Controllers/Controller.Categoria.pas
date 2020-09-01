@@ -29,12 +29,12 @@ type
       property Lista : TDictionary<integer, TCategoriaModel> read FLista;
 
       procedure New;
-      procedure Load(var aErro : String);
+      procedure Load(out aErro : String);
 
-      function Insert(var aErro : String) : Boolean;
-      function Update(var aErro : String) : Boolean;
-      function Delete(var aErro : String) : Boolean;
-      function Find(aCodigo : Integer; var aErro : String;
+      function Insert(out aErro : String) : Boolean;
+      function Update(out aErro : String) : Boolean;
+      function Delete(out aErro : String) : Boolean;
+      function Find(aCodigo : Integer; out aErro : String;
         const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean;
   end;
 
@@ -60,7 +60,7 @@ begin
     .ExecSQL(TScriptDDL.getInstance().getCreateTableCategoria.Text, True);
 end;
 
-function TCategoriaController.Delete(var aErro: String): Boolean;
+function TCategoriaController.Delete(out aErro: String): Boolean;
 var
   aQry : TFDQuery;
 begin
@@ -134,7 +134,7 @@ begin
   inherited;
 end;
 
-function TCategoriaController.Find(aCodigo: Integer; var aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
+function TCategoriaController.Find(aCodigo: Integer; out aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
 var
   aQry : TFDQuery;
 begin
@@ -187,7 +187,7 @@ begin
   Result := _instance;
 end;
 
-function TCategoriaController.Insert(var aErro : String): Boolean;
+function TCategoriaController.Insert(out aErro : String): Boolean;
 var
   aQry : TFDQuery;
 begin
@@ -222,8 +222,12 @@ begin
         EndUpdate;
 
         ParamByName('ds_categoria').Value := FModel.Descricao;
-        ParamByName('ic_categoria').Assign( FModel.Icone );
         ParamByName('ix_categoria').Value := FModel.Indice;
+
+        if Assigned(FModel.Icone) then
+          ParamByName('ic_categoria').Assign( FModel.Icone )
+        else
+          ParamByName('ic_categoria').Clear;
 
         ExecSQL;
 
@@ -240,7 +244,7 @@ begin
   end;
 end;
 
-procedure TCategoriaController.Load(var aErro: String);
+procedure TCategoriaController.Load(out aErro: String);
 var
   aModel : TCategoriaModel;
   aQry : TFDQuery;
@@ -323,7 +327,7 @@ begin
   end;
 end;
 
-function TCategoriaController.Update(var aErro: String): Boolean;
+function TCategoriaController.Update(out aErro: String): Boolean;
 var
   aQry : TFDQuery;
 begin
@@ -362,7 +366,11 @@ begin
         ParamByName('cd_categoria').Value := FModel.Codigo;
         ParamByName('ds_categoria').Value := FModel.Descricao;
         ParamByName('ix_categoria').Value := FModel.Indice;
-        ParamByName('ic_categoria').Assign( FModel.Icone );
+
+        if Assigned(FModel.Icone) then
+          ParamByName('ic_categoria').Assign( FModel.Icone )
+        else
+          ParamByName('ic_categoria').Clear;
 
         ExecSQL;
 
