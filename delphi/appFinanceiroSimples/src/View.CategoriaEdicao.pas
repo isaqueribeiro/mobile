@@ -121,7 +121,9 @@ implementation
 {$R *.fmx}
 
 uses
-  DataModule.Recursos, Services.Utils;
+    DataModule.Recursos
+  , Services.Utils
+  , Views.Mensagem;
 
 { TFrmCategoriaEdicao }
 
@@ -213,15 +215,19 @@ end;
 
 procedure TFrmCategoriaEdicao.ImageExcluirClick(Sender: TObject);
 begin
-  FController.Delete(FError);
-
-  if (not FError.IsEmpty) then
-    ShowMessage(FError)
-  else
-  begin
-    Notificar;
-    Close;
-  end;
+//  FController.Delete(FError);
+//
+//  if (not FError.IsEmpty) then
+//    ShowMessage(FError)
+//  else
+//  begin
+//    Notificar;
+//    Close;
+//  end;
+  TViewMensagem
+    .GetInstance()
+    .Informe('Informação', 'Teste de exibição!')
+    .Show;
 end;
 
 procedure TFrmCategoriaEdicao.ImageFecharClick(Sender: TObject);

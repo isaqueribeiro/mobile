@@ -1,0 +1,51 @@
+object ViewMensagem: TViewMensagem
+  Left = 0
+  Top = 0
+  Caption = 'Financeiro Simples'
+  ClientHeight = 820
+  ClientWidth = 359
+  Position = OwnerFormCenter
+  Transparency = True
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  FullScreen = True
+  OnCreate = FormCreate
+  OnClose = FormClose
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object RectangleBodyView: TRectangle
+    Align = Contents
+    Fill.Color = xFFC7934A
+    Opacity = 0.300000011920929000
+    Size.Width = 359.000000000000000000
+    Size.Height = 820.000000000000000000
+    Size.PlatformDefault = False
+    Stroke.Kind = None
+    object AnimationShowView: TFloatAnimation
+      Duration = 0.200000002980232200
+      Interpolation = Circular
+      OnFinish = AnimationShowViewFinish
+      PropertyName = 'Opacity'
+      StartValue = 0.000000000000000000
+      StopValue = 0.300000011920929000
+    end
+  end
+  object Layout: TLayout
+    Align = Center
+    Size.Width = 300.000000000000000000
+    Size.Height = 294.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object RectangleBodyMessage: TRectangle
+      Align = Contents
+      Fill.Color = claWhite
+      Size.Width = 300.000000000000000000
+      Size.Height = 294.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      XRadius = 30.000000000000000000
+      YRadius = 30.000000000000000000
+    end
+  end
+end
