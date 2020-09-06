@@ -55,7 +55,7 @@ begin
   Conn.Params.EndUpdate;
 
   {$IFDEF MSWINDOWS}
-  FFileBase := ExtractFilePath(ParamStr(0)) + 'db\financeiro_simples.db';
+  FFileBase := System.SysUtils.GetCurrentDir + 'db\financeiro_simples.db';
   {$ELSE}
   FFileBase := TPath.Combine(TPath.GetDocumentsPath, 'financeiro_simples.db');
   {$ENDIF}
