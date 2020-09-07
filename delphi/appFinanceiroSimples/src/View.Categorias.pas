@@ -139,18 +139,25 @@ begin
     ShowMessage(aError)
   else
   begin
-    LimparListView;
 
-    for I in FCategogiaController.Lista.Keys do
-    begin
-      o := TObjetoItemListView.Create;
+    ListViewCategorias.BeginUpdate;
+    try
+      LimparListView;
 
-      o.Codigo    := FCategogiaController.Lista[I].Codigo;
-      o.Descricao := FCategogiaController.Lista[I].Descricao;
-      o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Lista[I].Icone );
+      for I in FCategogiaController.Lista.Keys do
+      begin
+        o := TObjetoItemListView.Create;
 
-      addItemCategoria(o);
+        o.Codigo    := FCategogiaController.Lista[I].Codigo;
+        o.Descricao := FCategogiaController.Lista[I].Descricao;
+        o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Lista[I].Icone );
+
+        addItemCategoria(o);
+      end;
+    finally
+      ListViewCategorias.EndUpdate;
     end;
+
   end;
 
   if (ListViewCategorias.Items.Count < 2) then
@@ -242,6 +249,9 @@ procedure TFrmCategorias.LimparListView;
 var
   I : Integer;
 begin
+  // Voltar o Scroll para o índice 0 (zero)
+  ListViewCategorias.ScrollTo(0);
+
   // Limpar objesto de lista para evitar MemoryLeak
   for I := 0 to ListViewCategorias.Items.Count - 1 do
     if Assigned(ListViewCategorias.Items.Item[I].TagObject) then

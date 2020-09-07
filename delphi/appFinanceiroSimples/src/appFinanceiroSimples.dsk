@@ -16,27 +16,31 @@ File_13=TSourceModule,'c:\delphi\rio\studio\20.0\source\data\firedac\FireDAC.Sta
 File_14=TSourceModule,'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Models\Model.Lista.Generics.pas',0,1,1,11,23,0,0,,
 
 [Modules]
-Module0=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas
-Module1=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas
-Module2=default.htm
-Module3=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj
-Module4=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.pas
-Module5=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas
-Module6=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Views.Mensagem.pas
-Module7=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.pas
-Module8=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Lancamentos.pas
-Module9=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.LancamentoEdicao.pas
-Module10=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.pas
-Module11=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas
-Module12=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Services\Services.Utils.pas
-Module13=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.pas
-Count=14
+Module0=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas
+Module1=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas
+Module2=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Views.Mensagem.pas
+Module3=default.htm
+Module4=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj
+Module5=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Interfaces\Views.Interfaces.Mensagem.pas
+Module6=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.pas
+Module7=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Services\Services.Utils.pas
+Module8=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas
+Module9=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas
+Module10=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.pas
+Module11=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Lancamentos.pas
+Module12=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.LancamentoEdicao.pas
+Module13=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.pas
+Module14=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.pas
+Count=15
 EditWindowCount=1
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas]
+ModuleType=TSourceModule
+
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Views.Mensagem.pas]
 ModuleType=TSourceModule
 
 [default.htm]
@@ -45,13 +49,19 @@ ModuleType=TURLModule
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\appFinanceiroSimples.dproj]
 ModuleType=TBaseProject
 
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Interfaces\Views.Interfaces.Mensagem.pas]
+ModuleType=TSourceModule
+
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Recursos.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Services\Services.Utils.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Views.Mensagem.pas]
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas]
+ModuleType=TSourceModule
+
+[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas]
 ModuleType=TSourceModule
 
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Login.pas]
@@ -66,18 +76,12 @@ ModuleType=TSourceModule
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Principal.pas]
 ModuleType=TSourceModule
 
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas]
-ModuleType=TSourceModule
-
-[C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Services\Services.Utils.pas]
-ModuleType=TSourceModule
-
 [C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Incio.pas]
 ModuleType=TSourceModule
 
 [EditWindow0]
-ViewCount=14
-CurrentEditView=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas
+ViewCount=15
+CurrentEditView=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas
 View0=0
 View1=1
 View2=2
@@ -92,6 +96,7 @@ View10=10
 View11=11
 View12=12
 View13=13
+View14=14
 PercentageSizes=1
 Create=1
 Visible=1
@@ -151,8 +156,8 @@ EditViewName=Borland.FormDesignerView
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.pas
 CursorX=1
-CursorY=58
-TopLine=32
+CursorY=62
+TopLine=37
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -216,31 +221,31 @@ EditViewName=Borland.FormDesignerView
 [View9]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas
-CursorX=7
-CursorY=178
-TopLine=158
+CursorX=3
+CursorY=69
+TopLine=31
 LeftCol=1
 Elisions=
-Bookmarks={1,136,5}
-EditViewName=Borland.FormDesignerView
+Bookmarks={1,147,34}
+EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Categorias.pas
 
 [View10]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas
-CursorX=5
-CursorY=162
-TopLine=129
+CursorX=1
+CursorY=235
+TopLine=100
 LeftCol=1
 Elisions=
-Bookmarks={1,247,8}
+Bookmarks={1,252,8}
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaEdicao.pas
 
 [View11]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Views.Mensagem.pas
-CursorX=40
-CursorY=42
-TopLine=4
+CursorX=43
+CursorY=77
+TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -248,16 +253,27 @@ EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinan
 
 [View12]
 CustomEditViewType=TEditView
+Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Interfaces\Views.Interfaces.Mensagem.pas
+CursorX=1
+CursorY=10
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Interfaces\Views.Interfaces.Mensagem.pas
+
+[View13]
+CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas
 CursorX=87
 CursorY=102
-TopLine=266
+TopLine=245
 LeftCol=1
 Elisions=
 Bookmarks={1,180,1}
 EditViewName=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Controllers\Controller.Categoria.pas
 
-[View13]
+[View14]
 CustomEditViewType=TEditView
 Module=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Services\Services.Utils.pas
 CursorX=80
@@ -373,12 +389,12 @@ State=0
 Left=0
 Top=28
 Width=2771
-Height=1337
+Height=1413
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2771
-ClientHeight=1337
-TBDockHeight=1337
+ClientHeight=1413
+TBDockHeight=1413
 LRDockWidth=2771
 Dockable=1
 StayOnTop=0
@@ -435,7 +451,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
 ClientHeight=4952
-TBDockHeight=8769
+TBDockHeight=8500
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
@@ -450,11 +466,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=8500
+Height=8231
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=8500
+ClientHeight=8231
 TBDockHeight=5962
 LRDockWidth=2510
 Dockable=1
@@ -467,7 +483,7 @@ Visible=0
 Docked=1
 State=0
 Left=-1528
-Top=249
+Top=221
 Width=276
 Height=365
 MaxLeft=-1
@@ -522,8 +538,7 @@ StayOnTop=0
 Column0Width=145
 Column1Width=100
 Column2Width=115
-Column3Width=250
-Column4Width=124
+Column3Width=374
 
 [LocalVarsWindow]
 PercentageSizes=1
@@ -656,11 +671,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=8500
+Height=8231
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=8500
+ClientHeight=8231
 TBDockHeight=4885
 LRDockWidth=7151
 Dockable=1
@@ -692,7 +707,7 @@ Visible=0
 Docked=1
 State=0
 Left=-8
-Top=-120
+Top=-148
 Width=1849
 Height=3144
 MaxLeft=-1
@@ -796,11 +811,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=8500
+Height=8231
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=8500
+ClientHeight=8231
 TBDockHeight=4885
 LRDockWidth=5307
 Dockable=1
@@ -892,7 +907,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
 ClientHeight=4510
-TBDockHeight=8769
+TBDockHeight=8500
 LRDockWidth=2000
 Dockable=1
 StayOnTop=0
@@ -916,7 +931,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
 ClientHeight=3471
-TBDockHeight=8769
+TBDockHeight=8500
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
@@ -940,7 +955,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
 ClientHeight=3913
-TBDockHeight=8769
+TBDockHeight=8500
 LRDockWidth=2000
 Dockable=1
 StayOnTop=0

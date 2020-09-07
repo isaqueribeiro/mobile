@@ -34,18 +34,69 @@ object ViewMensagem: TViewMensagem
   object Layout: TLayout
     Align = Center
     Size.Width = 300.000000000000000000
-    Size.Height = 294.000000000000000000
+    Size.Height = 300.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
     object RectangleBodyMessage: TRectangle
       Align = Contents
       Fill.Color = claWhite
       Size.Width = 300.000000000000000000
-      Size.Height = 294.000000000000000000
+      Size.Height = 300.000000000000000000
       Size.PlatformDefault = False
       Stroke.Kind = None
       XRadius = 30.000000000000000000
       YRadius = 30.000000000000000000
+    end
+    object AnimationShowMessage: TFloatAnimation
+      Duration = 0.200000002980232200
+      Interpolation = Circular
+      PropertyName = 'Opacity'
+      StartValue = 0.000000000000000000
+      StopValue = 1.000000000000000000
+    end
+    object LabelTitulo: TLabel
+      Align = Top
+      StyledSettings = []
+      Size.Width = 300.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Family = 'Bauhaus 93'
+      TextSettings.Font.Size = 18.000000000000000000
+      TextSettings.FontColor = xFF272938
+      TextSettings.HorzAlign = Center
+      TextSettings.WordWrap = False
+      Text = 'TITULO'
+      TabOrder = 0
+    end
+    object LayoutBotoes: TLayout
+      Align = Bottom
+      Position.Y = 250.000000000000000000
+      Size.Width = 300.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+    end
+    object ImageMessage: TImage
+      MultiResBitmap = <
+        item
+        end>
+      Align = Bottom
+      Position.Y = 180.000000000000000000
+      Size.Width = 300.000000000000000000
+      Size.Height = 70.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object LabelMessage: TLabel
+      Align = Client
+      StyledSettings = []
+      Size.Width = 300.000000000000000000
+      Size.Height = 130.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 18.000000000000000000
+      TextSettings.FontColor = xFF272938
+      TextSettings.HorzAlign = Center
+      Text = 'Mensagem do caixa de di'#225'logo...'
+      TabOrder = 3
     end
   end
 end

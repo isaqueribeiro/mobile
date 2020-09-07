@@ -23,7 +23,8 @@ uses
   Services.SmartPoint in 'Services\Services.SmartPoint.pas',
   Views.Interfaces.Observers in 'Views\Interfaces\Views.Interfaces.Observers.pas',
   Services.ComplexTypes in 'Services\Services.ComplexTypes.pas',
-  Views.Mensagem in 'Views\Views.Mensagem.pas' {ViewMensagem};
+  Views.Mensagem in 'Views\Views.Mensagem.pas' {ViewMensagem},
+  Views.Interfaces.Mensagem in 'Views\Interfaces\Views.Interfaces.Mensagem.pas';
 
 {$R *.res}
 

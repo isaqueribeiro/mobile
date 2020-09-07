@@ -161,7 +161,11 @@ begin
     aItem := ListBoxIcone.ItemByIndex( ListBoxIcone.ItemIndex );
 
     if Assigned(aItem) then
+    begin
       ImgSelecao.Parent := aItem;
+      ListBoxIcone.ScrollToItem( aItem );
+      ListBoxIcone.ScrollTo( aItem.Position.X, aItem.Position.Y );
+    end;
   end;
 end;
 
@@ -224,10 +228,11 @@ begin
 //    Notificar;
 //    Close;
 //  end;
-  TViewMensagem
-    .GetInstance()
-    .Informe('Informação', 'Teste de exibição!')
-    .Show;
+
+//  TViewMensagem
+//    .GetInstance()
+//    .Informe('Informação', 'Teste de exibição!')
+//    .Show;
 end;
 
 procedure TFrmCategoriaEdicao.ImageFecharClick(Sender: TObject);

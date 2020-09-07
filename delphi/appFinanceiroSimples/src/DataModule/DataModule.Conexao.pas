@@ -55,12 +55,10 @@ begin
   Conn.Params.EndUpdate;
 
   {$IFDEF MSWINDOWS}
-  FFileBase := System.SysUtils.GetCurrentDir + 'db\financeiro_simples.db';
+  FFileBase := TPath.Combine(System.SysUtils.GetCurrentDir, 'db\financeiro_simples.db');
   {$ELSE}
   FFileBase := TPath.Combine(TPath.GetDocumentsPath, 'financeiro_simples.db');
   {$ENDIF}
-//
-//  Conn.Connected := True;
 end;
 
 class function TDMConexao.GetInstance: TDMConexao;

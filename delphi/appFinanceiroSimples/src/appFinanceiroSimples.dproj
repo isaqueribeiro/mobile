@@ -453,6 +453,7 @@
             <Form>ViewMensagem</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="Views\Interfaces\Views.Interfaces.Mensagem.pas"/>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>
