@@ -4,6 +4,7 @@ interface
 
 type
   TTipoOperacaoController = (operControllerBrowser, operControllerInsert, operControllerUpdate, operControllerDelete);
+  TTipoLancamento = (tipoReceita, tipoDespesa);
 
 implementation
 

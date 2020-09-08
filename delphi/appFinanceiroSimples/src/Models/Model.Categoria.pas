@@ -15,7 +15,7 @@ type
     procedure SetCodigo(const Value: Integer);
     procedure SetDescricao(const Value: String);
     procedure SetIcone(const Value: TBitmap);
-  procedure SetIndice(const Value: Integer);
+    procedure SetIndice(const Value: Integer);
   public
     constructor Create;
     destructor Destroy; override;
@@ -27,8 +27,6 @@ type
 
     class function New : TCategoriaModel;
   end;
-
-  TListaCategoria = array of TCategoriaModel;
 
 implementation
 

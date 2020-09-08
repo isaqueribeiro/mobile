@@ -454,6 +454,8 @@
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="Views\Interfaces\Views.Interfaces.Mensagem.pas"/>
+        <DCCReference Include="Models\Model.Lancamento.pas"/>
+        <DCCReference Include="Controllers\Controller.Lancamento.pas"/>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>
