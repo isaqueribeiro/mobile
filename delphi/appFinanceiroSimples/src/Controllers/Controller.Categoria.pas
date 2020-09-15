@@ -289,7 +289,7 @@ begin
       end;
     except
       On E : Exception do
-        aErro := 'Erro ao tentar localizar a categoria: ' + E.Message;
+        aErro := 'Erro ao tentar carregar as categorias: ' + E.Message;
     end;
   finally
     aQry.Close;
@@ -299,13 +299,7 @@ end;
 
 procedure TCategoriaController.New;
 begin
-  with FModel do
-  begin
-    Codigo    := 0;
-    Descricao := EmptyStr;
-    Indice    := 0;
-    Icone     := nil;
-  end;
+  FModel := TCategoriaModel.New;
 end;
 
 procedure TCategoriaController.SetAtributes(const aDataSet: TDataSet; aModel: TCategoriaModel);

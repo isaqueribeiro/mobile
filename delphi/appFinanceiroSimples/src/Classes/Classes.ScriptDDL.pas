@@ -65,8 +65,8 @@ begin
     aSQL.Add('  , tp_lancamento CHAR(1) NOT NULL ');
     aSQL.Add('  , ds_lancamento VARCHAR (100)');
     aSQL.Add('  , dt_lancamento DATE');
-    aSQL.Add('  , cd_categoria  INTEGER');
     aSQL.Add('  , vl_lancamento NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('  , cd_categoria  INTEGER');
     aSQL.Add(');');
     aSQL.EndUpdate;
   finally

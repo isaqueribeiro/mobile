@@ -34,6 +34,7 @@ type
     ImgSemImage: TImage;
     ListViewLancamentos: TListView;
     LabelTitulo: TLabel;
+    procedure DefinirMesClick(Sender: TObject);
     procedure ImageFecharClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ImageAdicionarClick(Sender: TObject);
@@ -44,6 +45,7 @@ type
   private
     { Private declarations }
     FEdicao : TFrmLancamentoEdicao;
+    FDataFiltro : TDateTime;
     procedure addItemLancamento(const aObjeto : TObjetoItemListView);
     procedure formatItemLancamento(const aItem: TListViewItem);
   public
@@ -60,7 +62,9 @@ implementation
 {$R *.fmx}
 
 uses
-    DataModule.Recursos;
+    DataModule.Recursos
+  , Services.Utils
+  , System.DateUtils;
 
 procedure TFrmLancamentos.addItemLancamento(const aObjeto: TObjetoItemListView);
 var
@@ -71,6 +75,15 @@ begin
   aItem.TagObject := aObjeto;
 
   formatItemLancamento(aItem);
+end;
+
+procedure TFrmLancamentos.DefinirMesClick(Sender: TObject);
+var
+  aIncremento : Integer;
+begin
+  aIncremento   := TFmxObject(Sender).Tag;
+  FDataFiltro   := IncMonth(FDataFiltro, aIncremento);
+  LabelMes.Text := TServicesUtils.MonthName(FDataFiltro).ToUpper + '/' + YearOf(FDataFiltro).ToString;
 end;
 
 procedure TFrmLancamentos.formatItemLancamento(const aItem: TListViewItem);
@@ -130,6 +143,8 @@ end;
 procedure TFrmLancamentos.FormCreate(Sender: TObject);
 begin
   ImgSemImage.Visible := False;
+  FDataFiltro := Date;
+  DefinirMesClick(Self);
 end;
 
 class function TFrmLancamentos.GetInstance: TFrmLancamentos;

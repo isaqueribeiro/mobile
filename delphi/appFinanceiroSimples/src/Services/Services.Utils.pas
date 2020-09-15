@@ -12,13 +12,15 @@ type
       class procedure ResourceImage( aResourceName : String; aImage : TImage);
       class function Base64FromBitmap(aBitmap : TBitmap) : String;
       class function BitmapFromBase64(const aBase64 : String) : TBitmap;
+      class function MonthName(aData : TDateTime) : String;
 
   end;
 implementation
 
 uses
     System.Classes
-  , System.Types;
+  , System.Types
+  , System.DateUtils;
 
 { TServicesUtils }
 
@@ -79,6 +81,30 @@ begin
 
     Result := aRestorno;
   end;
+end;
+
+class function TServicesUtils.MonthName(aData: TDateTime): String;
+var
+  aRetorno : String;
+begin
+  aRetorno := EmptyStr;
+
+  case MonthOf(aData) of
+     1 : aRetorno := 'Janeiro';
+     2 : aRetorno := 'Fevereiro';
+     3 : aRetorno := 'Março';
+     4 : aRetorno := 'Abril';
+     5 : aRetorno := 'Maio';
+     6 : aRetorno := 'Junho';
+     7 : aRetorno := 'Julho';
+     8 : aRetorno := 'Agosto';
+     9 : aRetorno := 'Setembro';
+    10 : aRetorno := 'Outubro';
+    11 : aRetorno := 'Novembro';
+    12 : aRetorno := 'Dezembro';
+  end;
+
+  Result := aRetorno;
 end;
 
 class procedure TServicesUtils.ResourceImage(aResourceName: String; aImage: TImage);
