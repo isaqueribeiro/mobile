@@ -5,7 +5,7 @@ interface
 type
   TTipoOperacaoController = (operControllerBrowser, operControllerInsert, operControllerUpdate, operControllerDelete);
   TTipoLancamento = (tipoReceita, tipoDespesa);
-  TTotalLancamento = record
+  TTotalLancamentos = record
     Receitas : Currency;
     Despesas : Currency;
     Saldo    : Currency;

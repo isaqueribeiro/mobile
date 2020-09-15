@@ -31,7 +31,7 @@ type
 
       procedure New;
       procedure Load(const aQuantidadeRegistros: Integer; aAno, aMes : Word;
-        var aTotais : TTotalLancamento; out aErro : String);
+        var aTotal : TTotalLancamentos; out aErro : String);
 
       function Insert(out aErro : String) : Boolean;
       function Update(out aErro : String) : Boolean;
@@ -151,7 +151,7 @@ begin
 end;
 
 procedure TLancamentoController.Load(const aQuantidadeRegistros: Integer; aAno, aMes : Word;
-  var aTotais : TTotalLancamento; out aErro : String);
+  var aTotal : TTotalLancamentos; out aErro : String);
 var
   aModel : TLancamentoModel;
   aQry : TFDQuery;
@@ -207,9 +207,9 @@ begin
 
         Lista.Clear;
 
-        aTotais.Receitas := 0.0;
-        aTotais.Despesas := 0.0;
-        aTotais.Saldo    := 0.0;
+        aTotal.Receitas := 0.0;
+        aTotal.Despesas := 0.0;
+        aTotal.Saldo    := 0.0;
 
         while not Eof do
         begin
@@ -220,11 +220,11 @@ begin
 
           // Totalizar lançamentos
           if aModel.Tipo = TTipoLancamento.tipoReceita then
-            aTotais.Receitas := ( aTotais.Receitas + aModel.Valor )
+            aTotal.Receitas := ( aTotal.Receitas + aModel.Valor )
           else
-            aTotais.Despesas := ( aTotais.Despesas + (aModel.Valor * (-1)) );
+            aTotal.Despesas := ( aTotal.Despesas + (aModel.Valor * (-1)) );
 
-          aTotais.Saldo := aTotais.Receitas - aTotais.Despesas;
+          aTotal.Saldo := aTotal.Receitas - aTotal.Despesas;
 
           Next;
         end;
