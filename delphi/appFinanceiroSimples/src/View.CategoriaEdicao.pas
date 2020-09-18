@@ -163,8 +163,7 @@ begin
     if Assigned(aItem) then
     begin
       ImgSelecao.Parent := aItem;
-      ListBoxIcone.ScrollToItem( aItem );
-      ListBoxIcone.ScrollTo( aItem.Position.X, aItem.Position.Y );
+      ListBoxIcone.ScrollToItem( ListBoxIcone.ItemByIndex(Attributes.Indice) );
     end;
   end;
 end;

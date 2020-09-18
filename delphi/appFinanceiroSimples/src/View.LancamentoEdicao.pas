@@ -43,6 +43,15 @@ type
     LabelHoje: TLabel;
     ImageOntem: TImage;
     LabelOntem: TLabel;
+    LayoutTipo: TLayout;
+    LabelTipo: TLabel;
+    LineTipo: TLine;
+    ImageTipoReceita: TImage;
+    LabelTipoReceita: TLabel;
+    ImageTipoDespesa: TImage;
+    LabelTipoDespesa: TLabel;
+    ImgMarcado: TImage;
+    ImgDesmarcado: TImage;
     procedure ImageFecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -75,7 +84,9 @@ end;
 
 procedure TFrmLancamentoEdicao.FormCreate(Sender: TObject);
 begin
-  ImgSemImage.Visible := False;
+  ImgSemImage.Visible   := False;
+  ImgMarcado.Visible    := False;
+  ImgDesmarcado.Visible := False;
 end;
 
 class function TFrmLancamentoEdicao.GetInstance: TFrmLancamentoEdicao;

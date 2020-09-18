@@ -29,7 +29,6 @@ type
         const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload;
 
       procedure AdicionarObservador(Observer : IObserverLancamentoController);
-      procedure RemoverObservador(Observer   : IObserverLancamentoController);
       procedure RemoverTodosObservadores;
       procedure Notificar;
     public
@@ -38,6 +37,8 @@ type
       property Operacao : TTipoOperacaoController read FOperacao;
       property Attributes : TLancamentoModel read  FModel;
       property Lista : TDictionary<TGUID, TLancamentoModel> read FLista;
+
+      procedure RemoverObservador(Observer   : IObserverLancamentoController);
 
       procedure New;
       procedure Load(const aQuantidadeRegistros: Integer; aAno, aMes : Word;
@@ -274,7 +275,8 @@ end;
 
 procedure TLancamentoController.RemoverObservador(Observer: IObserverLancamentoController);
 begin
-  FObservers.Delete(FObservers.IndexOf(Observer));
+  if (FObservers.IndexOf(Observer) > -1) then
+    FObservers.Delete(FObservers.IndexOf(Observer));
 end;
 
 procedure TLancamentoController.RemoverTodosObservadores;

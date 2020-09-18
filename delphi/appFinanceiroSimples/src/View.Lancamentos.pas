@@ -195,6 +195,8 @@ begin
   for I := 0 to ListViewLancamentos.Items.Count - 1 do
     if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
       ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
+
+  FLancamentoController.RemoverObservador(Self);
 end;
 
 procedure TFrmLancamentos.FormCreate(Sender: TObject);
