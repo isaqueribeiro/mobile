@@ -5,13 +5,16 @@ interface
 uses
   Classe.ObjetoItemListView,
   View.LancamentoEdicao,
+  Controller.Lancamento,
+  Controllers.Interfaces.Observers,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Layouts, FMX.Controls.Presentation,
-  FMX.StdCtrls, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
+  FMX.StdCtrls, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView
+;
 
 type
-  TFrmLancamentos = class(TForm)
+  TFrmLancamentos = class(TForm, IObserverLancamentoController)
     LayoutTool: TLayout;
     ImageFechar: TImage;
     LayoutResumo: TLayout;
@@ -44,10 +47,16 @@ type
     class var _instance : TFrmLancamentos;
   private
     { Private declarations }
+    FLancamentoController : TLancamentoController;
     FEdicao : TFrmLancamentoEdicao;
     FDataFiltro : TDateTime;
+    procedure LimparListView;
+    procedure AtualizarLancamento;
+
     procedure addItemLancamento(const aObjeto : TObjetoItemListView);
     procedure formatItemLancamento(const aItem: TListViewItem);
+
+    procedure CarregarLancamentos(aLimparLista : Boolean);
   public
     { Public declarations }
     class function GetInstance() : TFrmLancamentos;
@@ -64,7 +73,8 @@ implementation
 uses
     DataModule.Recursos
   , Services.Utils
-  , System.DateUtils;
+  , System.DateUtils
+  , Services.ComplexTypes;
 
 procedure TFrmLancamentos.addItemLancamento(const aObjeto: TObjetoItemListView);
 var
@@ -77,6 +87,51 @@ begin
   formatItemLancamento(aItem);
 end;
 
+procedure TFrmLancamentos.AtualizarLancamento;
+begin
+  ;
+end;
+
+procedure TFrmLancamentos.CarregarLancamentos(aLimparLista : Boolean);
+var
+  aError : String;
+  a : TGUID;
+  o : TObjetoItemListView;
+  aTotal : TTotalLancamentos;
+begin
+  FLAncamentoController.Load(0, YearOf(FDataFiltro), MonthOf(FDataFiltro), aTotal, aError);
+
+  if not aError.IsEmpty then
+    ShowMessage(aError)
+  else
+  begin
+
+    ListViewLancamentos.BeginUpdate;
+    try
+      if aLimparLista then
+        LimparListView;
+
+      for a in FLAncamentoController.Lista.Keys do
+      begin
+        o := TObjetoItemListView.Create;
+
+        o.Codigo    := FLAncamentoController.Lista[a].Codigo;
+        o.Descricao := FLAncamentoController.Lista[a].Descricao;
+        o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Lista[a].Categoria.Icone );
+
+        addItemLancamento(o);
+      end;
+    finally
+      ListViewLancamentos.EndUpdate;
+    end;
+
+  end;
+
+  lblValorReceitas.Text := FormatFloat('"R$" ,0.00', aTotal.Receitas);
+  lblValorDespesas.Text := FormatFloat('"R$" ,0.00', aTotal.Despesas);
+  lblValorSaldo.Text    := FormatFloat('"R$" ,0.00', aTotal.Saldo);
+end;
+
 procedure TFrmLancamentos.DefinirMesClick(Sender: TObject);
 var
   aIncremento : Integer;
@@ -84,6 +139,8 @@ begin
   aIncremento   := TFmxObject(Sender).Tag;
   FDataFiltro   := IncMonth(FDataFiltro, aIncremento);
   LabelMes.Text := TServicesUtils.MonthName(FDataFiltro).ToUpper + '/' + YearOf(FDataFiltro).ToString;
+
+  CarregarLancamentos(True);
 end;
 
 procedure TFrmLancamentos.formatItemLancamento(const aItem: TListViewItem);
@@ -142,6 +199,8 @@ end;
 
 procedure TFrmLancamentos.FormCreate(Sender: TObject);
 begin
+  FLancamentoController := TLancamentoController.GetInstance(Self);
+
   ImgSemImage.Visible := False;
   FDataFiltro := Date;
   DefinirMesClick(Self);
@@ -169,6 +228,21 @@ end;
 class function TFrmLancamentos.Instanciado: Boolean;
 begin
   Result := Assigned(_instance);
+end;
+
+procedure TFrmLancamentos.LimparListView;
+var
+  I : Integer;
+begin
+  // Voltar o Scroll para o índice 0 (zero)
+  ListViewLancamentos.ScrollTo(0);
+
+  // Limpar objesto de lista para evitar MemoryLeak
+  for I := 0 to ListViewLancamentos.Items.Count - 1 do
+    if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
+      ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
+
+  ListViewLancamentos.Items.Clear;
 end;
 
 procedure TFrmLancamentos.ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

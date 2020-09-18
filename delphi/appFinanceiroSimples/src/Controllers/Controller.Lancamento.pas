@@ -5,25 +5,35 @@ interface
 uses
     System.SysUtils
   , Model.Lancamento
+  , Controllers.Interfaces.Observers
   , Services.ComplexTypes
   , System.Generics.Collections
   , FireDAC.Comp.Client
   , Data.DB;
 
 type
-  TLancamentoController = class
+  TLancamentoController = class(TInterfacedObject, ISubjectLancamentoController)
     strict private
       class var _instance : TLancamentoController;
     protected
       constructor Create;
       destructor Destroy; override;
     private
+      FObservers : TList<IObserverLancamentoController>;
       FOperacao : TTipoOperacaoController;
       FModel : TLancamentoModel;
       FLista : TDictionary<TGUID, TLancamentoModel>;
       procedure SetAtributes(const aDataSet : TDataSet; aModel : TLancamentoModel);
+
+      function Find(aID : TGUID; aCodigo : Integer; out aErro : String;
+        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload;
+
+      procedure AdicionarObservador(Observer : IObserverLancamentoController);
+      procedure RemoverObservador(Observer   : IObserverLancamentoController);
+      procedure RemoverTodosObservadores;
+      procedure Notificar;
     public
-      class function GetInstance : TLancamentoController;
+      class function GetInstance(Observer : IObserverLancamentoController) : TLancamentoController;
 
       property Operacao : TTipoOperacaoController read FOperacao;
       property Attributes : TLancamentoModel read  FModel;
@@ -36,10 +46,10 @@ type
       function Insert(out aErro : String) : Boolean;
       function Update(out aErro : String) : Boolean;
       function Delete(out aErro : String) : Boolean;
-      function Find(aGuid : TGUID; out aErro : String;
-        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload; virtual; abstract;
+      function Find(aID : TGUID; out aErro : String;
+        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload;
       function Find(aCodigo : Integer; out aErro : String;
-        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload; virtual; abstract;
+        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload;
   end;
 
 implementation
@@ -53,11 +63,12 @@ uses
   , System.DateUtils
   , System.Math;
 
-class function TLancamentoController.GetInstance: TLancamentoController;
+class function TLancamentoController.GetInstance(Observer : IObserverLancamentoController): TLancamentoController;
 begin
   if not Assigned(_instance) then
     _instance := TLancamentoController.Create;
 
+  _instance.AdicionarObservador(Observer);
   Result := _instance;
 end;
 
@@ -105,6 +116,7 @@ begin
         Clear;
         Add('Insert Into ' + TScriptDDL.getInstance().getTableNameLancamento + '(');
         Add('    id_lancamento ');
+        Add('  , cd_lancamento ');
         Add('  , tp_lancamento ');
         Add('  , ds_lancamento ');
         Add('  , dt_lancamento ');
@@ -112,6 +124,7 @@ begin
         Add('  , cd_categoria  ');
         Add(') values (');
         Add('    :id_lancamento ');
+        Add('  , :cd_lancamento ');
         Add('  , :tp_lancamento ');
         Add('  , :ds_lancamento ');
         Add('  , :dt_lancamento ');
@@ -120,7 +133,12 @@ begin
         Add(')');
         EndUpdate;
 
+        FModel.Codigo := TDMConexao
+          .GetInstance()
+          .GetNexID(TScriptDDL.getInstance().getTableNameLancamento, 'cd_lancamento');
+
         ParamByName('id_lancamento').Value := FModel.ID.ToString;
+        ParamByName('cd_lancamento').Value := FModel.Codigo;
         ParamByName('tp_lancamento').Value := Ord(FModel.Tipo);
         ParamByName('ds_lancamento').Value := FModel.Descricao;
         ParamByName('dt_lancamento').Value := FModel.Data;
@@ -137,9 +155,7 @@ begin
 
         ExecSQL;
 
-        FModel.Codigo := TDMConexao.GetInstance().GetLastInsertRowID;
-
-        Result := (FModel.Codigo > 0);
+        Result := True;
       end;
     except
       On E : Exception do
@@ -147,6 +163,7 @@ begin
     end;
   finally
     aQry.DisposeOf;
+    Self.Notificar;
   end;
 end;
 
@@ -247,6 +264,29 @@ begin
   FModel := TLancamentoModel.New;
 end;
 
+procedure TLancamentoController.Notificar;
+var
+  Observer : IObserverLancamentoController;
+begin
+  for Observer in FObservers do
+     Observer.AtualizarLancamento;
+end;
+
+procedure TLancamentoController.RemoverObservador(Observer: IObserverLancamentoController);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TLancamentoController.RemoverTodosObservadores;
+var
+  I : Integer;
+begin
+  for I := 0 to (FObservers.Count - 1) do
+    FObservers.Delete(I);
+
+  FObservers.TrimExcess;
+end;
+
 procedure TLancamentoController.SetAtributes(const aDataSet: TDataSet; aModel: TLancamentoModel);
 begin
   with aDataSet, aModel do
@@ -341,12 +381,20 @@ begin
     end;
   finally
     aQry.DisposeOf;
+    Self.Notificar;
   end;
+end;
+
+procedure TLancamentoController.AdicionarObservador(Observer: IObserverLancamentoController);
+begin
+  if (FObservers.IndexOf(Observer) = -1) then
+    FObservers.Add(Observer);
 end;
 
 constructor TLancamentoController.Create;
 begin
-  FOperacao := TTipoOperacaoController.operControllerBrowser;
+  FObservers := TList<IObserverLancamentoController>.Create;
+  FOperacao  := TTipoOperacaoController.operControllerBrowser;
   FModel := TLancamentoModel.New;
   FLista := TDictionary<TGUID, TLancamentoModel>.Create;
 
@@ -401,6 +449,7 @@ begin
     end;
   finally
     aQry.DisposeOf;
+    Self.Notificar;
   end;
 end;
 
@@ -408,6 +457,9 @@ destructor TLancamentoController.Destroy;
 var
   aObj : TLancamentoModel;
 begin
+  RemoverTodosObservadores;
+  FObservers.DisposeOf;
+
   if Assigned(FModel) then
     FModel.DisposeOf;
 
@@ -425,6 +477,70 @@ begin
   end;
 
   inherited;
+end;
+
+function TLancamentoController.Find(aCodigo: Integer; out aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
+begin
+  Result := Self.Find(TGuid.Empty, aCodigo, aErro, RETURN_ATTRIBUTES);
+end;
+
+function TLancamentoController.Find(aID: TGUID; aCodigo: Integer; out aErro: String;
+  const RETURN_ATTRIBUTES: Boolean): Boolean;
+var
+  aQry : TFDQuery;
+begin
+  Result := False;
+
+  FOperacao := TTipoOperacaoController.operControllerBrowser;
+
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    try
+      with aQry, SQL do
+      begin
+        BeginUpdate;
+        Clear;
+        Add('Select ');
+        Add('    a.id_lancamento');
+        Add('  , a.cd_lancamento');
+        Add('  , a.tp_lancamento');
+        Add('  , a.ds_lancamento');
+        Add('  , a.dt_lancamento');
+        Add('  , a.vl_lancamento');
+        Add('  , a.cd_categoria ');
+        Add('  , c.ds_categoria ');
+        Add('  , c.ic_categoria ');
+        Add('from ' + TScriptDDL.getInstance().getTableNameLancamento + ' a');
+        Add('  left join ' + TScriptDDL.getInstance().getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
+        Add('where (a.id_lancamento = :id_lancamento)');
+        Add('   or (a.cd_lancamento = :cd_lancamento)');
+        EndUpdate;
+
+        ParamByName('id_lancamento').AsString  := aID.ToString;
+        ParamByName('cd_lancamento').AsInteger := aCodigo;
+
+        Open;
+
+        Result := not IsEmpty;
+
+        if Result and RETURN_ATTRIBUTES then
+          SetAtributes(aQry, FModel);
+      end;
+    except
+      On E : Exception do
+        aErro := 'Erro ao tentar localizar a categoria: ' + E.Message;
+    end;
+  finally
+    aQry.Close;
+    aQry.DisposeOf;
+  end;
+end;
+
+function TLancamentoController.Find(aID: TGUID; out aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
+begin
+  Result := Self.Find(aID, 0, aErro, RETURN_ATTRIBUTES);
 end;
 
 end.

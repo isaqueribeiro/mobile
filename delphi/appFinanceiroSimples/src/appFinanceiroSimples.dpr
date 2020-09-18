@@ -26,7 +26,8 @@ uses
   Views.Mensagem in 'Views\Views.Mensagem.pas' {ViewMensagem},
   Views.Interfaces.Mensagem in 'Views\Interfaces\Views.Interfaces.Mensagem.pas',
   Model.Lancamento in 'Models\Model.Lancamento.pas',
-  Controller.Lancamento in 'Controllers\Controller.Lancamento.pas';
+  Controller.Lancamento in 'Controllers\Controller.Lancamento.pas',
+  Controllers.Interfaces.Observers in 'Controllers\Interfaces\Controllers.Interfaces.Observers.pas';
 
 {$R *.res}
 

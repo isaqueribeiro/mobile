@@ -61,8 +61,8 @@ begin
     aSQL.BeginUpdate;
     aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_LANCAMENTO + ' (');
     aSQL.Add('    id_lancamento VARCHAR (38) NOT NULL PRIMARY KEY ');
-    aSQL.Add('  , cd_lancamento INTEGER NOT NULL AUTOINCREMENT');
-    aSQL.Add('  , tp_lancamento CHAR(1) NOT NULL ');
+    aSQL.Add('  , cd_lancamento INTEGER NOT NULL UNIQUE ');
+    aSQL.Add('  , tp_lancamento VARCHAR(1) NOT NULL ');
     aSQL.Add('  , ds_lancamento VARCHAR (100)');
     aSQL.Add('  , dt_lancamento DATE');
     aSQL.Add('  , vl_lancamento NUMERIC (15,2) DEFAULT (0)');

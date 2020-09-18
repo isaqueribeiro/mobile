@@ -4,13 +4,16 @@ interface
 
 uses
   Classe.ObjetoItemListView,
+  Controller.Lancamento,
+  Controllers.Interfaces.Observers,
+  View.LancamentoEdicao,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Layouts, FMX.Controls.Presentation,
   FMX.StdCtrls, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.Ani;
 
 type
-  TFrmPrincipal = class(TForm)
+  TFrmPrincipal = class(TForm, IObserverLancamentoController)
     LayoutTitulo: TLayout;
     ImageMenu: TImage;
     CircleFoto: TCircle;
@@ -25,10 +28,10 @@ type
     ImageReceita: TImage;
     lblValorReceitas: TLabel;
     LabelReceita: TLabel;
-    Layout1: TLayout;
-    Image1: TImage;
-    Label1: TLabel;
-    Label2: TLabel;
+    LayoutDespesa: TLayout;
+    ImageDespesa: TImage;
+    lblValorDespesas: TLabel;
+    LabelDespesa: TLabel;
     RectangleAdicionar: TRectangle;
     ImageAdicionar: TImage;
     RectangleLista: TRectangle;
@@ -54,10 +57,19 @@ type
     procedure AnimationMenuFinish(Sender: TObject);
     procedure AnimationMenuProcess(Sender: TObject);
     procedure lytMenuCategoriaClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
+    FEdicaoLancamento : TFrmLancamentoEdicao;
+    FLancamentoController : TLancamentoController;
+    FDataFiltro : TDateTime;
+    procedure LimparListView;
+    procedure AtualizarLancamento;
+
     procedure addItemLancamento(const aObjeto : TObjetoItemListView);
     procedure formatItemLancamento(const aItem: TListViewItem);
+
+    procedure CarregarLancamentos;
   public
     { Public declarations }
   end;
@@ -72,11 +84,14 @@ implementation
 {$R *.fmx}
 
 uses
-    DataModule.Recursos
+    System.DateUtils
+  , DataModule.Recursos
   , DataModule.Conexao
   , Classes.ScriptDDL
   , View.Lancamentos
-  , View.Categorias;
+  , View.Categorias
+  , Services.Utils
+  , Services.ComplexTypes;
 
 procedure CarregarPrincipal;
 begin
@@ -107,6 +122,57 @@ end;
 procedure TFrmPrincipal.AnimationMenuProcess(Sender: TObject);
 begin
   LayoutPrincipal.Margins.Right := (RectangleMenu.Width * (-1)) - RectangleMenu.Margins.Left;
+end;
+
+procedure TFrmPrincipal.AtualizarLancamento;
+begin
+  if (YearOf(FLancamentoController.Attributes.Data) = YearOf(FDataFiltro)) and (MonthOf(FLancamentoController.Attributes.Data) = MonthOf(FDataFiltro)) then
+    CarregarLancamentos;
+end;
+
+procedure TFrmPrincipal.CarregarLancamentos;
+var
+  aError : String;
+  a : TGUID;
+  o : TObjetoItemListView;
+  aTotal : TTotalLancamentos;
+begin
+  FLAncamentoController.Load(15, 0, 0, aTotal, aError);
+
+  if not aError.IsEmpty then
+    ShowMessage(aError)
+  else
+  begin
+
+    ListViewLancamentos.BeginUpdate;
+    try
+      LimparListView;
+
+      for a in FLAncamentoController.Lista.Keys do
+      begin
+        o := TObjetoItemListView.Create;
+
+        o.Codigo    := FLAncamentoController.Lista[a].Codigo;
+        o.Descricao := FLAncamentoController.Lista[a].Descricao;
+        o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Lista[a].Categoria.Icone );
+
+        addItemLancamento(o);
+      end;
+    finally
+      ListViewLancamentos.EndUpdate;
+    end;
+
+  end;
+
+  lblValorReceitas.Text := FormatFloat('"R$" ,0.00', aTotal.Receitas);
+  lblValorDespesas.Text := FormatFloat('"R$" ,0.00', aTotal.Despesas);
+  lblValorSaldo.Text    := FormatFloat('"R$" ,0.00', aTotal.Saldo);
+end;
+
+procedure TFrmPrincipal.FormActivate(Sender: TObject);
+begin
+  // Garantir que o controller seja instanciado novamente
+  FLancamentoController := TLancamentoController.GetInstance(Self);
 end;
 
 procedure TFrmPrincipal.formatItemLancamento(const aItem: TListViewItem);
@@ -188,17 +254,18 @@ begin
 //
 //  // Notificar, caso haja vazamento de memória
 //  ReportMemoryLeaksOnShutdown := True;
+
+  FDataFiltro := Date;
+  FLancamentoController := TLancamentoController.GetInstance(Self);
+  CarregarLancamentos;
 end;
 
 procedure TFrmPrincipal.ImageAdicionarClick(Sender: TObject);
-var
-  o : TObjetoItemListView;
 begin
-  o := TObjetoItemListView.Create;
-  o.Descricao := 'Teste';
-  o.Valor     := '125,45';
+  FLancamentoController.New;
 
-  addItemLancamento( o );
+  FEdicaoLancamento := TFrmLancamentoEdicao.GetInstance();
+  FEdicaoLancamento.Show;
 end;
 
 procedure TFrmPrincipal.ImageMenuClick(Sender: TObject);
@@ -212,6 +279,21 @@ var
 begin
   aLancamentos := TFrmLancamentos.GetInstance();
   aLancamentos.Show;
+end;
+
+procedure TFrmPrincipal.LimparListView;
+var
+  I : Integer;
+begin
+  // Voltar o Scroll para o índice 0 (zero)
+  ListViewLancamentos.ScrollTo(0);
+
+  // Limpar objesto de lista para evitar MemoryLeak
+  for I := 0 to ListViewLancamentos.Items.Count - 1 do
+    if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
+      ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
+
+  ListViewLancamentos.Items.Clear;
 end;
 
 procedure TFrmPrincipal.ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

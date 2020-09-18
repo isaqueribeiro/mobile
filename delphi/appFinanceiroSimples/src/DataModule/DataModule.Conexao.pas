@@ -24,6 +24,7 @@ type
     { Public declarations }
     class function GetInstance() : TDMConexao;
     class function GetLastInsertRowID : Integer;
+    class function GetNexID(aTableName, aFieldName : String) : Integer;
   end;
 
 //var
@@ -90,6 +91,33 @@ begin
       Open;
 
       Result := FieldByName('ID').AsInteger;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
+class function TDMConexao.GetNexID(aTableName, aFieldName: String): Integer;
+var
+  aQry : TFDQuery;
+begin
+  Result := 0;
+
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    with aQry, SQL do
+    begin
+      BeginUpdate;
+      Clear;
+
+      Add('SELECT max(' + aFieldName + ') as ID from ' + aTableName);
+
+      EndUpdate;
+      Open;
+
+      Result := (FieldByName('ID').AsInteger + 1);
     end;
   finally
     aQry.DisposeOf;
