@@ -12,6 +12,7 @@ object FrmLancamentoEdicao: TFrmLancamentoEdicao
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
   OnClose = FormClose
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object LayoutTool: TLayout
     Align = Top
@@ -907,6 +908,7 @@ object FrmLancamentoEdicao: TFrmLancamentoEdicao
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
         Size.PlatformDefault = False
+        OnClick = SelecionarTipo
       end
       object LabelTipoReceita: TLabel
         Align = Left
@@ -1069,6 +1071,7 @@ object FrmLancamentoEdicao: TFrmLancamentoEdicao
         Size.Width = 40.000000000000000000
         Size.Height = 40.000000000000000000
         Size.PlatformDefault = False
+        OnClick = SelecionarTipo
       end
       object LabelTipoDespesa: TLabel
         Align = Left

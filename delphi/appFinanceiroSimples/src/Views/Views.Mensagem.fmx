@@ -61,7 +61,7 @@ object ViewMensagem: TViewMensagem
       Size.Height = 50.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.Family = 'Bauhaus 93'
-      TextSettings.Font.Size = 18.000000000000000000
+      TextSettings.Font.Size = 26.000000000000000000
       TextSettings.FontColor = xFF272938
       TextSettings.HorzAlign = Center
       TextSettings.WordWrap = False

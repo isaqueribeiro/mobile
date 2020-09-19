@@ -123,6 +123,7 @@ implementation
 uses
     DataModule.Recursos
   , Services.Utils
+  , Services.ComplexTypes
   , Views.Mensagem;
 
 { TFrmCategoriaEdicao }
@@ -227,11 +228,13 @@ begin
 //    Notificar;
 //    Close;
 //  end;
-
-//  TViewMensagem
-//    .GetInstance()
-//    .Informe('Informação', 'Teste de exibição!')
-//    .Show;
+//
+  TViewMensagem
+    .GetInstance()
+    .Titulo('Excluir')
+    .Mensagem('Tste teste teste !')
+    .Tipo(TTipoMensagem.tipoMensagemPergunta)
+    .&End;
 end;
 
 procedure TFrmCategoriaEdicao.ImageFecharClick(Sender: TObject);

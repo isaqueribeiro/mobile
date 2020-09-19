@@ -4,6 +4,7 @@ interface
 
 uses
   Views.Interfaces.Mensagem,
+  Services.ComplexTypes,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts, FMX.Objects, FMX.Controls.Presentation,
@@ -25,15 +26,19 @@ type
     procedure FormCreate(Sender: TObject);
     procedure AnimationShowViewFinish(Sender: TObject);
   strict private
-    class var _instance : IViewMensagem;
+    class var _instance : TViewMensagem;
   private
     { Private declarations }
+    FTipo : TTipoMensagem;
   public
     { Public declarations }
     class function GetInstance() : IViewMensagem;
 
     function Titulo(Value : String) : IViewMensagem;
     function Mensagem(Value : String) : IViewMensagem;
+    function Tipo(Value : TTipoMensagem) : IViewMensagem;
+
+    procedure &End;
   end;
 
 implementation
@@ -41,6 +46,11 @@ implementation
 {$R *.fmx}
 
 { TViewMensagem }
+
+procedure TViewMensagem.&End;
+begin
+  Self.Show;
+end;
 
 procedure TViewMensagem.AnimationShowViewFinish(Sender: TObject);
 begin
@@ -75,6 +85,12 @@ function TViewMensagem.Mensagem(Value: String): IViewMensagem;
 begin
   Result := Self;
   LabelMessage.Text := Value.Trim.ToUpper;
+end;
+
+function TViewMensagem.Tipo(Value: TTipoMensagem): IViewMensagem;
+begin
+  Result := Self;
+  FTipo  := Value;
 end;
 
 function TViewMensagem.Titulo(Value: String): IViewMensagem;
