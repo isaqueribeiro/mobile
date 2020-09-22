@@ -98,12 +98,6 @@ begin
     Exit;
   end;
 
-  if (FModel.ID = TGuid.Empty) then
-  begin
-    CreateGUID(aGuid);
-    FModel.ID := aGuid;
-  end;
-
   FOperacao := TTipoOperacaoController.operControllerInsert;
 
   aQry := TFDQuery.Create(nil);
@@ -134,6 +128,14 @@ begin
         Add(')');
         EndUpdate;
 
+        // Gerar o ID
+        if (FModel.ID = TGuid.Empty) then
+        begin
+          CreateGUID(aGuid);
+          FModel.ID := aGuid;
+        end;
+
+        // Gerar o CÓDIGO
         FModel.Codigo := TDMConexao
           .GetInstance()
           .GetNexID(TScriptDDL.getInstance().getTableNameLancamento, 'cd_lancamento');

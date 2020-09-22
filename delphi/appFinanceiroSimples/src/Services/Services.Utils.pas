@@ -13,6 +13,7 @@ type
       class function Base64FromBitmap(aBitmap : TBitmap) : String;
       class function BitmapFromBase64(const aBase64 : String) : TBitmap;
       class function MonthName(aData : TDateTime) : String;
+      class function StrToCurrency(Value : String) : Currency;
 
   end;
 implementation
@@ -117,6 +118,11 @@ begin
   finally
     Resource.DisposeOf;
   end;
+end;
+
+class function TServicesUtils.StrToCurrency(Value: String): Currency;
+begin
+  Result := StrToCurrDef(Value.Trim.Replace('.', '').Replace(',', ''), 0) / 100.0;
 end;
 
 end.

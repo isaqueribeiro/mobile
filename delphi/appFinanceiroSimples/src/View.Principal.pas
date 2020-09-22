@@ -58,6 +58,7 @@ type
     procedure AnimationMenuProcess(Sender: TObject);
     procedure lytMenuCategoriaClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure ListViewLancamentosItemClick(const Sender: TObject; const AItem: TListViewItem);
   private
     { Private declarations }
     FEdicaoLancamento : TFrmLancamentoEdicao;
@@ -294,6 +295,20 @@ begin
       ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
 
   ListViewLancamentos.Items.Clear;
+end;
+
+procedure TFrmPrincipal.ListViewLancamentosItemClick(const Sender: TObject; const AItem: TListViewItem);
+begin
+  if (ListViewLancamentos.Selected <> nil) then
+    if Assigned(AItem.TagObject) then
+    begin
+      FLancamentoController
+        .Attributes
+        .ID := TObjetoItemListView(AItem.TagObject).ID;
+
+      FEdicaoLancamento := TFrmLancamentoEdicao.GetInstance();
+      FEdicaoLancamento.Show;
+    end;
 end;
 
 procedure TFrmPrincipal.ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

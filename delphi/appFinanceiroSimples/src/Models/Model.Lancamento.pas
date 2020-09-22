@@ -49,7 +49,7 @@ begin
   FData      := Date;
   FValor     := 0.0;
   FCategoria := TCategoriaModel.Create;
-  FTipo := TTipoLancamento.tipoReceita;
+  FTipo := TTipoLancamento.tipoDespesa;
 end;
 
 destructor TLancamentoModel.Destroy;

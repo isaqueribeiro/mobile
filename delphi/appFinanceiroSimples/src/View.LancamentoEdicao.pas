@@ -59,6 +59,9 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure SelecionarTipo(Sender: TObject);
+    procedure InformarData(Sender: TObject);
+    procedure ImageSalvarClick(Sender: TObject);
+    procedure edtValorTyping(Sender: TObject);
   strict private
     class var _instance : TFrmLancamentoEdicao;
   private
@@ -67,6 +70,8 @@ type
     FController : TLancamentoController;
     procedure CarregarRegistro;
     procedure AtualizarLancamento;
+
+    procedure Notificar; virtual; abstract;
   public
     { Public declarations }
     class function GetInstance() : TFrmLancamentoEdicao;
@@ -82,6 +87,7 @@ implementation
 uses
     DataModule.Recursos
   , Services.ComplexTypes
+  , Services.Format
   , System.StrUtils;
 
 { TFrmLancamentoEdicao }
@@ -97,22 +103,28 @@ begin
   begin
     Find(Attributes.ID, FError, True);
 
+    edtDescricao.Text := Attributes.Descricao;
+    edtData.DateTime  := Attributes.Data;
+    edtValor.Text     := IfThen(Attributes.Valor = 0, EmptyStr, FormatFloat(',0.00', Attributes.Valor)).Replace('-', '');
+    edtCategoria.Text := Attributes.Categoria.Descricao;
+
     if (Attributes.Tipo = TTipoLancamento.tipoReceita) then
       SelecionarTipo(ImageTipoReceita)
     else
     if (Attributes.Tipo = TTipoLancamento.tipoDespesa) then
       SelecionarTipo(ImageTipoDespesa);
 
-    edtDescricao.Text := Attributes.Descricao;
-    edtValor.Text     := IfThen(Attributes.Valor = 0, EmptyStr, FormatFloat(',0.00', Attributes.Valor));
-    edtData.DateTime  := Attributes.Data;
-    edtCategoria.Text := Attributes.Categoria.Descricao;
-
     if Assigned(Attributes.Categoria.Icone) then
       ImageCategoria.Bitmap := Attributes.Categoria.Icone
     else
       ImageCategoria.Bitmap := ImgSemImage.Bitmap;
   end;
+end;
+
+procedure TFrmLancamentoEdicao.edtValorTyping(Sender: TObject);
+begin
+  // Formatar Valor (R$)
+  TServicesFormat.Format(TTypeFormat.typeFormatMoney, Sender);
 end;
 
 procedure TFrmLancamentoEdicao.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -159,6 +171,42 @@ end;
 procedure TFrmLancamentoEdicao.ImageFecharClick(Sender: TObject);
 begin
   Self.Close;
+end;
+
+procedure TFrmLancamentoEdicao.ImageSalvarClick(Sender: TObject);
+var
+  aExecutado : Boolean;
+begin
+  with FController do
+  begin
+    Attributes.Descricao := edtDescricao.Text;
+    Attributes.Data      := edtData.Date;
+    Attributes.Valor     := StrToCurrDef(edtValor.Text.Trim.Replace('.', '').Replace('-', ''), 0);
+
+    if (ImageTipoReceita.TagString = 'S') then
+      Attributes.Tipo  := TTipoLancamento.tipoReceita
+    else
+    if (ImageTipoDespesa.TagString = 'S') then
+      Attributes.Tipo := TTipoLancamento.tipoDespesa;
+  end;
+
+  if (FController.Attributes.Codigo = 0) then
+    aExecutado := FController.Insert(FError)
+  else
+    aExecutado := FController.Update(FError);
+
+  if (not FError.IsEmpty) then
+    ShowMessage(FError)
+  else
+  begin
+    Notificar;
+    Close;
+  end;
+end;
+
+procedure TFrmLancamentoEdicao.InformarData(Sender: TObject);
+begin
+  edtData.Date := Date - TFmxObject(Sender).Tag;
 end;
 
 procedure TFrmLancamentoEdicao.SelecionarTipo(Sender: TObject);
