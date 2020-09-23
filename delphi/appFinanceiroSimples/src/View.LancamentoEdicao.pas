@@ -123,8 +123,7 @@ end;
 
 procedure TFrmLancamentoEdicao.edtValorTyping(Sender: TObject);
 begin
-  // Formatar Valor (R$)
-  TServicesFormat.Format(TTypeFormat.typeFormatMoney, Sender);
+  TServicesFormat.Formatar(Sender, TTypeFormat.typeFormatValor);
 end;
 
 procedure TFrmLancamentoEdicao.FormClose(Sender: TObject; var Action: TCloseAction);
