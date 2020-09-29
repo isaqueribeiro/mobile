@@ -21,31 +21,50 @@ type
     LayoutBotoes: TLayout;
     ImageMessage: TImage;
     LabelMessage: TLabel;
+    LayoutBtnConfirmar: TLayout;
+    LabelConfirmar: TLabel;
+    LayoutBtnCancelar: TLayout;
+    LabelCancelar: TLabel;
+    RectangleConfirmar: TRectangle;
+    RectangleCancelar: TRectangle;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure AnimationShowViewFinish(Sender: TObject);
+    procedure LabelCancelarClick(Sender: TObject);
+    procedure LabelConfirmarClick(Sender: TObject);
   strict private
     class var _instance : TViewMensagem;
   private
     { Private declarations }
     FTipo : TTipoMensagem;
+    FCallbackProcedureObject : TCallbackProcedureObject;
   public
     { Public declarations }
     class function GetInstance() : IViewMensagem;
 
+    function Tipo(Value : TTipoMensagem) : IViewMensagem;
     function Titulo(Value : String) : IViewMensagem;
     function Mensagem(Value : String) : IViewMensagem;
-    function Tipo(Value : TTipoMensagem) : IViewMensagem;
+    function CallbackProcedure(Value : TCallbackProcedureObject) : IViewMensagem;
 
     procedure &End;
   end;
 
 implementation
 
+uses
+  Services.Utils;
+
 {$R *.fmx}
 
 { TViewMensagem }
+
+function TViewMensagem.CallbackProcedure(Value: TCallbackProcedureObject): IViewMensagem;
+begin
+  Result := Self;
+  FCallbackProcedureObject := Value;
+end;
 
 procedure TViewMensagem.&End;
 begin
@@ -66,6 +85,7 @@ end;
 procedure TViewMensagem.FormCreate(Sender: TObject);
 begin
   Layout.Opacity := 0;
+  FCallbackProcedureObject := nil;
 end;
 
 procedure TViewMensagem.FormShow(Sender: TObject);
@@ -81,16 +101,66 @@ begin
   Result := _instance;
 end;
 
+procedure TViewMensagem.LabelCancelarClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TViewMensagem.LabelConfirmarClick(Sender: TObject);
+begin
+  if Assigned(FCallbackProcedureObject) then
+    FCallbackProcedureObject(Sender);
+
+  Close;
+end;
+
 function TViewMensagem.Mensagem(Value: String): IViewMensagem;
 begin
   Result := Self;
-  LabelMessage.Text := Value.Trim.ToUpper;
+  LabelMessage.Text := Value.Trim;
 end;
 
 function TViewMensagem.Tipo(Value: TTipoMensagem): IViewMensagem;
 begin
   Result := Self;
   FTipo  := Value;
+
+  LayoutBtnConfirmar.Visible := False;
+  LayoutBtnCancelar.Visible  := True;
+
+  LabelConfirmar.Text  := 'OK';
+  LabelCancelar.Text   := 'FECHAR';
+
+  case FTipo of
+    TTipoMensagem.tipoMensagemInformacao:
+      begin
+        TServicesUtils.ResourceImage('icon_message_informe', ImageMessage);
+      end;
+
+    TTipoMensagem.tipoMensagemAlerta:
+      begin
+        TServicesUtils.ResourceImage('icon_message_alert', ImageMessage);
+      end;
+
+    TTipoMensagem.tipoMensagemErro:
+      begin
+        TServicesUtils.ResourceImage('icon_message_error', ImageMessage);
+      end;
+
+    TTipoMensagem.tipoMensagemSucesso:
+      begin
+        TServicesUtils.ResourceImage('icon_message_sucess', ImageMessage);
+      end;
+
+    TTipoMensagem.tipoMensagemPergunta:
+      begin
+        TServicesUtils.ResourceImage('icon_message_question', ImageMessage);
+        LayoutBtnConfirmar.Visible     := True;
+        LayoutBtnCancelar.Visible      := True;
+        LabelConfirmar.Text := 'SIM';
+        LabelCancelar.Text  := 'NÃO';
+      end;
+  end;
 end;
 
 function TViewMensagem.Titulo(Value: String): IViewMensagem;

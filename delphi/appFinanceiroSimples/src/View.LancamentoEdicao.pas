@@ -88,7 +88,8 @@ uses
     DataModule.Recursos
   , Services.ComplexTypes
   , Services.Format
-  , System.StrUtils;
+  , System.StrUtils
+  , Services.MessageDialog;
 
 { TFrmLancamentoEdicao }
 
@@ -102,6 +103,9 @@ begin
   with FController do
   begin
     Find(Attributes.ID, FError, True);
+
+    if not FError.IsEmpty then
+      TServicesMessageDialog.Error('Lançamento', FError);
 
     edtDescricao.Text := Attributes.Descricao;
     edtData.DateTime  := Attributes.Data;
@@ -195,7 +199,7 @@ begin
     aExecutado := FController.Update(FError);
 
   if (not FError.IsEmpty) then
-    ShowMessage(FError)
+    TServicesMessageDialog.Error('Salvar', FError)
   else
   begin
     Notificar;

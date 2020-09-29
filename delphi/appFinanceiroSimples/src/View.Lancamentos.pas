@@ -74,7 +74,8 @@ uses
     DataModule.Recursos
   , Services.Utils
   , System.DateUtils
-  , Services.ComplexTypes;
+  , Services.ComplexTypes
+  , Services.MessageDialog;
 
 procedure TFrmLancamentos.addItemLancamento(const aObjeto: TObjetoItemListView);
 var
@@ -102,7 +103,7 @@ begin
   FLAncamentoController.Load(0, YearOf(FDataFiltro), MonthOf(FDataFiltro), aTotal, aError);
 
   if not aError.IsEmpty then
-    ShowMessage(aError)
+    TServicesMessageDialog.Error('Lançamentos', aError)
   else
   begin
 

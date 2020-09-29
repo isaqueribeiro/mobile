@@ -445,10 +445,7 @@
         </DCCReference>
         <DCCReference Include="Models\Model.Categoria.pas"/>
         <DCCReference Include="Controllers\Controller.Categoria.pas"/>
-        <DCCReference Include="Services\Services.Utils.pas"/>
-        <DCCReference Include="Services\Services.SmartPoint.pas"/>
         <DCCReference Include="Views\Interfaces\Views.Interfaces.Observers.pas"/>
-        <DCCReference Include="Services\Services.ComplexTypes.pas"/>
         <DCCReference Include="Views\Views.Mensagem.pas">
             <Form>ViewMensagem</Form>
             <FormType>fmx</FormType>
@@ -457,7 +454,11 @@
         <DCCReference Include="Models\Model.Lancamento.pas"/>
         <DCCReference Include="Controllers\Controller.Lancamento.pas"/>
         <DCCReference Include="Controllers\Interfaces\Controllers.Interfaces.Observers.pas"/>
+        <DCCReference Include="Services\Services.ComplexTypes.pas"/>
         <DCCReference Include="Services\Services.Format.pas"/>
+        <DCCReference Include="Services\Services.Utils.pas"/>
+        <DCCReference Include="Services\Services.SmartPoint.pas"/>
+        <DCCReference Include="Services\Services.MessageDialog.pas"/>
         <DCCReference Include="Models\Model.Usuario.pas"/>
         <DCCReference Include="Controllers\Controller.Usuario.pas"/>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
@@ -572,6 +573,26 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_25</ResourceId>
         </RcItem>
+        <RcItem Include="Assets\icon-message-alert-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>icon_message_alert</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\icon-message-error-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>icon_message_error</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\icon-message-inform-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>icon_message_informe</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\icon-message-question-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>icon_message_question</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\icon-message-sucess-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>icon_message_sucess</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -648,6 +669,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Assets\icon-message-sucess-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Assets\categoria-money-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -701,6 +728,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Assets\categoria-111-more-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\icon-message-question-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -852,6 +885,24 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Assets\categoria-card-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\icon-message-alert-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\icon-message-inform-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\icon-message-error-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

@@ -58,7 +58,8 @@ implementation
 
 uses
     DataModule.Recursos
-  , Services.Utils;
+  , Services.Utils
+  , Services.MessageDialog;
 
 { TFrmCategorias }
 
@@ -136,7 +137,7 @@ begin
   FCategogiaController.Load(aError);
 
   if not aError.IsEmpty then
-    ShowMessage(aError)
+    TServicesMessageDialog.Error('Categorias', aError)
   else
   begin
 

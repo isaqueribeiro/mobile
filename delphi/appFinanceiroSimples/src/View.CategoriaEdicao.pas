@@ -101,6 +101,7 @@ type
     FController : TCategoriaController;
     procedure CarregarImagens;
     procedure CarregarRegistro;
+    procedure ExcluirCategoria(Sender : TObject);
 
     procedure AdicionarObservador(Observer : IObserverCategoriaEdicao);
     procedure RemoverObservador(Observer   : IObserverCategoriaEdicao);
@@ -124,7 +125,7 @@ uses
     DataModule.Recursos
   , Services.Utils
   , Services.ComplexTypes
-  , Views.Mensagem;
+  , Services.MessageDialog;
 
 { TFrmCategoriaEdicao }
 
@@ -156,6 +157,9 @@ begin
   begin
     Find(Attributes.Codigo, FError, True);
 
+    if not FError.IsEmpty then
+      TServicesMessageDialog.Error('Categoria', FError);
+
     edtDescricao.Text      := Attributes.Descricao;
     ListBoxIcone.ItemIndex := Attributes.Indice;
 
@@ -166,6 +170,19 @@ begin
       ImgSelecao.Parent := aItem;
       ListBoxIcone.ScrollToItem( ListBoxIcone.ItemByIndex(Attributes.Indice) );
     end;
+  end;
+end;
+
+procedure TFrmCategoriaEdicao.ExcluirCategoria(Sender: TObject);
+begin
+  FController.Delete(FError);
+
+  if (not FError.IsEmpty) then
+    TServicesMessageDialog.Error('Excluir', FError)
+  else
+  begin
+    Notificar;
+    Close;
   end;
 end;
 
@@ -219,22 +236,8 @@ end;
 
 procedure TFrmCategoriaEdicao.ImageExcluirClick(Sender: TObject);
 begin
-//  FController.Delete(FError);
-//
-//  if (not FError.IsEmpty) then
-//    ShowMessage(FError)
-//  else
-//  begin
-//    Notificar;
-//    Close;
-//  end;
-//
-  TViewMensagem
-    .GetInstance()
-    .Tipo(TTipoMensagem.tipoMensagemPergunta)
-    .Titulo('Excluir')
-    .Mensagem('Tste teste teste !')
-    .&End;
+  TServicesMessageDialog.Confirm('Excluir',
+    Format('Você confirma a exclusão da categoria %s?', [FController.Attributes.Descricao.QuotedString]), ExcluirCategoria);
 end;
 
 procedure TFrmCategoriaEdicao.ImageFecharClick(Sender: TObject);
@@ -261,7 +264,7 @@ begin
     aExecutado := FController.Update(FError);
 
   if (not FError.IsEmpty) then
-    ShowMessage(FError)
+    TServicesMessageDIalog.Error('Salvar', FError)
   else
   begin
     Notificar;

@@ -34,14 +34,14 @@ object ViewMensagem: TViewMensagem
   object Layout: TLayout
     Align = Center
     Size.Width = 300.000000000000000000
-    Size.Height = 300.000000000000000000
+    Size.Height = 334.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
     object RectangleBodyMessage: TRectangle
       Align = Contents
       Fill.Color = claWhite
       Size.Width = 300.000000000000000000
-      Size.Height = 300.000000000000000000
+      Size.Height = 334.000000000000000000
       Size.PlatformDefault = False
       Stroke.Kind = None
       XRadius = 30.000000000000000000
@@ -70,32 +70,161 @@ object ViewMensagem: TViewMensagem
     end
     object LayoutBotoes: TLayout
       Align = Bottom
-      Position.Y = 250.000000000000000000
+      Margins.Top = 14.000000000000000000
+      Margins.Bottom = 14.000000000000000000
+      Position.Y = 270.000000000000000000
       Size.Width = 300.000000000000000000
       Size.Height = 50.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
+      object LayoutBtnConfirmar: TLayout
+        Align = Center
+        Margins.Right = 140.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        object RectangleConfirmar: TRectangle
+          Align = Client
+          Fill.Color = xFFC7934A
+          HitTest = False
+          Size.Width = 129.000000000000000000
+          Size.Height = 50.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 25.000000000000000000
+          YRadius = 25.000000000000000000
+        end
+        object LabelConfirmar: TLabel
+          Align = Client
+          StyledSettings = [Family]
+          HitTest = True
+          Margins.Left = 15.000000000000000000
+          Margins.Right = 15.000000000000000000
+          Size.Width = 99.000000000000000000
+          Size.Height = 50.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 16.000000000000000000
+          TextSettings.Font.StyleExt = {00060000000000000004000000}
+          TextSettings.FontColor = claWhite
+          TextSettings.HorzAlign = Center
+          Text = 'OK'
+          TabOrder = 1
+          OnClick = LabelConfirmarClick
+        end
+      end
+      object LayoutBtnCancelar: TLayout
+        Align = Center
+        Margins.Left = 140.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        object RectangleCancelar: TRectangle
+          Align = Client
+          Fill.Kind = None
+          HitTest = False
+          Size.Width = 129.000000000000000000
+          Size.Height = 50.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Color = xFFC7934A
+          Stroke.Thickness = 4.000000000000000000
+          XRadius = 25.000000000000000000
+          YRadius = 25.000000000000000000
+        end
+        object LabelCancelar: TLabel
+          Align = Client
+          StyledSettings = [Family]
+          HitTest = True
+          Margins.Left = 15.000000000000000000
+          Margins.Right = 15.000000000000000000
+          Size.Width = 99.000000000000000000
+          Size.Height = 50.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 16.000000000000000000
+          TextSettings.Font.StyleExt = {00060000000000000004000000}
+          TextSettings.FontColor = xFFC7934A
+          TextSettings.HorzAlign = Center
+          Text = 'FECHAR'
+          TabOrder = 1
+          OnClick = LabelCancelarClick
+        end
+      end
     end
     object ImageMessage: TImage
+      MultiResBitmap.Height = 64
+      MultiResBitmap.Width = 64
       MultiResBitmap = <
         item
+          Width = 64
+          Height = 64
+          PNG = {
+            89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
+            DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+            04C349444154785EED9B5B4C54471880FF9973D6A55CB4844B09945BC56A3525
+            4D6FD0D484A49A5E88312AAB92D4A4B549D3264D6F0F6D13B5203EF0DE17D3A7
+            9AA64D53436B9B168DB7D0528DAD8906A106AC4583C802454140D8B29C9D393D
+            03BF05DDB370D6726676ED7E09D9FFFFF701E663EE671712244890E0FF0CC1D7
+            A829F9E4D062632848318D19AEB41B37A1610BC3745EA212905B7F204303A8E3
+            C07C1AD11FC0724C619AE618003F6A9AA4B66767D5792C47C4B180FC3D5FAD22
+            D47314343D174B310D632CA811B2AD7B67D53758B2C59180C2DA7D49CCBBE402
+            25A4104B71020B30031EF3D7F8FEC442188EC630F7A46C89BFC60BB464AAC307
+            98D8E26C12A37435467107215A0586B63812408078308C3BACB9601186B6C4DC
+            32269B9812E0D535589A9106695E791D2E6604941764C2E9B75E80A6D7D740CB
+            3B2FC186550FE23BEE1213023292BDF0E9C6A721FDBEE9E1EAD128BCF6E4D2A9
+            D86D6242C09B65CBFE6DFC2DEEBF23770BE502744A617369016633DC084C62E4
+            2ECA053C9E971EF6DF179CFF6B182377512E6045D6128C6EE7C8C53E8CDC45B9
+            00AF1EFE27B4F50DC389AE01CCDC45B980B6BE1B184D333261C0FB8D67AD632D
+            165C46B980D35707A1E6581B9CE91982C60E3F6CFCA2193A076FE2BBEEA35C80
+            E0F3B397617BC3AFB0FBF8EF7069700CAB72502E405C48EC5EFB28B4BE570967
+            DE7E113EF3954392B52596857201AF3CF1106CB7767D944CDFCDAC29C981779F
+            5D3E15CB40A980EC9424F8B0622566336C2E9577F7A254C01BE52590B248C76C
+            86AC14EFD48F0C9409100DAF2E2DC22C9C641B316EA04CC0BA47F220D51BB991
+            C110C7C85D9409D8B072EEF3FEE8C43D7C1812879FB2FC4CCCC219B5768301C3
+            F1C39DFF84120115C5D9A0D1C88F24BA87C731721F250256176563644FE790BC
+            DDA012014FE56760644FBBA4BB00817401E2AAAB283D05337B5AADE3B02CA40B
+            5891B518237B0CC6E15CEFED476437912EA0383D15237BDAFA87612224670510
+            481790939684913D2725DD04DD42C91C3017CD97EF71011E1AF9570E0682D022
+            71FC0BA40B08B2C8E3FB78673F70599781887401FE91BF310AE7C70E3F46F290
+            2E20D224777D3C08A7AE5CC34C1ED2055CB8360A876D1E7A7CDDDA058CCBEDFE
+            02E902041F1D6A8173B39E07740C8CC0DEDF227E8EC9551C7D4AACA0FEDB7D40
+            E8AB982E08BA751A7CA6206BEA51B8E8FA6E6D7E18635DFE5DBE624CC350D203
+            0421ABBB8BC75F4D97FAA5EEFCEE44998058C1990093CB3B9E2D301A25D731B4
+            C5910016623F60188FECC7575B1C09F0D756FF6C9AFC7B4CE30666F27623E8D9
+            8BA92D4EE70073D293BACD0CB12F8133F98BF55DC0393FA57158DB57B73E8025
+            5B1C2D83B3C9AB6B28A33AAD22149661695E1823E59A4672308D0A6B7D98D4C0
+            3C2C26222CCD09E73040081CBCDAC20E3AF9DE40D402EE86DCFA030FEB9CFF04
+            9A16DD47ED437C1C3452DDBD63532356161C29CB60EF8E4D172967CF595DA117
+            4BF3C3F83807A3D2CDC60BA4081074D56CFD2324248039EF914F7CD9C1D4C8CB
+            3D1F57FF8225D79032046693BB67FF729D6A4D118783698E71C358D753BBB519
+            2BAE225D8020920431E111C6D6F7ECF21DC192EB281120089B18AD098F13B34A
+            66E305CA04088AAC9EC0AD9EC028CD2486F1BCAC6E1F5388E15058FF5D25A609
+            124805E01F2EDB765736D8BAFA0000000049454E44AE426082}
+          FileName = 
+            'C:\Users\Isaque\OneDrive\Imagens\Apps\Financeiro\icon-message-in' +
+            'form-64x64.png'
         end>
-      Align = Bottom
-      Position.Y = 180.000000000000000000
+      Align = Top
+      Position.Y = 50.000000000000000000
       Size.Width = 300.000000000000000000
-      Size.Height = 70.000000000000000000
+      Size.Height = 74.000000000000000000
       Size.PlatformDefault = False
+      WrapMode = Center
     end
     object LabelMessage: TLabel
       Align = Client
       StyledSettings = []
       Size.Width = 300.000000000000000000
-      Size.Height = 130.000000000000000000
+      Size.Height = 132.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.Size = 18.000000000000000000
       TextSettings.FontColor = xFF272938
       TextSettings.HorzAlign = Center
-      Text = 'Mensagem do caixa de di'#225'logo...'
+      Text = 
+        'Mensagem da caixa de di'#225'logo...  mensagem da caixa de di'#225'logo...' +
+        '  mensagem da caixa de di'#225'logo...  mensagem da caixa de di'#225'logo.' +
+        '..   mensagem da caixa de di'#225'logo...  mensagem da caixa de di'#225'lo' +
+        'go... '
       TabOrder = 3
     end
   end

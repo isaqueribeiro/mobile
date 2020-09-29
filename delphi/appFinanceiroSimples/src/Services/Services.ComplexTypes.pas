@@ -12,6 +12,8 @@ type
     Saldo    : Currency;
   end;
 
+  TCallbackProcedureObject = procedure(Sender: TObject) of Object;
+
 implementation
 
 end.

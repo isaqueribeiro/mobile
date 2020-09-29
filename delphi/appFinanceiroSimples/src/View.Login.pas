@@ -110,7 +110,8 @@ implementation
 uses
     DataModule.Recursos
   , DataModule.Conexao
-  , View.Principal;
+  , View.Principal
+  , Services.MessageDialog;
 
 procedure TFrmLogin.CarregarUsuario;
 var
@@ -121,7 +122,7 @@ begin
     FController.Load(aError);
 
     if not aError.IsEmpty then
-      ShowMessage(aError)
+      TServicesMessageDialog.Error('Carregar', aError)
     else
     begin
       edtNomeCadastro.TagString := FController.Attributes.ID.ToString;
@@ -148,7 +149,7 @@ end;
 
 procedure TFrmLogin.ErroPermissao(Sender: TObject);
 begin
-  ShowMessage('Você não possui permissão de acesso para este recurso.');
+  TServicesMessageDialog.Alert('Alerta', 'Você não possui permissão de acesso para este recurso.');
 end;
 
 procedure TFrmLogin.FloatAnimationBarraFinish(Sender: TObject);
@@ -181,7 +182,7 @@ begin
   except
     On E : Exception do
     begin
-      ShowMessage(E.Message);
+      TServicesMessageDialog.Error('Base de dados', E.Message);
       FController := nil;
     end;
   end;

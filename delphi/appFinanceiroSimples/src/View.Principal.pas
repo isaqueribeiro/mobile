@@ -92,7 +92,8 @@ uses
   , View.Lancamentos
   , View.Categorias
   , Services.Utils
-  , Services.ComplexTypes;
+  , Services.ComplexTypes
+  , Services.MessageDialog;
 
 procedure CarregarPrincipal;
 begin
@@ -141,7 +142,7 @@ begin
   FLAncamentoController.Load(15, 0, 0, aTotal, aError);
 
   if not aError.IsEmpty then
-    ShowMessage(aError)
+    TServicesMessageDialog.Error('Lançamentos', aError)
   else
   begin
 
