@@ -352,11 +352,11 @@ begin
         BeginUpdate;
         Clear;
         Add('Update ' + TScriptDDL.getInstance().getTableNameLancamento + ' set ');
-        Add('    tp_lancamento ');
-        Add('  , ds_lancamento ');
-        Add('  , dt_lancamento ');
-        Add('  , vl_lancamento ');
-        Add('  , cd_categoria  ');
+        Add('    tp_lancamento = :tp_lancamento');
+        Add('  , ds_lancamento = :ds_lancamento');
+        Add('  , dt_lancamento = :dt_lancamento');
+        Add('  , vl_lancamento = :vl_lancamento');
+        Add('  , cd_categoria  = :cd_categoria');
         Add('where id_lancamento = :id_lancamento');
         EndUpdate;
 

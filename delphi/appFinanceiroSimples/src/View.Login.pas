@@ -4,6 +4,7 @@ interface
 
 uses
   u99Permissions,
+  Controller.Usuario,
 
   {$IFDEF ANDROID}
   FMX.VirtualKeyBoard, FMX.Platform,
@@ -87,11 +88,14 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char; Shift: TShiftState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure LabelAcessarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     FPermissao : T99Permissions;
+    FController : TUsuarioController;
 
     procedure ErroPermissao(Sender : TObject);
+    procedure CarregarUsuario;
   public
     { Public declarations }
   end;
@@ -107,6 +111,35 @@ uses
     DataModule.Recursos
   , DataModule.Conexao
   , View.Principal;
+
+procedure TFrmLogin.CarregarUsuario;
+var
+  aError : String;
+begin
+  if Assigned(FController) then
+  begin
+    FController.Load(aError);
+
+    if not aError.IsEmpty then
+      ShowMessage(aError)
+    else
+    begin
+      edtNomeCadastro.TagString := FController.Attributes.ID.ToString;
+
+      edtNomeCadastro.Text  := FController.Attributes.Nome;
+      edtEmailCadastro.Text := FController.Attributes.Email;
+      edtSenhaCadastro.Text := EmptyStr;
+
+      if Assigned(FController.Attributes.Foto) then
+      begin
+        CircleFoto.Tag := FController.Attributes.Codigo;
+        CircleFoto.Fill.Bitmap.Bitmap.Assign( FController.Attributes.Foto );
+      end
+      else
+        CircleFoto.Tag := 0;
+    end;
+  end;
+end;
 
 procedure TFrmLogin.CircleFotoClick(Sender: TObject);
 begin
@@ -142,6 +175,16 @@ procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
   FPermissao := T99Permissions.Create;
   tabControles.ActiveTab := tbsLogin;
+
+  try
+    FController := TUsuarioController.GetInstance();
+  except
+    On E : Exception do
+    begin
+      ShowMessage(E.Message);
+      FController := nil;
+    end;
+  end;
 end;
 
 procedure TFrmLogin.FormDestroy(Sender: TObject);
@@ -181,6 +224,11 @@ begin
     end;
   end;
   {$ENDIF}
+end;
+
+procedure TFrmLogin.FormShow(Sender: TObject);
+begin
+  CarregarUsuario;
 end;
 
 procedure TFrmLogin.ImageBibliotecaFOtoClick(Sender: TObject);

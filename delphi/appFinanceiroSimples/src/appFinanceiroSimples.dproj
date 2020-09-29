@@ -458,6 +458,8 @@
         <DCCReference Include="Controllers\Controller.Lancamento.pas"/>
         <DCCReference Include="Controllers\Interfaces\Controllers.Interfaces.Observers.pas"/>
         <DCCReference Include="Services\Services.Format.pas"/>
+        <DCCReference Include="Models\Model.Usuario.pas"/>
+        <DCCReference Include="Controllers\Controller.Usuario.pas"/>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>

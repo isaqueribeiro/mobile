@@ -28,7 +28,9 @@ uses
   Model.Lancamento in 'Models\Model.Lancamento.pas',
   Controller.Lancamento in 'Controllers\Controller.Lancamento.pas',
   Controllers.Interfaces.Observers in 'Controllers\Interfaces\Controllers.Interfaces.Observers.pas',
-  Services.Format in 'Services\Services.Format.pas';
+  Services.Format in 'Services\Services.Format.pas',
+  Model.Usuario in 'Models\Model.Usuario.pas',
+  Controller.Usuario in 'Controllers\Controller.Usuario.pas';
 
 {$R *.res}
 

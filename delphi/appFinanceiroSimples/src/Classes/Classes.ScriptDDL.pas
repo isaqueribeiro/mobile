@@ -13,6 +13,7 @@ type
       NUMBER_VERSION_DB  = 1;
       TABLE_CONFIGURACAO = 'app_configuracao';
       TABLE_VERSAO       = 'app_versao';
+      TABLE_USUARIO      = 'app_usuario';
       TABLE_CATEGORIA    = 'tbl_categoria';
       TABLE_LANCAMENTO   = 'tbl_lancamento';
   private
@@ -23,7 +24,9 @@ type
     function getTableNameConfiguracao : String;
     function getTableNameCategoria : String;
     function getTableNameLancamento : String;
+    function getTableNameUsuario : String;
 
+    function getCreateTableUsuario : TStringList;
     function getCreateTableCategoria : TStringList;
     function getCreateTableLancamento : TStringList;
   end;
@@ -74,6 +77,29 @@ begin
   end;
 end;
 
+function TScriptDDL.getCreateTableUsuario: TStringList;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_USUARIO + ' (');
+    aSQL.Add('    id_usuario VARCHAR (38) NOT NULL PRIMARY KEY ');
+    aSQL.Add('  , cd_usuario INTEGER NOT NULL UNIQUE ');
+    aSQL.Add('  , nm_usuario VARCHAR (100)');
+    aSQL.Add('  , ds_email   VARCHAR (100)');
+    aSQL.Add('  , ds_senha   VARCHAR (255)');
+    aSQL.Add('  , ft_usuario BLOB');
+    aSQL.Add('  , sn_logado  VARCHAR(1) NOT NULL DEFAULT(' + QuotedStr('S') +')');
+    aSQL.Add(');');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
+end;
+
 class function TScriptDDL.getInstance: TScriptDDL;
 begin
   if not Assigned(_instance) then
@@ -95,6 +121,11 @@ end;
 function TScriptDDL.getTableNameLancamento: String;
 begin
   Result := TABLE_LANCAMENTO;
+end;
+
+function TScriptDDL.getTableNameUsuario: String;
+begin
+  Result := TABLE_USUARIO;
 end;
 
 end.

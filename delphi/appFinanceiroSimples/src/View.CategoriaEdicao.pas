@@ -231,9 +231,9 @@ begin
 //
   TViewMensagem
     .GetInstance()
+    .Tipo(TTipoMensagem.tipoMensagemPergunta)
     .Titulo('Excluir')
     .Mensagem('Tste teste teste !')
-    .Tipo(TTipoMensagem.tipoMensagemPergunta)
     .&End;
 end;
 

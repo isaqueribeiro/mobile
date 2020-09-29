@@ -311,13 +311,17 @@ begin
     Indice    := FieldByName('ix_categoria').AsInteger;
 
     // #0#0#0#0'IEND®B`‚'
-    if (Trim(FieldByName('ic_categoria').AsString) <> EmptyStr) then
-    begin
-      Icone := TBitmap.Create;
-      Icone.LoadFromStream( CreateBlobStream(FieldByName('ic_categoria'), TBlobStreamMode.bmRead) );
-    end
-    else
+    try
+      if (Trim(FieldByName('ic_categoria').AsString) <> EmptyStr) then
+      begin
+        Icone := TBitmap.Create;
+        Icone.LoadFromStream( CreateBlobStream(FieldByName('ic_categoria'), TBlobStreamMode.bmRead) );
+      end
+      else
+        Icone := nil;
+    except
       Icone := nil;
+    end;
   end;
 end;
 
