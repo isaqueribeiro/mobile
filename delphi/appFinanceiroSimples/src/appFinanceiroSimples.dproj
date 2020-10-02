@@ -549,10 +549,6 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_7</ResourceId>
         </RcItem>
-        <RcItem Include="Assets\categoria-777-baby-chupeta-64x64.png">
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>categoria_8</ResourceId>
-        </RcItem>
         <RcItem Include="Assets\categoria-888-input-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_9</ResourceId>
@@ -592,6 +588,10 @@
         <RcItem Include="Assets\icon-message-sucess-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>icon_message_sucess</ResourceId>
+        </RcItem>
+        <RcItem Include="Assets\categoria-pets-64x64.png">
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>categoria_8</ResourceId>
         </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -757,12 +757,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Assets\categoria-777-baby-chupeta-64x64.png" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Assets\categoria-888-input-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -897,6 +891,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Assets\icon-message-inform-64x64.png" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Assets\categoria-pets-64x64.png" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

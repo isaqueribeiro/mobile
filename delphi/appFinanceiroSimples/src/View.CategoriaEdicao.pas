@@ -277,7 +277,7 @@ var
   Observer : IObserverCategoriaEdicao;
 begin
   for Observer in FObservers do
-     Observer.AtualizarCategoria;
+    Observer.AtualizarCategoria;
 end;
 
 procedure TFrmCategoriaEdicao.RemoverObservador(Observer: IObserverCategoriaEdicao);
