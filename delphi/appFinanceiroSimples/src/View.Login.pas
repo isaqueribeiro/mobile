@@ -133,7 +133,7 @@ begin
 
       if Assigned(FController.Attributes.Foto) then
       begin
-        CircleFoto.Tag := FController.Attributes.Codigo;
+        CircleFoto.Tag := 1;
         CircleFoto.Fill.Bitmap.Bitmap.Assign( FController.Attributes.Foto );
       end
       else
