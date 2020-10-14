@@ -128,12 +128,16 @@ begin
   LayoutBtnConfirmar.Visible := False;
   LayoutBtnCancelar.Visible  := True;
 
+  LayoutBtnConfirmar.Margins.Right := 0;
+  LayoutBtnCancelar.Margins.Left   := 0;
+
   LabelConfirmar.Text  := 'OK';
   LabelCancelar.Text   := 'FECHAR';
 
   case FTipo of
     TTipoMensagem.tipoMensagemInformacao:
       begin
+        LayoutBtnCancelar.Margins.Left := 0;
         TServicesUtils.ResourceImage('icon_message_informe', ImageMessage);
       end;
 
@@ -157,6 +161,10 @@ begin
         TServicesUtils.ResourceImage('icon_message_question', ImageMessage);
         LayoutBtnConfirmar.Visible     := True;
         LayoutBtnCancelar.Visible      := True;
+
+        LayoutBtnConfirmar.Margins.Right := 140;
+        LayoutBtnCancelar.Margins.Left   := 140;
+
         LabelConfirmar.Text := 'SIM';
         LabelCancelar.Text  := 'NÃO';
       end;

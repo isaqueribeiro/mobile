@@ -24,7 +24,7 @@ type
     LayoutLogin: TLayout;
     LayoutEmail: TLayout;
     RoundRectEmail: TRoundRect;
-    edlEmail: TEdit;
+    edtEmail: TEdit;
     LayoutSenha: TLayout;
     RoundRectSenha: TRoundRect;
     edtSenha: TEdit;
@@ -253,11 +253,19 @@ begin
 end;
 
 procedure TFrmLogin.LabelAcessarClick(Sender: TObject);
+var
+  aErro : String;
 begin
   TDMConexao.GetInstance();
 
-  CarregarPrincipal;
-  Self.Close;
+  if not FController.Autenticar(edtEmail.Text, edtSenha.Text, aErro) then
+    TServicesMessageDialog.Alert('Autenticação', aErro)
+  else
+  begin
+    FController.RenovarHash();
+    CarregarPrincipal;
+    Self.Close;
+  end;
 end;
 
 procedure TFrmLogin.LabelProximoClick(Sender: TObject);
