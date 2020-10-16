@@ -89,6 +89,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure LabelAcessarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure LabelCriarMinhaContaClick(Sender: TObject);
   private
     { Private declarations }
     FPermissao : T99Permissions;
@@ -96,6 +97,9 @@ type
 
     procedure ErroPermissao(Sender : TObject);
     procedure CarregarUsuario;
+
+    function AutenticarUsuario : Boolean;
+    function CriarContaUsuario : Boolean;
   public
     { Public declarations }
   end;
@@ -111,7 +115,21 @@ uses
     DataModule.Recursos
   , DataModule.Conexao
   , View.Principal
-  , Services.MessageDialog;
+  , Services.MessageDialog, System.StrUtils;
+
+function TFrmLogin.AutenticarUsuario: Boolean;
+var
+  aErro : String;
+begin
+  TDMConexao.GetInstance();
+
+  Result := FController.Autenticar(edtEmail.Text, edtSenha.Text, aErro);
+
+  if not Result then
+    TServicesMessageDialog.Alert('Autenticação', aErro)
+  else
+    FController.RenovarHash(aErro);
+end;
 
 procedure TFrmLogin.CarregarUsuario;
 var
@@ -130,14 +148,10 @@ begin
       edtNomeCadastro.Text  := FController.Attributes.Nome;
       edtEmailCadastro.Text := FController.Attributes.Email;
       edtSenhaCadastro.Text := EmptyStr;
+      CircleFoto.Tag        := IfThen(FController.Attributes.TemFoto, '1', '0').ToInteger;
 
-      if Assigned(FController.Attributes.Foto) then
-      begin
-        CircleFoto.Tag := 1;
+      if FController.Attributes.TemFoto and Assigned(FController.Attributes.Foto) then
         CircleFoto.Fill.Bitmap.Bitmap.Assign( FController.Attributes.Foto );
-      end
-      else
-        CircleFoto.Tag := 0;
     end;
   end;
 end;
@@ -145,6 +159,41 @@ end;
 procedure TFrmLogin.CircleFotoClick(Sender: TObject);
 begin
   ChangeTabActionEscolherFoto.Execute;
+end;
+
+function TFrmLogin.CriarContaUsuario: Boolean;
+var
+  aRetorno : Boolean;
+  aError : String;
+begin
+  aRetorno := False;
+  try
+  with FController do
+    begin
+      Attributes.New;
+
+      Attributes.Nome    := edtNomeCadastro.Text;
+      Attributes.Email   := edtEmailCadastro.Text;
+      Attributes.Senha   := edtSenhaCadastro.Text;
+      Attributes.TemFoto := (CircleFoto.Tag = 1);
+      Attributes.Logado  := True;
+
+      Attributes.Foto := TBitmap.Create;
+      Attributes.Foto.Assign( CircleFoto.Fill.Bitmap.Bitmap );
+
+      if not FController.Find(Attributes.Email, aError) then
+        aRetorno := Insert(aError)
+      else
+        aRetorno := Update(aError);
+
+      if aRetorno then
+        TServicesMessageDialog.Sucess('Financeiro Simples', 'Sua conta criada com sucesso.')
+      else
+        TServicesMessageDialog.Error('Criar Conta', aError);
+    end;
+  finally
+    Result := aRetorno;
+  end;
 end;
 
 procedure TFrmLogin.ErroPermissao(Sender: TObject);
@@ -186,6 +235,10 @@ begin
       FController := nil;
     end;
   end;
+
+  // APENAS PARA TESTES
+  edtEmail.Text := 'isaque.ribeiro@outlook.com';
+  edtSenha.Text := '12345678901234567890123456';
 end;
 
 procedure TFrmLogin.FormDestroy(Sender: TObject);
@@ -253,16 +306,18 @@ begin
 end;
 
 procedure TFrmLogin.LabelAcessarClick(Sender: TObject);
-var
-  aErro : String;
 begin
-  TDMConexao.GetInstance();
-
-  if not FController.Autenticar(edtEmail.Text, edtSenha.Text, aErro) then
-    TServicesMessageDialog.Alert('Autenticação', aErro)
-  else
+  if AutenticarUsuario then
   begin
-    FController.RenovarHash();
+    CarregarPrincipal;
+    Self.Close;
+  end;
+end;
+
+procedure TFrmLogin.LabelCriarMinhaContaClick(Sender: TObject);
+begin
+  if CriarContaUsuario then
+  begin
     CarregarPrincipal;
     Self.Close;
   end;
@@ -295,6 +350,7 @@ end;
 
 procedure TFrmLogin.TakeImageFinishTaking(Image: TBitmap);
 begin
+  CircleFoto.Tag := 1;
   CircleFoto.Fill.Bitmap.Bitmap := Image;
   ChangeTabActionFoto.Execute;
 end;

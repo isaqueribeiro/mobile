@@ -21,12 +21,13 @@ type
       property Attributes : TUsuarioModel read  FModel;
 
       procedure Load(out aErro : String);
-      procedure RenovarHash(); virtual; abstract;
+      procedure RenovarHash(out aErro : String);
 
       function Insert(out aErro : String) : Boolean;
       function Update(out aErro : String) : Boolean;
       function Delete(out aErro : String) : Boolean;
 
+      function Find(aLogin : String; out aErro : String; const RETURN_ATTRIBUTES : Boolean = False) : Boolean;
       function Autenticar(aLogin, aSenha : String; out aErro : String) : Boolean;
   end;
 
@@ -34,7 +35,7 @@ implementation
 
 uses
   DataModule.Conexao, Classes.ScriptDDL, FMX.Graphics, System.StrUtils,
-  Services.Utils;
+  Services.Hash;
 
 { TUsuarioController }
 
@@ -75,6 +76,7 @@ begin
         Add('  , nm_usuario ');
         Add('  , ds_email   ');
         Add('  , ds_senha   ');
+        Add('  , sn_temfoto ');
         Add('  , ft_usuario ');
         Add('  , sn_logado  ');
         Add('from ' + TScriptDDL.getInstance().getTableNameUsuario);
@@ -86,7 +88,7 @@ begin
 
         if not IsEmpty then
         begin
-          Result := TServicesUtils.StrCompareHash(FieldByName('ds_senha').AsString, aSenha, aLogin.Trim.ToLower);
+          Result := TServicesHash.StrCompareHash(FieldByName('ds_senha').AsString, aSenha, aLogin.Trim.ToLower);
 
           if not Result then
             aErro := 'Usuário e senha inválidos!'
@@ -161,6 +163,66 @@ begin
   inherited;
 end;
 
+function TUsuarioController.Find(aLogin: String; out aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
+var
+  aQry : TFDQuery;
+begin
+  Result := False;
+
+  if aLogin.Trim.IsEmpty then
+  begin
+    aErro := 'Informe o e-mail';
+    Exit;
+  end;
+
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    try
+      with aQry, SQL do
+      begin
+        BeginUpdate;
+        Clear;
+        Add('Select ');
+        Add('    id_usuario ');
+        Add('  , cd_usuario ');
+        Add('  , nm_usuario ');
+        Add('  , ds_email   ');
+        Add('  , ds_senha   ');
+        Add('  , sn_temfoto ');
+        Add('  , ft_usuario ');
+        Add('  , sn_logado  ');
+        Add('from ' + TScriptDDL.getInstance().getTableNameUsuario);
+        Add('where (ds_email = :login)');
+        EndUpdate;
+
+        ParamByName('login').AsString := aLogin.Trim.ToLower;
+        Open;
+
+        Result := not IsEmpty;
+
+        if Result then
+        begin
+          if RETURN_ATTRIBUTES then
+            SetAtributes(aQry, FModel)
+          else
+          begin
+            FModel.ID     := StringToGUID(FieldByName('id_usuario').AsString);
+            FModel.Codigo := FieldByName('cd_usuario').AsInteger;
+          end;
+        end;
+      end;
+    except
+      On E : Exception do
+        aErro := 'Erro ao tentar localizar o usuário: ' + E.Message;
+    end;
+  finally
+    aQry.Close;
+    aQry.DisposeOf;
+  end;
+end;
+
 class function TUsuarioController.GetInstance: TUsuarioController;
 begin
   if not Assigned(_instance) then
@@ -209,6 +271,7 @@ begin
         Add('  , nm_usuario ');
         Add('  , ds_email   ');
         Add('  , ds_senha   ');
+        Add('  , sn_temfoto ');
         Add('  , ft_usuario ');
         Add('  , sn_logado  ');
         Add(') values (');
@@ -217,6 +280,7 @@ begin
         Add('  , :nm_usuario ');
         Add('  , :ds_email   ');
         Add('  , :ds_senha   ');
+        Add('  , :sn_temfoto ');
         Add('  , :ft_usuario ');
         Add('  , :sn_logado  ');
         Add(')');
@@ -238,8 +302,9 @@ begin
         ParamByName('cd_usuario').Value := FModel.Codigo;
         ParamByName('nm_usuario').Value := FModel.Nome;
         ParamByName('ds_email').Value   := FModel.Email;
-        ParamByName('ds_senha').Value   := TServicesUtils.StrToHash(FModel.Senha, FModel.Email);
+        ParamByName('ds_senha').Value   := TServicesHash.StrToHash(FModel.Senha, FModel.Email);
         ParamByName('sn_logado').Value  := IfThen(FModel.Logado, FLAG_SIM, FLAG_NAO);
+        ParamByName('sn_temfoto').Value := IfThen(FModel.TemFoto, FLAG_SIM, FLAG_NAO);
 
         if Assigned(FModel.Foto) then
           ParamByName('ft_usuario').Assign( FModel.Foto )
@@ -278,6 +343,7 @@ begin
         Add('  , nm_usuario ');
         Add('  , ds_email   ');
         Add('  , ds_senha   ');
+        Add('  , sn_temfoto ');
         Add('  , ft_usuario ');
         Add('  , sn_logado  ');
         Add('from ' + TScriptDDL.getInstance().getTableNameUsuario);
@@ -301,16 +367,63 @@ begin
   end;
 end;
 
+procedure TUsuarioController.RenovarHash(out aErro : String);
+var
+  aQry : TFDQuery;
+begin
+  if FModel.Email.IsEmpty then
+  begin
+    aErro := 'Informe o e-mail';
+    Exit;
+  end;
+
+  if FModel.Senha.IsEmpty then
+  begin
+    aErro := 'Informe a senha';
+    Exit;
+  end;
+
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    try
+      with aQry, SQL do
+      begin
+        BeginUpdate;
+        Clear;
+        Add('Update ' + TScriptDDL.getInstance().getTableNameUsuario + ' set ');
+        Add('    ds_senha   = :ds_senha ');
+        Add('  , sn_logado  = :sn_logado ');
+        Add('where id_usuario = :id_usuario');
+        EndUpdate;
+
+        ParamByName('id_usuario').Value := FModel.ID.ToString;
+        ParamByName('ds_senha').Value   := TServicesHash.StrRenewHash(FModel.Senha, FModel.Email);
+        ParamByName('sn_logado').Value  := FLAG_SIM;
+
+        ExecSQL;
+      end;
+    except
+      On E : Exception do
+        aErro := 'Erro ao tentar renovar o hash da senha do usuário: ' + E.Message;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
 procedure TUsuarioController.SetAtributes(const aDataSet: TDataSet; aModel: TUsuarioModel);
 begin
   with aDataSet, aModel do
   begin
-    ID     := StringToGUID(FieldByName('id_usuario').AsString);
-    Codigo := FieldByName('cd_usuario').AsInteger;
-    Nome   := FieldByName('nm_usuario').AsString;
-    Email  := FieldByName('ds_email').AsString;
-    Senha  := FieldByName('ds_senha').AsString;
-    Logado := (FieldByName('sn_logado').AsString = FLAG_SIM);
+    ID      := StringToGUID(FieldByName('id_usuario').AsString);
+    Codigo  := FieldByName('cd_usuario').AsInteger;
+    Nome    := FieldByName('nm_usuario').AsString;
+    Email   := FieldByName('ds_email').AsString;
+    Senha   := FieldByName('ds_senha').AsString;
+    Logado  := (FieldByName('sn_logado').AsString = FLAG_SIM);
+    TemFoto := (FieldByName('sn_temfoto').AsString = FLAG_SIM);
 
     // #0#0#0#0'IEND®B`‚'
     try
@@ -369,6 +482,8 @@ begin
         Add('Update ' + TScriptDDL.getInstance().getTableNameUsuario + ' set ');
         Add('    nm_usuario = :nm_usuario ');
         Add('  , ds_email   = :ds_email ');
+        Add('  , ds_senha   = :ds_senha ');
+        Add('  , sn_temfoto = :sn_temfoto ');
         Add('  , ft_usuario = :ft_usuario ');
         Add('  , sn_logado  = :sn_logado ');
         Add('where id_usuario = :id_usuario');
@@ -377,7 +492,14 @@ begin
         ParamByName('id_usuario').Value := FModel.ID.ToString;
         ParamByName('nm_usuario').Value := FModel.Nome;
         ParamByName('ds_email').Value   := FModel.Email;
+
+        if TServicesHash.StrIsHash(FModel.Senha) then
+          ParamByName('ds_senha').Value := TServicesHash.StrRenewHash(FModel.Senha, FModel.Email)
+        else
+          ParamByName('ds_senha').Value := TServicesHash.StrToHash(FModel.Senha, FModel.Email);
+
         ParamByName('sn_logado').Value  := IfThen(FModel.Logado, FLAG_SIM, FLAG_NAO);
+        ParamByName('sn_temfoto').Value := IfThen(FModel.TemFoto, FLAG_SIM, FLAG_NAO);
 
         if Assigned(FModel.Foto) then
           ParamByName('ft_usuario').Assign( FModel.Foto )

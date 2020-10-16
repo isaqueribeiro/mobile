@@ -8,17 +8,12 @@ uses
 type
   TServicesUtils = class
     private
-      class function StrToMD5(Value : String) : String;
-      class function StrToEncode(Value : String) : String;
     public
       class procedure ResourceImage( aResourceName : String; aImage : TImage);
       class function Base64FromBitmap(aBitmap : TBitmap) : String;
       class function BitmapFromBase64(const aBase64 : String) : TBitmap;
       class function MonthName(aData : TDateTime) : String;
       class function StrToCurrency(Value : String) : Currency;
-      class function StrToHash(Value : String; const Chave : String) : String;
-      class function StrCompareHash(Base, Value : String; const Chave : String) : Boolean;
-      class function StrRenewHash(Base : String; const Chave : String) : Boolean; virtual; abstract;
   end;
 implementation
 
@@ -91,20 +86,6 @@ begin
   end;
 end;
 
-class function TServicesUtils.StrCompareHash(Base, Value : String; const Chave : String): Boolean;
-var
-  aChave   ,
-  aHash    : String;
-  aRetorno : Boolean;
-begin
-  try
-    aHash := Self.StrToMD5( ReverseString(Value + Chave) ).ToLower;
-    aRetorno := (Pos(aHash, Base) > 0);
-  finally
-    Result := aRetorno;
-  end;
-end;
-
 class function TServicesUtils.MonthName(aData: TDateTime): String;
 var
   aRetorno : String;
@@ -144,56 +125,6 @@ end;
 class function TServicesUtils.StrToCurrency(Value: String): Currency;
 begin
   Result := StrToCurrDef(Value.Trim.Replace('.', '').Replace(',', ''), 0) / 100.0;
-end;
-
-class function TServicesUtils.StrToHash(Value: String; const Chave : String): String;
-var
-  aChave   ,
-  aHash    ,
-  aHora    ,
-  aRetorno : String;
-  aTamanho ,
-  aPosicao : Integer;
-begin
-  try
-    aHora  := TServicesUtils.StrToEncode( ReverseString(FormatDateTime('hh:mm:ss', Time)) ).Replace('=', '');
-    aChave := TServicesUtils.StrToEncode( ReverseString(Chave.Trim.ToLower) );
-    aHash  := Self.StrToMD5( ReverseString(Value + Chave) ).ToLower;
-
-    aTamanho := aChave.Length;
-    aPosicao := -1;
-
-    while (aPosicao < 0) do
-      aPosicao := Random( aTamanho );
-
-    aRetorno := aHora + Copy(aChave, 1, aPosicao) + aHash + Copy(aChave, aPosicao + 1, aTamanho);
-  finally
-    Result := aRetorno;
-  end;
-end;
-
-class function TServicesUtils.StrToMD5(Value: String): String;
-var
-  aMD5 : TIdHashMessageDigest5;
-begin
-  aMD5 := TIdHashMessageDigest5.Create;
-  try
-    Result := aMD5.HashStringAsHex(Value);
-  finally
-    aMD5.DisposeOf;
-  end;
-end;
-
-class function TServicesUtils.StrToEncode(Value: String): String;
-var
-  aEncode : TIdEncoderMIME;
-begin
-  aEncode := TIdEncoderMIME.Create;
-  try
-    Result := aEncode.Encode(Value);
-  finally
-    aEncode.DisposeOf;
-  end;
 end;
 
 end.

@@ -117,7 +117,10 @@ begin
       EndUpdate;
       Open;
 
-      Result := (FieldByName('ID').AsInteger + 1);
+      if not FieldByName('ID').IsNull then
+        Result := (FieldByName('ID').AsInteger + 1)
+      else
+        Result := 1;
     end;
   finally
     aQry.DisposeOf;

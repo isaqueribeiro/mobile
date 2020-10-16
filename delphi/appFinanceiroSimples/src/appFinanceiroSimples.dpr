@@ -31,7 +31,8 @@ uses
   Services.SmartPoint in 'Services\Services.SmartPoint.pas',
   Services.MessageDialog in 'Services\Services.MessageDialog.pas',
   Model.Usuario in 'Models\Model.Usuario.pas',
-  Controller.Usuario in 'Controllers\Controller.Usuario.pas';
+  Controller.Usuario in 'Controllers\Controller.Usuario.pas',
+  Services.Hash in 'Services\Services.Hash.pas';
 
 {$R *.res}
 

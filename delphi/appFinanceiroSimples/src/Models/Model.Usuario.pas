@@ -15,6 +15,7 @@ type
       FSenha : String;
       FFoto  : TBitmap;
       FLogado : Boolean;
+      FTemFoto: Boolean;
       procedure SetEmail(const Value: String);
       procedure SetFoto(const Value: TBitmap);
       procedure SetID(const Value: TGUID);
@@ -22,6 +23,7 @@ type
       procedure SetNome(const Value: String);
       procedure SetSenha(const Value: String);
       procedure SetCodigo(const Value: Integer);
+      procedure SetTemFoto(const Value: Boolean);
     public
       constructor Create;
       destructor Destroy; override;
@@ -32,7 +34,8 @@ type
       property Email : String read FEmail write SetEmail;
       property Senha : String read FSenha write SetSenha;
       property Foto : TBitmap read FFoto write SetFoto;
-      property Logado : Boolean read FLogado write SetLogado;
+      property TemFoto : Boolean read FTemFoto write SetTemFoto;
+      property Logado  : Boolean read FLogado write SetLogado;
 
       class function New : TUsuarioModel;
   end;
@@ -93,6 +96,11 @@ end;
 procedure TUsuarioModel.SetSenha(const Value: String);
 begin
   FSenha := Value.Trim;
+end;
+
+procedure TUsuarioModel.SetTemFoto(const Value: Boolean);
+begin
+  FTemFoto := Value;
 end;
 
 end.

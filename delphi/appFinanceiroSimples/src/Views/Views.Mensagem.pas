@@ -68,7 +68,11 @@ end;
 
 procedure TViewMensagem.&End;
 begin
-  Self.Show;
+  //Self.Show;
+  Self.ShowModal(procedure (ModalResult : TModalResult)
+  begin
+    ;
+  end);
 end;
 
 procedure TViewMensagem.AnimationShowViewFinish(Sender: TObject);

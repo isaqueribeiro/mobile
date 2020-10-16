@@ -91,6 +91,7 @@ begin
     aSQL.Add('  , nm_usuario VARCHAR (100)');
     aSQL.Add('  , ds_email   VARCHAR (100)');
     aSQL.Add('  , ds_senha   VARCHAR (255)');
+    aSQL.Add('  , sn_temfoto VARCHAR(1) NOT NULL DEFAULT(' + QuotedStr('S') +')');
     aSQL.Add('  , ft_usuario BLOB');
     aSQL.Add('  , sn_logado  VARCHAR(1) NOT NULL DEFAULT(' + QuotedStr('S') +')');
     aSQL.Add(');');
