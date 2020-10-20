@@ -462,6 +462,10 @@
         <DCCReference Include="Models\Model.Usuario.pas"/>
         <DCCReference Include="Controllers\Controller.Usuario.pas"/>
         <DCCReference Include="Services\Services.Hash.pas"/>
+        <DCCReference Include="View.CategoriaSelecao.pas">
+            <Form>FrmCategoriaSelecao</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>

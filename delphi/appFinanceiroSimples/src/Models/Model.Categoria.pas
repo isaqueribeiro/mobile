@@ -25,12 +25,27 @@ type
     property Icone : TBitmap read FIcone write SetIcone;
     property Indice : Integer read FIndice write SetIndice;
 
+    procedure Assign(Source : TCategoriaModel);
+
     class function New : TCategoriaModel;
   end;
 
 implementation
 
 { TCategoriaModel }
+
+procedure TCategoriaModel.Assign(Source: TCategoriaModel);
+begin
+  if Assigned(Source) then
+  begin
+    FCodigo    := Source.Codigo;
+    FDescricao := Source.Descricao;
+    FIndice    := Source.Indice;
+
+    FIcone := TBitmap.Create;
+    FIcone.Assign( Source.Icone );
+  end;
+end;
 
 constructor TCategoriaModel.Create;
 begin

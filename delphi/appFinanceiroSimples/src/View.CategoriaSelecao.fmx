@@ -1,0 +1,151 @@
+object FrmCategoriaSelecao: TFrmCategoriaSelecao
+  Left = 0
+  Top = 0
+  Caption = 'Financeiro Simples'
+  ClientHeight = 720
+  ClientWidth = 359
+  Fill.Kind = Solid
+  Position = MainFormCenter
+  StyleBook = DMRecursos.MyStyleBook
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnClose = FormClose
+  DesignerMasterStyle = 0
+  object LayoutTool: TLayout
+    Align = Top
+    Size.Width = 359.000000000000000000
+    Size.Height = 50.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object LabelTitulo: TLabel
+      Align = Contents
+      StyledSettings = [Style]
+      Margins.Left = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 339.000000000000000000
+      Size.Height = 40.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Family = 'Bauhaus 93'
+      TextSettings.Font.Size = 26.000000000000000000
+      TextSettings.FontColor = xFF272938
+      TextSettings.HorzAlign = Center
+      Text = 'Selecionar Categoria'
+      TabOrder = 2
+    end
+    object ImageFechar: TImage
+      MultiResBitmap.Height = 64
+      MultiResBitmap.Width = 64
+      MultiResBitmap = <
+        item
+          Width = 64
+          Height = 64
+          PNG = {
+            89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
+            DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+            027A49444154785EED9AD16A1341148667966D936C946A11A40F22426D5514A9
+            78E1A5EFE08D0683F80C228AFA285E485BC11BA3622CF818DE14B568DA4DDC9D
+            31BFCE96B69BAC339B910EC7F3C1929C2117F9BF9DDD333BAC60188661188661
+            18C63BBD87374F6E3CBAD636659048F3E995B74FAF9F93523E1B46BBE71BDB3B
+            5A2C2EF585CC3BCB7736FBE627C1E05D40EFF9DA6A94462F654B9E30437FC844
+            AAA4BA78A1B3FED18C0441643EBD30353C8845530AF9D854C1E04D4065F882AF
+            9F9743BB27781160157ECCF0CC826CAB96D759372B33FF19DBF0A0A1920F2B0F
+            5E7C376510CC24C025BCDED33FB4D6774D190CB505B88657B1BA115A0700B5DA
+            609DF02BF736DE98A1A0701640293C7012402D3CB01640313CB01240353CF8AB
+            00CAE141A500EAE1C154014EE1339DE691BE95A94670E1E7463AAF5A7D4E14E0
+            123E74523150B148B644AEBBAB9DF59E19DEA724E0F766C648BEA610FE20A91E
+            8C62D5BA7A544269298C9D1C6AE14153B6E7C7E94AFB11876600F6F07E263BDF
+            9AA21DD423AB2F7039CCED2E9C3A784F2805FDB29D5476066A1C1200336717C5
+            27539223CE93ADA31DA13403F22CBF8D9E6E4A32E026386ED85D53EE531270A9
+            BBD9C782868A045CF759AEFB933A0098BE107A325E0B64FFE942A8C04902B5A5
+            70017509562D8FB204EB9E4F5582B5004051829300404D82B3004049422D0180
+            8A84DA0280AB043DAFAF907A3F0067146716E1CCD05420097B0DA60C86996640
+            81ED4C98F43C7EDCCC34030A6C6702DE171A447BCA9441E04500B092707AE9DD
+            DAFD57035305813701A04A821662A8273C8F1F375E050048C0DD5E2BFD1ED73C
+            0E7CCF95BA1CE2FB01FF146CB2E23025C3300CC3300CC330A120C42F797FCDC6
+            5C61EDFD0000000049454E44AE426082}
+          FileName = 'C:\Users\Isaque\OneDrive\Imagens\Apps\Financeiro\back.png'
+        end>
+      Align = Left
+      Margins.Left = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Size.Width = 30.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      OnClick = ImageFecharClick
+    end
+  end
+  object ListViewCategorias: TListView
+    ItemAppearanceClassName = 'TDynamicAppearance'
+    ItemEditAppearanceClassName = 'TDynamicAppearance'
+    HeaderAppearanceClassName = 'TListHeaderObjects'
+    FooterAppearanceClassName = 'TListHeaderObjects'
+    ItemSpaces.Left = 4.000000000000000000
+    ItemSpaces.Right = 4.000000000000000000
+    Align = Client
+    Margins.Top = 10.000000000000000000
+    Margins.Bottom = 10.000000000000000000
+    Size.Width = 359.000000000000000000
+    Size.Height = 650.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    ItemAppearance.ItemHeight = 52
+    ItemAppearance.ItemEditHeight = 50
+    ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+      item
+        AppearanceObjectName = 'TextCategoria'
+        AppearanceClassName = 'TTextObjectAppearance'
+        Appearance.Font.Size = 18.000000000000000000
+        Appearance.TextAlign = Leading
+        Appearance.Width = 284.000000000000000000
+        Appearance.Height = 44.000000000000000000
+        Appearance.PlaceOffset.X = 58.000000000000000000
+        Appearance.PlaceOffset.Y = 4.000000000000000000
+      end
+      item
+        AppearanceObjectName = 'ImageCategoria'
+        AppearanceClassName = 'TImageObjectAppearance'
+        Appearance.Width = 44.000000000000000000
+        Appearance.Height = 44.000000000000000000
+        Appearance.PlaceOffset.X = 8.000000000000000000
+        Appearance.PlaceOffset.Y = 4.000000000000000000
+      end>
+    ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+      item
+        AppearanceObjectName = 'Text1'
+        AppearanceClassName = 'TTextObjectAppearance'
+      end>
+    CanSwipeDelete = False
+    OnItemClick = ListViewCategoriasItemClick
+    ShowSelection = False
+  end
+  object ImgSemImage: TImage
+    MultiResBitmap = <
+      item
+        Width = 32
+        Height = 32
+        PNG = {
+          89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
+          F4000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+          00E3494441545847ED945F0A824010C677D684D00BF4608F5DA0082128EFD13D
+          BA445DA8D7A5179F3C85E00992C8729BD9B6BF46BDACD5C3FC40996FBE0F1971
+          56C1300CC3FC15499274E8B2F2232EF240B778188F84F496A8A6A6ABC506EA7A
+          91666966F4132EF3604C4F2A9C2534E615BD85A39E3D3FD4755E9AC91A2601A1
+          967265C50DC77988C7933D2AFFDC6C5075033F504A1D48D0F7DB955589A5B3BC
+          B4C5CF90B410B66E82DEE56D08533BCE4BDA465A08DBBA0397C4788FB8CE7B79
+          9117FD5EB41600033C26113A354EA6A0D6F357C7AAD5FCAB1FC53BDACE330CC3
+          305F408813465AB0899A50E3990000000049454E44AE426082}
+        FileName = 
+          'C:\Users\Isaque\OneDrive\Imagens\Apps\Financeiro\button-more-32x' +
+          '32.png'
+      end>
+    Position.X = 64.000000000000000000
+    Position.Y = 344.000000000000000000
+    Size.Width = 32.000000000000000000
+    Size.Height = 32.000000000000000000
+    Size.PlatformDefault = False
+    WrapMode = Center
+  end
+end

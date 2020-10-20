@@ -32,7 +32,8 @@ uses
   Services.MessageDialog in 'Services\Services.MessageDialog.pas',
   Model.Usuario in 'Models\Model.Usuario.pas',
   Controller.Usuario in 'Controllers\Controller.Usuario.pas',
-  Services.Hash in 'Services\Services.Hash.pas';
+  Services.Hash in 'Services\Services.Hash.pas',
+  View.CategoriaSelecao in 'View.CategoriaSelecao.pas' {FrmCategoriaSelecao};
 
 {$R *.res}
 

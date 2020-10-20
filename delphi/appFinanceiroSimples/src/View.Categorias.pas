@@ -247,17 +247,9 @@ begin
 end;
 
 procedure TFrmCategorias.LimparListView;
-var
-  I : Integer;
 begin
   // Voltar o Scroll para o índice 0 (zero)
   ListViewCategorias.ScrollTo(0);
-
-  // Limpar objesto de lista para evitar MemoryLeak
-  for I := 0 to ListViewCategorias.Items.Count - 1 do
-    if Assigned(ListViewCategorias.Items.Item[I].TagObject) then
-      ListViewCategorias.Items.Item[I].TagObject.DisposeOf;
-
   ListViewCategorias.Items.Clear;
 end;
 

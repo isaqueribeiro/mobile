@@ -94,7 +94,7 @@ begin
 
   if (FModel.Categoria.Codigo = 0) then
   begin
-    aErro := 'Informe a categoria do lançamento';
+    aErro := 'Selecione a categoria do lançamento';
     Exit;
   end;
 
@@ -271,8 +271,12 @@ procedure TLancamentoController.Notificar;
 var
   Observer : IObserverLancamentoController;
 begin
-  for Observer in FObservers do
-     Observer.AtualizarLancamento;
+  try
+    for Observer in FObservers do
+      Observer.AtualizarLancamento;
+  except
+    Exit;
+  end;
 end;
 
 procedure TLancamentoController.RemoverObservador(Observer: IObserverLancamentoController);

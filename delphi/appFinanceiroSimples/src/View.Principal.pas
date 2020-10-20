@@ -7,13 +7,14 @@ uses
   Controller.Lancamento,
   Controllers.Interfaces.Observers,
   View.LancamentoEdicao,
+  Views.Interfaces.Observers,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Layouts, FMX.Controls.Presentation,
   FMX.StdCtrls, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView, FMX.Ani;
 
 type
-  TFrmPrincipal = class(TForm, IObserverLancamentoController)
+  TFrmPrincipal = class(TForm, IObserverLancamentoController, IObserverLancamentoEdicao)
     LayoutTitulo: TLayout;
     ImageMenu: TImage;
     CircleFoto: TCircle;
@@ -66,6 +67,7 @@ type
     FDataFiltro : TDateTime;
     procedure LimparListView;
     procedure AtualizarLancamento;
+    procedure AtualizarItemLancamento;
 
     procedure addItemLancamento(const aObjeto : TObjetoItemListView);
     procedure formatItemLancamento(const aItem: TListViewItem);
@@ -126,6 +128,77 @@ begin
   LayoutPrincipal.Margins.Right := (RectangleMenu.Width * (-1)) - RectangleMenu.Margins.Left;
 end;
 
+procedure TFrmPrincipal.AtualizarItemLancamento;
+var
+  aError : String;
+  aTotal     : TTotalLancamentos;
+  aRegistros ,
+  aItemIndex : Integer;
+  aItem      : TListViewItem;
+  o : TObjetoItemListView;
+begin
+  if (YearOf(FLancamentoController.Attributes.Data) = YearOf(FDataFiltro)) and (MonthOf(FLancamentoController.Attributes.Data) = MonthOf(FDataFiltro)) then
+  begin
+    aRegistros := 15;
+
+    case FLancamentoController.Operacao of
+      TTipoOperacaoController.operControllerInsert :
+        begin
+          o := TObjetoItemListView.Create;
+
+          o.ID        := FLAncamentoController.Attributes.ID;
+          o.Codigo    := FLAncamentoController.Attributes.Codigo;
+          o.Descricao := FLAncamentoController.Attributes.Descricao;
+          o.Valor     := FormatFloat(',0.00', FLAncamentoController.Attributes.Valor);
+          o.Categoria := FLAncamentoController.Attributes.Categoria.Descricao;
+          o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Attributes.Data);
+          o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Attributes.Categoria.Icone );
+
+          addItemLancamento(o);
+          Inc(aRegistros);
+        end;
+
+      TTipoOperacaoController.operControllerUpdate :
+        begin
+          aItem := TListViewItem(ListViewLancamentos.Items.Item[ListViewLancamentos.ItemIndex]);
+
+          if Assigned(aItem.TagObject) then
+            o := TObjetoItemListView(aItem.TagObject)
+          else
+            o := TObjetoItemListView.Create;
+
+          o.ID        := FLAncamentoController.Attributes.ID;
+          o.Codigo    := FLAncamentoController.Attributes.Codigo;
+          o.Descricao := FLAncamentoController.Attributes.Descricao;
+          o.Valor     := FormatFloat(',0.00', FLAncamentoController.Attributes.Valor);
+          o.Categoria := FLAncamentoController.Attributes.Categoria.Descricao;
+          o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Attributes.Data);
+          o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Attributes.Categoria.Icone );
+
+          aItem.TagObject := o;
+          formatItemLancamento( aItem );
+        end;
+
+      TTipoOperacaoController.operControllerDelete :
+        begin
+          aItemIndex := ListViewLancamentos.ItemIndex;
+          aItem      := TListViewItem(ListViewLancamentos.Items.Item[aItemIndex]);
+
+          if Assigned(aItem.TagObject) then
+            aItem.TagObject.DisposeOf;
+
+          ListViewLancamentos.Items.Delete(aItemIndex);
+        end;
+    end;
+
+    FLAncamentoController.Load(aRegistros, 0, 0, aTotal, aError);
+
+    lblValorReceitas.Text := 'R$ ' + FormatFloat(',0.00', aTotal.Receitas);
+    lblValorDespesas.Text := 'R$ ' + FormatFloat(',0.00', aTotal.Despesas);
+    lblValorSaldo.Text    := FormatFloat(',0.00', aTotal.Saldo);
+  end;
+end;
+
 procedure TFrmPrincipal.AtualizarLancamento;
 begin
   if (YearOf(FLancamentoController.Attributes.Data) = YearOf(FDataFiltro)) and (MonthOf(FLancamentoController.Attributes.Data) = MonthOf(FDataFiltro)) then
@@ -154,8 +227,12 @@ begin
       begin
         o := TObjetoItemListView.Create;
 
+        o.ID        := FLAncamentoController.Lista[a].ID;
         o.Codigo    := FLAncamentoController.Lista[a].Codigo;
         o.Descricao := FLAncamentoController.Lista[a].Descricao;
+        o.Valor     := FormatFloat(',0.00', FLAncamentoController.Lista[a].Valor);
+        o.Categoria := FLAncamentoController.Lista[a].Categoria.Descricao;
+        o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Lista[a].Data);
         o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Lista[a].Categoria.Icone );
 
         addItemLancamento(o);
@@ -166,9 +243,9 @@ begin
 
   end;
 
-  lblValorReceitas.Text := FormatFloat('"R$" ,0.00', aTotal.Receitas);
-  lblValorDespesas.Text := FormatFloat('"R$" ,0.00', aTotal.Despesas);
-  lblValorSaldo.Text    := FormatFloat('"R$" ,0.00', aTotal.Saldo);
+  lblValorReceitas.Text := 'R$ ' + FormatFloat(',0.00', aTotal.Receitas);
+  lblValorDespesas.Text := 'R$ ' + FormatFloat(',0.00', aTotal.Despesas);
+  lblValorSaldo.Text    := FormatFloat(',0.00', aTotal.Saldo);
 end;
 
 procedure TFrmPrincipal.FormActivate(Sender: TObject);
@@ -213,7 +290,11 @@ begin
         aImage.Bitmap := ImgSemImage.Bitmap
       else
       begin
-        aImage.Bitmap := nil;
+        // Criar uma imagem a partir de uma base de 64 bits
+        aImage.Bitmap := TBitmap.Create;
+        aImage.Bitmap.Assign( TServicesUtils.BitmapFromBase64(aObjeto.Image) );
+        aImage.OwnsBitmap  := True;
+        aImage.ScalingMode := TImageScalingMode.Stretch;
       end;
 
       aItem.Height := 60;
@@ -266,7 +347,7 @@ procedure TFrmPrincipal.ImageAdicionarClick(Sender: TObject);
 begin
   FLancamentoController.New;
 
-  FEdicaoLancamento := TFrmLancamentoEdicao.GetInstance();
+  FEdicaoLancamento := TFrmLancamentoEdicao.GetInstance(Self);
   FEdicaoLancamento.Show;
 end;
 
@@ -307,7 +388,7 @@ begin
         .Attributes
         .ID := TObjetoItemListView(AItem.TagObject).ID;
 
-      FEdicaoLancamento := TFrmLancamentoEdicao.GetInstance();
+      FEdicaoLancamento := TFrmLancamentoEdicao.GetInstance(Self);
       FEdicaoLancamento.Show;
     end;
 end;

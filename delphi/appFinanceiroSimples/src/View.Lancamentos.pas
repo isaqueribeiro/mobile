@@ -7,14 +7,14 @@ uses
   View.LancamentoEdicao,
   Controller.Lancamento,
   Controllers.Interfaces.Observers,
+  Views.Interfaces.Observers,
 
   System.SysUtils, System.StrUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects, FMX.Layouts, FMX.Controls.Presentation,
-  FMX.StdCtrls, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView
-;
+  FMX.StdCtrls, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
-  TFrmLancamentos = class(TForm, IObserverLancamentoController)
+  TFrmLancamentos = class(TForm, IObserverLancamentoController, IObserverLancamentoEdicao)
     LayoutTool: TLayout;
     ImageFechar: TImage;
     LayoutResumo: TLayout;
@@ -52,6 +52,7 @@ type
     FDataFiltro : TDateTime;
     procedure LimparListView;
     procedure AtualizarLancamento;
+    procedure AtualizarItemLancamento; virtual; abstract;
 
     procedure addItemLancamento(const aObjeto : TObjetoItemListView);
     procedure formatItemLancamento(const aItem: TListViewItem);
@@ -116,8 +117,12 @@ begin
       begin
         o := TObjetoItemListView.Create;
 
+        o.ID        := FLAncamentoController.Lista[a].ID;
         o.Codigo    := FLAncamentoController.Lista[a].Codigo;
         o.Descricao := FLAncamentoController.Lista[a].Descricao;
+        o.Valor     := FormatFloat(',0.00', FLAncamentoController.Lista[a].Valor);
+        o.Categoria := FLAncamentoController.Lista[a].Categoria.Descricao;
+        o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Lista[a].Data);
         o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Lista[a].Categoria.Icone );
 
         addItemLancamento(o);
@@ -128,9 +133,9 @@ begin
 
   end;
 
-  lblValorReceitas.Text := FormatFloat('"R$" ,0.00', aTotal.Receitas);
-  lblValorDespesas.Text := FormatFloat('"R$" ,0.00', aTotal.Despesas);
-  lblValorSaldo.Text    := FormatFloat('"R$" ,0.00', aTotal.Saldo);
+  lblValorReceitas.Text := 'R$' + #13 + FormatFloat(',0.00', aTotal.Receitas);
+  lblValorDespesas.Text := 'R$' + #13 + FormatFloat(',0.00', aTotal.Despesas);
+  lblValorSaldo.Text    := 'R$' + #13 + FormatFloat(',0.00', aTotal.Saldo);
 end;
 
 procedure TFrmLancamentos.DefinirMesClick(Sender: TObject);
@@ -180,7 +185,11 @@ begin
         aImage.Bitmap := ImgSemImage.Bitmap
       else
       begin
-        aImage.Bitmap := nil;
+        // Criar uma imagem a partir de uma base de 64 bits
+        aImage.Bitmap := TBitmap.Create;
+        aImage.Bitmap.Assign( TServicesUtils.BitmapFromBase64(aObjeto.Image) );
+        aImage.OwnsBitmap  := True;
+        aImage.ScalingMode := TImageScalingMode.Stretch;
       end;
 
       aItem.Height := 60;
@@ -189,14 +198,8 @@ begin
 end;
 
 procedure TFrmLancamentos.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  I : Integer;
 begin
-  // Limpar objesto de lista para evitar MemoryLeak
-  for I := 0 to ListViewLancamentos.Items.Count - 1 do
-    if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
-      ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
-
+  LimparListView;
   FLancamentoController.RemoverObservador(Self);
 end;
 
@@ -219,7 +222,7 @@ end;
 
 procedure TFrmLancamentos.ImageAdicionarClick(Sender: TObject);
 begin
-  FEdicao := TFrmLancamentoEdicao.GetInstance();
+  FEdicao := TFrmLancamentoEdicao.GetInstance(Self);
   FEdicao.Show;
 end;
 
@@ -234,17 +237,9 @@ begin
 end;
 
 procedure TFrmLancamentos.LimparListView;
-var
-  I : Integer;
 begin
   // Voltar o Scroll para o índice 0 (zero)
   ListViewLancamentos.ScrollTo(0);
-
-  // Limpar objesto de lista para evitar MemoryLeak
-  for I := 0 to ListViewLancamentos.Items.Count - 1 do
-    if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
-      ListViewLancamentos.Items.Item[I].TagObject.DisposeOf;
-
   ListViewLancamentos.Items.Clear;
 end;
 

@@ -13,6 +13,7 @@
     <Transaction>2020/08/17 20:31:58.000.443,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.dfm=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\DataModule\DataModule.Conexao.dfm</Transaction>
     <Transaction>2020/09/01 21:18:19.000.859,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\View.Mensagem.fmx</Transaction>
     <Transaction>2020/09/01 21:56:28.000.086,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Views.Mensagem.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\View.Mensagem.fmx</Transaction>
+    <Transaction>2020/10/16 11:12:16.000.749,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaSelecao.fmx</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5"/>
@@ -154,5 +155,7 @@
     <File Path="View.Login.fmx"/>
     <File Path="View.Principal.pas"/>
     <File Path="View.Principal.fmx"/>
+    <File Path="View.CategoriaSelecao.pas"/>
+    <File Path="View.CategoriaSelecao.fmx"/>
   </ProjectSortOrder>
 </BorlandProject>
