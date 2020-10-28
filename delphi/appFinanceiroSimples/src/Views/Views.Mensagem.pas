@@ -34,7 +34,7 @@ type
     procedure LabelCancelarClick(Sender: TObject);
     procedure LabelConfirmarClick(Sender: TObject);
   strict private
-    class var _instance : TViewMensagem;
+    class var _mensagem : TViewMensagem;
   private
     { Private declarations }
     FTipo : TTipoMensagem;
@@ -83,7 +83,7 @@ end;
 procedure TViewMensagem.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := TCloseAction.caFree;
-  _instance := nil;
+  _mensagem := nil;
 end;
 
 procedure TViewMensagem.FormCreate(Sender: TObject);
@@ -99,15 +99,15 @@ end;
 
 class function TViewMensagem.GetInstance: IViewMensagem;
 begin
-  if not Assigned(_instance) then
-    Application.CreateForm(TViewMensagem, _instance);
+  if not Assigned(_mensagem) then
+    Application.CreateForm(TViewMensagem, _mensagem);
 
-  Result := _instance;
+  Result := _mensagem;
 end;
 
 procedure TViewMensagem.LabelCancelarClick(Sender: TObject);
 begin
-  Close;
+  Self.Close;
 end;
 
 procedure TViewMensagem.LabelConfirmarClick(Sender: TObject);
@@ -115,7 +115,7 @@ begin
   if Assigned(FCallbackProcedureObject) then
     FCallbackProcedureObject(Sender);
 
-  Close;
+  Self.Close;
 end;
 
 function TViewMensagem.Mensagem(Value: String): IViewMensagem;

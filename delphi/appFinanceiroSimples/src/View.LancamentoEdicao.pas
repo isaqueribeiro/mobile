@@ -56,6 +56,7 @@ type
     LabelTipoDespesa: TLabel;
     ImgMarcado: TImage;
     ImgDesmarcado: TImage;
+    TmrFechar: TTimer;
     procedure ImageFecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -65,6 +66,8 @@ type
     procedure ImageSalvarClick(Sender: TObject);
     procedure edtValorTyping(Sender: TObject);
     procedure ImageSelecionarCategoriaClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure TmrFecharTimer(Sender: TObject);
   strict private
     class var _instance : TFrmLancamentoEdicao;
   private
@@ -148,6 +151,12 @@ end;
 procedure TFrmLancamentoEdicao.edtValorTyping(Sender: TObject);
 begin
   TServicesFormat.Formatar(Sender, TTypeFormat.typeFormatValor);
+end;
+
+procedure TFrmLancamentoEdicao.FormActivate(Sender: TObject);
+begin
+  if (FController.Operacao = TTipoOperacaoController.operControllerDelete) then
+    TmrFechar.Enabled := True;
 end;
 
 procedure TFrmLancamentoEdicao.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -304,6 +313,11 @@ begin
         ImageTipoDespesa.TagString := 'S';
       end;
   end;
+end;
+
+procedure TFrmLancamentoEdicao.TmrFecharTimer(Sender: TObject);
+begin
+  Self.Close;
 end;
 
 end.

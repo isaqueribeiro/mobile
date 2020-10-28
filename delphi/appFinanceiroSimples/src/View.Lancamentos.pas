@@ -43,6 +43,8 @@ type
     procedure ImageAdicionarClick(Sender: TObject);
     procedure ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ListViewLancamentosItemClick(const Sender: TObject; const AItem: TListViewItem);
+    procedure FormShow(Sender: TObject);
   strict private
     class var _instance : TFrmLancamentos;
   private
@@ -50,6 +52,7 @@ type
     FLancamentoController : TLancamentoController;
     FEdicao : TFrmLancamentoEdicao;
     FDataFiltro : TDateTime;
+    FRecarregar : Boolean;
     procedure LimparListView;
     procedure AtualizarLancamento;
     procedure AtualizarItemLancamento; virtual; abstract;
@@ -199,6 +202,8 @@ end;
 
 procedure TFrmLancamentos.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FRecarregar := True;
+
   LimparListView;
   FLancamentoController.RemoverObservador(Self);
 end;
@@ -209,7 +214,13 @@ begin
 
   ImgSemImage.Visible := False;
   FDataFiltro := Date;
-  DefinirMesClick(Self);
+  FRecarregar := True;
+end;
+
+procedure TFrmLancamentos.FormShow(Sender: TObject);
+begin
+  if FRecarregar then
+    DefinirMesClick(Self);
 end;
 
 class function TFrmLancamentos.GetInstance: TFrmLancamentos;
@@ -241,6 +252,11 @@ begin
   // Voltar o Scroll para o índice 0 (zero)
   ListViewLancamentos.ScrollTo(0);
   ListViewLancamentos.Items.Clear;
+end;
+
+procedure TFrmLancamentos.ListViewLancamentosItemClick(const Sender: TObject; const AItem: TListViewItem);
+begin
+  FRecarregar := False;
 end;
 
 procedure TFrmLancamentos.ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);

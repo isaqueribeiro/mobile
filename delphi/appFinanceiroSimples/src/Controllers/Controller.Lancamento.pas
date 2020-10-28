@@ -424,8 +424,6 @@ begin
     Exit;
   end;
 
-  FOperacao := TTipoOperacaoController.operControllerDelete;
-
   aQry := TFDQuery.Create(nil);
   try
     aQry.Connection := TDMConexao.GetInstance().Conn;
@@ -450,6 +448,8 @@ begin
           FLista.Remove(FModel.ID);
           FLista.TrimExcess;
         end;
+
+        FOperacao := TTipoOperacaoController.operControllerDelete;
       end;
     except
       On E : Exception do

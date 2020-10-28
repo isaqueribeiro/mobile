@@ -84,6 +84,7 @@ type
     LayoutBototes: TLayout;
     RectangleBotoes: TRectangle;
     ImageExcluir: TImage;
+    TmrFechar: TTimer;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -92,6 +93,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure ImageSalvarClick(Sender: TObject);
     procedure ImageExcluirClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure TmrFecharTimer(Sender: TObject);
   strict private
     class var _instance : TFrmCategoriaEdicao;
   private
@@ -177,13 +180,14 @@ procedure TFrmCategoriaEdicao.ExcluirCategoria(Sender: TObject);
 begin
   FController.Delete(FError);
 
-  if (not FError.IsEmpty) then
-    TServicesMessageDialog.Error('Excluir', FError)
-  else
-  begin
+  if FError.IsEmpty then
     Notificar;
-    Close;
-  end;
+end;
+
+procedure TFrmCategoriaEdicao.FormActivate(Sender: TObject);
+begin
+  if (FController.Operacao = TTipoOperacaoController.operControllerDelete) then
+    TmrFechar.Enabled := True;
 end;
 
 procedure TFrmCategoriaEdicao.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -236,8 +240,11 @@ end;
 
 procedure TFrmCategoriaEdicao.ImageExcluirClick(Sender: TObject);
 begin
-  TServicesMessageDialog.Confirm('Excluir',
-    Format('Você confirma a exclusão da categoria %s?', [FController.Attributes.Descricao.QuotedString]), ExcluirCategoria);
+  if not FController.ValidarExclusao(FError) then
+    TServicesMessageDialog.Error('Excluir', FError)
+  else
+    TServicesMessageDialog.Confirm('Excluir',
+      Format('Você confirma a exclusão da categoria %s?', [FController.Attributes.Descricao.QuotedString]), ExcluirCategoria);
 end;
 
 procedure TFrmCategoriaEdicao.ImageFecharClick(Sender: TObject);
@@ -306,6 +313,11 @@ begin
     FController.Attributes.Indice := TListBoxItem(TImage(Sender).Parent).Index;
     FController.Attributes.Icone  := TImage(Sender).Bitmap;
   end;
+end;
+
+procedure TFrmCategoriaEdicao.TmrFecharTimer(Sender: TObject);
+begin
+  Self.Close;
 end;
 
 end.

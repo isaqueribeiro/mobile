@@ -36,6 +36,8 @@ type
       function Delete(out aErro : String) : Boolean;
       function Find(aCodigo : Integer; out aErro : String;
         const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean;
+
+      function ValidarExclusao(out aErro : String) : Boolean;
   end;
 
 implementation
@@ -66,20 +68,9 @@ var
 begin
   Result := False;
 
-  if FModel.Codigo < 1 then
-  begin
-    aErro := 'Informe o código da categoria';
-    Exit;
-  end;
-
-  // Verificar se existe lançamentos para a categoria
-  // ???
-
-  FOperacao := TTipoOperacaoController.operControllerDelete;
-
-  aQry := TFDQuery.Create(nil);
+  aQry  := TFDQuery.Create(nil);
   try
-    aQry.Connection := TDMConexao.GetInstance().Conn;
+    aQry.Connection  := TDMConexao.GetInstance().Conn;
 
     try
       with aQry, SQL do
@@ -101,6 +92,8 @@ begin
           FLista.Remove(FModel.Codigo);
           FLista.TrimExcess;
         end;
+
+        FOperacao := TTipoOperacaoController.operControllerDelete;
       end;
     except
       On E : Exception do
@@ -377,6 +370,52 @@ begin
     except
       On E : Exception do
         aErro := 'Erro ao tentar atualizar a categoria: ' + E.Message;
+    end;
+  finally
+    aQry.DisposeOf;
+  end;
+end;
+
+function TCategoriaController.ValidarExclusao(out aErro: String): Boolean;
+var
+  aQry : TFDQuery;
+begin
+  Result := False;
+
+  if FModel.Codigo < 1 then
+  begin
+    aErro := 'Informe o código da categoria';
+    Exit;
+  end;
+
+  aQry  := TFDQuery.Create(nil);
+  try
+    aQry.Connection  := TDMConexao.GetInstance().Conn;
+
+    try
+      // Verificar se existe lançamentos para a categoria
+      with aQry, SQL do
+      begin
+        BeginUpdate;
+        Clear;
+        Add('Select ');
+        Add('  count(cd_categoria) as qt_lancamento ');
+        Add('from ' + TScriptDDL.getInstance().getTableNameLancamento);
+        Add('where (cd_categoria = :cd_categoria)');
+        EndUpdate;
+
+        ParamByName('cd_categoria').Value := FModel.Codigo;
+
+        Open;
+
+        Result := (FieldByName('qt_lancamento').AsInteger = 0);
+
+        if (not Result) then
+          aErro := 'Categoria com lançamentos não poderá ser excluída';
+      end;
+    except
+      On E : Exception do
+        aErro := 'Erro ao tentar validar a exclusão da categoria: ' + E.Message;
     end;
   finally
     aQry.DisposeOf;
