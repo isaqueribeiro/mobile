@@ -50,20 +50,19 @@ type
     imgMenuCategoria: TImage;
     lblMenuCategoria: TLabel;
     lytMenuCompromisso: TLayout;
-    imgMenuCompromisso: TImage;
     lblMenuCompromisso: TLabel;
     lytMenuCompromissoPagar: TLayout;
-    Image1: TImage;
+    imgMenuCompromissoPagar: TImage;
     lblMenuCompromissoPagar: TLabel;
     lytMenuCompromissoReceber: TLayout;
-    Image2: TImage;
+    imgMenuCompromissoReceber: TImage;
     lblMenuCompromissoReceber: TLabel;
     lytMenuConfiguracoes: TLayout;
-    Image3: TImage;
+    imgMenuConfiguracoes: TImage;
     lblMenuConfiguracoes: TLabel;
-    Line1: TLine;
-    Line2: TLine;
-    Line3: TLine;
+    lnMenuCompromisso: TLine;
+    lnMenuCategoria: TLine;
+    lnMenuConfiguracoes: TLine;
     procedure FormCreate(Sender: TObject);
     procedure ListViewLancamentosUpdateObjects(const Sender: TObject; const AItem: TListViewItem);
     procedure ImageAdicionarClick(Sender: TObject);
@@ -154,7 +153,7 @@ var
 begin
   if (YearOf(FLancamentoController.Attributes.Data) = YearOf(FDataFiltro)) and (MonthOf(FLancamentoController.Attributes.Data) = MonthOf(FDataFiltro)) then
   begin
-    aRegistros := 15;
+    aRegistros := 30;
 
     case FLancamentoController.Operacao of
       TTipoOperacaoController.operControllerInsert :
@@ -223,6 +222,7 @@ end;
 procedure TFrmPrincipal.CarregarLancamentos;
 var
   aError : String;
+  I : Integer;
   a : TGUID;
   o : TObjetoItemListView;
   aTotal : TTotalLancamentos;
@@ -238,17 +238,31 @@ begin
     try
       LimparListView;
 
-      for a in FLAncamentoController.Lista.Keys do
+//      for a in FLAncamentoController.Lista.Keys do
+//      begin
+//        o := TObjetoItemListView.Create;
+//
+//        o.ID        := FLAncamentoController.Lista[a].ID;
+//        o.Codigo    := FLAncamentoController.Lista[a].Codigo;
+//        o.Descricao := FLAncamentoController.Lista[a].Descricao;
+//        o.Valor     := FormatFloat(',0.00', FLAncamentoController.Lista[a].Valor);
+//        o.Categoria := FLAncamentoController.Lista[a].Categoria.Descricao;
+//        o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Lista[a].Data);
+//        o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Lista[a].Categoria.Icone );
+//
+//        addItemLancamento(o);
+//      end;
+      for I := 0 to FLAncamentoController.Lista.Count - 1 do
       begin
         o := TObjetoItemListView.Create;
 
-        o.ID        := FLAncamentoController.Lista[a].ID;
-        o.Codigo    := FLAncamentoController.Lista[a].Codigo;
-        o.Descricao := FLAncamentoController.Lista[a].Descricao;
-        o.Valor     := FormatFloat(',0.00', FLAncamentoController.Lista[a].Valor);
-        o.Categoria := FLAncamentoController.Lista[a].Categoria.Descricao;
-        o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Lista[a].Data);
-        o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Lista[a].Categoria.Icone );
+        o.ID        := FLAncamentoController.Lista.Items[I].ID;
+        o.Codigo    := FLAncamentoController.Lista.Items[I].Codigo;
+        o.Descricao := FLAncamentoController.Lista.Items[I].Descricao;
+        o.Valor     := FormatFloat(',0.00', FLAncamentoController.Lista.Items[I].Valor);
+        o.Categoria := FLAncamentoController.Lista.Items[I].Categoria.Descricao;
+        o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Lista.Items[I].Data);
+        o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Lista.Items[I].Categoria.Icone );
 
         addItemLancamento(o);
       end;
@@ -267,6 +281,7 @@ procedure TFrmPrincipal.FormActivate(Sender: TObject);
 begin
   // Garantir que o controller seja instanciado novamente
   FLancamentoController := TLancamentoController.GetInstance(Self);
+  Self.BringToFront;
 end;
 
 procedure TFrmPrincipal.formatItemLancamento(const aItem: TListViewItem);

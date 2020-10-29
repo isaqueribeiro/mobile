@@ -17,6 +17,7 @@ type
       FOperacao : TTipoOperacaoController;
       FModel : TCategoriaModel;
       FLista : TDictionary<integer, TCategoriaModel>;
+      FSelecao : TList<TCategoriaModel>;
       procedure SetAtributes(const aDataSet : TDataSet; aModel : TCategoriaModel);
     protected
       constructor Create;
@@ -27,6 +28,7 @@ type
       property Operacao : TTipoOperacaoController read FOperacao;
       property Attributes : TCategoriaModel read  FModel;
       property Lista : TDictionary<integer, TCategoriaModel> read FLista;
+      property Selecao : TList<TCategoriaModel> read FSelecao;
 
       procedure New;
       procedure Load(out aErro : String);
@@ -55,6 +57,7 @@ begin
   FOperacao := TTipoOperacaoController.operControllerBrowser;
   FModel := TCategoriaModel.New;
   FLista := TDictionary<integer, TCategoriaModel>.Create;
+  FSelecao := TList<TCategoriaModel>.Create;
 
   TDMConexao
     .GetInstance()
@@ -93,6 +96,12 @@ begin
           FLista.TrimExcess;
         end;
 
+        if (FSelecao.IndexOf(FModel) > -1) then
+        begin
+          FSelecao.Remove(FModel);
+          FSelecao.TrimExcess;
+        end;
+
         FOperacao := TTipoOperacaoController.operControllerDelete;
       end;
     except
@@ -107,6 +116,7 @@ end;
 destructor TCategoriaCOntroller.Destroy;
 var
   aObj : TCategoriaModel;
+  I : Integer;
 begin
   if Assigned(FModel) then
     FModel.DisposeOf;
@@ -122,6 +132,20 @@ begin
     FLista.Clear;
     FLista.TrimExcess;
     FLista.DisposeOf;
+  end;
+
+  if Assigned(FSelecao) then
+  begin
+    for I := 0 to FSelecao.Count - 1 do
+    begin
+      aObj := FSelecao.Items[I];
+      FSelecao.Delete(I);
+      aObj.DisposeOf;
+    end;
+
+    FSelecao.Clear;
+    FSelecao.TrimExcess;
+    FSelecao.DisposeOf;
   end;
 
   inherited;
@@ -192,8 +216,6 @@ begin
     Exit;
   end;
 
-  FOperacao := TTipoOperacaoController.operControllerInsert;
-
   aQry := TFDQuery.Create(nil);
   try
     aQry.Connection := TDMConexao.GetInstance().Conn;
@@ -226,7 +248,8 @@ begin
 
         FModel.Codigo := TDMConexao.GetInstance().GetLastInsertRowID;
 
-        Result := (FModel.Codigo > 0);
+        Result    := (FModel.Codigo > 0);
+        FOperacao := TTipoOperacaoController.operControllerInsert;
       end;
     except
       On E : Exception do
@@ -272,7 +295,8 @@ begin
           aModel := TCategoriaModel.Create;
 
           SetAtributes(aQry, aModel);
-          Lista.AddOrSetValue(aModel.Codigo, aModel);
+          FLista.AddOrSetValue(aModel.Codigo, aModel);
+          FSelecao.Add(aModel);
 
           Next;
         end;
@@ -336,8 +360,6 @@ begin
     Exit;
   end;
 
-  FOperacao := TTipoOperacaoController.operControllerUpdate;
-
   aQry := TFDQuery.Create(nil);
   try
     aQry.Connection := TDMConexao.GetInstance().Conn;
@@ -365,7 +387,8 @@ begin
 
         ExecSQL;
 
-        Result := True;
+        Result    := True;
+        FOperacao := TTipoOperacaoController.operControllerUpdate;
       end;
     except
       On E : Exception do

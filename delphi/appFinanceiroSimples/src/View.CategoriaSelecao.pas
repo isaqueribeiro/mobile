@@ -86,13 +86,23 @@ begin
     try
       LimparListView;
 
-      for I in FCategogiaController.Lista.Keys do
+//      for I in FCategogiaController.Lista.Keys do
+//      begin
+//        o := TObjetoItemListView.Create;
+//
+//        o.Codigo    := FCategogiaController.Lista[I].Codigo;
+//        o.Descricao := FCategogiaController.Lista[I].Descricao;
+//        o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Lista[I].Icone );
+//
+//        addItemCategoria(o);
+//      end;
+      for I := 0 to FCategogiaController.Selecao.Count - 1 do
       begin
         o := TObjetoItemListView.Create;
 
-        o.Codigo    := FCategogiaController.Lista[I].Codigo;
-        o.Descricao := FCategogiaController.Lista[I].Descricao;
-        o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Lista[I].Icone );
+        o.Codigo    := FCategogiaController.Selecao.Items[I].Codigo;
+        o.Descricao := FCategogiaController.Selecao.Items[I].Descricao;
+        o.Image     := TServicesUtils.Base64FromBitmap( FCategogiaController.Selecao.Items[I].Icone );
 
         addItemCategoria(o);
       end;

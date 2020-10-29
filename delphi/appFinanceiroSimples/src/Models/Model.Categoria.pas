@@ -27,6 +27,8 @@ type
 
     procedure Assign(Source : TCategoriaModel);
 
+    function ToString : String; override;
+
     class function New : TCategoriaModel;
   end;
 
@@ -87,6 +89,11 @@ end;
 procedure TCategoriaModel.SetIndice(const Value: Integer);
 begin
   FIndice := Value;
+end;
+
+function TCategoriaModel.ToString: String;
+begin
+  Result := FCodigo.ToString;
 end;
 
 end.

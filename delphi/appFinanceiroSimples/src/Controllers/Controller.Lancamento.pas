@@ -22,7 +22,8 @@ type
       FObservers : TList<IObserverLancamentoController>;
       FOperacao : TTipoOperacaoController;
       FModel : TLancamentoModel;
-      FLista : TDictionary<TGUID, TLancamentoModel>;
+      //FLista : TDictionary<TGUID, TLancamentoModel>;
+      FLista : TList<TLancamentoModel>;
       procedure SetAtributes(const aDataSet : TDataSet; aModel : TLancamentoModel);
 
       function Find(aID : TGUID; aCodigo : Integer; out aErro : String;
@@ -36,7 +37,8 @@ type
 
       property Operacao : TTipoOperacaoController read FOperacao;
       property Attributes : TLancamentoModel read  FModel;
-      property Lista : TDictionary<TGUID, TLancamentoModel> read FLista;
+      //property Lista : TDictionary<TGUID, TLancamentoModel> read FLista;
+      property Lista : TList<TLancamentoModel> read FLista;
 
       procedure RemoverObservador(Observer   : IObserverLancamentoController);
 
@@ -98,8 +100,6 @@ begin
     Exit;
   end;
 
-  FOperacao := TTipoOperacaoController.operControllerInsert;
-
   aQry := TFDQuery.Create(nil);
   try
     aQry.Connection := TDMConexao.GetInstance().Conn;
@@ -158,7 +158,8 @@ begin
 
         ExecSQL;
 
-        Result := True;
+        Result    := True;
+        FOperacao := TTipoOperacaoController.operControllerInsert;
       end;
     except
       On E : Exception do
@@ -206,7 +207,7 @@ begin
           Add('  and (a.dt_lancamento between :data_inicial and :data_final)');
 
         Add('order by');
-        Add('    a.dt_lancamento DESC');
+        Add('    datetime(a.dt_lancamento) DESC');
         Add('  , a.ds_lancamento ASC');
 
         if (aQuantidadeRegistros > 0) then
@@ -236,7 +237,8 @@ begin
           aModel := TLancamentoModel.Create;
 
           SetAtributes(aQry, aModel);
-          Lista.AddOrSetValue(aModel.ID, aModel);
+          //Lista.AddOrSetValue(aModel.ID, aModel);
+          Lista.Add(aModel);
 
           // Totalizar lançamentos
           if aModel.Tipo = TTipoLancamento.tipoReceita then
@@ -344,8 +346,6 @@ begin
     Exit;
   end;
 
-  FOperacao := TTipoOperacaoController.operControllerUpdate;
-
   aQry := TFDQuery.Create(nil);
   try
     aQry.Connection := TDMConexao.GetInstance().Conn;
@@ -381,7 +381,8 @@ begin
 
         ExecSQL;
 
-        Result := True;
+        Result    := True;
+        FOperacao := TTipoOperacaoController.operControllerUpdate;
       end;
     except
       On E : Exception do
@@ -404,7 +405,8 @@ begin
   FObservers := TList<IObserverLancamentoController>.Create;
   FOperacao  := TTipoOperacaoController.operControllerBrowser;
   FModel := TLancamentoModel.New;
-  FLista := TDictionary<TGUID, TLancamentoModel>.Create;
+  //FLista := TDictionary<TGUID, TLancamentoModel>.Create;
+  FLista := TList<TLancamentoModel>.Create;
 
   TDMConexao
     .GetInstance()
@@ -443,9 +445,14 @@ begin
 
         Result := True;
 
-        if FLista.ContainsKey(FModel.ID) then
+//        if FLista.ContainsKey(FModel.ID) then
+//        begin
+//          FLista.Remove(FModel.ID);
+//          FLista.TrimExcess;
+//        end;
+        if (FLista.IndexOf(FModel) > -1) then
         begin
-          FLista.Remove(FModel.ID);
+          FLista.Remove(FModel);
           FLista.TrimExcess;
         end;
 
@@ -464,6 +471,7 @@ end;
 destructor TLancamentoController.Destroy;
 var
   aObj : TLancamentoModel;
+  I : Integer;
 begin
   RemoverTodosObservadores;
   FObservers.DisposeOf;
@@ -473,9 +481,15 @@ begin
 
   if Assigned(FLista) then
   begin
-    for aObj in FLista.Values do
+//    for aObj in FLista.Values do
+//    begin
+//      FLista.Remove(aObj.ID);
+//      aObj.DisposeOf;
+//    end;
+    for I := 0 to FLista.Count - 1 do
     begin
-      FLista.Remove(aObj.ID);
+      aObj := FLista.Items[I];
+      FLista.Delete(I);
       aObj.DisposeOf;
     end;
 

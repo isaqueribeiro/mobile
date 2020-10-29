@@ -68,6 +68,7 @@ type
     procedure ImageSelecionarCategoriaClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure TmrFecharTimer(Sender: TObject);
+    procedure ImageExcluirClick(Sender: TObject);
   strict private
     class var _instance : TFrmLancamentoEdicao;
   private
@@ -76,6 +77,8 @@ type
     FObservers  : TList<IObserverLancamentoEdicao>;
     FController : TLancamentoController;
     procedure CarregarRegistro;
+    procedure ExcluirLancamento(Sender : TObject);
+
     procedure AtualizarLancamento;
 
     procedure AdicionarObservador(Observer : IObserverLancamentoEdicao);
@@ -113,7 +116,7 @@ end;
 
 procedure TFrmLancamentoEdicao.AtualizarLancamento;
 begin
-  CarregarRegistro;
+  ;
 end;
 
 procedure TFrmLancamentoEdicao.CarregarRegistro;
@@ -151,6 +154,17 @@ end;
 procedure TFrmLancamentoEdicao.edtValorTyping(Sender: TObject);
 begin
   TServicesFormat.Formatar(Sender, TTypeFormat.typeFormatValor);
+end;
+
+procedure TFrmLancamentoEdicao.ExcluirLancamento(Sender: TObject);
+begin
+  FController.Delete(FError);
+
+  if FError.IsEmpty then
+  begin
+    Notificar;
+    TmrFechar.Enabled := True;
+  end;
 end;
 
 procedure TFrmLancamentoEdicao.FormActivate(Sender: TObject);
@@ -207,6 +221,12 @@ begin
   _instance.AdicionarObservador(Observer);
 
   Result := _instance;
+end;
+
+procedure TFrmLancamentoEdicao.ImageExcluirClick(Sender: TObject);
+begin
+  TServicesMessageDialog.Confirm('Excluir',
+    Format('Você confirma o lançamento %s?', [FController.Attributes.Descricao.QuotedString]), ExcluirLancamento);
 end;
 
 procedure TFrmLancamentoEdicao.ImageFecharClick(Sender: TObject);

@@ -34,12 +34,31 @@ type
       property Valor : Currency read FValor write SetValor;
       property Categoria : TCategoriaModel read FCategoria write SetCategoria;
 
+      procedure Assign(Source : TLancamentoModel);
+
+      function ToString : String; override;
+
       class function New : TLancamentoModel;
   end;
 
 implementation
 
 { TLancamentoModel }
+
+procedure TLancamentoModel.Assign(Source: TLancamentoModel);
+begin
+  if Assigned(Source) then
+  begin
+    FID        := Source.ID;
+    FCodigo    := Source.Codigo;
+    FDescricao := Source.Descricao;
+    FValor     := Source.Valor;
+    FData      := Source.Data;
+    FTipo      := Source.Tipo;
+
+    FCategoria.Assign(Source.Categoria);
+  end;
+end;
 
 constructor TLancamentoModel.Create;
 begin
@@ -96,6 +115,11 @@ end;
 procedure TLancamentoModel.SetValor(const Value: Currency);
 begin
   FValor := Value;
+end;
+
+function TLancamentoModel.ToString: String;
+begin
+  Result := FID.ToString;
 end;
 
 end.
