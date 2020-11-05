@@ -119,6 +119,7 @@
     <File Path="Controllers\Controller.Categoria.pas"/>
     <File Path="Controllers\Controller.Lancamento.pas"/>
     <File Path="Controllers\Controller.Usuario.pas"/>
+    <File Path="Controllers\Controller.Compromisso.pas"/>
     <File Path="DataModule"/>
     <File Path="DataModule\DataModule.Conexao.pas"/>
     <File Path="DataModule\DataModule.Conexao.dfm"/>
@@ -128,6 +129,7 @@
     <File Path="Models\Model.Categoria.pas"/>
     <File Path="Models\Model.Lancamento.pas"/>
     <File Path="Models\Model.Usuario.pas"/>
+    <File Path="Models\Model.Compromisso.pas"/>
     <File Path="Services"/>
     <File Path="Services\Services.ComplexTypes.pas"/>
     <File Path="Services\Services.Format.pas"/>

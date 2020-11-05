@@ -284,7 +284,10 @@ end;
 procedure TLancamentoController.RemoverObservador(Observer: IObserverLancamentoController);
 begin
   if (FObservers.IndexOf(Observer) > -1) then
+  begin
     FObservers.Delete(FObservers.IndexOf(Observer));
+    FObservers.TrimExcess;
+  end;
 end;
 
 procedure TLancamentoController.RemoverTodosObservadores;

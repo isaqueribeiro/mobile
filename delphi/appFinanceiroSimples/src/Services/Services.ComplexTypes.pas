@@ -6,6 +6,7 @@ type
   TTipoMensagem = (tipoMensagemInformacao, tipoMensagemAlerta, tipoMensagemErro, tipoMensagemSucesso, tipoMensagemPergunta);
   TTipoOperacaoController = (operControllerBrowser, operControllerInsert, operControllerUpdate, operControllerDelete);
   TTipoLancamento = (tipoReceita, tipoDespesa);
+  TTipoCompromisso = (tipoCompromissoAReceber, tipoCompromissoAPagar);
   TTotalLancamentos = record
     Receitas : Currency;
     Despesas : Currency;

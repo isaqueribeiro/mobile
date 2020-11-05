@@ -16,6 +16,7 @@ type
       TABLE_USUARIO      = 'app_usuario';
       TABLE_CATEGORIA    = 'tbl_categoria';
       TABLE_LANCAMENTO   = 'tbl_lancamento';
+      TABLE_COMPROMISSO  = 'tbl_compromisso';
   private
 
   public
@@ -24,11 +25,13 @@ type
     function getTableNameConfiguracao : String;
     function getTableNameCategoria : String;
     function getTableNameLancamento : String;
+    function getTableNameCompromisso : String;
     function getTableNameUsuario : String;
 
     function getCreateTableUsuario : TStringList;
     function getCreateTableCategoria : TStringList;
     function getCreateTableLancamento : TStringList;
+    function getCreateTableCompromisso : TStringList;
   end;
 implementation
 
@@ -47,6 +50,30 @@ begin
     aSQL.Add('  , ds_categoria VARCHAR (50)');
     aSQL.Add('  , ic_categoria BLOB');
     aSQL.Add('  , ix_categoria INTEGER');
+    aSQL.Add(');');
+    aSQL.EndUpdate;
+  finally
+    Result := aSQL;
+  end;
+end;
+
+function TScriptDDL.getCreateTableCompromisso: TStringList;
+var
+  aSQL : TStringList;
+begin
+  aSQL := TStringList.Create;
+  try
+    aSQL.Clear;
+    aSQL.BeginUpdate;
+    aSQL.Add('CREATE TABLE IF NOT EXISTS ' + TABLE_COMPROMISSO + ' (');
+    aSQL.Add('    id_compromisso VARCHAR (38) NOT NULL PRIMARY KEY ');
+    aSQL.Add('  , cd_compromisso INTEGER NOT NULL UNIQUE ');
+    aSQL.Add('  , tp_compromisso VARCHAR(1) NOT NULL ');
+    aSQL.Add('  , ds_compromisso VARCHAR (100)');
+    aSQL.Add('  , dt_compromisso DATE');
+    aSQL.Add('  , vl_compromisso NUMERIC (15,2) DEFAULT (0)');
+    aSQL.Add('  , cd_categoria   INTEGER');
+    aSQL.Add('  , sn_realizado   VARCHAR(1) NOT NULL DEFAULT(' + QuotedStr('N') +')');
     aSQL.Add(');');
     aSQL.EndUpdate;
   finally
@@ -112,6 +139,11 @@ end;
 function TScriptDDL.getTableNameCategoria: String;
 begin
   Result := TABLE_CATEGORIA;
+end;
+
+function TScriptDDL.getTableNameCompromisso: String;
+begin
+  Result := TABLE_COMPROMISSO;
 end;
 
 function TScriptDDL.getTableNameConfiguracao: String;
