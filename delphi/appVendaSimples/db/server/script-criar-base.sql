@@ -98,11 +98,13 @@ GO
 IF OBJECT_ID (N'dbo.sys_empresa') IS NULL
 BEGIN
 	CREATE TABLE dbo.sys_empresa (
-		id_empresa	VARCHAR(38) NOT NULL PRIMARY KEY 
-	  , cd_empresa	INT IDENTITY(1,1) NOT NULL UNIQUE
-	  , nm_empresa	VARCHAR(250)
-	  , nm_fantasia	VARCHAR(150)
-	  , nr_cnpj_cpf	VARCHAR(25) UNIQUE
+		id_empresa		VARCHAR(38) NOT NULL PRIMARY KEY 
+	  , cd_empresa		INT IDENTITY(1,1) NOT NULL UNIQUE
+	  , nm_empresa		VARCHAR(250)
+	  , nm_fantasia		VARCHAR(150)
+	  , nr_cnpj_cpf		VARCHAR(25) UNIQUE
+	  , sn_sincronizar	SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_sincronizar = 0) or (sn_sincronizar = 1))
+	  , sn_ativo		SMALLINT DEFAULT 1 NOT NULL CHECK ((sn_ativo = 0) or (sn_ativo = 1))
 	);
 
 	CREATE TABLE dbo.sys_empresa_sequencia (
@@ -114,6 +116,13 @@ BEGIN
 		REFERENCES dbo.sys_empresa (id_empresa)     
 		ON DELETE CASCADE    
 		ON UPDATE CASCADE;
+	/*
+	ALTER TABLE dbo.sys_empresa
+	  ADD sn_sincronizar SMALLINT DEFAULT 0 NOT NULL CHECK ((sn_sincronizar = 0) or (sn_sincronizar = 1));
+
+	ALTER TABLE dbo.sys_empresa
+	  ADD sn_ativo SMALLINT DEFAULT 1 NOT NULL CHECK ((sn_ativo = 0) or (sn_ativo = 1));
+	*/
 END
 GO
 
