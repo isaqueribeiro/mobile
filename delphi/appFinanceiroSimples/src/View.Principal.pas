@@ -74,6 +74,8 @@ type
     procedure lytMenuCategoriaClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure ListViewLancamentosItemClick(const Sender: TObject; const AItem: TListViewItem);
+    procedure lytMenuCompromissoPagarClick(Sender: TObject);
+    procedure lytMenuCompromissoReceberClick(Sender: TObject);
   private
     { Private declarations }
     FEdicaoLancamento : TFrmLancamentoEdicao;
@@ -105,6 +107,7 @@ uses
   , DataModule.Recursos
   , DataModule.Conexao
   , Classes.ScriptDDL
+  , View.Compromissos
   , View.Lancamentos
   , View.Categorias
   , Services.Utils
@@ -432,6 +435,18 @@ procedure TFrmPrincipal.lytMenuCategoriaClick(Sender: TObject);
 begin
   AnimationMenu.Start;
   TFrmCategorias.GetInstance().Show;
+end;
+
+procedure TFrmPrincipal.lytMenuCompromissoPagarClick(Sender: TObject);
+begin
+  AnimationMenu.Start;
+  TFrmCompromissos.GetInstance(TTipoCompromisso.tipoCompromissoAPagar).Show;
+end;
+
+procedure TFrmPrincipal.lytMenuCompromissoReceberClick(Sender: TObject);
+begin
+  AnimationMenu.Start;
+  TFrmCompromissos.GetInstance(TTipoCompromisso.tipoCompromissoAReceber).Show;
 end;
 
 end.

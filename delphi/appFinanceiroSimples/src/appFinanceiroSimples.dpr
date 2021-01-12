@@ -35,7 +35,8 @@ uses
   Services.Hash in 'Services\Services.Hash.pas',
   View.CategoriaSelecao in 'View.CategoriaSelecao.pas' {FrmCategoriaSelecao},
   Model.Compromisso in 'Models\Model.Compromisso.pas',
-  Controller.Compromisso in 'Controllers\Controller.Compromisso.pas';
+  Controller.Compromisso in 'Controllers\Controller.Compromisso.pas',
+  View.Compromissos in 'View.Compromissos.pas' {FrmCompromissos};
 
 {$R *.res}
 

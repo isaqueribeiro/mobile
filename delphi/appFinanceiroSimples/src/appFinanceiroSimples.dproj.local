@@ -14,6 +14,7 @@
     <Transaction>2020/09/01 21:18:19.000.859,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\View.Mensagem.fmx</Transaction>
     <Transaction>2020/09/01 21:56:28.000.086,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\Views.Mensagem.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Views\View.Mensagem.fmx</Transaction>
     <Transaction>2020/10/16 11:12:16.000.749,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.CategoriaSelecao.fmx</Transaction>
+    <Transaction>2021/01/11 21:21:01.023,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\View.Compromissos.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appFinanceiroSimples\src\Unit1.fmx</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5"/>
@@ -100,6 +101,7 @@
     <File Path="Assets\categoria-mobile-64x64.png"/>
     <File Path="Assets\categoria-money-64x64.png"/>
     <File Path="Assets\categoria-motobike-64x64.png"/>
+    <File Path="Assets\categoria-pets-64x64.png"/>
     <File Path="Assets\categoria-shopping-64x64.png"/>
     <File Path="Assets\categoria-toy-64x64.png"/>
     <File Path="Assets\categoria-travel-64x64.png"/>
@@ -108,7 +110,6 @@
     <File Path="Assets\icon-message-inform-64x64.png"/>
     <File Path="Assets\icon-message-question-64x64.png"/>
     <File Path="Assets\icon-message-sucess-64x64.png"/>
-    <File Path="Assets\categoria-pets-64x64.png"/>
     <File Path="Classes"/>
     <File Path="Classes\Classe.ObjetoItemListView.pas"/>
     <File Path="Classes\Classes.ScriptDDL.pas"/>
@@ -117,9 +118,9 @@
     <File Path="Controllers\Interfaces"/>
     <File Path="Controllers\Interfaces\Controllers.Interfaces.Observers.pas"/>
     <File Path="Controllers\Controller.Categoria.pas"/>
+    <File Path="Controllers\Controller.Compromisso.pas"/>
     <File Path="Controllers\Controller.Lancamento.pas"/>
     <File Path="Controllers\Controller.Usuario.pas"/>
-    <File Path="Controllers\Controller.Compromisso.pas"/>
     <File Path="DataModule"/>
     <File Path="DataModule\DataModule.Conexao.pas"/>
     <File Path="DataModule\DataModule.Conexao.dfm"/>
@@ -127,16 +128,16 @@
     <File Path="DataModule\DataModule.Recursos.dfm"/>
     <File Path="Models"/>
     <File Path="Models\Model.Categoria.pas"/>
+    <File Path="Models\Model.Compromisso.pas"/>
     <File Path="Models\Model.Lancamento.pas"/>
     <File Path="Models\Model.Usuario.pas"/>
-    <File Path="Models\Model.Compromisso.pas"/>
     <File Path="Services"/>
     <File Path="Services\Services.ComplexTypes.pas"/>
     <File Path="Services\Services.Format.pas"/>
+    <File Path="Services\Services.Hash.pas"/>
+    <File Path="Services\Services.MessageDialog.pas"/>
     <File Path="Services\Services.SmartPoint.pas"/>
     <File Path="Services\Services.Utils.pas"/>
-    <File Path="Services\Services.MessageDialog.pas"/>
-    <File Path="Services\Services.Hash.pas"/>
     <File Path="Views"/>
     <File Path="Views\Interfaces"/>
     <File Path="Views\Interfaces\Views.Interfaces.Mensagem.pas"/>
@@ -159,5 +160,7 @@
     <File Path="View.Principal.fmx"/>
     <File Path="View.CategoriaSelecao.pas"/>
     <File Path="View.CategoriaSelecao.fmx"/>
+    <File Path="View.Compromissos.pas"/>
+    <File Path="View.Compromissos.fmx"/>
   </ProjectSortOrder>
 </BorlandProject>

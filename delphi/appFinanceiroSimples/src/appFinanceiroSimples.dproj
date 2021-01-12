@@ -468,6 +468,10 @@
         </DCCReference>
         <DCCReference Include="Models\Model.Compromisso.pas"/>
         <DCCReference Include="Controllers\Controller.Compromisso.pas"/>
+        <DCCReference Include="View.Compromissos.pas">
+            <Form>FrmCompromissos</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>
