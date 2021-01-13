@@ -4,6 +4,7 @@ interface
 
 uses
     Services.ComplexTypes
+  , Classes.ScriptDDL
   , Model.Categoria
   , System.Generics.Collections
   , FireDAC.Comp.Client
@@ -15,6 +16,7 @@ type
       class var _instance : TCategoriaCOntroller;
     private
       FOperacao : TTipoOperacaoController;
+      FDDL   : TScriptDDL;
       FModel : TCategoriaModel;
       FLista : TDictionary<integer, TCategoriaModel>;
       FSelecao : TList<TCategoriaModel>;
@@ -48,13 +50,13 @@ implementation
 
 uses
     DataModule.Conexao
-  , Classes.ScriptDDL
   , System.SysUtils
   , FMX.Graphics;
 
 constructor TCategoriaCOntroller.Create;
 begin
   FOperacao := TTipoOperacaoController.operControllerBrowser;
+  FDDL   := TScriptDDL.getInstance();
   FModel := TCategoriaModel.New;
   FLista := TDictionary<integer, TCategoriaModel>.Create;
   FSelecao := TList<TCategoriaModel>.Create;
@@ -62,7 +64,7 @@ begin
   TDMConexao
     .GetInstance()
     .Conn
-    .ExecSQL(TScriptDDL.getInstance().getCreateTableCategoria.Text, True);
+    .ExecSQL(FDDL.getCreateTableCategoria.Text, True);
 end;
 
 function TCategoriaController.Delete(out aErro: String): Boolean;
@@ -80,7 +82,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Delete from ' + TScriptDDL.getInstance().getTableNameCategoria);
+        Add('Delete from ' + FDDL.getTableNameCategoria);
         Add('where cd_categoria = :cd_categoria');
         EndUpdate;
 
@@ -118,8 +120,8 @@ var
   aObj : TCategoriaModel;
   I : Integer;
 begin
-  if Assigned(FModel) then
-    FModel.DisposeOf;
+  FDDL.DisposeOf;
+  FModel.DisposeOf;
 
   if Assigned(FLista) then
   begin
@@ -173,7 +175,7 @@ begin
         Add('  , ds_categoria  ');
         Add('  , ic_categoria  ');
         Add('  , ix_categoria  ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameCategoria);
+        Add('from ' + FDDL.getTableNameCategoria);
         Add('where (cd_categoria = :cd_categoria)');
         EndUpdate;
 
@@ -225,7 +227,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Insert Into ' + TScriptDDL.getInstance().getTableNameCategoria + '(');
+        Add('Insert Into ' + FDDL.getTableNameCategoria + '(');
         Add('    ds_categoria  ');
         Add('  , ic_categoria  ');
         Add('  , ix_categoria  ');
@@ -281,7 +283,7 @@ begin
         Add('  , ds_categoria  ');
         Add('  , ic_categoria  ');
         Add('  , ix_categoria  ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameCategoria);
+        Add('from ' + FDDL.getTableNameCategoria);
         Add('order by');
         Add('    ds_categoria');
         EndUpdate;
@@ -369,7 +371,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Update ' + TScriptDDL.getInstance().getTableNameCategoria + ' set ');
+        Add('Update ' + FDDL.getTableNameCategoria + ' set ');
         Add('    ds_categoria = :ds_categoria ');
         Add('  , ic_categoria = :ic_categoria ');
         Add('  , ix_categoria = :ix_categoria ');
@@ -423,7 +425,7 @@ begin
         Clear;
         Add('Select ');
         Add('  count(cd_categoria) as qt_lancamento ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameLancamento);
+        Add('from ' + FDDL.getTableNameLancamento);
         Add('where (cd_categoria = :cd_categoria)');
         EndUpdate;
 

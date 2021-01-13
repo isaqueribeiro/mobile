@@ -49,12 +49,13 @@ begin
   FNome   := EmptyStr;
   FEmail  := EmptyStr;
   FSenha  := EmptyStr;
-  FFoto   := nil;
+  FFoto   := TBitmap.Create;
   FLogado := False;
 end;
 
 destructor TUsuarioModel.Destroy;
 begin
+  FFoto.DisposeOf;
   inherited;
 end;
 

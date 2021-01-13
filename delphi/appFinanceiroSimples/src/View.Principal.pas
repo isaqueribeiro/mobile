@@ -340,9 +340,6 @@ var
   aLancamentos : TFrmLancamentos;
   I : Integer;
 begin
-  TScriptDDL.getInstance().DisposeOf;
-  TDMConexao.getInstance().DisposeOf;
-
   // Limpar objesto de lista para evitar MemoryLeak
   for I := 0 to ListViewLancamentos.Items.Count - 1 do
     if Assigned(ListViewLancamentos.Items.Item[I].TagObject) then
@@ -354,6 +351,9 @@ begin
     aLancamentos.DisposeOf;
     aLancamentos := nil;
   end;
+
+//  TScriptDDL.getInstance().DisposeOf;
+  TDMConexao.getInstance().DisposeOf;
 end;
 
 procedure TFrmPrincipal.FormCreate(Sender: TObject);

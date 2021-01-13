@@ -4,6 +4,7 @@ interface
 
 uses
     System.SysUtils
+  , Classes.ScriptDDL
   , Model.Compromisso
   , Controllers.Interfaces.Observers
   , Services.ComplexTypes
@@ -18,12 +19,12 @@ type
     private
       FObservers : TList<IObserverCompromissoController>;
       FOperacao  : TTipoOperacaoController;
+      FDDL       : TScriptDDL;
       FModel     : TCompromissoModel;
       FLista     : TList<TCompromissoModel>;
       procedure SetAtributes(const aDataSet : TDataSet; aModel : TCompromissoModel);
 
       procedure AdicionarObservador(Observer : IObserverCompromissoController);
-      procedure RemoverObservador(Observer   : IObserverCompromissoController);
       procedure RemoverTodosObservadores;
       procedure Notificar;
 
@@ -40,13 +41,15 @@ type
       property Lista : TList<TCompromissoModel> read FLista;
 
       procedure New;
+      procedure Load(const aQuantidadeRegistros: Integer; aAno, aMes : Word; aTipo : TTipoCompromisso;
+        var aTotal : TTotalCompromissos; out aErro : String);
+      procedure RemoverObservador(Observer   : IObserverCompromissoController);
   end;
 
 implementation
 
 uses
     DataModule.Conexao
-  , Classes.ScriptDDL
   , FMX.Graphics
   , System.DateUtils
   , System.Math;
@@ -66,6 +69,12 @@ begin
   Result := _instance;
 end;
 
+procedure TCompromissoController.Load(const aQuantidadeRegistros: Integer; aAno, aMes: Word; aTipo: TTipoCompromisso;
+  var aTotal: TTotalCompromissos; out aErro: String);
+begin
+  ;
+end;
+
 procedure TCompromissoController.AdicionarObservador(Observer: IObserverCompromissoController);
 begin
   if (FObservers.IndexOf(Observer) = -1) then
@@ -76,6 +85,7 @@ constructor TCompromissoController.Create;
 begin
   FObservers := TList<IObserverCompromissoController>.Create;
   FOperacao  := TTipoOperacaoController.operControllerBrowser;
+  FDDL       := TScriptDDL.getInstance();
   FModel     := TCompromissoModel.New;
   FLista     := TList<TCompromissoModel>.Create;
 
@@ -93,8 +103,8 @@ begin
   RemoverTodosObservadores;
   FObservers.DisposeOf;
 
-  if Assigned(FModel) then
-    FModel.DisposeOf;
+  FDDL.DisposeOf;
+  FModel.DisposeOf;
 
   if Assigned(FLista) then
   begin
@@ -142,8 +152,8 @@ begin
         Add('  , a.cd_categoria ');
         Add('  , c.ds_categoria ');
         Add('  , c.ic_categoria ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameCompromisso + ' a');
-        Add('  left join ' + TScriptDDL.getInstance().getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
+        Add('from ' + FDDL.getTableNameCompromisso + ' a');
+        Add('  left join ' + FDDL.getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
         Add('where (a.id_compromisso = :id_compromisso)');
         Add('   or (a.cd_compromisso = :cd_compromisso)');
         EndUpdate;

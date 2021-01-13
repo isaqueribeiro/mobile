@@ -4,6 +4,7 @@ interface
 
 uses
     System.SysUtils
+  , Classes.ScriptDDL
   , Model.Lancamento
   , Controllers.Interfaces.Observers
   , Services.ComplexTypes
@@ -21,6 +22,7 @@ type
     private
       FObservers : TList<IObserverLancamentoController>;
       FOperacao : TTipoOperacaoController;
+      FDDL   : TScriptDDL;
       FModel : TLancamentoModel;
       //FLista : TDictionary<TGUID, TLancamentoModel>;
       FLista : TList<TLancamentoModel>;
@@ -61,7 +63,6 @@ implementation
 
 uses
     DataModule.Conexao
-  , Classes.ScriptDDL
   , FMX.Graphics
   , System.DateUtils
   , System.Math;
@@ -109,7 +110,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Insert Into ' + TScriptDDL.getInstance().getTableNameLancamento + '(');
+        Add('Insert Into ' + FDDL.getTableNameLancamento + '(');
         Add('    id_lancamento ');
         Add('  , cd_lancamento ');
         Add('  , tp_lancamento ');
@@ -138,7 +139,7 @@ begin
         // Gerar o CÓDIGO
         FModel.Codigo := TDMConexao
           .GetInstance()
-          .GetNexID(TScriptDDL.getInstance().getTableNameLancamento, 'cd_lancamento');
+          .GetNexID(FDDL.getTableNameLancamento, 'cd_lancamento');
 
         ParamByName('id_lancamento').Value := FModel.ID.ToString;
         ParamByName('cd_lancamento').Value := FModel.Codigo;
@@ -199,8 +200,8 @@ begin
         Add('  , a.cd_categoria ');
         Add('  , c.ds_categoria ');
         Add('  , c.ic_categoria ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameLancamento + ' a');
-        Add('  left join ' + TScriptDDL.getInstance().getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
+        Add('from ' + FDDL.getTableNameLancamento + ' a');
+        Add('  left join ' + FDDL.getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
         Add('where (a.cd_lancamento > 0)');
 
         if ((aAno > 0) and (aMes > 0)) then
@@ -358,7 +359,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Update ' + TScriptDDL.getInstance().getTableNameLancamento + ' set ');
+        Add('Update ' + FDDL.getTableNameLancamento + ' set ');
         Add('    tp_lancamento = :tp_lancamento');
         Add('  , ds_lancamento = :ds_lancamento');
         Add('  , dt_lancamento = :dt_lancamento');
@@ -407,6 +408,7 @@ constructor TLancamentoController.Create;
 begin
   FObservers := TList<IObserverLancamentoController>.Create;
   FOperacao  := TTipoOperacaoController.operControllerBrowser;
+  FDDL   := TScriptDDL.getInstance();
   FModel := TLancamentoModel.New;
   //FLista := TDictionary<TGUID, TLancamentoModel>.Create;
   FLista := TList<TLancamentoModel>.Create;
@@ -414,7 +416,7 @@ begin
   TDMConexao
     .GetInstance()
     .Conn
-    .ExecSQL(TScriptDDL.getInstance().getCreateTableLancamento.Text, True);
+    .ExecSQL(FDDL.getCreateTableLancamento.Text, True);
 end;
 
 function TLancamentoController.Delete(out aErro: String): Boolean;
@@ -438,7 +440,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Delete from ' + TScriptDDL.getInstance().getTableNameLancamento);
+        Add('Delete from ' + FDDL.getTableNameLancamento);
         Add('where id_lancamento = :id_lancamento');
         EndUpdate;
 
@@ -479,8 +481,8 @@ begin
   RemoverTodosObservadores;
   FObservers.DisposeOf;
 
-  if Assigned(FModel) then
-    FModel.DisposeOf;
+  FDDL.DisposeOf;
+  FModel.DisposeOf;
 
   if Assigned(FLista) then
   begin
@@ -537,8 +539,8 @@ begin
         Add('  , a.cd_categoria ');
         Add('  , c.ds_categoria ');
         Add('  , c.ic_categoria ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameLancamento + ' a');
-        Add('  left join ' + TScriptDDL.getInstance().getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
+        Add('from ' + FDDL.getTableNameLancamento + ' a');
+        Add('  left join ' + FDDL.getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
         Add('where (a.id_lancamento = :id_lancamento)');
         Add('   or (a.cd_lancamento = :cd_lancamento)');
         EndUpdate;

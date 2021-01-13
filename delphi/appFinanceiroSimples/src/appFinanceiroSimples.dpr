@@ -42,6 +42,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.FormFactor.Orientations := [TFormOrientation.Portrait];
   Application.CreateForm(TDMRecursos, DMRecursos);
   Application.CreateForm(TFrmLogin, FrmLogin);
   Application.CreateForm(TFrmInicio, FrmInicio);

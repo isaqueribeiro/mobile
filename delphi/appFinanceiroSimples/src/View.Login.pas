@@ -243,6 +243,7 @@ end;
 
 procedure TFrmLogin.FormDestroy(Sender: TObject);
 begin
+  FController.DisposeOf;
   FPermissao.DisposeOf;
 end;
 

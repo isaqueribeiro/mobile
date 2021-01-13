@@ -3,13 +3,14 @@ unit Controller.Usuario;
 interface
 
 uses
-  System.SysUtils, Model.Usuario, FireDAC.Comp.Client, Data.DB;
+  System.SysUtils, Classes.ScriptDDL, Model.Usuario, FireDAC.Comp.Client, Data.DB;
 
 type
   TUsuarioController = class
     strict private
       class var _instance : TUsuarioController;
     private
+      FDDL   : TScriptDDL;
       FModel : TUsuarioModel;
       procedure SetAtributes(const aDataSet : TDataSet; aModel : TUsuarioModel);
     protected
@@ -34,8 +35,8 @@ type
 implementation
 
 uses
-  DataModule.Conexao, Classes.ScriptDDL, FMX.Graphics, System.StrUtils,
-  Services.Hash;
+  System.StrUtils, System.Classes, FMX.Graphics,
+  DataModule.Conexao, Services.Hash;
 
 { TUsuarioController }
 
@@ -79,7 +80,7 @@ begin
         Add('  , sn_temfoto ');
         Add('  , ft_usuario ');
         Add('  , sn_logado  ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameUsuario);
+        Add('from ' + FDDL.getTableNameUsuario);
         Add('where (ds_email = :login)');
         EndUpdate;
 
@@ -110,11 +111,12 @@ end;
 
 constructor TUsuarioController.Create;
 begin
+  FDDL   := TScriptDDL.getInstance();
   FModel := TUsuarioModel.New;
   TDMConexao
     .GetInstance()
     .Conn
-    .ExecSQL(TScriptDDL.getInstance().getCreateTableUsuario.Text, True);
+    .ExecSQL(FDDL.getCreateTableUsuario.Text, True);
 end;
 
 function TUsuarioController.Delete(out aErro: String): Boolean;
@@ -138,7 +140,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Delete from ' + TScriptDDL.getInstance().getTableNameUsuario);
+        Add('Delete from ' + FDDL.getTableNameUsuario);
         Add('where id_usuario = :id_usuario');
         EndUpdate;
 
@@ -159,6 +161,7 @@ end;
 
 destructor TUsuarioController.Destroy;
 begin
+  FDDL.DisposeOf;
   FModel.DisposeOf;
   inherited;
 end;
@@ -193,7 +196,7 @@ begin
         Add('  , sn_temfoto ');
         Add('  , ft_usuario ');
         Add('  , sn_logado  ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameUsuario);
+        Add('from ' + FDDL.getTableNameUsuario);
         Add('where (ds_email = :login)');
         EndUpdate;
 
@@ -265,7 +268,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Insert Into ' + TScriptDDL.getInstance().getTableNameUsuario + '(');
+        Add('Insert Into ' + FDDL.getTableNameUsuario + '(');
         Add('    id_usuario ');
         Add('  , cd_usuario ');
         Add('  , nm_usuario ');
@@ -296,7 +299,7 @@ begin
         // Gerar o CÓDIGO
         FModel.Codigo := TDMConexao
           .GetInstance()
-          .GetNexID(TScriptDDL.getInstance().getTableNameUsuario, 'cd_usuario');
+          .GetNexID(FDDL.getTableNameUsuario, 'cd_usuario');
 
         ParamByName('id_usuario').Value := FModel.ID.ToString;
         ParamByName('cd_usuario').Value := FModel.Codigo;
@@ -346,7 +349,7 @@ begin
         Add('  , sn_temfoto ');
         Add('  , ft_usuario ');
         Add('  , sn_logado  ');
-        Add('from ' + TScriptDDL.getInstance().getTableNameUsuario);
+        Add('from ' + FDDL.getTableNameUsuario);
         Add('where (sn_logado = ' + QuotedStr(FLAG_SIM) + ')');
         Add('order by');
         Add('    cd_usuario');
@@ -392,7 +395,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Update ' + TScriptDDL.getInstance().getTableNameUsuario + ' set ');
+        Add('Update ' + FDDL.getTableNameUsuario + ' set ');
         Add('    ds_senha   = :ds_senha ');
         Add('  , sn_logado  = :sn_logado ');
         Add('where id_usuario = :id_usuario');
@@ -414,29 +417,38 @@ begin
 end;
 
 procedure TUsuarioController.SetAtributes(const aDataSet: TDataSet; aModel: TUsuarioModel);
+var
+  aStream : TStream;
 begin
-  with aDataSet, aModel do
-  begin
-    ID      := StringToGUID(FieldByName('id_usuario').AsString);
-    Codigo  := FieldByName('cd_usuario').AsInteger;
-    Nome    := FieldByName('nm_usuario').AsString;
-    Email   := FieldByName('ds_email').AsString;
-    Senha   := FieldByName('ds_senha').AsString;
-    Logado  := (FieldByName('sn_logado').AsString = FLAG_SIM);
-    TemFoto := (FieldByName('sn_temfoto').AsString = FLAG_SIM);
+  aStream := TStream.Create;
+  try
+    with aDataSet, aModel do
+    begin
+      ID      := StringToGUID(FieldByName('id_usuario').AsString);
+      Codigo  := FieldByName('cd_usuario').AsInteger;
+      Nome    := FieldByName('nm_usuario').AsString;
+      Email   := FieldByName('ds_email').AsString;
+      Senha   := FieldByName('ds_senha').AsString;
+      Logado  := (FieldByName('sn_logado').AsString = FLAG_SIM);
+      TemFoto := (FieldByName('sn_temfoto').AsString = FLAG_SIM);
 
-    // #0#0#0#0'IEND®B`‚'
-    try
-      if (Trim(FieldByName('ft_usuario').AsString) <> EmptyStr) then
-      begin
-        Foto := TBitmap.Create;
-        Foto.LoadFromStream( CreateBlobStream(FieldByName('ft_usuario'), TBlobStreamMode.bmRead) );
-      end
-      else
+      // #0#0#0#0'IEND®B`‚'
+      try
+        if (Trim(FieldByName('ft_usuario').AsString) <> EmptyStr) then
+        begin
+          Foto    := TBitmap.Create;
+          aStream := CreateBlobStream(FieldByName('ft_usuario'), TBlobStreamMode.bmRead);
+
+          Foto.LoadFromStream( aStream );
+        end
+        else
+          Foto := nil;
+      except
         Foto := nil;
-    except
-      Foto := nil;
+      end;
     end;
+  finally
+    aStream.DisposeOf;
   end;
 end;
 
@@ -479,7 +491,7 @@ begin
       begin
         BeginUpdate;
         Clear;
-        Add('Update ' + TScriptDDL.getInstance().getTableNameUsuario + ' set ');
+        Add('Update ' + FDDL.getTableNameUsuario + ' set ');
         Add('    nm_usuario = :nm_usuario ');
         Add('  , ds_email   = :ds_email ');
         Add('  , ds_senha   = :ds_senha ');

@@ -23,6 +23,7 @@ type
   public
     { Public declarations }
     class function GetInstance() : TDMConexao;
+    class function Instanciado : Boolean;
     class function GetLastInsertRowID : Integer;
     class function GetNexID(aTableName, aFieldName : String) : Integer;
   end;
@@ -125,6 +126,11 @@ begin
   finally
     aQry.DisposeOf;
   end;
+end;
+
+class function TDMConexao.Instanciado: Boolean;
+begin
+  Result := Assigned(_instance);
 end;
 
 end.

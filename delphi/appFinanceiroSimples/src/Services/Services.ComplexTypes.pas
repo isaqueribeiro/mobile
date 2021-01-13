@@ -12,6 +12,11 @@ type
     Despesas : Currency;
     Saldo    : Currency;
   end;
+  TTotalCompromissos = record
+    Comprometer  : Currency;
+    Comprometido : Currency;
+    Pendente     : Currency;
+  end;
 
   TCallbackProcedureObject = procedure(Sender: TObject) of Object;
 
