@@ -291,6 +291,7 @@ begin
         Open;
 
         Lista.Clear;
+        FSelecao.Clear;
 
         while not Eof do
         begin

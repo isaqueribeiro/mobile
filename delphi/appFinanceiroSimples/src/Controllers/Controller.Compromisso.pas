@@ -44,6 +44,14 @@ type
       procedure Load(const aQuantidadeRegistros: Integer; aAno, aMes : Word; aTipo : TTipoCompromisso;
         var aTotal : TTotalCompromissos; out aErro : String);
       procedure RemoverObservador(Observer   : IObserverCompromissoController);
+
+      function Insert(out aErro : String) : Boolean; virtual; abstract;
+      function Update(out aErro : String) : Boolean; virtual; abstract;
+      function Delete(out aErro : String) : Boolean; virtual; abstract;
+      function Find(aID : TGUID; out aErro : String;
+        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload;
+      function Find(aCodigo : Integer; out aErro : String;
+        const RETURN_ATTRIBUTES : Boolean = FALSE) : Boolean; overload;
   end;
 
 implementation
@@ -71,8 +79,104 @@ end;
 
 procedure TCompromissoController.Load(const aQuantidadeRegistros: Integer; aAno, aMes: Word; aTipo: TTipoCompromisso;
   var aTotal: TTotalCompromissos; out aErro: String);
+var
+  aModel : TCompromissoModel;
+  aQry : TFDQuery;
 begin
-  ;
+  FOperacao := TTipoOperacaoController.operControllerBrowser;
+
+  aQry := TFDQuery.Create(nil);
+  try
+    aQry.Connection := TDMConexao.GetInstance().Conn;
+
+    try
+      with aQry, SQL do
+      begin
+        BeginUpdate;
+        Clear;
+
+        Add('Select ');
+        Add('    a.id_compromisso');
+        Add('  , a.cd_compromisso');
+        Add('  , a.tp_compromisso');
+        Add('  , a.ds_compromisso');
+        Add('  , a.dt_compromisso');
+        Add('  , a.vl_compromisso');
+        Add('  , a.cd_categoria ');
+        Add('  , c.ds_categoria ');
+        Add('  , c.ic_categoria ');
+        Add('from ' + FDDL.getTableNameCompromisso + ' a');
+        Add('  left join ' + FDDL.getTableNameCategoria + ' c on (c.cd_categoria = a.cd_categoria)');
+        Add('where (a.tp_compromisso = :tipo)');
+
+        if ((aAno > 0) and (aMes > 0)) then
+          Add('  and (a.dt_compromisso between :data_inicial and :data_final)');
+
+        Add('order by');
+        Add('    datetime(a.dt_compromisso) DESC');
+        Add('  , a.ds_compromisso ASC');
+
+        if (aQuantidadeRegistros > 0) then
+          Add('limit :limite');
+
+        EndUpdate;
+
+        ParamByName('tipo').AsInteger := Ord(aTipo);
+
+        if ((aAno > 0) and (aMes > 0)) then
+        begin
+          ParamByName('data_inicial').AsDateTime := EncodeDate(aAno, aMes, 1);
+          ParamByName('data_final').AsDateTime   := EndOfTheMonth( EncodeDate(aAno, aMes, 1) );
+        end;
+
+        if (aQuantidadeRegistros > 0) then
+          ParamByName('limite').AsInteger := aQuantidadeRegistros;
+
+        Open;
+
+        Lista.Clear;
+
+        aTotal.Comprometer  := 0.0;
+        aTotal.Comprometido := 0.0;
+        aTotal.Pendente     := 0.0;
+
+        while not Eof do
+        begin
+          aModel := TCompromissoModel.Create;
+
+          SetAtributes(aQry, aModel);
+          Lista.Add(aModel);
+
+          // Totalizar
+          if (aModel.Tipo = TTipoCompromisso.tipoCompromissoAReceber) then
+            aTotal.Comprometer := ( aTotal.Comprometer + aModel.Valor )
+          else
+            aTotal.Comprometer := ( aTotal.Comprometer + (aModel.Valor * (-1)) );
+
+          if aModel.Realizado then
+          begin
+            if (aModel.Tipo = TTipoCompromisso.tipoCompromissoAReceber) then
+              aTotal.Comprometido := ( aTotal.Comprometido + aModel.Valor )
+            else
+              aTotal.Comprometido := ( aTotal.Comprometido + (aModel.Valor * (-1)) );
+          end;
+
+          aTotal.Pendente := aTotal.Comprometer - aTotal.Comprometido;
+
+          Next;
+        end;
+
+        // Limitar o tamanho da lista à quantidade de objetos instanciados
+        Lista.TrimExcess;
+      end;
+    except
+      On E : Exception do
+        aErro := 'Erro ao tentar carregar os compromissos: ' + E.Message;
+    end;
+  finally
+    aQry.Close;
+    aQry.DisposeOf;
+  end;
 end;
 
 procedure TCompromissoController.AdicionarObservador(Observer: IObserverCompromissoController);
@@ -121,6 +225,16 @@ begin
   end;
 
   inherited;
+end;
+
+function TCompromissoController.Find(aCodigo: Integer; out aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
+begin
+  Result := Self.Find(TGuid.Empty, aCodigo, aErro, RETURN_ATTRIBUTES);
+end;
+
+function TCompromissoController.Find(aID: TGUID; out aErro: String; const RETURN_ATTRIBUTES: Boolean): Boolean;
+begin
+  Result := Self.Find(aID, 0, aErro, RETURN_ATTRIBUTES);
 end;
 
 function TCompromissoController.Find(aID: TGUID; aCodigo: Integer; out aErro: String;
@@ -218,9 +332,9 @@ procedure TCompromissoController.SetAtributes(const aDataSet: TDataSet; aModel: 
 begin
   with aDataSet, aModel do
   begin
-    ID     := StringToGUID(FieldByName('id_compromisso').AsString);
-    Codigo := FieldByName('cd_compromisso').AsInteger;
-    Tipo   := TTipoCompromisso(FieldByName('tp_compromisso').AsInteger);
+    ID        := StringToGUID(FieldByName('id_compromisso').AsString);
+    Codigo    := FieldByName('cd_compromisso').AsInteger;
+    Tipo      := TTipoCompromisso(FieldByName('tp_compromisso').AsInteger);
     Descricao := FieldByName('ds_compromisso').AsString;
     Data      := FieldByName('dt_compromisso').AsDateTime;
     Valor     := FieldByName('vl_compromisso').AsCurrency;

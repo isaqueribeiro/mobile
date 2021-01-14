@@ -473,6 +473,10 @@
             <Form>FrmCompromissos</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="View.CompromissoEdicao.pas">
+            <Form>FrmCompromissoEdicao</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <RcItem Include="Assets\categoria-airplane-64x64.png">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>categoria_11</ResourceId>

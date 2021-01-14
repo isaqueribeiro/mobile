@@ -143,8 +143,6 @@ begin
 
     ListViewCategorias.BeginUpdate;
     try
-      LimparListView;
-
       for I in FCategogiaController.Lista.Keys do
       begin
         o := TObjetoItemListView.Create;
@@ -222,6 +220,7 @@ begin
   ImgSemImage.Visible  := False;
   FCategogiaController := TCategoriaController.GetInstance();
 
+  LimparListView;
   CarregarCategorias;
 end;
 

@@ -28,6 +28,20 @@ type
     procedure RemoverTodosObservadores;
     procedure Notificar;
   end;
+
+  IObserverCompromissoEdicao = interface
+    ['{CF5D9749-D3ED-4455-883E-ED39E9FEADA0}']
+    procedure AtualizarItemCompromisso;
+  end;
+
+  ISubjectCompromissoEdicao = interface
+    ['{9AF5A0DB-3AD5-4E7F-A697-2FCE0AB9C2AD}']
+    procedure AdicionarObservador(Observer : IObserverCompromissoEdicao);
+    procedure RemoverObservador(Observer   : IObserverCompromissoEdicao);
+    procedure RemoverTodosObservadores;
+    procedure Notificar;
+  end;
+
 implementation
 
 end.

@@ -22,6 +22,7 @@ type
     procedure ImageFecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ListViewCategoriasItemClick(const Sender: TObject; const AItem: TListViewItem);
+    procedure FormShow(Sender: TObject);
   strict private
     class var _instance : TFrmCategoriaSelecao;
   private
@@ -84,8 +85,6 @@ begin
 
     ListViewCategorias.BeginUpdate;
     try
-      LimparListView;
-
 //      for I in FCategogiaController.Lista.Keys do
 //      begin
 //        o := TObjetoItemListView.Create;
@@ -161,7 +160,11 @@ procedure TFrmCategoriaSelecao.FormCreate(Sender: TObject);
 begin
   ImgSemImage.Visible  := False;
   FCategogiaController := TCategoriaController.GetInstance();
+end;
 
+procedure TFrmCategoriaSelecao.FormShow(Sender: TObject);
+begin
+  LimparListView;
   CarregarCategorias;
 end;
 

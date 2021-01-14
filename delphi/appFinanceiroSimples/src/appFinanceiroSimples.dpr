@@ -36,7 +36,8 @@ uses
   View.CategoriaSelecao in 'View.CategoriaSelecao.pas' {FrmCategoriaSelecao},
   Model.Compromisso in 'Models\Model.Compromisso.pas',
   Controller.Compromisso in 'Controllers\Controller.Compromisso.pas',
-  View.Compromissos in 'View.Compromissos.pas' {FrmCompromissos};
+  View.Compromissos in 'View.Compromissos.pas' {FrmCompromissos},
+  View.CompromissoEdicao in 'View.CompromissoEdicao.pas' {FrmCompromissoEdicao};
 
 {$R *.res}
 

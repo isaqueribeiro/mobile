@@ -5,6 +5,7 @@ interface
 uses
   Classe.ObjetoItemListView,
   Services.ComplexTypes,
+  View.CompromissoEdicao,
   Controller.Compromisso,
   Controllers.Interfaces.Observers,
   Views.Interfaces.Observers,
@@ -14,7 +15,7 @@ uses
   FMX.Layouts, FMX.Objects, FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
-  TFrmCompromissos = class(TForm, IObserverCompromissoController)
+  TFrmCompromissos = class(TForm, IObserverCompromissoController, IObserverCompromissoEdicao)
     ImgSemImage: TImage;
     LayoutHeader: TLayout;
     LabelTitulo: TLabel;
@@ -47,6 +48,7 @@ type
     procedure ImageFecharClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure ImageAdicionarClick(Sender: TObject);
+    procedure ListViewCompromissosItemClick(const Sender: TObject; const AItem: TListViewItem);
   strict private
     class var _instance : TFrmCompromissos;
   private
@@ -55,10 +57,12 @@ type
     FDataFiltro : TDateTime;
     FRecarregar : Boolean;
     FCompromissoController : TCompromissoController;
+    FEdicao : TFrmCompromissoEdicao;
 
     procedure CarregarCompromissos(aLimparLista : Boolean);
     procedure InicializarComponentes;
     procedure AtualizarCompromisso;
+    procedure AtualizarItemCompromisso;
     procedure LimparListView;
   public
     { Public declarations }
@@ -81,6 +85,80 @@ uses
 procedure TFrmCompromissos.AtualizarCompromisso;
 begin
   ;
+end;
+
+procedure TFrmCompromissos.AtualizarItemCompromisso;
+var
+  aError : String;
+  aTotal     : TTotalCompromissos;
+  aRegistros ,
+  aItemIndex : Integer;
+  aItem      : TListViewItem;
+  o : TObjetoItemListView;
+begin
+  if (YearOf(FCompromissoController.Attributes.Data) = YearOf(FDataFiltro)) and (MonthOf(FCompromissoController.Attributes.Data) = MonthOf(FDataFiltro)) then
+  begin
+    aRegistros := 30;
+
+    case FCompromissoController.Operacao of
+      TTipoOperacaoController.operControllerInsert :
+        begin
+//          o := TObjetoItemListView.Create;
+//
+//          o.ID        := FLAncamentoController.Attributes.ID;
+//          o.Codigo    := FLAncamentoController.Attributes.Codigo;
+//          o.Descricao := FLAncamentoController.Attributes.Descricao;
+//          o.Valor     := FormatFloat(',0.00', FLAncamentoController.Attributes.Valor);
+//          o.Categoria := FLAncamentoController.Attributes.Categoria.Descricao;
+//          o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Attributes.Data);
+//          o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Attributes.Categoria.Icone );
+//
+//          addItemLancamento(o);
+//          Inc(aRegistros);
+        end;
+
+      TTipoOperacaoController.operControllerUpdate :
+        begin
+//          aItem := TListViewItem(ListViewLancamentos.Items.Item[ListViewLancamentos.ItemIndex]);
+//
+//          if Assigned(aItem.TagObject) then
+//            o := TObjetoItemListView(aItem.TagObject)
+//          else
+//            o := TObjetoItemListView.Create;
+//
+//          o.ID        := FLAncamentoController.Attributes.ID;
+//          o.Codigo    := FLAncamentoController.Attributes.Codigo;
+//          o.Descricao := FLAncamentoController.Attributes.Descricao;
+//          o.Valor     := FormatFloat(',0.00', FLAncamentoController.Attributes.Valor);
+//          o.Categoria := FLAncamentoController.Attributes.Categoria.Descricao;
+//          o.DataMovimento := FormatDateTime('dd/mm', FLAncamentoController.Attributes.Data);
+//          o.Image     := TServicesUtils.Base64FromBitmap( FLAncamentoController.Attributes.Categoria.Icone );
+//
+//          aItem.TagObject := o;
+//          formatItemLancamento( aItem );
+        end;
+
+      TTipoOperacaoController.operControllerDelete :
+        begin
+          aItemIndex := ListViewCompromissos.ItemIndex;
+          aItem      := TListViewItem(ListViewCompromissos.Items.Item[aItemIndex]);
+
+          if Assigned(aItem.TagObject) then
+            aItem.TagObject.DisposeOf;
+
+          ListViewCompromissos.Items.Delete(aItemIndex);
+        end;
+
+      TTipoOperacaoController.operControllerBrowser :
+        CarregarCompromissos(True);
+    end;
+
+    FCompromissoController.Load(aRegistros, 0, 0, FTipo, aTotal, aError);
+
+    lblValorComprometer.Text  := 'R$' + #13 + FormatFloat(',0.00', aTotal.Comprometer);
+    lblValorComprometido.Text := 'R$' + #13 + FormatFloat(',0.00', aTotal.Comprometido);
+    lblValorPendente.Text     := 'R$' + #13 + FormatFloat(',0.00', aTotal.Pendente);
+  end;
 end;
 
 procedure TFrmCompromissos.CarregarCompromissos(aLimparLista: Boolean);
@@ -166,9 +244,10 @@ end;
 procedure TFrmCompromissos.ImageAdicionarClick(Sender: TObject);
 begin
   FCompromissoController.New;
+  FCompromissoController.Attributes.Tipo := FTipo;
 
-//  FEdicao := TFrmLancamentoEdicao.GetInstance(Self);
-//  FEdicao.Show;
+  FEdicao := TFrmCompromissoEdicao.GetInstance(FTipo, Self);
+  FEdicao.Show;
 end;
 
 procedure TFrmCompromissos.ImageFecharClick(Sender: TObject);
@@ -196,9 +275,9 @@ begin
       end;
   end;
 
-  lblValorComprometer.Text  := 'R$ 000.000,00';
-  lblValorComprometido.Text := 'R$ 000.000,00';
-  lblValorPendente.Text     := 'R$ 000.000,00';
+  lblValorComprometer.Text  := 'R$' + #13 + FormatFloat(',0.00', 0);
+  lblValorComprometido.Text := 'R$' + #13 + FormatFloat(',0.00', 0);
+  lblValorPendente.Text     := 'R$' + #13 + FormatFloat(',0.00', 0);
 end;
 
 class function TFrmCompromissos.Instanciado: Boolean;
@@ -211,6 +290,22 @@ begin
   // Voltar o Scroll para o índice 0 (zero)
   ListViewCompromissos.ScrollTo(0);
   ListViewCompromissos.Items.Clear;
+end;
+
+procedure TFrmCompromissos.ListViewCompromissosItemClick(const Sender: TObject; const AItem: TListViewItem);
+begin
+  FRecarregar := False;
+
+  if (ListViewCompromissos.Selected <> nil) then
+    if Assigned(AItem.TagObject) then
+    begin
+      FCompromissoController
+        .Attributes
+        .ID := TObjetoItemListView(AItem.TagObject).ID;
+
+      FEdicao := TFrmCompromissoEdicao.GetInstance(FTipo, Self);
+      FEdicao.Show;
+    end;
 end;
 
 end.

@@ -77,7 +77,7 @@ begin
   FValor     := 0.0;
   FCategoria := TCategoriaModel.Create;
   FRealizado := False;
-  FTipo      := TTipoCompromisso.tipoCompromissoAPagar;
+  FTipo      := TTipoCompromisso.tipoCompromissoAReceber;
 end;
 
 destructor TCompromissoModel.Destroy;
