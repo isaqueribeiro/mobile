@@ -46,18 +46,16 @@ type
     ImgSemImage: TImage;
     ImageHoje: TImage;
     LabelHoje: TLabel;
-    ImageOntem: TImage;
-    LabelOntem: TLabel;
-    LayoutTipo: TLayout;
-    LabelTipo: TLabel;
-    LineTipo: TLine;
+    ImageAmanha: TImage;
+    LabelAmanha: TLabel;
     ImgRealizado: TImage;
     ImgPendente: TImage;
     TmrFechar: TTimer;
     LayoutSituacao: TLayout;
-    Line1: TLine;
     ImageSituacao: TImage;
     LabelSituacao: TLabel;
+    LayoutSubTitulo: TLayout;
+    LayoutTipo: TLayout;
     LayoutTipoAReceber: TLayout;
     ImageTipoAReceber: TImage;
     LabelTipoAReceber: TLabel;
@@ -203,6 +201,9 @@ begin
   ImgRealizado.Visible := False;
   ImgPendente.Visible  := False;
 
+  LayoutTipoAReceber.Align := TAlignLayout.Center;
+  LayoutTipoAPagar.Align   := TAlignLayout.Center;
+
   ImageTipoAReceber.Tag := Ord(TTipoCompromisso.tipoCompromissoAReceber);
   ImageTipoAPagar.Tag   := Ord(TTipoCompromisso.tipoCompromissoAPagar);
 
@@ -308,7 +309,7 @@ end;
 
 procedure TFrmCompromissoEdicao.InformarData(Sender: TObject);
 begin
-  edtData.Date := Date - TFmxObject(Sender).Tag;
+  edtData.Date := Date + TFmxObject(Sender).Tag;
 end;
 
 procedure TFrmCompromissoEdicao.Notificar;
