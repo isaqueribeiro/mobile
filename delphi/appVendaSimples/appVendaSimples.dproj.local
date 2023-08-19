@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<ActiveMobileDevice>
+		<NoProfile iOSSimulator="iPhone5"/>
+	</ActiveMobileDevice>
+	<Transactions>
+    <Transaction>2020/04/08 18:57:51.000.185,C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\Unit1.fmx=C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVendaSimples\src\USincronizar.fmx</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,205 @@
+object ViewPrincipal: TViewPrincipal
+  Left = 0
+  Top = 0
+  Caption = 'Servidor Venda Simples'
+  ClientHeight = 711
+  ClientWidth = 401
+  Fill.Kind = Solid
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object lytToolBar: TLayout
+    Align = Top
+    Size.Width = 401.000000000000000000
+    Size.Height = 50.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Rectangle1: TRectangle
+      Align = Contents
+      Fill.Color = xFF3D576B
+      Size.Width = 401.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+    end
+    object swtAtivar: TSwitch
+      Align = MostRight
+      IsChecked = False
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Position.X = 313.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 78.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'switchstyle'
+      TabOrder = 1
+      OnSwitch = swtAtivarSwitch
+    end
+    object lblAtivar: TLabel
+      Align = Right
+      StyledSettings = []
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Position.X = 206.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 97.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.StyleExt = {00060000000000000004000000}
+      TextSettings.FontColor = claWhite
+      TextSettings.HorzAlign = Trailing
+      Text = 'DESATIVADO'
+      TabOrder = 2
+    end
+    object ImgLogo: TImage
+      MultiResBitmap.Height = 64
+      MultiResBitmap.Width = 64
+      MultiResBitmap = <
+        item
+          Width = 64
+          Height = 64
+          PNG = {
+            89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
+            DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+            052849444154785EED9A0B4C55751CC7BF08978BBC91201290378992869B4C6B
+            4A0F96D2CA122BC41243375981454E6BE4CA582D2B8C1950DA5AA4E60A5D96AB
+            9CEB818464626020884090206F4C7484A0F2F0F6FFFFF921C6B85E0EF77284CE
+            F9B0FF7E0FCE3D3BE7BBFFE3F73FE7982D888AD741C14C22AB585401C82A1655
+            00B28A451580AC62510520AB585401C82A9611ED053CEF70C57DF3426033D98A
+            32E39BAECB5790935F84FAE67394D18F4101E6CE0AC23B1BE3A0D158506662D0
+            DDD38BA4941D2828A9A0CCF0181C0209319113EEE63996EC9A13562EA3483F06
+            7B40EE97E9303333A3483E366FCB444767A7F09F7F6629FCBD3C905F5C867D07
+            0F8B9C8FE754AC8BE9BFC137D377E2427B87F0E3563C86E9BED384AFD3E91016
+            BD4EF8FA30D8036EC5CD734A2AAA51585A295AC7A5CB2277FE42FBF55CE5993A
+            91E394569EC1895395A2FD73A95F34CE48AE5D5D050C0D81235919E4C9CBEF27
+            CBD1D3DB2BFCE0405F38D8D9A0F5FC05549F6D14397B5B6BDC75A79FF00B4B2B
+            70B5BB47F83303BCE1686F277CCEC2E509E40DCFB815C0541812401D02527A40
+            43CBDF38949B4FD1F824226C1E3CDC5C2832F110E0E372C3960F291A9F6C7D35
+            1EA1AC781B401D0206500520AB588C9E0382FCBCD0CEAAAFA6D6F394191DBCD4
+            8D7D22825D91F4CAF3A7BC02FC72BC48F8B2CE011E6EAE70B0B7C52476D1EEB7
+            BB20F3DD24F84D73A7FFFE17ADA5259C1C060B94A1682CCC616B630D3BEBC992
+            9B56ABA1B348C7A81EC06FC8976D4A7885C6778CBB5236E1B9D7DE4759550D1D
+            3148E4A230B6A9791CE12B5FA2CCD8206B0FE8EEE941DFB56B140D323F24184B
+            1EBC97A291C3059D22B1F1DF58989BD319A463D446DF89D5DC565A4B8A06993F
+            672666F87BE3DBECA39431CCFDF342909CB8862269647D9F8D8FF67C4391348C
+            128057867C0ED007DF8E26C63E891F7F2DA08C7EF8939BE4B4CF46B5FD3E3DCC
+            901B29464E822EB06313D7CD58FAD04278BBBB51A49F4B5D9791FDDB09FC7CB4
+            50726B3AD74667918E5102F01ED0D1D9459171B8383B6255E4623CBB2C42720B
+            F2F7A2B34867CC7BC048F1F37447F4A3E1582EB53D122E1EDC8E96319D038662
+            C6FEF890B8674E301CD9EF5ADB2E22E7D81F38CC1A7FDEB73876031D291F46F5
+            00A96858AD103A3B48AC0EA99FEEC591E3C578EAE107B035297ED8D5440E4C22
+            8097871BBCA6F64F74FC258A839D2DABFC3408F0F610395767272C5A188A4FB2
+            BE4352CAC7C82B3889F2BFCE8AD58197B073674DC7FA3551E258B9315A80EADA
+            46B60F68C3D9A656ACDAF8362A6BEAB173FF21BCBE2D133DBD7D22C7DFD470F6
+            1CF841D801426604606DF412E12F5A10CACAE9DB842F27460B70B5BB1B35F54D
+            376D2E531C91CBBAFB8D3537CFBDF1E26A984FEABF04BEFEDFCD04911B59E600
+            2B2BEDF55E30400C5BF2866E8EACB45AF2E4431601EA1A5B10E8E349513FAEAC
+            070CA5AEA9853CF99045806CB6CC2D983B5B4C90034C71B427AF9F6656CD1595
+            5551241FB208D076B11D3BBE3880D44D0962E2E3DC2800DF556ED9FE397AFBFA
+            28231FB208C03998730C69BBBEC2CB714F636F5A329C49800AB61CAE4BFE00C5
+            E5D522961BD904E0E41594604562325E796F3B12DF4A47D40B9BB176530ACAAB
+            6BE908F99155000E7F655DDBD082E2D35562DCDF6A243D123BF5E719A466EEA3
+            687CB27E751482037D2832C19BA15BF581842930C90712B56C0D9FA8D4343493
+            A71F830264ECDE2F3E389A68F06BCED8FD3545FA3138043813ED33B9CEAE2BC8
+            61BBCC06537C26F77F47F66570BCA10A4056B1A80290552CAA0064158B2A0059
+            C5A20A405691E800DDBF0D92FD26718501E90000000049454E44AE426082}
+          FileName = 
+            'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appVe' +
+            'ndaSimples\src\images\app_venda_simples_64x64.png'
+        end>
+      Align = MostLeft
+      Size.Width = 50.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object lytStatusBar: TLayout
+    Align = Bottom
+    Position.Y = 671.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Rectangle2: TRectangle
+      Align = Contents
+      Fill.Color = claBlack
+      Size.Width = 401.000000000000000000
+      Size.Height = 40.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+    end
+  end
+  object Layout: TLayout
+    Align = Client
+    Size.Width = 401.000000000000000000
+    Size.Height = 621.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    object LayoutSideBar: TLayout
+      Align = Left
+      Size.Width = 50.000000000000000000
+      Size.Height = 621.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Rectangle3: TRectangle
+        Align = Contents
+        Fill.Color = xFF3D576B
+        Size.Width = 50.000000000000000000
+        Size.Height = 621.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+      end
+      object imgConfiguracoes: TImage
+        MultiResBitmap = <
+          item
+          end>
+        Align = MostBottom
+        Position.Y = 571.000000000000000000
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object imgHome: TImage
+        MultiResBitmap = <
+          item
+          end>
+        Align = MostTop
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object imgUsuarios: TImage
+        MultiResBitmap = <
+          item
+          end>
+        Align = Top
+        Position.Y = 100.000000000000000000
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object imgEmpresas: TImage
+        MultiResBitmap = <
+          item
+          end>
+        Align = Top
+        Position.Y = 50.000000000000000000
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object LayoutContent: TLayout
+      Align = Client
+      Size.Width = 351.000000000000000000
+      Size.Height = 621.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+    end
+  end
+end

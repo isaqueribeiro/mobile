@@ -1,0 +1,127 @@
+inherited ViewPrincipal: TViewPrincipal
+  DesignerMasterStyle = 0
+  inherited LayoutView: TLayout
+    object ltwCatalogos: TListView
+      ItemAppearanceClassName = 'TDynamicAppearance'
+      ItemEditAppearanceClassName = 'TDynamicAppearance'
+      HeaderAppearanceClassName = 'TListHeaderObjects'
+      FooterAppearanceClassName = 'TListHeaderObjects'
+      ItemSpaces.Left = 0.000000000000000000
+      ItemSpaces.Right = 0.000000000000000000
+      Align = Client
+      Size.Width = 339.000000000000000000
+      Size.Height = 531.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      ItemAppearance.ItemHeight = 150
+      ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'txtCatalogo'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 14.000000000000000000
+          Appearance.Font.StyleExt = {00060000000000000004000000}
+          Appearance.TextAlign = Leading
+          Appearance.Width = 249.000000000000000000
+          Appearance.Height = 33.000000000000000000
+          Appearance.PlaceOffset.X = 72.000000000000000000
+          Appearance.PlaceOffset.Y = 8.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'txtQtde'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 14.000000000000000000
+          Appearance.TextAlign = Leading
+          Appearance.Width = 249.000000000000000000
+          Appearance.Height = 25.000000000000000000
+          Appearance.PlaceOffset.X = 72.000000000000000000
+          Appearance.PlaceOffset.Y = 40.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'imgLogo'
+          AppearanceClassName = 'TImageObjectAppearance'
+          Appearance.Width = 56.000000000000000000
+          Appearance.Height = 56.000000000000000000
+          Appearance.PlaceOffset.X = 8.000000000000000000
+          Appearance.PlaceOffset.Y = 8.000000000000000000
+        end>
+      ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'Text1'
+          AppearanceClassName = 'TTextObjectAppearance'
+        end>
+      CanSwipeDelete = False
+      ShowSelection = False
+    end
+  end
+  inherited lytToolBar: TLayout
+    TabOrder = 2
+    inherited recBackgroundToolBar: TRectangle
+      Stroke.Kind = None
+    end
+    inherited lbtTitle: TLabel
+      TextSettings.Font.StyleExt = {00060000000000000004000000}
+    end
+    inherited lytBtnBack: TLayout
+      inherited imBtnBack: TImage
+        MultiResBitmap.Height = 64
+        MultiResBitmap.Width = 64
+        MultiResBitmap = <
+          item
+            Width = 64
+            Height = 64
+            PNG = {
+              89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
+              DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              019E49444154785EED9B3F4AC4401C856304B1F14F6D21281696222C16DB6C27
+              AC07F004565EC146ACB7F4105EC00B88852EB8582B5AB9B5DA58ADFADE2F8990
+              307B00E7BD0FBE24C34E8A9784D9C964A630469B857ADF70008F610FEEC0EEEF
+              FF951FF80CC7F00ADEC116CB7004679095739619999599FFB884A9CA39CBCCC1
+              007EC354A59C65E6C12236E7700FAAC1F6AD2CB16183A74A8F57E11DAE45518F
+              0F3E0193EA5892092FC06D752C49645F876F30D552E62C33337B7008BF60AA62
+              8E322B33B7D885F73075424E3223B306DDBE3ECBDB70BFDEE7F42EF0021FEA3D
+              CBC618638C31DACCEBE9ADC22D98534FF0157E46690E4BF0023EC11CC7089989
+              D99891595BF06E3FC2D48939CAACCC1C7050E406A62AE62C33971C153E81A750
+              8D4D38E5DD1F465193215B790E0D6D44518F7802A4E105E0175355C6BC00D7D5
+              B124915DFA6F1006D21DA106C9AEB05F868C31C6186354E9F6F458969D202139
+              45A6417A9294F434390E8B9FC123A8C60A9C7144A41F454DFA6CE5E5274B4FAB
+              6349E2BB80F4B03837D24B666020BD688AC82E9BEBF6F565174E1A234951FC02
+              E32765FD9F90A1CB0000000049454E44AE426082}
+            FileName = 
+              'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appCa' +
+              'talogo\src\Assets\Images\menu-button-of-three-horizontal-lines.p' +
+              'ng'
+          end>
+      end
+    end
+    inherited lytBtnPlus: TLayout
+      inherited imgBtnPlus: TImage
+        MultiResBitmap.Height = 64
+        MultiResBitmap.Width = 64
+        MultiResBitmap = <
+          item
+            Width = 64
+            Height = 64
+            PNG = {
+              89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971
+              DE000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              017949444154785EED9B3D4EC35010840D14FCDC80034041C10510F7C88D9090
+              E839001454141C0151A6A1A0A1871BD021988927C8480F7896A3C5F1EC274DE6
+              C559297A1329B676F59A7F6206DD412F12D7BC367976A15BE8E307F133D64C96
+              0BA8B4F1AE5833490EA077A8B4E9AE58C3DA1036E5119C4035DFC71AD6861019
+              C0B1BC863EB583880C604F5E439FDA414406304A3200B92D1980DC960C406E4B
+              0620B7250390DB9201C86DC900E4B66400725B3200B92D1BF2256C47B323CBA6
+              E4AAFB72A7D051BBFC9327E8BE5DAE8C37E8117A809E79A10BA7311C48D4F4ED
+              D75DDC23F7FA6D02F5DBB86AAAE29E177028592A70D06C0B2F67D021E4C80EFF
+              04399EDE5FBCF5E3359F03A079BBB464CE00AEDBB5255772CBDBE00DF485DB83
+              D039B40DE5A370249750E9172989B521E46D506E4B0620B7250390DB9201C86D
+              C900E4B66400725B3200B92D1980DC960C406E4B06208F804DC95AFAD40E2232
+              0076646BE953BB368CF2E06434D6476789FDE1E92523393EDF349F9AE88D4B76
+              C85B510000000049454E44AE426082}
+            FileName = 
+              'C:\Users\Isaque\Documents\Projetos\ASS\mobile\trunk\delphi\appCa' +
+              'talogo\src\Assets\Images\plus-sign.png'
+          end>
+      end
+    end
+  end
+end

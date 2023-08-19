@@ -5,6 +5,8 @@ program appFinanceiroSimples;
 uses
   System.StartUpCopy,
   FMX.Forms,
+  Skia,
+  Skia.FMX,
   View.Incio in 'View.Incio.pas' {FrmInicio},
   View.Login in 'View.Login.pas' {FrmLogin},
   u99Permissions in 'Classes\u99Permissions.pas',
@@ -42,6 +44,8 @@ uses
 {$R *.res}
 
 begin
+  GlobalUseSkia := True;
+
   Application.Initialize;
   Application.FormFactor.Orientations := [TFormOrientation.Portrait];
   Application.CreateForm(TDMRecursos, DMRecursos);

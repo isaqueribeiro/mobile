@@ -2,7 +2,9 @@ program appVendaSimples;
 
 uses
   System.StartUpCopy,
+  Skia,
   FMX.Forms,
+  Skia.FMX,
   UInicial in 'src\UInicial.pas' {FrmInicial},
   UConstantes in 'src\UConstantes.pas',
   ULogin in 'src\ULogin.pas' {FrmLogin},
@@ -51,6 +53,8 @@ uses
 {$R *.res}
 
 begin
+  GlobalUseSkia := True;
+
   Application.Initialize;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TFrmInicial, FrmInicial);

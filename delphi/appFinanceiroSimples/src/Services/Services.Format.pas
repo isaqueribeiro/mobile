@@ -3,7 +3,10 @@ unit Services.Format;
 interface
 
 uses
-  System.SysUtils, System.Classes, System.MaskUtils, FMX.Edit;
+  System.SysUtils,
+  System.Classes,
+  System.MaskUtils,
+  FMX.Edit;
 
 type
   TTypeFormat = (
